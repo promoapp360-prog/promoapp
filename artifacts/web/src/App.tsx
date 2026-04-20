@@ -88,6 +88,47 @@ export default function App() {
         </div>
       </section>
 
+      {/* Sezione Video Demo */}
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center gap-16">
+            <div className="md:w-1/2">
+              <h2 className="text-4xl font-bold mb-6 italic">L'esperienza di un'App nativa, senza i costi di un'App nativa.</h2>
+              <p className="text-gray-600 text-lg mb-8">Le nostre soluzioni si installano con un click, inviano notifiche push e funzionano anche offline. Guarda come i tuoi clienti interagiranno con la tua attività.</p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="mt-1 text-emerald-500"><i className="fas fa-bolt"></i></div>
+                  <div>
+                    <h4 className="font-bold">Velocità estrema</h4>
+                    <p className="text-sm text-gray-500">Caricamento istantaneo per non perdere nemmeno un cliente.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="mt-1 text-orange-500"><i className="fas fa-bell"></i></div>
+                  <div>
+                    <h4 className="font-bold">Notifiche Push</h4>
+                    <p className="text-sm text-gray-500">Invia offerte e promemoria direttamente sul blocco schermo dei tuoi clienti.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="md:w-1/2 relative">
+              <div className="relative mx-auto border-gray-900 bg-gray-900 border-[8px] rounded-[2.5rem] h-[600px] w-[300px] shadow-2xl">
+                <div className="h-[32px] w-[3px] bg-gray-900 absolute -left-[11px] top-[72px] rounded-l-lg"></div>
+                <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[124px] rounded-l-lg"></div>
+                <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[178px] rounded-l-lg"></div>
+                <div className="h-[64px] w-[3px] bg-gray-900 absolute -right-[11px] top-[142px] rounded-r-lg"></div>
+                <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white">
+                  <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-mobile-app-user-interface-9041-large.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Demo Settori */}
       <section id="demo" className="py-24 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
