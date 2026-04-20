@@ -14,6 +14,11 @@ router.post("/invia-contatto", async (req, res) => {
     messaggio?: string;
   };
 
+  if (!nome_attivita?.trim() || !email?.trim() || !messaggio?.trim()) {
+    res.status(400).json({ success: false, message: "Per favore compila tutti i campi." });
+    return;
+  }
+
   req.log.info({ nome_attivita, settore, email }, "Nuova richiesta contatto");
 
   try {

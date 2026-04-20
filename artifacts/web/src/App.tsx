@@ -1,4 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem("cookiesAccepted")) {
+      setVisible(true);
+    }
+  }, []);
+
+  function acceptCookies() {
+    localStorage.setItem("cookiesAccepted", "true");
+    setVisible(false);
+  }
+
+  return (
+    <div
+      className={`fixed bottom-0 left-0 w-full bg-gray-900 text-white p-6 z-[10000] transform transition-transform duration-500 ${
+        visible ? "translate-y-0" : "translate-y-full"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <p className="text-sm opacity-80">
+          Utilizziamo i cookie per migliorare la tua esperienza e analizzare il traffico. Cliccando su "Accetta", acconsenti all'uso dei cookie secondo la nostra{" "}
+          <a href="/privacy.html" className="underline">Privacy Policy</a>.
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={acceptCookies}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold text-sm transition"
+          >
+            Accetta
+          </button>
+          <button
+            onClick={() => setVisible(false)}
+            className="text-gray-400 hover:text-white text-sm"
+          >
+            Chiudi
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "Medico", messaggio: "" });
@@ -307,9 +351,11 @@ export default function App() {
       {/* Footer */}
       <footer className="py-12 px-4 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-60 text-sm">
-          <div>© {new Date().getFullYear()} PromoApp.it - Soluzioni Digitali Snelle</div>
+          <div>© 2026 PromoApp.it - P.IVA: [LA TUA P.IVA SE CE L'HAI]</div>
           <div className="mt-4 md:mt-0 space-x-6 italic">
-            <span>Creato con passione per i piccoli business</span>
+            <a href="/privacy.html" className="hover:underline">Privacy Policy</a>
+            <a href="/cookie.html" className="hover:underline">Cookie Policy</a>
+            <span>Creato con passione</span>
           </div>
         </div>
       </footer>
@@ -323,6 +369,9 @@ export default function App() {
       >
         <i className="fab fa-whatsapp text-3xl"></i>
       </a>
+
+      {/* Cookie Banner */}
+      <CookieBanner />
     </>
   );
 }
