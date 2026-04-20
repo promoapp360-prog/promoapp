@@ -80,48 +80,42 @@ export default function App() {
           </div>
           <div className="p-8 rounded-2xl hover:bg-gray-50 transition">
             <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-              <i className="fas fa-shopping-cart"></i>
+              <i className="fas fa-euro-sign"></i>
             </div>
-            <h3 className="text-xl font-bold mb-3">Vendi Online</h3>
-            <p className="text-gray-600 italic">Che sia un massaggio o un paio di scarpe, i tuoi clienti pagano comodamente dall'app.</p>
+            <h3 className="text-xl font-bold mb-3">Costi Abbattuti</h3>
+            <p className="text-gray-600 italic">Prezzi chiari, nessun costo nascosto. Paghi solo per quello che ti serve davvero per crescere.</p>
           </div>
         </div>
       </section>
 
       {/* Demo Settori */}
-      <section id="demo" className="py-24 bg-gray-50 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Scegli il tuo modello</h2>
-          <p className="text-gray-600 mb-16">Clicca su una demo per vedere come sarà la tua futura app.</p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600",
-                title: "Beauty & Spa",
-                desc: "Perfetta per estetiste e centri massaggi. Prenotazione oraria e fidelity card incluse.",
-              },
-              {
-                img: "https://images.unsplash.com/photo-1505751172107-573225a9134c?auto=format&fit=crop&w=600",
-                title: "Medical Center",
-                desc: "Gestione pazienti, prenotazione visite e invio referti in totale sicurezza e semplicità.",
-              },
-              {
-                img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600",
-                title: "Local Shop",
-                desc: "Trasforma il tuo negozio in un e-commerce tascabile. Notifiche per i nuovi arrivi.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition border border-gray-100">
-                <img src={item.img} alt={item.title} className="h-56 w-full object-cover group-hover:scale-110 transition duration-500" />
-                <div className="p-8 text-left">
-                  <h4 className="font-bold text-2xl mb-2">{item.title}</h4>
-                  <p className="text-gray-500 text-sm mb-6">{item.desc}</p>
-                  <button className="w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold group-hover:bg-indigo-600 group-hover:text-white transition">
-                    Prova Demo
-                  </button>
-                </div>
-              </div>
-            ))}
+      <section id="demo" className="py-24 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold italic">Soluzioni su misura</h2>
+            <p className="text-gray-500">Un unico motore, infinite possibilità per il tuo settore.</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <h4 className="font-bold text-indigo-600 mb-2">Studi Medici</h4>
+              <p className="text-sm text-gray-600 mb-4 font-light">Gestione appuntamenti e storico visite in totale privacy.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Pronto all'uso</span>
+            </div>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <h4 className="font-bold text-emerald-600 mb-2">Centri Estetici</h4>
+              <p className="text-sm text-gray-600 mb-4 font-light">Vetrina trattamenti e notifiche per offerte flash.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Alta richiesta</span>
+            </div>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <h4 className="font-bold text-orange-600 mb-2">Autorimesse</h4>
+              <p className="text-sm text-gray-600 mb-4 font-light">Stato riparazioni e scadenze revisioni in tempo reale.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Settore Tech</span>
+            </div>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <h4 className="font-bold text-blue-600 mb-2">Agenti di Commercio</h4>
+              <p className="text-sm text-gray-600 mb-4 font-light">Catalogo asset e gestione ordini in mobilità.</p>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Massima Efficienza</span>
+            </div>
           </div>
         </div>
       </section>
@@ -147,10 +141,12 @@ export default function App() {
       </section>
 
       {/* Form Contatti */}
-      <section id="contatti" className="py-24 bg-indigo-900 text-white px-4">
-        <div className="max-w-xl mx-auto">
-          <h2 className="text-4xl font-bold mb-4 text-center">Configura la tua App</h2>
-          <p className="text-center mb-10 opacity-70">Entro 24 ore riceverai una bozza della tua app personalizzata.</p>
+      <section id="contatti" className="py-24 px-4 bg-white">
+        <div className="max-w-3xl mx-auto bg-gray-900 text-white rounded-3xl p-8 md:p-12 shadow-2xl">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold">Inizia il tuo progetto</h2>
+            <p className="opacity-70 font-light">Compila il modulo: analizzeremo la fattibilità gratuitamente.</p>
+          </div>
 
           {sent ? (
             <div className="bg-emerald-500 rounded-2xl p-10 text-center">
@@ -159,88 +155,77 @@ export default function App() {
               <p className="opacity-90">Ti contatteremo entro 24 ore con la tua bozza personalizzata.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-1 opacity-80">Nome e Cognome</label>
+                  <label className="block text-sm font-medium mb-2">Nome Attività</label>
                   <input
                     type="text"
                     name="nome"
                     required
                     value={form.nome}
                     onChange={handleChange}
-                    placeholder="Mario Rossi"
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-white/40 focus:outline-none focus:border-emerald-400 transition"
+                    placeholder="Es. Officina Rossi"
+                    className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1 opacity-80">Telefono</label>
-                  <input
-                    type="tel"
-                    name="telefono"
-                    required
-                    value={form.telefono}
+                  <label className="block text-sm font-medium mb-2">Settore</label>
+                  <select
+                    name="settore"
+                    value={form.settore}
                     onChange={handleChange}
-                    placeholder="+39 333 000 0000"
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-white/40 focus:outline-none focus:border-emerald-400 transition"
-                  />
+                    className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="medico">Medico / Professionista</option>
+                    <option value="estetica">Estetica / Parrucchiere</option>
+                    <option value="autorimessa">Autorimessa / Meccanico</option>
+                    <option value="agente">Agente di Commercio</option>
+                    <option value="altro">Altro</option>
+                  </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 opacity-80">Email</label>
+                <label className="block text-sm font-medium mb-2">Email di contatto</label>
                 <input
                   type="email"
                   name="email"
                   required
                   value={form.email}
                   onChange={handleChange}
-                  placeholder="mario@esempio.it"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-white/40 focus:outline-none focus:border-emerald-400 transition"
+                  placeholder="tua@email.it"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 opacity-80">Tipo di attività</label>
-                <select
-                  name="settore"
-                  required
-                  value={form.settore}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-indigo-800 border border-white/20 focus:outline-none focus:border-emerald-400 transition appearance-none"
-                >
-                  <option value="">Seleziona il tuo settore...</option>
-                  <option value="beauty">Beauty & Spa</option>
-                  <option value="medical">Centro Medico</option>
-                  <option value="shop">Negozio / E-commerce</option>
-                  <option value="restaurant">Ristorante / Bar</option>
-                  <option value="altro">Altro</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 opacity-80">Descrivi brevemente la tua attività</label>
+                <label className="block text-sm font-medium mb-2">Cosa deve fare la tua App?</label>
                 <textarea
                   name="messaggio"
-                  rows={4}
                   value={form.messaggio}
                   onChange={handleChange}
-                  placeholder="Es: ho un centro estetico con 3 dipendenti, offro trattamenti viso e massaggi..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-white/40 focus:outline-none focus:border-emerald-400 transition resize-none"
+                  placeholder="Descrivi brevemente la tua idea..."
+                  className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 h-32 focus:outline-none focus:border-indigo-500 resize-none"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-4 rounded-2xl font-bold text-lg transition shadow-xl"
+                className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl hover:bg-emerald-600 transition shadow-lg"
               >
-                <i className="fas fa-paper-plane mr-2"></i> Invia la Richiesta Gratuita
+                Invia Richiesta Gratuita
               </button>
-              <p className="text-center text-xs opacity-50 pt-2">Nessun impegno. Primo mese gratuito.</p>
             </form>
           )}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-indigo-950 text-white py-8 px-4 text-center text-sm opacity-60">
-        © {new Date().getFullYear()} PromoApp.it — Tutti i diritti riservati
+      <footer className="py-12 px-4 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-60 text-sm">
+          <div>© {new Date().getFullYear()} PromoApp.it - Soluzioni Digitali Snelle</div>
+          <div className="mt-4 md:mt-0 space-x-6 italic">
+            <span>Creato con passione per i piccoli business</span>
+          </div>
+        </div>
       </footer>
 
       {/* Tasto WhatsApp Flottante */}
