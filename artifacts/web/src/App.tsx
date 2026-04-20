@@ -1,16 +1,32 @@
 import { useState } from "react";
 
 export default function App() {
-  const [form, setForm] = useState({ nome: "", email: "", telefono: "", settore: "", messaggio: "" });
+  const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "medico", messaggio: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSent(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/invia-contatto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("Errore server");
+      setSent(true);
+    } catch {
+      setError("Errore nell'invio. Riprova o contattaci su WhatsApp.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -226,9 +242,9 @@ export default function App() {
                   <label className="block text-sm font-medium mb-2">Nome Attività</label>
                   <input
                     type="text"
-                    name="nome"
+                    name="nome_attivita"
                     required
-                    value={form.nome}
+                    value={form.nome_attivita}
                     onChange={handleChange}
                     placeholder="Es. Officina Rossi"
                     className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
@@ -272,11 +288,15 @@ export default function App() {
                   className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 h-32 focus:outline-none focus:border-indigo-500 resize-none"
                 />
               </div>
+              {error && (
+                <p className="text-red-400 text-sm text-center">{error}</p>
+              )}
               <button
                 type="submit"
-                className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl hover:bg-emerald-600 transition shadow-lg"
+                disabled={loading}
+                className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl hover:bg-emerald-600 transition shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Invia Richiesta Gratuita
+                {loading ? <><i className="fas fa-spinner fa-spin mr-2"></i>Invio in corso...</> : "Invia Richiesta Gratuita"}
               </button>
             </form>
           )}
