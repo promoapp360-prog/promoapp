@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function App() {
-  const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "medico", messaggio: "" });
+  const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "Medico", messaggio: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -258,11 +258,11 @@ export default function App() {
                     onChange={handleChange}
                     className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
                   >
-                    <option value="medico">Medico / Professionista</option>
-                    <option value="estetica">Estetica / Parrucchiere</option>
-                    <option value="autorimessa">Autorimessa / Meccanico</option>
-                    <option value="agente">Agente di Commercio</option>
-                    <option value="altro">Altro</option>
+                    <option value="Medico">Medico / Professionista</option>
+                    <option value="Estetica">Estetica / Parrucchiere</option>
+                    <option value="Meccanico">Autorimessa / Meccanico</option>
+                    <option value="Agente">Agente di Commercio</option>
+                    <option value="Altro">Altro</option>
                   </select>
                 </div>
               </div>
@@ -284,6 +284,7 @@ export default function App() {
                   name="messaggio"
                   value={form.messaggio}
                   onChange={handleChange}
+                  required
                   placeholder="Descrivi brevemente la tua idea..."
                   className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 h-32 focus:outline-none focus:border-indigo-500 resize-none"
                 />
