@@ -1,0 +1,28 @@
+<!-- Cerca questo tag e modificalo esattamente così -->
+<form action="/invia-contatto" method="POST" class="space-y-6">
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <label class="block text-sm font-medium mb-2 text-white">Nome Attività</label>
+            <input type="text" name="nome_attivita" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 text-white" placeholder="Es. Officina Rossi">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-2 text-white">Settore</label>
+            <select name="settore" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 text-white">
+                <option value="Medico">Medico / Professionista</option>
+                <option value="Estetica">Estetica / Parrucchiere</option>
+                <option value="Meccanico">Autorimessa / Meccanico</option>
+                <option value="Agente">Agente di Commercio</option>
+                <option value="Altro">Altro</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-2 text-white">Email di contatto</label>
+        <input type="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 text-white" placeholder="tua@email.it">
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-2 text-white">Cosa deve fare la tua App?</label>
+        <textarea name="messaggio" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 h-32 focus:outline-none focus:border-indigo-500 text-white" placeholder="Descrivi brevemente la tua idea..."></textarea>
+    </div>
+    <button type="submit" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl hover:bg-emerald-600 transition shadow-lg">Invia Richiesta Gratuita</button>
+</form>
