@@ -179,19 +179,18 @@ export default function App() {
                 <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[178px] rounded-l-lg"></div>
                 <div className="h-[64px] w-[3px] bg-gray-900 absolute -right-[11px] top-[142px] rounded-r-lg"></div>
                 <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
                   borderRadius: '2rem',
                   overflow: 'hidden',
-                  width: '100%',
-                  height: '100%',
-                  position: 'relative',
                   background: '#000',
                 }}>
                   <video
                     autoPlay loop muted playsInline
                     style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
