@@ -180,7 +180,7 @@ export default function App() {
                 <div className="h-[64px] w-[3px] bg-gray-900 absolute -right-[11px] top-[142px] rounded-r-lg"></div>
                 <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white">
                   <video autoPlay loop muted playsInline className="w-full h-full object-cover">
-                    <source src="https://assets.mixkit.co/videos/preview/mixkit-mobile-app-user-interface-9041-large.mp4" type="video/mp4" />
+                    <source src="/demo.mp4" type="video/mp4" />
                   </video>
                 </div>
               </div>
@@ -357,9 +357,18 @@ export default function App() {
       <footer className="py-12 px-4 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-60 text-sm">
           <div>© 2026 PromoApp.it - P.IVA: [LA TUA P.IVA SE CE L'HAI]</div>
-          <div className="mt-4 md:mt-0 space-x-6 italic">
+          <div className="mt-4 md:mt-0 space-x-6 italic flex flex-wrap items-center gap-x-6 gap-y-2">
             <a href="/privacy.html" className="hover:underline">Privacy Policy</a>
             <a href="/cookie.html" className="hover:underline">Cookie Policy</a>
+            <a
+              href="https://www.facebook.com/profile.php?id=61568000249468"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-blue-600 transition-colors not-italic"
+              title="Seguici su Facebook"
+            >
+              <i className="fab fa-facebook text-lg"></i>
+            </a>
             <span>Creato con passione</span>
           </div>
         </div>
