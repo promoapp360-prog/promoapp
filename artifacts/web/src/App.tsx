@@ -180,7 +180,7 @@ export default function App() {
                 <div className="h-[64px] w-[3px] bg-gray-900 absolute -right-[11px] top-[142px] rounded-r-lg"></div>
                 <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white">
                   <video autoPlay loop muted playsInline className="w-full h-full object-cover">
-                    <source src="/demo.mp4" type="video/mp4" />
+                    <source src="/demo-vertical.mp4" type="video/mp4" />
                   </video>
                 </div>
               </div>
