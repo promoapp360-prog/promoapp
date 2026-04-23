@@ -355,29 +355,31 @@ export default function App() {
 
       {/* Footer */}
       <footer className="py-12 px-4 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-60 text-sm">
-          <div>© 2026 PromoApp.it - P.IVA: [LA TUA P.IVA SE CE L'HAI]</div>
-          <div className="mt-4 md:mt-0 space-x-6 italic flex flex-wrap items-center gap-x-6 gap-y-2">
-            <a href="/privacy.html" className="hover:underline">Privacy Policy</a>
-            <a href="/cookie.html" className="hover:underline">Cookie Policy</a>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
+          <div className="opacity-60">© 2026 PromoApp.it - P.IVA: [LA TUA P.IVA SE CE L'HAI]</div>
+          <div className="flex items-center gap-5">
             <a
               href="https://www.facebook.com/profile.php?id=61568000249468"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-600 transition-colors not-italic"
               title="Seguici su Facebook"
+              className="text-gray-500 hover:text-blue-600 transition-colors text-2xl"
             >
-              <i className="fab fa-facebook text-lg"></i>
+              <i className="fa-brands fa-facebook"></i>
             </a>
             <a
               href="https://www.instagram.com/promoapp.it/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-pink-500 transition-colors not-italic"
               title="Seguici su Instagram"
+              className="text-gray-500 hover:text-pink-500 transition-colors text-2xl"
             >
-              <i className="fab fa-instagram text-lg"></i>
+              <i className="fa-brands fa-instagram"></i>
             </a>
+          </div>
+          <div className="opacity-60 italic flex gap-6">
+            <a href="/privacy.html" className="hover:underline">Privacy Policy</a>
+            <a href="/cookie.html" className="hover:underline">Cookie Policy</a>
             <span>Creato con passione</span>
           </div>
         </div>
