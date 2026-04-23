@@ -369,6 +369,15 @@ export default function App() {
             >
               <i className="fab fa-facebook text-lg"></i>
             </a>
+            <a
+              href="https://www.instagram.com/promoapp.it/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-500 transition-colors not-italic"
+              title="Seguici su Instagram"
+            >
+              <i className="fab fa-instagram text-lg"></i>
+            </a>
             <span>Creato con passione</span>
           </div>
         </div>
