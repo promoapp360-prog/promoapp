@@ -178,8 +178,20 @@ export default function App() {
                 <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[124px] rounded-l-lg"></div>
                 <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[178px] rounded-l-lg"></div>
                 <div className="h-[64px] w-[3px] bg-gray-900 absolute -right-[11px] top-[142px] rounded-r-lg"></div>
-                <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white">
-                  <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+                <div className="rounded-[2rem] overflow-hidden w-full h-full bg-black" style={{position: 'relative'}}>
+                  <video
+                    autoPlay loop muted playsInline
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  >
                     <source src="/demo-vertical.mp4" type="video/mp4" />
                   </video>
                 </div>
