@@ -103,7 +103,7 @@ export default function App() {
             Basta siti web dimenticati. Entra nello smartphone dei tuoi clienti. Gestisci prenotazioni e vendite tutto online.
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#demo" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
+            <a href="#video-demo" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
               Guarda le Demo Live
             </a>
             <a href="#contatti" className="bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
@@ -149,7 +149,7 @@ export default function App() {
       </section>
 
       {/* Sezione Video Demo */}
-      <section className="py-24 bg-white overflow-hidden">
+      <section id="video-demo" className="py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center gap-16">
             <div className="md:w-1/2">
