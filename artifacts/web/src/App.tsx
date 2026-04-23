@@ -99,9 +99,14 @@ export default function App() {
           <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
             La tua App ufficiale.<br />Nessuno crederà al prezzo.
           </h1>
-          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light">
+          <p className="text-xl mb-6 opacity-90 max-w-2xl mx-auto font-light">
             Basta siti web dimenticati. Entra nello smartphone dei tuoi clienti. Gestisci prenotazioni e vendite tutto online.
           </p>
+          {/* Demo badge */}
+          <div className="mb-8 inline-flex items-center gap-3 bg-white/15 border border-white/30 rounded-2xl px-6 py-3 text-sm font-semibold">
+            <i className="fas fa-flask text-yellow-300"></i>
+            <span>Prova subito la Demo gratuita — <span className="text-yellow-300">10 pazienti + 10 appuntamenti</span> già inclusi</span>
+          </div>
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <a href="#video-demo" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
               Guarda le Demo Live
@@ -113,6 +118,7 @@ export default function App() {
           <div className="mt-10 flex justify-center items-center space-x-6 opacity-80 text-sm">
             <span><i className="fas fa-bolt mr-2"></i> Pronto in 7 giorni</span>
             <span><i className="fas fa-shield-alt mr-2"></i> Tutto incluso</span>
+            <span><i className="fas fa-key mr-2"></i> Sblocco definitivo al pagamento</span>
           </div>
         </div>
       </section>
@@ -120,30 +126,38 @@ export default function App() {
       {/* Come Funziona */}
       <section id="come-funziona" className="py-24 px-4 bg-white">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl font-bold">Semplifichiamo la tua vita aziendale</h2>
-          <p className="text-gray-500">Tutto il processo è pensato per chi non ha tempo da perdere.</p>
+          <h2 className="text-3xl font-bold">Come funziona in 3 passi</h2>
+          <p className="text-gray-500">Dal primo test all'app definitiva — senza rischi, senza sorprese.</p>
         </div>
-        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 text-center">
-          <div className="p-8 rounded-2xl hover:bg-gray-50 transition">
-            <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-              <i className="fas fa-magic"></i>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center relative">
+          {/* Linea connettore */}
+          <div className="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 bg-indigo-100 z-0"></div>
+
+          {/* Step 1 */}
+          <div className="p-8 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10">
+            <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
+              1
             </div>
-            <h3 className="text-xl font-bold mb-3">Zero Tecnicismi</h3>
-            <p className="text-gray-600 italic">"Non so come si faccia" non è più una scusa. Pensiamo a tutto noi, tu ci metti solo il logo.</p>
+            <h3 className="text-xl font-bold mb-3 text-indigo-700">Prova la Demo</h3>
+            <p className="text-gray-600 text-sm">Ricevi subito un'app funzionante con <strong>10 pazienti</strong> e <strong>10 appuntamenti</strong> già caricati. La testi tu stesso, gratis, senza impegno.</p>
           </div>
-          <div className="p-8 rounded-2xl hover:bg-gray-50 transition">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-              <i className="fas fa-mobile-alt"></i>
+
+          {/* Step 2 */}
+          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10">
+            <div className="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
+              2
             </div>
-            <h3 className="text-xl font-bold mb-3">Sempre in tasca</h3>
-            <p className="text-gray-600 italic">Invia notifiche push per offerte o promemoria appuntamenti direttamente sul telefono del cliente.</p>
+            <h3 className="text-xl font-bold mb-3 text-emerald-700">Personalizziamo Insieme</h3>
+            <p className="text-gray-600 text-sm">Aggiungiamo il tuo logo, i tuoi colori, i tuoi servizi. L'app viene costruita su misura per la tua attività, settore per settore.</p>
           </div>
-          <div className="p-8 rounded-2xl hover:bg-gray-50 transition">
-            <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-              <i className="fas fa-euro-sign"></i>
+
+          {/* Step 3 */}
+          <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 relative z-10">
+            <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
+              3
             </div>
-            <h3 className="text-xl font-bold mb-3">Costi Abbattuti</h3>
-            <p className="text-gray-600 italic">Prezzi chiari, nessun costo nascosto. Paghi solo per quello che ti serve davvero per crescere.</p>
+            <h3 className="text-xl font-bold mb-3 text-orange-700">Chiave di Sblocco</h3>
+            <p className="text-gray-600 text-sm">Dopo il pagamento del piano scelto ricevi la <strong>chiave di attivazione</strong> che sblocca l'app definitivamente — tua per sempre, senza canoni mensili.</p>
           </div>
         </div>
       </section>
@@ -234,15 +248,21 @@ export default function App() {
       <section id="prezzi" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4 italic">Piani chiari, nessun segreto</h2>
-          <p className="text-gray-500 mb-16">Scegli la soluzione più adatta alla dimensione del tuo business.</p>
+          <p className="text-gray-500 mb-6">Scegli la soluzione più adatta alla dimensione del tuo business.</p>
+          <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl px-5 py-3 text-sm font-semibold mb-12">
+            <i className="fas fa-key text-indigo-500"></i>
+            Tutti i piani includono la <strong className="mx-1">chiave di sblocco definitiva</strong> — paghi una volta, l'app è tua per sempre.
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Piano Base */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
               <h4 className="text-xl font-bold mb-2">Smart PWA</h4>
               <div className="text-4xl font-bold mb-6">399€ <span className="text-sm text-gray-400 font-light">una tantum</span></div>
               <ul className="text-left space-y-4 mb-8 text-gray-600">
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Installazione istantanea</li>
+                <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> App personalizzata con logo e colori</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pagina prenotazioni</li>
+                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
               <a href="#contatti" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Scegli Smart</a>
@@ -253,9 +273,12 @@ export default function App() {
               <h4 className="text-xl font-bold mb-2">Business Pro</h4>
               <div className="text-4xl font-bold mb-6">799€ <span className="text-sm opacity-70 font-light">una tantum</span></div>
               <ul className="text-left space-y-4 mb-8">
+                <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> App personalizzata con logo e colori</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Notifiche Push Illimitate</b></li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Catalogo Prodotti/Servizi</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione Coupon Sconto</li>
+                <li><i className="fas fa-key text-yellow-300 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
               </ul>
               <a href="#contatti" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Scegli Pro</a>
             </div>
