@@ -149,58 +149,50 @@ export default function App() {
       </section>
 
       {/* Sezione Video Demo */}
-      <section id="video-demo" className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-16">
-            <div className="md:w-1/2">
-              <h2 className="text-4xl font-bold mb-6 italic">L'esperienza di un'App nativa, senza i costi di un'App nativa.</h2>
-              <p className="text-gray-600 text-lg mb-8">Le nostre soluzioni si installano con un click, inviano notifiche push e funzionano anche offline. Guarda come i tuoi clienti interagiranno con la tua attività.</p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 text-emerald-500"><i className="fas fa-bolt"></i></div>
-                  <div>
-                    <h4 className="font-bold">Velocità estrema</h4>
-                    <p className="text-sm text-gray-500">Caricamento istantaneo per non perdere nemmeno un cliente.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 text-orange-500"><i className="fas fa-bell"></i></div>
-                  <div>
-                    <h4 className="font-bold">Notifiche Push</h4>
-                    <p className="text-sm text-gray-500">Invia offerte e promemoria direttamente sul blocco schermo dei tuoi clienti.</p>
-                  </div>
-                </div>
-              </div>
+      <section id="video-demo" className="py-24 bg-gray-950">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4 italic">Guarda la tua App in azione</h2>
+            <p className="text-gray-400 text-lg">Prenotazioni, notifiche, catalogo prodotti — tutto in un'unica app professionale.</p>
+          </div>
+          {/* Video player con cornice stile schermo */}
+          <div style={{
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 0 0 1px #374151, 0 25px 60px rgba(0,0,0,0.6)',
+            background: '#000',
+          }}>
+            {/* Barra titolo stile app */}
+            <div style={{
+              background: '#1f2937',
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              <div style={{width:12,height:12,borderRadius:'50%',background:'#ef4444'}}></div>
+              <div style={{width:12,height:12,borderRadius:'50%',background:'#f59e0b'}}></div>
+              <div style={{width:12,height:12,borderRadius:'50%',background:'#22c55e'}}></div>
+              <div style={{flex:1,textAlign:'center',color:'#9ca3af',fontSize:'13px'}}>PromoApp — Demo Live</div>
             </div>
-            <div className="md:w-1/2 relative">
-              <div className="relative mx-auto border-gray-900 bg-gray-900 border-[8px] rounded-[2.5rem] h-[600px] w-[300px] shadow-2xl">
-                <div className="h-[32px] w-[3px] bg-gray-900 absolute -left-[11px] top-[72px] rounded-l-lg"></div>
-                <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[124px] rounded-l-lg"></div>
-                <div className="h-[46px] w-[3px] bg-gray-900 absolute -left-[11px] top-[178px] rounded-l-lg"></div>
-                <div className="h-[64px] w-[3px] bg-gray-900 absolute -right-[11px] top-[142px] rounded-r-lg"></div>
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  borderRadius: '2rem',
-                  overflow: 'hidden',
-                  background: '#000',
-                }}>
-                  <video
-                    autoPlay loop muted playsInline
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  >
-                    <source src="/demo-vertical.mp4" type="video/mp4" />
-                  </video>
-                </div>
-              </div>
+            {/* Video */}
+            <video
+              autoPlay loop muted playsInline controls
+              style={{ width: '100%', display: 'block' }}
+            >
+              <source src="/demo.mp4" type="video/mp4" />
+            </video>
+          </div>
+          {/* Feature pills sotto il video */}
+          <div className="flex flex-wrap justify-center gap-6 mt-10">
+            <div className="flex items-center gap-2 text-gray-300 text-sm">
+              <i className="fas fa-bolt text-emerald-400"></i> Installazione in 1 click
+            </div>
+            <div className="flex items-center gap-2 text-gray-300 text-sm">
+              <i className="fas fa-bell text-orange-400"></i> Notifiche Push incluse
+            </div>
+            <div className="flex items-center gap-2 text-gray-300 text-sm">
+              <i className="fas fa-wifi text-blue-400"></i> Funziona anche offline
             </div>
           </div>
         </div>
