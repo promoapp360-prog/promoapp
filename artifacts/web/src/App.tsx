@@ -283,7 +283,8 @@ export default function App() {
               <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Il più scelto</span>
               <h4 className="text-xl font-bold mb-2">Business Pro</h4>
               <div className="text-4xl font-bold mb-1">899€</div>
-              <div className="text-indigo-200 text-sm font-light mb-6">una tantum — tutto incluso</div>
+              <div className="text-indigo-200 text-sm font-light mb-1">una tantum</div>
+              <div className="text-yellow-300 font-bold mb-6">+ 25€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-sm">
                 <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> App personalizzata con logo e colori</li>
