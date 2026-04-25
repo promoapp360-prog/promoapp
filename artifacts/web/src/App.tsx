@@ -164,40 +164,45 @@ export default function App() {
 
       {/* Sezione Video Demo */}
       <section id="video-demo" className="py-24 bg-gray-950">
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4 italic">Guarda la tua App in azione</h2>
             <p className="text-gray-400 text-lg">Prenotazioni, notifiche, catalogo prodotti — tutto in un'unica app professionale.</p>
           </div>
-          {/* Video player con cornice stile schermo */}
-          <div style={{
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: '0 0 0 1px #374151, 0 25px 60px rgba(0,0,0,0.6)',
-            background: '#000',
-          }}>
-            {/* Barra titolo stile app */}
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Video player */}
             <div style={{
-              background: '#1f2937',
-              padding: '10px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 0 0 1px #374151, 0 25px 60px rgba(0,0,0,0.6)',
+              background: '#000',
             }}>
-              <div style={{width:12,height:12,borderRadius:'50%',background:'#ef4444'}}></div>
-              <div style={{width:12,height:12,borderRadius:'50%',background:'#f59e0b'}}></div>
-              <div style={{width:12,height:12,borderRadius:'50%',background:'#22c55e'}}></div>
-              <div style={{flex:1,textAlign:'center',color:'#9ca3af',fontSize:'13px'}}>PromoApp — Demo Live</div>
+              <div style={{
+                background: '#1f2937',
+                padding: '10px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}>
+                <div style={{width:12,height:12,borderRadius:'50%',background:'#ef4444'}}></div>
+                <div style={{width:12,height:12,borderRadius:'50%',background:'#f59e0b'}}></div>
+                <div style={{width:12,height:12,borderRadius:'50%',background:'#22c55e'}}></div>
+                <div style={{flex:1,textAlign:'center',color:'#9ca3af',fontSize:'13px'}}>PromoApp — Demo Live</div>
+              </div>
+              <video autoPlay loop muted playsInline controls style={{ width: '100%', display: 'block' }}>
+                <source src="/demo.mp4" type="video/mp4" />
+              </video>
             </div>
-            {/* Video */}
-            <video
-              autoPlay loop muted playsInline controls
-              style={{ width: '100%', display: 'block' }}
-            >
-              <source src="/demo.mp4" type="video/mp4" />
-            </video>
+            {/* Immagine promo */}
+            <div style={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+              <img
+                src="/promo-estetica.png"
+                alt="Agenda sempre piena – App per centri estetici"
+                style={{ width: '100%', display: 'block' }}
+              />
+            </div>
           </div>
-          {/* Feature pills sotto il video */}
+          {/* Feature pills */}
           <div className="flex flex-wrap justify-center gap-6 mt-10">
             <div className="flex items-center gap-2 text-gray-300 text-sm">
               <i className="fas fa-bolt text-emerald-400"></i> Installazione in 1 click
@@ -256,40 +261,50 @@ export default function App() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Piano Base */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
-              <h4 className="text-xl font-bold mb-2">Smart PWA</h4>
-              <div className="text-4xl font-bold mb-6">399€ <span className="text-sm text-gray-400 font-light">una tantum</span></div>
-              <ul className="text-left space-y-4 mb-8 text-gray-600">
+              <div className="inline-block bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Promo Limitata</div>
+              <h4 className="text-xl font-bold mb-2">Base</h4>
+              <div className="mb-1">
+                <span className="text-4xl font-bold">690€</span>
+                <span className="text-sm text-gray-400 font-light"> una tantum</span>
+              </div>
+              <div className="text-indigo-600 font-bold mb-6">+ 19€/mese</div>
+              <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
                 <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> App personalizzata con logo e colori</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pagina prenotazioni</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda appuntamenti online</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici ai clienti</li>
                 <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
-              <a href="#contatti" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Scegli Smart</a>
+              <a href="#contatti" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Scegli Base</a>
             </div>
             {/* Piano Consigliato */}
             <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white transform scale-105 relative">
               <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Il più scelto</span>
               <h4 className="text-xl font-bold mb-2">Business Pro</h4>
-              <div className="text-4xl font-bold mb-6">799€ <span className="text-sm opacity-70 font-light">una tantum</span></div>
-              <ul className="text-left space-y-4 mb-8">
+              <div className="text-4xl font-bold mb-1">899€</div>
+              <div className="text-indigo-200 text-sm font-light mb-6">una tantum — tutto incluso</div>
+              <ul className="text-left space-y-3 mb-8 text-sm">
                 <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> App personalizzata con logo e colori</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Notifiche Push Illimitate</b></li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Catalogo Prodotti/Servizi</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione Coupon Sconto</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione Clienti avanzata</li>
                 <li><i className="fas fa-key text-yellow-300 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
               </ul>
               <a href="#contatti" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Scegli Pro</a>
             </div>
             {/* Piano Custom */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
-              <h4 className="text-xl font-bold mb-2">Enterprise</h4>
+              <h4 className="text-xl font-bold mb-2">Personalizzata</h4>
               <div className="text-4xl font-bold mb-6">Su Misura</div>
-              <ul className="text-left space-y-4 mb-8 text-gray-600">
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pubblicazione su Store</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Integrazione Gestionale</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Funzioni Avanzate</li>
+              <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Funzionalità su richiesta</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pubblicazione su App Store</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Integrazione con gestionali</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza dedicata</li>
+                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
               </ul>
               <a href="#contatti" className="block w-full py-3 border-2 border-gray-800 text-gray-800 rounded-xl font-bold hover:bg-gray-800 hover:text-white transition">Contattaci</a>
             </div>
