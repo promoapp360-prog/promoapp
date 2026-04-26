@@ -1,5 +1,18 @@
 import Stripe from "stripe";
 
+async function fetchConnection(hostname: string, token: string, env: string) {
+  const url = new URL(`https://${hostname}/api/v2/connection`);
+  url.searchParams.set("include_secrets", "true");
+  url.searchParams.set("connector_names", "stripe");
+  url.searchParams.set("environment", env);
+
+  const response = await fetch(url.toString(), {
+    headers: { Accept: "application/json", "X-Replit-Token": token },
+  });
+  const data = await response.json();
+  return data.items?.[0];
+}
+
 async function getCredentials() {
   const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
   const xReplitToken = process.env.REPL_IDENTITY
@@ -8,31 +21,28 @@ async function getCredentials() {
       ? "depl " + process.env.WEB_REPL_RENEWAL
       : null;
 
-  if (!xReplitToken) throw new Error("X-Replit-Token not found");
+  if (!xReplitToken) throw new Error("X-Replit-Token non trovato");
+  if (!hostname) throw new Error("REPLIT_CONNECTORS_HOSTNAME non trovato");
 
-  const connectorName = "stripe";
   const isProduction = process.env.REPLIT_DEPLOYMENT === "1";
-  const targetEnvironment = isProduction ? "production" : "development";
 
-  const url = new URL(`https://${hostname}/api/v2/connection`);
-  url.searchParams.set("include_secrets", "true");
-  url.searchParams.set("connector_names", connectorName);
-  url.searchParams.set("environment", targetEnvironment);
+  // Se siamo in produzione, proviamo prima le chiavi live, poi facciamo fallback al sandbox
+  let conn = isProduction
+    ? await fetchConnection(hostname, xReplitToken, "production")
+    : null;
 
-  const response = await fetch(url.toString(), {
-    headers: { Accept: "application/json", "X-Replit-Token": xReplitToken },
-  });
+  // Fallback: usa sandbox se la connessione di produzione non è configurata
+  if (!conn?.settings?.publishable || !conn?.settings?.secret) {
+    conn = await fetchConnection(hostname, xReplitToken, "development");
+  }
 
-  const data = await response.json();
-  const connectionSettings = data.items?.[0];
-
-  if (!connectionSettings?.settings?.publishable || !connectionSettings?.settings?.secret) {
-    throw new Error(`Stripe ${targetEnvironment} connection not found`);
+  if (!conn?.settings?.publishable || !conn?.settings?.secret) {
+    throw new Error("Connessione Stripe non trovata. Configura l'integrazione Stripe.");
   }
 
   return {
-    publishableKey: connectionSettings.settings.publishable as string,
-    secretKey: connectionSettings.settings.secret as string,
+    publishableKey: conn.settings.publishable as string,
+    secretKey: conn.settings.secret as string,
   };
 }
 
