@@ -276,7 +276,7 @@ export default function App() {
                 <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
-              <a href="#contatti" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Scegli Base</a>
+              <a href="/checkout?piano=base" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Acquista Base →</a>
             </div>
             {/* Piano Consigliato */}
             <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white transform scale-105 relative">
@@ -294,7 +294,7 @@ export default function App() {
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione Clienti avanzata</li>
                 <li><i className="fas fa-key text-yellow-300 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
               </ul>
-              <a href="#contatti" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Scegli Pro</a>
+              <a href="/checkout?piano=pro" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Acquista Pro →</a>
             </div>
             {/* Piano Custom */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
