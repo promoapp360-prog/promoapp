@@ -86,7 +86,7 @@ export default function App() {
             <a href="#demo" className="hover:text-indigo-600 transition">Demo Settori</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
           </div>
-          <a href="#contatti" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
+          <a href="https://centro-medico.replit.app/onboarding" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
         </div>
       </nav>
 
