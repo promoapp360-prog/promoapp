@@ -108,7 +108,7 @@ export default function App() {
             <span>Prova subito la Demo gratuita — <span className="text-yellow-300">10 pazienti + 10 appuntamenti</span> già inclusi</span>
           </div>
           <div className="flex flex-col md:flex-row justify-center gap-4">
-            <a href="#video-demo" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
+            <a href="https://centro-medico.replit.app/onboarding" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
               Guarda le Demo Live
             </a>
             <a href="#contatti" className="bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
@@ -162,56 +162,52 @@ export default function App() {
         </div>
       </section>
 
-      {/* Sezione Video Demo */}
-      <section id="video-demo" className="py-24 bg-gray-950">
+      {/* Sezione Mockup App */}
+      <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4 italic">Guarda la tua App in azione</h2>
-            <p className="text-gray-400 text-lg">Prenotazioni, notifiche, catalogo prodotti — tutto in un'unica app professionale.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Video player */}
-            <div style={{
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 0 0 1px #374151, 0 25px 60px rgba(0,0,0,0.6)',
-              background: '#000',
-            }}>
-              <div style={{
-                background: '#1f2937',
-                padding: '10px 16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}>
-                <div style={{width:12,height:12,borderRadius:'50%',background:'#ef4444'}}></div>
-                <div style={{width:12,height:12,borderRadius:'50%',background:'#f59e0b'}}></div>
-                <div style={{width:12,height:12,borderRadius:'50%',background:'#22c55e'}}></div>
-                <div style={{flex:1,textAlign:'center',color:'#9ca3af',fontSize:'13px'}}>PromoApp — Demo Live</div>
-              </div>
-              <video autoPlay loop muted playsInline controls style={{ width: '100%', display: 'block' }}>
-                <source src="/demo.mp4" type="video/mp4" />
-              </video>
-            </div>
-            {/* Immagine promo */}
-            <div style={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Immagine mockup */}
+            <div className="flex justify-center">
               <img
-                src="/promo-estetica.png"
-                alt="Agenda sempre piena – App per centri estetici"
-                style={{ width: '100%', display: 'block' }}
+                src="/promo-app-mockup.png"
+                alt="PromoApp – Clienti, appuntamenti e messaggi tutto in un posto"
+                className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
               />
             </div>
-          </div>
-          {/* Feature pills */}
-          <div className="flex flex-wrap justify-center gap-6 mt-10">
-            <div className="flex items-center gap-2 text-gray-300 text-sm">
-              <i className="fas fa-bolt text-emerald-400"></i> Installazione in 1 click
-            </div>
-            <div className="flex items-center gap-2 text-gray-300 text-sm">
-              <i className="fas fa-bell text-orange-400"></i> Notifiche Push incluse
-            </div>
-            <div className="flex items-center gap-2 text-gray-300 text-sm">
-              <i className="fas fa-wifi text-blue-400"></i> Funziona anche offline
+            {/* Testo a fianco */}
+            <div>
+              <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+                Clienti, appuntamenti e messaggi.<br />
+                <span className="text-indigo-600">Tutto in un unico posto.</span>
+              </h2>
+              <p className="text-gray-500 text-lg mb-8">
+                Smetti di usare carta, fogli Excel e WhatsApp allo stesso tempo. PromoApp riunisce tutto in un'app professionale pensata per la tua attività.
+              </p>
+              <div className="space-y-4">
+                {[
+                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Calendario prenotazioni in tempo reale" },
+                  { icon: "fa-bell", color: "text-orange-500", label: "Promemoria automatici ai tuoi clienti" },
+                  { icon: "fa-comments", color: "text-emerald-500", label: "Messaggi e promozioni via WhatsApp" },
+                  { icon: "fa-chart-line", color: "text-blue-500", label: "Contabilità e fatture sempre sott'occhio" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center ${item.color} flex-shrink-0`}>
+                      <i className={`fas ${item.icon}`}></i>
+                    </div>
+                    <span className="text-gray-700 font-medium">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <a href="https://centro-medico.replit.app/onboarding" target="_blank" rel="noopener noreferrer"
+                  className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
+                  Prova la Demo gratuita →
+                </a>
+                <a href="#prezzi"
+                  className="inline-block border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition text-center">
+                  Vedi i prezzi
+                </a>
+              </div>
             </div>
           </div>
         </div>
