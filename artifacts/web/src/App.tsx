@@ -94,7 +94,7 @@ export default function App() {
       <section className="pt-32 pb-20 px-4 gradient-bg text-white">
         <div className="max-w-7xl mx-auto text-center">
           <span className="bg-white/20 px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block italic">
-            Soluzioni per PMI, Centri Medici ed Estetici
+            La tua App professionale, pronta in 7 giorni
           </span>
           <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
             La tua App ufficiale.<br />Nessuno crederà al prezzo.
@@ -105,7 +105,7 @@ export default function App() {
           {/* Demo badge */}
           <div className="mb-8 inline-flex items-center gap-3 bg-white/15 border border-white/30 rounded-2xl px-6 py-3 text-sm font-semibold">
             <i className="fas fa-flask text-yellow-300"></i>
-            <span>Prova subito la Demo gratuita — <span className="text-yellow-300">10 pazienti + 10 appuntamenti</span> già inclusi</span>
+            <span>Prova subito la Demo gratuita — <span className="text-yellow-300">10 clienti + 10 prenotazioni</span> già inclusi</span>
           </div>
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
@@ -139,7 +139,7 @@ export default function App() {
               1
             </div>
             <h3 className="text-xl font-bold mb-3 text-indigo-700">Prova la Demo</h3>
-            <p className="text-gray-600 text-sm">Ricevi subito un'app funzionante con <strong>10 pazienti</strong> e <strong>10 appuntamenti</strong> già caricati. La testi tu stesso, gratis, senza impegno.</p>
+            <p className="text-gray-600 text-sm">Ricevi subito un'app funzionante con <strong>10 clienti</strong> e <strong>10 prenotazioni</strong> già caricati. La testi tu stesso, gratis, senza impegno.</p>
           </div>
 
           {/* Step 2 */}
@@ -265,7 +265,7 @@ export default function App() {
               </div>
               <div className="text-indigo-600 font-bold mb-6">+ 19€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
-                <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
+                <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> (10 clienti + 10 prenotazioni)</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> App personalizzata con logo e colori</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda appuntamenti online</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici ai clienti</li>
@@ -282,7 +282,7 @@ export default function App() {
               <div className="text-indigo-200 text-sm font-light mb-1">una tantum</div>
               <div className="text-yellow-300 font-bold mb-6">+ 25€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-sm">
-                <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 pazienti + 10 appuntamenti)</li>
+                <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 clienti + 10 prenotazioni)</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> App personalizzata con logo e colori</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Notifiche Push Illimitate</b></li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Catalogo Prodotti/Servizi</li>
@@ -431,7 +431,7 @@ export default function App() {
 
       {/* Tasto WhatsApp Flottante */}
       <a
-        href="https://wa.me/39IL_TUO_NUMERO"
+        href="https://wa.me/393793602035"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl z-50 hover:bg-green-600 transition-all hover:scale-110"
