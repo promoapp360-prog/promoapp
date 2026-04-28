@@ -86,7 +86,7 @@ export default function App() {
             <a href="#demo" className="hover:text-indigo-600 transition">Demo Settori</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
           </div>
-          <a href="https://centro-medico.replit.app/onboarding" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
+          <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
         </div>
       </nav>
 
@@ -108,7 +108,7 @@ export default function App() {
             <span>Prova subito la Demo gratuita — <span className="text-yellow-300">10 pazienti + 10 appuntamenti</span> già inclusi</span>
           </div>
           <div className="flex flex-col md:flex-row justify-center gap-4">
-            <a href="https://centro-medico.replit.app/onboarding" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
+            <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
               Guarda le Demo Live
             </a>
             <a href="#contatti" className="bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
@@ -199,7 +199,7 @@ export default function App() {
                 ))}
               </div>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <a href="https://centro-medico.replit.app/onboarding" target="_blank" rel="noopener noreferrer"
+                <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer"
                   className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
                   Prova la Demo gratuita →
                 </a>
