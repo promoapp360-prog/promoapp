@@ -258,7 +258,8 @@ export default function App() {
             {/* Piano Base */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
               <div className="inline-block bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Promo Limitata</div>
-              <h4 className="text-xl font-bold mb-2">Base</h4>
+              <h4 className="text-xl font-bold mb-1">Base</h4>
+              <p className="text-gray-400 text-xs font-light mb-3 italic">Agenda online, piccolo negozio, piccola attività</p>
               <div className="mb-1">
                 <span className="text-4xl font-bold">690€</span>
                 <span className="text-sm text-gray-400 font-light"> una tantum</span>
@@ -266,9 +267,11 @@ export default function App() {
               <div className="text-indigo-600 font-bold mb-6">+ 19€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
                 <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> (10 clienti + 10 prenotazioni)</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> App personalizzata con logo e colori</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda appuntamenti online</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici ai clienti</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> App con logo e colori della tua attività</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda prenotazioni online</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Scheda clienti e storico</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici via notifica</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Vetrina servizi / listino prezzi</li>
                 <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
@@ -277,17 +280,20 @@ export default function App() {
             {/* Piano Consigliato */}
             <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white transform scale-105 relative">
               <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Il più scelto</span>
-              <h4 className="text-xl font-bold mb-2">Business Pro</h4>
+              <h4 className="text-xl font-bold mb-1">Business Pro</h4>
+              <p className="text-indigo-300 text-xs font-light mb-3 italic">Gestione avanzata, shop online, statistiche</p>
               <div className="text-4xl font-bold mb-1">899€</div>
               <div className="text-indigo-200 text-sm font-light mb-1">una tantum</div>
               <div className="text-yellow-300 font-bold mb-6">+ 25€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-sm">
                 <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 clienti + 10 prenotazioni)</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> App personalizzata con logo e colori</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Tutto il piano Base incluso</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Shop integrato</b> — vendi prodotti/servizi online</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Statistiche vendite e clienti</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Notifiche Push Illimitate</b></li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Catalogo Prodotti/Servizi</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione Coupon Sconto</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione Clienti avanzata</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Coupon e promozioni personalizzate</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione magazzino / disponibilità</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Più operatori / accessi multipli</li>
                 <li><i className="fas fa-key text-yellow-300 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
               </ul>
               <a href="/checkout?piano=pro" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Acquista Pro →</a>
