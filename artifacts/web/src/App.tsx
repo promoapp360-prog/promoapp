@@ -493,7 +493,7 @@ export default function App() {
         href="https://wa.me/393793602035"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl z-50 hover:bg-green-600 transition-all hover:scale-110"
+        className="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl z-[10001] hover:bg-green-600 transition-all hover:scale-110"
       >
         <i className="fab fa-whatsapp text-3xl"></i>
       </a>
