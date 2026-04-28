@@ -215,11 +215,11 @@ export default function App() {
 
       {/* Sezione Flyer Promozionale */}
       <section className="py-16 px-4 bg-gradient-to-b from-white to-indigo-50">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="flex justify-center">
           <img
             src="/promo-app-flyer.png"
             alt="PromoApp – La tua App, più clienti, più vendite"
-            className="w-full rounded-3xl shadow-2xl"
+            className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
           />
         </div>
       </section>
