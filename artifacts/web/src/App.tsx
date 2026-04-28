@@ -214,13 +214,55 @@ export default function App() {
       </section>
 
       {/* Sezione Flyer Promozionale */}
-      <section className="py-16 px-4 bg-gradient-to-b from-white to-indigo-50">
-        <div className="flex justify-center">
-          <img
-            src="/promo-app-flyer.png"
-            alt="PromoApp – La tua App, più clienti, più vendite"
-            className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
-          />
+      <section className="py-20 bg-gradient-to-b from-white to-indigo-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Immagine */}
+            <div className="flex justify-center">
+              <img
+                src="/promo-app-flyer.png"
+                alt="PromoApp – La tua App, più clienti, più vendite"
+                className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
+              />
+            </div>
+            {/* Testo */}
+            <div>
+              <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+                La tua App.<br />
+                <span className="text-indigo-600">Più clienti, più vendite.</span>
+              </h2>
+              <p className="text-gray-500 text-lg mb-8">
+                Una soluzione <strong>personalizzata</strong> per far crescere la tua attività — con tutte le funzioni che servono davvero, già pronte all'uso.
+              </p>
+              <div className="space-y-4">
+                {[
+                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e richieste in un click" },
+                  { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card digitale per i tuoi clienti" },
+                  { icon: "fa-credit-card", color: "text-emerald-500", label: "Pagamenti online semplici e sicuri" },
+                  { icon: "fa-tag", color: "text-pink-500", label: "Promozioni e offerte mirate" },
+                  { icon: "fa-box", color: "text-orange-500", label: "Gestione magazzino e punti vendita" },
+                  { icon: "fa-palette", color: "text-blue-500", label: "Personalizzata con logo e colori tuoi" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center ${item.color} flex-shrink-0 shadow-sm`}>
+                      <i className={`fas ${item.icon}`}></i>
+                    </div>
+                    <span className="text-gray-700 font-medium">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <a href="#contatti"
+                  className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
+                  Richiedi un Preventivo →
+                </a>
+                <a href="#prezzi"
+                  className="inline-block border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition text-center">
+                  Vedi i prezzi
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
