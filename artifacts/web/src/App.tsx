@@ -263,30 +263,30 @@ export default function App() {
       <section id="demo" className="py-24 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold italic">Soluzioni su misura</h2>
-            <p className="text-gray-500">Un unico motore, infinite possibilità per il tuo settore.</p>
+            <h2 className="text-3xl font-bold italic">Funziona per ogni tipo di attività</h2>
+            <p className="text-gray-500">Un'unica piattaforma adattata al tuo settore — pronta in 7 giorni.</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <h4 className="font-bold text-indigo-600 mb-2">Studi Medici</h4>
-              <p className="text-sm text-gray-600 mb-4 font-light">Gestione appuntamenti e storico visite in totale privacy.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Pronto all'uso</span>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <h4 className="font-bold text-emerald-600 mb-2">Centri Estetici</h4>
-              <p className="text-sm text-gray-600 mb-4 font-light">Vetrina trattamenti e notifiche per offerte flash.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Alta richiesta</span>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <h4 className="font-bold text-orange-600 mb-2">Autorimesse</h4>
-              <p className="text-sm text-gray-600 mb-4 font-light">Stato riparazioni e scadenze revisioni in tempo reale.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Settore Tech</span>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <h4 className="font-bold text-blue-600 mb-2">Agenti di Commercio</h4>
-              <p className="text-sm text-gray-600 mb-4 font-light">Catalogo asset e gestione ordini in mobilità.</p>
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 italic">Massima Efficienza</span>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              { color: "text-indigo-600", bg: "bg-indigo-50", name: "Studi Medici & Dentisti", desc: "Prenotazioni, storico visite e promemoria automatici.", badge: "Pronto all'uso" },
+              { color: "text-pink-600", bg: "bg-pink-50", name: "Centri Estetici & SPA", desc: "Vetrina trattamenti, fidelity card e offerte flash.", badge: "Alta richiesta" },
+              { color: "text-orange-600", bg: "bg-orange-50", name: "Parrucchieri & Barber", desc: "Agenda online, clienti fidelizzati e promozioni.", badge: "Molto richiesto" },
+              { color: "text-emerald-600", bg: "bg-emerald-50", name: "Negozi & Retail", desc: "Shop integrato, gestione magazzino e ordini online.", badge: "E-commerce" },
+              { color: "text-blue-600", bg: "bg-blue-50", name: "Ristoranti & Bar", desc: "Menu digitale, prenotazioni tavoli e ordini d'asporto.", badge: "Food & Beverage" },
+              { color: "text-violet-600", bg: "bg-violet-50", name: "Palestre & Fitness", desc: "Abbonamenti, prenotazione corsi e accessi digitali.", badge: "Sport & Wellness" },
+              { color: "text-orange-500", bg: "bg-orange-50", name: "Autorimesse & Meccanici", desc: "Stato riparazioni, scadenze revisioni e devis online.", badge: "Settore Tech" },
+              { color: "text-cyan-600", bg: "bg-cyan-50", name: "Centri Servizi & Agenzie", desc: "Gestione pratiche, appuntamenti e documenti digitali.", badge: "Professionisti" },
+              { color: "text-rose-600", bg: "bg-rose-50", name: "Studi Legali & Notarili", desc: "Agenda clienti, archivio pratiche e notifiche scadenze.", badge: "Legal & Pro" },
+              { color: "text-teal-600", bg: "bg-teal-50", name: "Immobiliari", desc: "Vetrina immobili, richieste visite e gestione contatti.", badge: "Real Estate" },
+              { color: "text-yellow-600", bg: "bg-yellow-50", name: "Agenti di Commercio", desc: "Catalogo prodotti, ordini in mobilità e statistiche.", badge: "Massima efficienza" },
+              { color: "text-gray-700", bg: "bg-gray-100", name: "Qualsiasi altra attività", desc: "Costruiamo l'app su misura per le tue esigenze specifiche.", badge: "Su richiesta" },
+            ].map((item, i) => (
+              <div key={i} className={`bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition`}>
+                <div className={`inline-block ${item.bg} ${item.color} text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-lg mb-3`}>{item.badge}</div>
+                <h4 className={`font-bold ${item.color} mb-2 text-sm`}>{item.name}</h4>
+                <p className="text-xs text-gray-500 font-light leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
