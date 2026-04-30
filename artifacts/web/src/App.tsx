@@ -99,14 +99,9 @@ export default function App() {
           <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
             La tua App ufficiale.<br />Nessuno crederà al prezzo.
           </h1>
-          <p className="text-xl mb-6 opacity-90 max-w-2xl mx-auto font-light">
-            Basta siti web dimenticati. Entra nello smartphone dei tuoi clienti. Gestisci prenotazioni e vendite tutto online.
+          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light">
+            Basta siti web dimenticati. Entra nello smartphone dei tuoi clienti. Gestisci prenotazioni, ordini, clienti, promozioni e vendite — tutto online, tutto in un'unica app.
           </p>
-          {/* Demo badge */}
-          <div className="mb-8 inline-flex items-center gap-3 bg-white/15 border border-white/30 rounded-2xl px-6 py-3 text-sm font-semibold">
-            <i className="fas fa-flask text-yellow-300"></i>
-            <span>Prova subito la Demo gratuita — <span className="text-yellow-300">10 clienti + 10 prenotazioni</span> già inclusi</span>
-          </div>
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
               Guarda le Demo Live
@@ -123,50 +118,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* Come Funziona */}
-      <section id="come-funziona" className="py-24 px-4 bg-white">
-        <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl font-bold">Come funziona in 3 passi</h2>
-          <p className="text-gray-500">Dal primo test all'app definitiva — senza rischi, senza sorprese.</p>
-        </div>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center relative">
-          {/* Linea connettore */}
-          <div className="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 bg-indigo-100 z-0"></div>
-
-          {/* Step 1 */}
-          <div className="p-8 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10">
-            <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
-              1
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-indigo-700">Prova la Demo</h3>
-            <p className="text-gray-600 text-sm">Ricevi subito un'app funzionante con <strong>10 clienti</strong> e <strong>10 prenotazioni</strong> già caricati. La testi tu stesso, gratis, senza impegno.</p>
-          </div>
-
-          {/* Step 2 */}
-          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10">
-            <div className="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
-              2
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-emerald-700">Personalizziamo Insieme</h3>
-            <p className="text-gray-600 text-sm">Aggiungiamo il tuo logo, i tuoi colori, i tuoi servizi. L'app viene costruita su misura per la tua attività, settore per settore.</p>
-          </div>
-
-          {/* Step 3 */}
-          <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 relative z-10">
-            <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
-              3
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-orange-700">Chiave di Sblocco</h3>
-            <p className="text-gray-600 text-sm">Dopo il pagamento del piano scelto ricevi la <strong>chiave di attivazione</strong> che sblocca l'app definitivamente — tua per sempre, senza canoni mensili.</p>
-          </div>
-        </div>
-      </section>
-
       {/* Sezione Mockup App */}
       <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Immagine mockup */}
             <div className="flex justify-center">
               <img
                 src="/promo-app-mockup.png"
@@ -174,7 +129,6 @@ export default function App() {
                 className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
               />
             </div>
-            {/* Testo a fianco */}
             <div>
               <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
                 Clienti, appuntamenti e messaggi.<br />
@@ -209,6 +163,45 @@ export default function App() {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Come Funziona */}
+      <section id="come-funziona" className="py-24 px-4 bg-white">
+        <div className="max-w-7xl mx-auto text-center mb-16">
+          <h2 className="text-3xl font-bold">Come funziona in 3 passi</h2>
+          <p className="text-gray-500">Dal primo test all'app definitiva — senza rischi, senza sorprese.</p>
+        </div>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center relative">
+          {/* Linea connettore */}
+          <div className="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 bg-indigo-100 z-0"></div>
+
+          {/* Step 1 */}
+          <div className="p-8 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10">
+            <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
+              1
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-indigo-700">Prova la Demo</h3>
+            <p className="text-gray-600 text-sm">Ricevi subito un'app funzionante e già configurata. La testi tu stesso, gratis, senza impegno.</p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10">
+            <div className="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
+              2
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-emerald-700">Personalizziamo Insieme</h3>
+            <p className="text-gray-600 text-sm">Aggiungiamo il tuo logo, i tuoi colori, i tuoi servizi. L'app viene costruita su misura per la tua attività, settore per settore.</p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 relative z-10">
+            <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
+              3
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-orange-700">Chiave di Sblocco</h3>
+            <p className="text-gray-600 text-sm">Dopo il pagamento del piano scelto ricevi la <strong>chiave di attivazione</strong> che sblocca l'app definitivamente — tua per sempre, senza canoni mensili.</p>
           </div>
         </div>
       </section>
@@ -319,7 +312,7 @@ export default function App() {
               </div>
               <div className="text-indigo-600 font-bold mb-6">+ 19€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
-                <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> (10 clienti + 10 prenotazioni)</li>
+                <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> inclusa</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> App con logo e colori della tua attività</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda prenotazioni online</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Scheda clienti e storico</li>
@@ -339,7 +332,7 @@ export default function App() {
               <div className="text-indigo-200 text-sm font-light mb-1">una tantum</div>
               <div className="text-yellow-300 font-bold mb-6">+ 25€/mese</div>
               <ul className="text-left space-y-3 mb-8 text-sm">
-                <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> (10 clienti + 10 prenotazioni)</li>
+                <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> inclusa</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Tutto il piano Base incluso</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Shop integrato</b> — vendi prodotti/servizi online</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Statistiche vendite e clienti</li>
