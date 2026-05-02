@@ -33,14 +33,15 @@ Ordine sezioni in `artifacts/web/src/App.tsx`:
    2. Ti prepariamo il progetto in PDF + dashboard di anteprima (gratis)
    3. 7 giorni per accettare, paghi e parti
 5. **Sezione Gestionale** (`promo-app-gestionale.png`) — gestionale multi-device, immagine a destra
-6. **Demo Settori** — 12 categorie (medici, estetici, parrucchieri, negozi, ristoranti, palestre, autorimesse, centri servizi, legali, immobiliari, agenti, altro)
-7. **Prezzi** — Banner promo "6 mesi paghi, 6 GRATIS" + 3 piani:
+6. **Lavori Svolti** (`components/LavoriSvolti.tsx`) — Portfolio con 20 mockup di app finte (cornice telefono CSS) per attività italiane di vari settori. 4 template di contenuto (booking/menu/catalog/services).
+7. **Demo Settori** — 12 categorie (medici, estetici, parrucchieri, negozi, ristoranti, palestre, autorimesse, centri servizi, legali, immobiliari, agenti, altro)
+8. **Prezzi** — Banner promo "6 mesi paghi, 6 GRATIS" + 3 piani:
    - **Base** 690€ una tantum + 19€/mese (gestionale, magazzino, shop)
    - **Business Pro** 890€ una tantum + 29€/mese (integrazioni, pagamenti, statistiche)
    - **Personalizzata** — Preventivo (link al form)
-8. **Form Contatti** — "Richiedi un Preventivo" con 12 settori
-9. **Banner test** giallo (rimuovere prima di andare live)
-10. **Footer** — Sophia 2005 S.r.l. · P.IVA 08223951008 · social FB/IG
+9. **Form Contatti** — "Richiedi un Preventivo" con 12 settori
+10. **Banner test** giallo (rimuovere prima di andare live)
+11. **Footer** — Sophia 2005 S.r.l. · P.IVA 08223951008 · social FB/IG
 
 ## Convenzioni importanti
 
