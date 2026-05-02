@@ -184,39 +184,64 @@ export default function App() {
       {/* Come Funziona */}
       <section id="come-funziona" className="py-24 px-4 bg-white">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl font-bold">Come funziona in 3 passi</h2>
-          <p className="text-gray-500">Dal primo test all'app definitiva — senza rischi, senza sorprese.</p>
+          <h2 className="text-3xl md:text-4xl font-bold">Come funziona in 3 passi</h2>
+          <p className="text-gray-500 mt-3 max-w-2xl mx-auto">Dal racconto della tua idea all'App pronta da usare — un percorso semplice, senza rischi, senza sorprese.</p>
         </div>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center relative">
           {/* Linea connettore */}
           <div className="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 bg-indigo-100 z-0"></div>
 
-          {/* Step 1 */}
-          <div className="p-8 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10">
+          {/* Step 1 — Idea */}
+          <div className="p-8 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10 flex flex-col">
             <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
               1
             </div>
-            <h3 className="text-xl font-bold mb-3 text-indigo-700">Prova la Demo</h3>
-            <p className="text-gray-600 text-sm">Ricevi subito un'app funzionante e già configurata. La testi tu stesso, gratis, senza impegno.</p>
+            <div className="text-3xl mb-3"><i className="fas fa-comments text-indigo-500"></i></div>
+            <h3 className="text-xl font-bold mb-3 text-indigo-700">Raccontaci la tua idea</h3>
+            <p className="text-gray-600 text-sm flex-grow">Compili il modulo o ci scrivi su WhatsApp. Ci spieghi cosa fa la tua attività e cosa vorresti dalla tua App — anche se hai solo un'idea generica.</p>
+            <div className="mt-4 inline-block self-center text-xs font-semibold text-indigo-600 bg-white px-3 py-1 rounded-full border border-indigo-200">
+              <i className="fas fa-clock mr-1"></i> 5 minuti
+            </div>
           </div>
 
-          {/* Step 2 */}
-          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10">
+          {/* Step 2 — Progetto PDF */}
+          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10 flex flex-col">
             <div className="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
               2
             </div>
-            <h3 className="text-xl font-bold mb-3 text-emerald-700">Personalizziamo Insieme</h3>
-            <p className="text-gray-600 text-sm">Aggiungiamo il tuo logo, i tuoi colori, i tuoi servizi. L'app viene costruita su misura per la tua attività, settore per settore.</p>
+            <div className="text-3xl mb-3"><i className="fas fa-file-pdf text-emerald-500"></i></div>
+            <h3 className="text-xl font-bold mb-3 text-emerald-700">Ti prepariamo il progetto</h3>
+            <p className="text-gray-600 text-sm flex-grow">Ricevi un <strong>progetto in PDF</strong> con tutte le funzioni della tua App e una <strong>dashboard di anteprima</strong> già navigabile. Vedi com'è prima di decidere.</p>
+            <div className="mt-4 inline-block self-center text-xs font-semibold text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200">
+              <i className="fas fa-gift mr-1"></i> Gratis e senza impegno
+            </div>
           </div>
 
-          {/* Step 3 */}
-          <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 relative z-10">
+          {/* Step 3 — 7 giorni per accettare */}
+          <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 relative z-10 flex flex-col">
             <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
               3
             </div>
-            <h3 className="text-xl font-bold mb-3 text-orange-700">Chiave di Sblocco</h3>
-            <p className="text-gray-600 text-sm">Dopo il pagamento del piano scelto ricevi la <strong>chiave di attivazione</strong> che sblocca l'app definitivamente — tua per sempre, senza canoni mensili.</p>
+            <div className="text-3xl mb-3"><i className="fas fa-rocket text-orange-500"></i></div>
+            <h3 className="text-xl font-bold mb-3 text-orange-700">Accetti, paghi, parti</h3>
+            <p className="text-gray-600 text-sm flex-grow">Hai <strong>7 giorni di tempo</strong> per accettare il progetto. Dopo il pagamento ricevi la chiave di attivazione e l'App è subito pronta da usare.</p>
+            <div className="mt-4 inline-block self-center text-xs font-semibold text-orange-700 bg-white px-3 py-1 rounded-full border border-orange-200">
+              <i className="fas fa-hourglass-half mr-1"></i> 7 giorni per decidere
+            </div>
           </div>
+        </div>
+
+        {/* Riassunto / CTA */}
+        <div className="max-w-3xl mx-auto mt-12 text-center">
+          <p className="text-gray-500 italic mb-6">Nessun anticipo. Nessun rischio. Paghi solo quando il progetto ti convince davvero.</p>
+          <a
+            href="#contatti"
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:scale-105 transition transform"
+          >
+            <i className="fas fa-lightbulb text-yellow-300"></i>
+            Inizia: raccontaci la tua idea
+            <i className="fas fa-arrow-right"></i>
+          </a>
         </div>
       </section>
 
