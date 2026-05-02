@@ -561,11 +561,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* Banner pagina di test */}
-      <div className="bg-yellow-100 border-t border-yellow-300 text-yellow-800 text-center text-sm py-3 px-4 font-medium">
-        ⚠️ Questa è una pagina di test — non un sito ufficiale.
-      </div>
-
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
