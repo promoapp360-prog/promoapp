@@ -1,0 +1,122 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "SJna8E22WligK_3MdAmdg"
+uri = "file://artifacts/web/public/lavori/immobiliare.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "kBKwz2OaqOKkfpr9M25Tk"
+uri = "file://artifacts/web/public/lavori/yoga.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "9Mlh-wj6nGMagTvkDFXJ0"
+uri = "file://artifacts/web/public/lavori/boutique.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "1lyEQbLSvKUcPtrTApgU9"
+uri = "file://artifacts/web/public/lavori/veterinario.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "WGG7ZgpA3EgkzmUYLxVlL"
+uri = "file://artifacts/web/public/lavori/glow.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "oCOeLF2bkzYxsPrriPSQW"
+uri = "file://artifacts/web/public/lavori/bella-napoli.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "BlNdNEwUzgPymzOpfyz_i"
+uri = "file://artifacts/web/public/lavori/hotel.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "hu6YKE6eGzSqOtTTIb-fd"
+uri = "file://artifacts/web/public/lavori/ottica.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "T5EAjDXw8TWAR2yUCbMvW"
+uri = "file://artifacts/web/public/lavori/lavanderia.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "D7J3B4lvDKw2zxyAW9YeB"
+uri = "file://artifacts/web/public/lavori/asilo.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "PpLTDkkbhmT-l9nlP6H5c"
+uri = "file://artifacts/web/public/lavori/dentista.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "aYst0P43nJ_eFir5pP7WG"
+uri = "file://artifacts/web/public/lavori/estetica-aurora.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "2LeceACjDx9wqPli9T8MX"
+uri = "file://artifacts/web/public/lavori/pizzeria-mario.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "u-rJ70C8vTu8YXVGvx-sg"
+uri = "file://artifacts/web/public/lavori/palestra-fitzone.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "tnhptEkwZFDS94i2Q1GUK"
+uri = "file://artifacts/web/public/lavori/autofficina.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "gzyVMERQweyFprhoy-NL_"
+uri = "file://artifacts/web/public/lavori/centro-medico.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Y_Nac050msyqKFDsOHKgW"
+uri = "file://artifacts/web/public/lavori/barbiere.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "pXoOOxWZr9HAqP4RNNHLf"
+uri = "file://artifacts/web/public/lavori/ristorante-gusto.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "BfJuY17lVhgX2TwZ_pQ93"
+uri = "file://artifacts/web/public/lavori/pasticceria.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "DMJMDNDA8e4Pf5iyJ8FMf"
+uri = "file://artifacts/web/public/lavori/legale.png"
+type = "image"
+title = "generated_image"
