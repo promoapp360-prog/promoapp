@@ -149,7 +149,12 @@ export default function App() {
               <img
                 src="/promo-app-flyer.png"
                 alt="PromoApp – Tutte le funzioni in un'unica App"
-                className="w-full max-w-[200px] md:max-w-[220px] object-contain rounded-2xl shadow-xl"
+                width="220"
+                height="320"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="w-full max-w-[200px] md:max-w-[220px] h-auto object-contain rounded-2xl shadow-xl"
               />
             </div>
 

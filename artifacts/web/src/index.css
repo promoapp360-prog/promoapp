@@ -1,1 +1,14 @@
-/* Global resets handled by Tailwind CDN */
+@import "tailwindcss";
+
+.gradient-bg {
+  background: linear-gradient(135deg, #4F46E5 0%, #10B981 100%);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
