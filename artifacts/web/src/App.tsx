@@ -84,7 +84,7 @@ export default function App() {
           </div>
           <div className="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-wide">
             <a href="#come-funziona" className="hover:text-indigo-600 transition">Come Funziona</a>
-            <a href="#lavori" className="hover:text-indigo-600 transition">Lavori Svolti</a>
+            <a href="#perche" className="hover:text-indigo-600 transition">Perché Noi</a>
             <a href="#demo" className="hover:text-indigo-600 transition">Demo Settori</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
           </div>
@@ -350,7 +350,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Lavori Svolti — portfolio mockup */}
+      {/* Perché sceglierci — trust + comparison */}
       <LavoriSvolti />
 
       {/* Demo Settori */}
