@@ -26,15 +26,6 @@ const PILLARS = [
     text: "Server europei, dati protetti secondo le normative GDPR. Backup quotidiani inclusi.",
     badge: "Conforme alla legge",
   },
-  {
-    icon: "fa-headset",
-    color: "text-amber-600",
-    bg: "bg-amber-50",
-    border: "border-amber-200",
-    title: "Assistenza diretta",
-    text: "Niente call center. Parli direttamente con chi sviluppa la tua App via WhatsApp ed email.",
-    badge: "Risposta in poche ore",
-  },
 ];
 
 type Row = { label: string; promo: string; template: string; freelancer: string; agenzia: string; promoOk?: boolean };
@@ -67,7 +58,7 @@ export default function LavoriSvolti() {
         </div>
 
         {/* Pilastri di fiducia */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16 max-w-5xl mx-auto">
           {PILLARS.map((p, i) => (
             <div key={i} className={`relative bg-white p-6 rounded-2xl border ${p.border} shadow-sm hover:shadow-lg transition group`}>
               <div className={`w-14 h-14 rounded-2xl ${p.bg} ${p.color} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition transform`}>
