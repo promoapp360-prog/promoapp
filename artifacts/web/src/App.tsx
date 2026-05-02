@@ -45,7 +45,7 @@ function CookieBanner() {
 }
 
 export default function App() {
-  const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "Medico", messaggio: "" });
+  const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "Negozio", messaggio: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -97,10 +97,10 @@ export default function App() {
             La tua App professionale, pronta in 7 giorni
           </span>
           <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
-            La tua App ufficiale.<br />Nessuno crederà al prezzo.
+            Realizziamo l'App<br />che <span className="text-yellow-300">la tua attività merita.</span>
           </h1>
           <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light">
-            Basta siti web dimenticati. Entra nello smartphone dei tuoi clienti. Gestisci prenotazioni, ordini, clienti, promozioni e vendite — tutto online, tutto in un'unica app.
+            Ogni attività è diversa. Per questo costruiamo <strong>app e gestionali su misura</strong> — qualunque sia il tuo settore, qualunque sia la funzione che ti serve. Tu ce la chiedi, noi la realizziamo.
           </p>
           <div className="flex flex-col md:flex-row justify-center gap-4">
             <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
@@ -259,6 +259,56 @@ export default function App() {
         </div>
       </section>
 
+      {/* Sezione Gestionale */}
+      <section className="py-20 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="md:order-2 flex justify-center">
+              <img
+                src="/promo-app-gestionale.png"
+                alt="PromoApp – Gestionali personalizzati su tutti i dispositivi"
+                className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
+              />
+            </div>
+            <div className="md:order-1">
+              <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+                Gestionali personalizzati.<br />
+                <span className="text-indigo-600">La tua azienda sempre connessa.</span>
+              </h2>
+              <p className="text-gray-500 text-lg mb-8">
+                Non solo app per i tuoi clienti — anche un <strong>gestionale completo</strong> per te e il tuo team. Lavora ovunque, da qualsiasi dispositivo, sempre sincronizzato.
+              </p>
+              <div className="space-y-4">
+                {[
+                  { icon: "fa-users", color: "text-indigo-500", label: "CRM Clienti — tutti i contatti in un unico posto" },
+                  { icon: "fa-file-invoice-dollar", color: "text-emerald-500", label: "Gestione preventivi e fatture in pochi clic" },
+                  { icon: "fa-calendar-alt", color: "text-orange-500", label: "Agenda e appuntamenti senza stress" },
+                  { icon: "fa-chart-bar", color: "text-blue-500", label: "Statistiche e piano di lavoro per il team" },
+                  { icon: "fa-sync-alt", color: "text-purple-500", label: "Sincronizzato su PC, tablet e smartphone" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center ${item.color} flex-shrink-0`}>
+                      <i className={`fas ${item.icon}`}></i>
+                    </div>
+                    <span className="text-gray-700 font-medium">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <a href="#contatti"
+                  className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
+                  Chiedici quello che ti serve →
+                </a>
+                <a href="https://wa.me/393793602035" target="_blank" rel="noopener noreferrer"
+                  className="inline-block bg-green-500 text-white px-7 py-3 rounded-xl font-bold hover:bg-green-600 transition text-center">
+                  <i className="fab fa-whatsapp mr-2"></i> Scrivici su WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Demo Settori */}
       <section id="demo" className="py-24 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
@@ -294,86 +344,99 @@ export default function App() {
       {/* Prezzi */}
       <section id="prezzi" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4 italic">Piani chiari, nessun segreto</h2>
-          <p className="text-gray-500 mb-6">Scegli la soluzione più adatta alla dimensione del tuo business.</p>
-          <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl px-5 py-3 text-sm font-semibold mb-12">
-            <i className="fas fa-key text-indigo-500"></i>
-            Tutti i piani includono la <strong className="mx-1">chiave di sblocco definitiva</strong> — paghi una volta, l'app è tua per sempre.
+          <h2 className="text-3xl font-bold mb-4 italic">Quanto costa la tua App?</h2>
+          <p className="text-gray-500 mb-6 max-w-2xl mx-auto">Prezzo chiaro, nessuna sorpresa. <strong>L'App costa una sola volta</strong> — il canone mensile copre solo hosting, aggiornamenti e assistenza.</p>
+
+          {/* Promo Banner 6+6 */}
+          <div className="inline-flex flex-col sm:flex-row items-center gap-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-2xl px-6 py-4 text-sm font-bold mb-6 shadow-lg">
+            <i className="fas fa-fire text-yellow-300 text-xl"></i>
+            <span className="text-base">PROMO LANCIO — Paghi 6 mesi, gli altri 6 sono <span className="text-yellow-300 underline">GRATIS</span></span>
           </div>
+          <div className="block mb-12 text-xs text-gray-500 italic">Promo valida sul primo anno di canone — solo per le prime richieste</div>
+
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Piano Base */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
-              <div className="inline-block bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Promo Limitata</div>
-              <h4 className="text-xl font-bold mb-1">Base</h4>
-              <p className="text-gray-400 text-xs font-light mb-3 italic">Agenda online, piccolo negozio, piccola attività</p>
+            {/* Piano Base — App Semplice */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition flex flex-col">
+              <div className="inline-block self-start bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">App Essenziale</div>
+              <h4 className="text-2xl font-bold mb-1">Base</h4>
+              <p className="text-gray-400 text-xs font-light mb-4 italic">Per attività che vogliono iniziare bene</p>
               <div className="mb-1">
-                <span className="text-4xl font-bold">690€</span>
-                <span className="text-sm text-gray-400 font-light"> una tantum</span>
+                <span className="text-5xl font-extrabold text-gray-900">690€</span>
               </div>
-              <div className="text-indigo-600 font-bold mb-6">+ 19€/mese</div>
-              <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
-                <li><i className="fas fa-flask text-indigo-400 mr-2"></i> <b>Demo gratuita</b> inclusa</li>
+              <div className="text-xs text-gray-500 font-light mb-1">prezzo dell'App — pagamento unico</div>
+              <div className="text-indigo-600 font-bold text-sm mb-6">+ 19€/mese · hosting & assistenza</div>
+              <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm flex-grow">
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> App con logo e colori della tua attività</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Gestionale</b> clienti / appuntamenti</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Gestione magazzino</b> base</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Shop online</b> per i tuoi prodotti/servizi</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda prenotazioni online</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Scheda clienti e storico</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici via notifica</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici ai clienti</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Vetrina servizi / listino prezzi</li>
-                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
+                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>App tua per sempre</b></li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
-              <a href="/checkout?piano=base" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Acquista Base →</a>
+              <a href="/checkout?piano=base" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Richiedi la Base →</a>
             </div>
-            {/* Piano Consigliato */}
-            <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white transform scale-105 relative">
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Il più scelto</span>
-              <h4 className="text-xl font-bold mb-1">Business Pro</h4>
-              <p className="text-indigo-300 text-xs font-light mb-3 italic">Gestione avanzata, shop online, statistiche</p>
-              <div className="text-4xl font-bold mb-1">899€</div>
-              <div className="text-indigo-200 text-sm font-light mb-1">una tantum</div>
-              <div className="text-yellow-300 font-bold mb-6">+ 25€/mese</div>
-              <ul className="text-left space-y-3 mb-8 text-sm">
-                <li><i className="fas fa-flask text-yellow-300 mr-2"></i> <b>Demo gratuita</b> inclusa</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Tutto il piano Base incluso</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Shop integrato</b> — vendi prodotti/servizi online</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Statistiche vendite e clienti</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Notifiche Push Illimitate</b></li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Coupon e promozioni personalizzate</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Gestione magazzino / disponibilità</li>
+            {/* Piano Pro — App Avanzata con Integrazioni */}
+            <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white transform md:scale-105 relative flex flex-col">
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase whitespace-nowrap">Il più scelto</span>
+              <div className="inline-block self-start bg-yellow-300 text-indigo-900 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">App Avanzata</div>
+              <h4 className="text-2xl font-bold mb-1">Business Pro</h4>
+              <p className="text-indigo-200 text-xs font-light mb-4 italic">Per chi vuole crescere con integrazioni e dati</p>
+              <div className="text-5xl font-extrabold mb-1">890€</div>
+              <div className="text-xs text-indigo-200 font-light mb-1">prezzo dell'App — pagamento unico</div>
+              <div className="text-yellow-300 font-bold text-sm mb-6">+ 29€/mese · hosting & assistenza</div>
+              <ul className="text-left space-y-3 mb-8 text-sm flex-grow">
+                <li><i className="fas fa-star text-yellow-300 mr-2"></i> <b>Tutto il piano Base, più:</b></li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Integrazione con gestionali</b> esistenti</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Pagamenti online</b> (Stripe, PayPal, bonifico)</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Statistiche</b> vendite, clienti e fatturato</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Notifiche Push Illimitate</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Fidelity card digitale e coupon</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Più operatori / accessi multipli</li>
-                <li><i className="fas fa-key text-yellow-300 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> CRM avanzato e segmentazione clienti</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Assistenza prioritaria</li>
               </ul>
-              <a href="/checkout?piano=pro" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Acquista Pro →</a>
+              <a href="/checkout?piano=pro" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Richiedi la Pro →</a>
             </div>
-            {/* Piano Custom */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition">
-              <h4 className="text-xl font-bold mb-2">Personalizzata</h4>
-              <div className="text-4xl font-bold mb-6">Su Misura</div>
-              <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm">
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Funzionalità su richiesta</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pubblicazione su App Store</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Integrazione con gestionali</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza dedicata</li>
-                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>Chiave di sblocco definitiva</b></li>
+            {/* Piano Custom — Su Misura */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border-2 border-dashed border-gray-300 hover:shadow-xl transition flex flex-col">
+              <div className="inline-block self-start bg-gray-900 text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Su Misura</div>
+              <h4 className="text-2xl font-bold mb-1">Personalizzata</h4>
+              <p className="text-gray-400 text-xs font-light mb-4 italic">Hai un'idea precisa? La realizziamo per te</p>
+              <div className="text-5xl font-extrabold text-gray-900 mb-1">Preventivo</div>
+              <div className="text-xs text-gray-500 font-light mb-6">prezzo personalizzato in base alle tue esigenze</div>
+              <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm flex-grow">
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Qualunque funzione tu chieda</b></li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pubblicazione su App Store / Google Play</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Integrazioni con software esterni / API</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Multi-sede, multi-utente, multi-lingua</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Design completamente custom</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Project manager dedicato</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza dedicata e SLA garantito</li>
+                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>App tua per sempre</b></li>
               </ul>
-              <a href="#contatti" className="block w-full py-3 border-2 border-gray-800 text-gray-800 rounded-xl font-bold hover:bg-gray-800 hover:text-white transition">Contattaci</a>
+              <a href="#contatti" className="block w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-indigo-600 transition">Richiedi un Preventivo →</a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Form Contatti */}
+      {/* Form Contatti — Richiesta Preventivo */}
       <section id="contatti" className="py-24 px-4 bg-white">
         <div className="max-w-3xl mx-auto bg-gray-900 text-white rounded-3xl p-8 md:p-12 shadow-2xl">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold">Inizia il tuo progetto</h2>
-            <p className="opacity-70 font-light">Compila il modulo: analizzeremo la fattibilità gratuitamente.</p>
+            <div className="inline-block bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Richiedi un Preventivo</div>
+            <h2 className="text-3xl font-bold">Raccontaci la tua idea</h2>
+            <p className="opacity-70 font-light mt-2">Analizziamo la fattibilità <strong>gratuitamente</strong> e ti rispondiamo entro 24 ore con un preventivo su misura.</p>
           </div>
 
           {sent ? (
             <div className="bg-emerald-500 rounded-2xl p-10 text-center">
               <i className="fas fa-check-circle text-5xl mb-4 block"></i>
               <h3 className="text-2xl font-bold mb-2">Richiesta inviata!</h3>
-              <p className="opacity-90">Ti contatteremo entro 24 ore con la tua bozza personalizzata.</p>
+              <p className="opacity-90">Ti contatteremo entro 24 ore con il tuo preventivo personalizzato.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -386,21 +449,28 @@ export default function App() {
                     required
                     value={form.nome_attivita}
                     onChange={handleChange}
-                    placeholder="Es. Officina Rossi"
+                    placeholder="Es. Bar Centrale"
                     className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Settore</label>
+                  <label className="block text-sm font-medium mb-2">Tipo di Attività</label>
                   <select
                     name="settore"
                     value={form.settore}
                     onChange={handleChange}
                     className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500"
                   >
-                    <option value="Medico">Medico / Professionista</option>
-                    <option value="Estetica">Estetica / Parrucchiere</option>
+                    <option value="Medico">Studio Medico / Dentistico</option>
+                    <option value="Estetica">Centro Estetico / SPA</option>
+                    <option value="Parrucchiere">Parrucchiere / Barber</option>
+                    <option value="Negozio">Negozio / Retail</option>
+                    <option value="Ristorazione">Ristorante / Bar</option>
+                    <option value="Palestra">Palestra / Fitness</option>
                     <option value="Meccanico">Autorimessa / Meccanico</option>
+                    <option value="Servizi">Centro Servizi / Agenzia</option>
+                    <option value="Legale">Studio Legale / Notarile</option>
+                    <option value="Immobiliare">Agenzia Immobiliare</option>
                     <option value="Agente">Agente di Commercio</option>
                     <option value="Altro">Altro</option>
                   </select>
@@ -419,13 +489,13 @@ export default function App() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Cosa deve fare la tua App?</label>
+                <label className="block text-sm font-medium mb-2">Cosa deve fare la tua App? <span className="text-gray-500 font-light">(funzioni, integrazioni, esempi)</span></label>
                 <textarea
                   name="messaggio"
                   value={form.messaggio}
                   onChange={handleChange}
                   required
-                  placeholder="Descrivi brevemente la tua idea..."
+                  placeholder="Es. mi serve un'app con prenotazioni online, gestione clienti, shop integrato per vendere i miei prodotti, integrazione col mio gestionale attuale..."
                   className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 h-32 focus:outline-none focus:border-indigo-500 resize-none"
                 />
               </div>
@@ -437,8 +507,11 @@ export default function App() {
                 disabled={loading}
                 className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl hover:bg-emerald-600 transition shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {loading ? <><i className="fas fa-spinner fa-spin mr-2"></i>Invio in corso...</> : "Invia Richiesta Gratuita"}
+                {loading ? <><i className="fas fa-spinner fa-spin mr-2"></i>Invio in corso...</> : "Richiedi il tuo Preventivo Gratuito"}
               </button>
+              <p className="text-center text-xs text-gray-500 italic">
+                I tuoi dati sono trattati secondo la nostra <a href="/privacy.html" className="underline hover:text-white">Privacy Policy</a>. Nessuno spam, promesso.
+              </p>
             </form>
           )}
         </div>
@@ -452,7 +525,10 @@ export default function App() {
       {/* Footer */}
       <footer className="py-12 px-4 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
-          <div className="opacity-60">© 2026 PromoApp.it - P.IVA: [LA TUA P.IVA SE CE L'HAI]</div>
+          <div className="opacity-70 text-center md:text-left">
+            © 2026 <strong>PromoApp.it</strong><br className="md:hidden" />
+            <span className="opacity-80"> · Sophia 2005 S.r.l. · P.IVA 08223951008</span>
+          </div>
           <div className="flex items-center gap-5">
             <a
               href="https://www.facebook.com/profile.php?id=61568000249468"
