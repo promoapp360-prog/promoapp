@@ -102,12 +102,22 @@ export default function App() {
           <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light">
             Ogni attività è diversa. Per questo costruiamo <strong>app e gestionali su misura</strong> — qualunque sia il tuo settore, qualunque sia la funzione che ti serve. Tu ce la chiedi, noi la realizziamo.
           </p>
-          <div className="flex flex-col md:flex-row justify-center gap-4">
-            <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
-              Guarda le Demo Live
+          <div className="flex flex-col items-center gap-4">
+            <a
+              href="#contatti"
+              className="group inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-5 rounded-2xl font-bold text-lg md:text-xl shadow-2xl hover:scale-105 transition transform"
+            >
+              <i className="fas fa-lightbulb text-yellow-300 text-2xl"></i>
+              <span>Raccontaci la tua idea — la realizziamo</span>
+              <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
             </a>
-            <a href="#contatti" className="bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:scale-105 transition transform">
-              Richiedi la tua App
+            <a
+              href="https://promo-app.replit.app/prova-gratis"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/90 hover:text-white text-sm underline underline-offset-4 decoration-white/40 hover:decoration-white"
+            >
+              oppure guarda una demo già pronta →
             </a>
           </div>
           <div className="mt-10 flex justify-center items-center space-x-6 opacity-80 text-sm">
