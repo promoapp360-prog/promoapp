@@ -130,55 +130,93 @@ export default function App() {
         </div>
       </section>
 
-      {/* Sezione Flyer Promozionale — POSIZIONE 1 (facciamo tutto) */}
-      <section className="py-12 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+      {/* Cosa fa la tua App — sezione UNICA combinata (clienti + team) */}
+      <section className="py-14 bg-gradient-to-b from-white to-indigo-50/40 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
+              Cosa fa la tua App
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
+              Tutto in <span className="text-indigo-600">un'unica App</span>.
+            </h2>
+            <p className="text-gray-500 mt-2 max-w-2xl mx-auto">
+              Una soluzione completa: per i tuoi <strong>clienti</strong> e per la <strong>gestione interna</strong> della tua attività.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-[200px_1fr] gap-8 items-center">
+            {/* Immagine compatta */}
             <div className="flex justify-center">
-              <div className="w-full max-w-[260px] md:max-w-xs h-[380px] md:h-[420px] flex items-center justify-center">
-                <img
-                  src="/promo-app-flyer.png"
-                  alt="PromoApp – Una sola App, tutte le funzioni che ti servono"
-                  className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
-                />
+              <img
+                src="/promo-app-mockup.png"
+                alt="PromoApp – La tua App e gestionale tutto in uno"
+                className="w-full max-w-[180px] md:max-w-[200px] object-contain rounded-2xl shadow-xl"
+              />
+            </div>
+
+            {/* Due colonne di feature */}
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-600 mb-3 flex items-center gap-2">
+                  <i className="fas fa-users"></i> Per i tuoi clienti
+                </h3>
+                <ul className="space-y-2.5">
+                  {[
+                    { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e appuntamenti online" },
+                    { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card e promozioni mirate" },
+                    { icon: "fa-credit-card", color: "text-emerald-500", label: "Pagamenti online sicuri" },
+                    { icon: "fa-bell", color: "text-orange-500", label: "Notifiche e promemoria automatici" },
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm">
+                      <div className={`w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center ${item.color} flex-shrink-0`}>
+                        <i className={`fas ${item.icon} text-xs`}></i>
+                      </div>
+                      <span className="text-gray-700">{item.label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-600 mb-3 flex items-center gap-2">
+                  <i className="fas fa-briefcase"></i> Per te e il tuo team
+                </h3>
+                <ul className="space-y-2.5">
+                  {[
+                    { icon: "fa-address-book", color: "text-indigo-500", label: "CRM clienti centralizzato" },
+                    { icon: "fa-file-invoice-dollar", color: "text-emerald-500", label: "Preventivi, fatture e contabilità" },
+                    { icon: "fa-chart-bar", color: "text-blue-500", label: "Statistiche e agenda team" },
+                    { icon: "fa-sync-alt", color: "text-purple-500", label: "Sincronizzato su PC, tablet, mobile" },
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm">
+                      <div className={`w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center ${item.color} flex-shrink-0`}>
+                        <i className={`fas ${item.icon} text-xs`}></i>
+                      </div>
+                      <span className="text-gray-700">{item.label}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
-                Una sola App.<br />
-                <span className="text-indigo-600">Tutte le funzioni che ti servono.</span>
-              </h2>
-              <p className="text-gray-500 mb-5">
-                Una soluzione personalizzata per far crescere la tua attività — già pronta all'uso.
-              </p>
-              <div className="space-y-2.5">
-                {[
-                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e richieste in un click" },
-                  { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card digitale per i tuoi clienti" },
-                  { icon: "fa-credit-card", color: "text-emerald-500", label: "Pagamenti online semplici e sicuri" },
-                  { icon: "fa-tag", color: "text-pink-500", label: "Promozioni e offerte mirate" },
-                  { icon: "fa-box", color: "text-orange-500", label: "Gestione magazzino e punti vendita" },
-                  { icon: "fa-palette", color: "text-blue-500", label: "Personalizzata con logo e colori tuoi" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center ${item.color} flex-shrink-0`}>
-                      <i className={`fas ${item.icon}`}></i>
-                    </div>
-                    <span className="text-gray-700 font-medium">{item.label}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <a href="#contatti"
-                  className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
-                  Richiedi un Preventivo →
-                </a>
-                <a href="#prezzi"
-                  className="inline-block border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition text-center">
-                  Vedi i prezzi
-                </a>
-              </div>
-            </div>
+          </div>
+
+          {/* CTA centrali */}
+          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
+            <a
+              href="https://promo-app.replit.app/prova-gratis"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-md"
+            >
+              <i className="fas fa-play"></i> Prova la demo gratuita
+            </a>
+            <a
+              href="#contatti"
+              className="inline-flex items-center justify-center gap-2 border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition"
+            >
+              Richiedi un preventivo
+            </a>
           </div>
         </div>
       </section>
@@ -244,109 +282,6 @@ export default function App() {
             Inizia: raccontaci la tua idea
             <i className="fas fa-arrow-right"></i>
           </a>
-        </div>
-      </section>
-
-      {/* Sezione Mockup App — POSIZIONE 2 (medici) */}
-      <section className="py-12 bg-gradient-to-b from-white to-indigo-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="flex justify-center">
-              <div className="w-full max-w-[260px] md:max-w-xs h-[380px] md:h-[420px] flex items-center justify-center">
-                <img
-                  src="/promo-app-mockup.png"
-                  alt="PromoApp – Clienti, appuntamenti e messaggi tutto in un posto"
-                  className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
-                />
-              </div>
-            </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
-                Clienti, appuntamenti e messaggi.<br />
-                <span className="text-indigo-600">Tutto in un unico posto.</span>
-              </h2>
-              <p className="text-gray-500 mb-5">
-                Basta carta, Excel e WhatsApp confusi: tutto in un'unica app professionale.
-              </p>
-              <div className="space-y-2.5">
-                {[
-                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Calendario prenotazioni in tempo reale" },
-                  { icon: "fa-bell", color: "text-orange-500", label: "Promemoria automatici ai tuoi clienti" },
-                  { icon: "fa-comments", color: "text-emerald-500", label: "Messaggi e promozioni via WhatsApp" },
-                  { icon: "fa-chart-line", color: "text-blue-500", label: "Contabilità e fatture sempre sott'occhio" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center ${item.color} flex-shrink-0 shadow-sm`}>
-                      <i className={`fas ${item.icon}`}></i>
-                    </div>
-                    <span className="text-gray-700 font-medium">{item.label}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer"
-                  className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
-                  Prova la Demo gratuita →
-                </a>
-                <a href="#prezzi"
-                  className="inline-block border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition text-center">
-                  Vedi i prezzi
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sezione Gestionale */}
-      <section className="py-12 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="md:order-2 flex justify-center">
-              <div className="w-full max-w-[260px] md:max-w-xs h-[380px] md:h-[420px] flex items-center justify-center">
-                <img
-                  src="/promo-app-gestionale.png"
-                  alt="PromoApp – Gestionali personalizzati su tutti i dispositivi"
-                  className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
-                />
-              </div>
-            </div>
-            <div className="md:order-1">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
-                Gestionali personalizzati.<br />
-                <span className="text-indigo-600">La tua azienda sempre connessa.</span>
-              </h2>
-              <p className="text-gray-500 mb-5">
-                Non solo app per i clienti — anche un <strong>gestionale completo</strong> per te e il tuo team, sincronizzato su ogni dispositivo.
-              </p>
-              <div className="space-y-2.5">
-                {[
-                  { icon: "fa-users", color: "text-indigo-500", label: "CRM Clienti — tutti i contatti in un unico posto" },
-                  { icon: "fa-file-invoice-dollar", color: "text-emerald-500", label: "Gestione preventivi e fatture in pochi clic" },
-                  { icon: "fa-calendar-alt", color: "text-orange-500", label: "Agenda e appuntamenti senza stress" },
-                  { icon: "fa-chart-bar", color: "text-blue-500", label: "Statistiche e piano di lavoro per il team" },
-                  { icon: "fa-sync-alt", color: "text-purple-500", label: "Sincronizzato su PC, tablet e smartphone" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center ${item.color} flex-shrink-0`}>
-                      <i className={`fas ${item.icon}`}></i>
-                    </div>
-                    <span className="text-gray-700 font-medium">{item.label}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <a href="#contatti"
-                  className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
-                  Chiedici quello che ti serve →
-                </a>
-                <a href="https://wa.me/393793602035" target="_blank" rel="noopener noreferrer"
-                  className="inline-block bg-green-500 text-white px-7 py-3 rounded-xl font-bold hover:bg-green-600 transition text-center">
-                  <i className="fab fa-whatsapp mr-2"></i> Scrivici su WhatsApp
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
