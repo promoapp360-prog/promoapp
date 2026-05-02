@@ -118,31 +118,35 @@ export default function App() {
         </div>
       </section>
 
-      {/* Sezione Mockup App */}
+      {/* Sezione Flyer Promozionale — POSIZIONE 1 (facciamo tutto) */}
       <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="flex justify-center">
-              <img
-                src="/promo-app-mockup.png"
-                alt="PromoApp – Clienti, appuntamenti e messaggi tutto in un posto"
-                className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
-              />
+              <div className="w-full max-w-xs md:max-w-sm h-[480px] md:h-[520px] flex items-center justify-center">
+                <img
+                  src="/promo-app-flyer.png"
+                  alt="PromoApp – Una sola App, tutte le funzioni che ti servono"
+                  className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
+                />
+              </div>
             </div>
             <div>
               <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
-                Clienti, appuntamenti e messaggi.<br />
-                <span className="text-indigo-600">Tutto in un unico posto.</span>
+                Una sola App.<br />
+                <span className="text-indigo-600">Tutte le funzioni che ti servono.</span>
               </h2>
               <p className="text-gray-500 text-lg mb-8">
-                Smetti di usare carta, fogli Excel e WhatsApp allo stesso tempo. PromoApp riunisce tutto in un'app professionale pensata per la tua attività.
+                Una soluzione personalizzata per far crescere la tua attività — con tutte le funzioni che servono davvero, già pronte all'uso.
               </p>
               <div className="space-y-4">
                 {[
-                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Calendario prenotazioni in tempo reale" },
-                  { icon: "fa-bell", color: "text-orange-500", label: "Promemoria automatici ai tuoi clienti" },
-                  { icon: "fa-comments", color: "text-emerald-500", label: "Messaggi e promozioni via WhatsApp" },
-                  { icon: "fa-chart-line", color: "text-blue-500", label: "Contabilità e fatture sempre sott'occhio" },
+                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e richieste in un click" },
+                  { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card digitale per i tuoi clienti" },
+                  { icon: "fa-credit-card", color: "text-emerald-500", label: "Pagamenti online semplici e sicuri" },
+                  { icon: "fa-tag", color: "text-pink-500", label: "Promozioni e offerte mirate" },
+                  { icon: "fa-box", color: "text-orange-500", label: "Gestione magazzino e punti vendita" },
+                  { icon: "fa-palette", color: "text-blue-500", label: "Personalizzata con logo e colori tuoi" },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center ${item.color} flex-shrink-0`}>
@@ -153,9 +157,9 @@ export default function App() {
                 ))}
               </div>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer"
+                <a href="#contatti"
                   className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
-                  Prova la Demo gratuita →
+                  Richiedi un Preventivo →
                 </a>
                 <a href="#prezzi"
                   className="inline-block border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition text-center">
@@ -206,35 +210,33 @@ export default function App() {
         </div>
       </section>
 
-      {/* Sezione Flyer Promozionale */}
+      {/* Sezione Mockup App — POSIZIONE 2 (medici) */}
       <section className="py-20 bg-gradient-to-b from-white to-indigo-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Immagine */}
             <div className="flex justify-center">
-              <img
-                src="/promo-app-flyer.png"
-                alt="PromoApp – La tua App, più clienti, più vendite"
-                className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
-              />
+              <div className="w-full max-w-xs md:max-w-sm h-[480px] md:h-[520px] flex items-center justify-center">
+                <img
+                  src="/promo-app-mockup.png"
+                  alt="PromoApp – Clienti, appuntamenti e messaggi tutto in un posto"
+                  className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
+                />
+              </div>
             </div>
-            {/* Testo */}
             <div>
               <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
-                La tua App.<br />
-                <span className="text-indigo-600">Più clienti, più vendite.</span>
+                Clienti, appuntamenti e messaggi.<br />
+                <span className="text-indigo-600">Tutto in un unico posto.</span>
               </h2>
               <p className="text-gray-500 text-lg mb-8">
-                Una soluzione <strong>personalizzata</strong> per far crescere la tua attività — con tutte le funzioni che servono davvero, già pronte all'uso.
+                Smetti di usare carta, fogli Excel e WhatsApp allo stesso tempo. PromoApp riunisce tutto in un'app professionale pensata per la tua attività.
               </p>
               <div className="space-y-4">
                 {[
-                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e richieste in un click" },
-                  { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card digitale per i tuoi clienti" },
-                  { icon: "fa-credit-card", color: "text-emerald-500", label: "Pagamenti online semplici e sicuri" },
-                  { icon: "fa-tag", color: "text-pink-500", label: "Promozioni e offerte mirate" },
-                  { icon: "fa-box", color: "text-orange-500", label: "Gestione magazzino e punti vendita" },
-                  { icon: "fa-palette", color: "text-blue-500", label: "Personalizzata con logo e colori tuoi" },
+                  { icon: "fa-calendar-check", color: "text-indigo-500", label: "Calendario prenotazioni in tempo reale" },
+                  { icon: "fa-bell", color: "text-orange-500", label: "Promemoria automatici ai tuoi clienti" },
+                  { icon: "fa-comments", color: "text-emerald-500", label: "Messaggi e promozioni via WhatsApp" },
+                  { icon: "fa-chart-line", color: "text-blue-500", label: "Contabilità e fatture sempre sott'occhio" },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center ${item.color} flex-shrink-0 shadow-sm`}>
@@ -245,9 +247,9 @@ export default function App() {
                 ))}
               </div>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <a href="#contatti"
+                <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer"
                   className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
-                  Richiedi un Preventivo →
+                  Prova la Demo gratuita →
                 </a>
                 <a href="#prezzi"
                   className="inline-block border-2 border-indigo-200 text-indigo-600 px-7 py-3 rounded-xl font-bold hover:border-indigo-600 transition text-center">
@@ -264,11 +266,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="md:order-2 flex justify-center">
-              <img
-                src="/promo-app-gestionale.png"
-                alt="PromoApp – Gestionali personalizzati su tutti i dispositivi"
-                className="w-full max-w-xs md:max-w-sm rounded-3xl shadow-2xl"
-              />
+              <div className="w-full max-w-xs md:max-w-sm h-[480px] md:h-[520px] flex items-center justify-center">
+                <img
+                  src="/promo-app-gestionale.png"
+                  alt="PromoApp – Gestionali personalizzati su tutti i dispositivi"
+                  className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl"
+                />
+              </div>
             </div>
             <div className="md:order-1">
               <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
@@ -367,13 +371,13 @@ export default function App() {
               <div className="text-indigo-600 font-bold text-sm mb-6">+ 19€/mese · hosting & assistenza</div>
               <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm flex-grow">
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> App con logo e colori della tua attività</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Gestionale</b> clienti / appuntamenti</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Gestione magazzino</b> base</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Shop online</b> per i tuoi prodotti/servizi</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Gestionale clienti e appuntamenti</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Gestione magazzino base</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Shop online per prodotti e servizi</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Agenda prenotazioni online</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Promemoria automatici ai clienti</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Vetrina servizi / listino prezzi</li>
-                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>App tua per sempre</b></li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Vetrina servizi e listino prezzi</li>
+                <li><i className="fas fa-key text-orange-400 mr-2"></i> App tua per sempre</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
               <a href="/checkout?piano=base" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Richiedi la Base →</a>
@@ -388,13 +392,13 @@ export default function App() {
               <div className="text-xs text-indigo-200 font-light mb-1">prezzo dell'App — pagamento unico</div>
               <div className="text-yellow-300 font-bold text-sm mb-6">+ 29€/mese · hosting & assistenza</div>
               <ul className="text-left space-y-3 mb-8 text-sm flex-grow">
-                <li><i className="fas fa-star text-yellow-300 mr-2"></i> <b>Tutto il piano Base, più:</b></li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Integrazione con gestionali</b> esistenti</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Pagamenti online</b> (Stripe, PayPal, bonifico)</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> <b>Statistiche</b> vendite, clienti e fatturato</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Notifiche Push Illimitate</li>
+                <li className="font-semibold"><i className="fas fa-star text-yellow-300 mr-2"></i> Tutto il piano Base, più:</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Integrazione con gestionali esistenti</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Pagamenti online (Stripe, PayPal, bonifico)</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Statistiche vendite, clienti e fatturato</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Notifiche push illimitate</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Fidelity card digitale e coupon</li>
-                <li><i className="fas fa-check text-orange-400 mr-2"></i> Più operatori / accessi multipli</li>
+                <li><i className="fas fa-check text-orange-400 mr-2"></i> Più operatori e accessi multipli</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> CRM avanzato e segmentazione clienti</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Assistenza prioritaria</li>
               </ul>
@@ -408,14 +412,14 @@ export default function App() {
               <div className="text-5xl font-extrabold text-gray-900 mb-1">Preventivo</div>
               <div className="text-xs text-gray-500 font-light mb-6">prezzo personalizzato in base alle tue esigenze</div>
               <ul className="text-left space-y-3 mb-8 text-gray-600 text-sm flex-grow">
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> <b>Qualunque funzione tu chieda</b></li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pubblicazione su App Store / Google Play</li>
-                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Integrazioni con software esterni / API</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Qualunque funzione tu chieda</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Pubblicazione su App Store e Google Play</li>
+                <li><i className="fas fa-check text-emerald-500 mr-2"></i> Integrazioni con software esterni e API</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Multi-sede, multi-utente, multi-lingua</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Design completamente custom</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Project manager dedicato</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza dedicata e SLA garantito</li>
-                <li><i className="fas fa-key text-orange-400 mr-2"></i> <b>App tua per sempre</b></li>
+                <li><i className="fas fa-key text-orange-400 mr-2"></i> App tua per sempre</li>
               </ul>
               <a href="#contatti" className="block w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-indigo-600 transition">Richiedi un Preventivo →</a>
             </div>
