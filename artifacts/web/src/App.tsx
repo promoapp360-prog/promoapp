@@ -91,23 +91,23 @@ export default function App() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-20 px-4 gradient-bg text-white">
+      <section className="pt-24 pb-12 px-4 gradient-bg text-white">
         <div className="max-w-7xl mx-auto text-center">
-          <span className="bg-white/20 px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block italic">
+          <span className="bg-white/20 px-4 py-1 rounded-full text-xs font-semibold mb-3 inline-block italic">
             La tua App professionale, pronta in 7 giorni
           </span>
-          <h1 className="text-4xl md:text-7xl font-extrabold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
             Realizziamo l'App<br />che <span className="text-yellow-300">la tua attività merita.</span>
           </h1>
-          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light">
-            Ogni attività è diversa. Per questo costruiamo <strong>app e gestionali su misura</strong> — qualunque sia il tuo settore, qualunque sia la funzione che ti serve. Tu ce la chiedi, noi la realizziamo.
+          <p className="text-base md:text-lg mb-6 opacity-90 max-w-2xl mx-auto font-light">
+            Ogni attività è diversa. Per questo costruiamo <strong>app e gestionali su misura</strong> — qualunque sia il tuo settore. Tu ce la chiedi, noi la realizziamo.
           </p>
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3">
             <a
               href="#contatti"
-              className="group inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-5 rounded-2xl font-bold text-lg md:text-xl shadow-2xl hover:scale-105 transition transform"
+              className="group inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold text-base md:text-lg shadow-2xl hover:scale-105 transition transform"
             >
-              <i className="fas fa-lightbulb text-yellow-300 text-2xl"></i>
+              <i className="fas fa-lightbulb text-yellow-300 text-xl"></i>
               <span>Raccontaci la tua idea — la realizziamo</span>
               <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
             </a>
@@ -120,20 +120,20 @@ export default function App() {
               oppure guarda una demo già pronta →
             </a>
           </div>
-          <div className="mt-10 flex justify-center items-center space-x-6 opacity-80 text-sm">
+          <div className="mt-6 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 opacity-80 text-sm">
             <span><i className="fas fa-bolt mr-2"></i> Pronto in 7 giorni</span>
             <span><i className="fas fa-shield-alt mr-2"></i> Tutto incluso</span>
-            <span><i className="fas fa-key mr-2"></i> Sblocco definitivo al pagamento</span>
+            <span><i className="fas fa-key mr-2"></i> Sblocco definitivo</span>
           </div>
         </div>
       </section>
 
       {/* Sezione Flyer Promozionale — POSIZIONE 1 (facciamo tutto) */}
-      <section className="py-20 bg-white overflow-hidden">
+      <section className="py-12 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="flex justify-center">
-              <div className="w-full max-w-xs md:max-w-sm h-[480px] md:h-[520px] flex items-center justify-center">
+              <div className="w-full max-w-[260px] md:max-w-xs h-[380px] md:h-[420px] flex items-center justify-center">
                 <img
                   src="/promo-app-flyer.png"
                   alt="PromoApp – Una sola App, tutte le funzioni che ti servono"
@@ -142,14 +142,14 @@ export default function App() {
               </div>
             </div>
             <div>
-              <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
                 Una sola App.<br />
                 <span className="text-indigo-600">Tutte le funzioni che ti servono.</span>
               </h2>
-              <p className="text-gray-500 text-lg mb-8">
-                Una soluzione personalizzata per far crescere la tua attività — con tutte le funzioni che servono davvero, già pronte all'uso.
+              <p className="text-gray-500 mb-5">
+                Una soluzione personalizzata per far crescere la tua attività — già pronta all'uso.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {[
                   { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e richieste in un click" },
                   { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card digitale per i tuoi clienti" },
@@ -166,7 +166,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <a href="#contatti"
                   className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
                   Richiedi un Preventivo →
@@ -182,17 +182,17 @@ export default function App() {
       </section>
 
       {/* Come Funziona */}
-      <section id="come-funziona" className="py-24 px-4 bg-white">
-        <div className="max-w-7xl mx-auto text-center mb-16">
+      <section id="come-funziona" className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold">Come funziona in 3 passi</h2>
-          <p className="text-gray-500 mt-3 max-w-2xl mx-auto">Dal racconto della tua idea all'App pronta da usare — un percorso semplice, senza rischi, senza sorprese.</p>
+          <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Dal racconto della tua idea all'App pronta da usare — semplice, senza rischi.</p>
         </div>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center relative">
           {/* Linea connettore */}
           <div className="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 bg-indigo-100 z-0"></div>
 
           {/* Step 1 — Idea */}
-          <div className="p-8 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10 flex flex-col">
+          <div className="p-6 rounded-2xl bg-indigo-50 border border-indigo-100 relative z-10 flex flex-col">
             <div className="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
               1
             </div>
@@ -205,7 +205,7 @@ export default function App() {
           </div>
 
           {/* Step 2 — Progetto PDF */}
-          <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10 flex flex-col">
+          <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-100 relative z-10 flex flex-col">
             <div className="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
               2
             </div>
@@ -218,7 +218,7 @@ export default function App() {
           </div>
 
           {/* Step 3 — 7 giorni per accettare */}
-          <div className="p-8 rounded-2xl bg-orange-50 border border-orange-100 relative z-10 flex flex-col">
+          <div className="p-6 rounded-2xl bg-orange-50 border border-orange-100 relative z-10 flex flex-col">
             <div className="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-lg">
               3
             </div>
@@ -232,7 +232,7 @@ export default function App() {
         </div>
 
         {/* Riassunto / CTA */}
-        <div className="max-w-3xl mx-auto mt-12 text-center">
+        <div className="max-w-3xl mx-auto mt-8 text-center">
           <p className="text-gray-500 italic mb-6">Nessun anticipo. Nessun rischio. Paghi solo quando il progetto ti convince davvero.</p>
           <a
             href="#contatti"
@@ -246,11 +246,11 @@ export default function App() {
       </section>
 
       {/* Sezione Mockup App — POSIZIONE 2 (medici) */}
-      <section className="py-20 bg-gradient-to-b from-white to-indigo-50 overflow-hidden">
+      <section className="py-12 bg-gradient-to-b from-white to-indigo-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="flex justify-center">
-              <div className="w-full max-w-xs md:max-w-sm h-[480px] md:h-[520px] flex items-center justify-center">
+              <div className="w-full max-w-[260px] md:max-w-xs h-[380px] md:h-[420px] flex items-center justify-center">
                 <img
                   src="/promo-app-mockup.png"
                   alt="PromoApp – Clienti, appuntamenti e messaggi tutto in un posto"
@@ -259,14 +259,14 @@ export default function App() {
               </div>
             </div>
             <div>
-              <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
                 Clienti, appuntamenti e messaggi.<br />
                 <span className="text-indigo-600">Tutto in un unico posto.</span>
               </h2>
-              <p className="text-gray-500 text-lg mb-8">
-                Smetti di usare carta, fogli Excel e WhatsApp allo stesso tempo. PromoApp riunisce tutto in un'app professionale pensata per la tua attività.
+              <p className="text-gray-500 mb-5">
+                Basta carta, Excel e WhatsApp confusi: tutto in un'unica app professionale.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {[
                   { icon: "fa-calendar-check", color: "text-indigo-500", label: "Calendario prenotazioni in tempo reale" },
                   { icon: "fa-bell", color: "text-orange-500", label: "Promemoria automatici ai tuoi clienti" },
@@ -281,7 +281,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer"
                   className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
                   Prova la Demo gratuita →
@@ -297,11 +297,11 @@ export default function App() {
       </section>
 
       {/* Sezione Gestionale */}
-      <section className="py-20 bg-white overflow-hidden">
+      <section className="py-12 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="md:order-2 flex justify-center">
-              <div className="w-full max-w-xs md:max-w-sm h-[480px] md:h-[520px] flex items-center justify-center">
+              <div className="w-full max-w-[260px] md:max-w-xs h-[380px] md:h-[420px] flex items-center justify-center">
                 <img
                   src="/promo-app-gestionale.png"
                   alt="PromoApp – Gestionali personalizzati su tutti i dispositivi"
@@ -310,14 +310,14 @@ export default function App() {
               </div>
             </div>
             <div className="md:order-1">
-              <h2 className="text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
                 Gestionali personalizzati.<br />
                 <span className="text-indigo-600">La tua azienda sempre connessa.</span>
               </h2>
-              <p className="text-gray-500 text-lg mb-8">
-                Non solo app per i tuoi clienti — anche un <strong>gestionale completo</strong> per te e il tuo team. Lavora ovunque, da qualsiasi dispositivo, sempre sincronizzato.
+              <p className="text-gray-500 mb-5">
+                Non solo app per i clienti — anche un <strong>gestionale completo</strong> per te e il tuo team, sincronizzato su ogni dispositivo.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {[
                   { icon: "fa-users", color: "text-indigo-500", label: "CRM Clienti — tutti i contatti in un unico posto" },
                   { icon: "fa-file-invoice-dollar", color: "text-emerald-500", label: "Gestione preventivi e fatture in pochi clic" },
@@ -333,7 +333,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <a href="#contatti"
                   className="inline-block bg-indigo-600 text-white px-7 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-center">
                   Chiedici quello che ti serve →
@@ -349,9 +349,9 @@ export default function App() {
       </section>
 
       {/* Demo Settori */}
-      <section id="demo" className="py-24 px-4 bg-gray-50">
+      <section id="demo" className="py-16 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-3xl font-bold italic">Funziona per ogni tipo di attività</h2>
             <p className="text-gray-500">Un'unica piattaforma adattata al tuo settore — pronta in 7 giorni.</p>
           </div>
@@ -381,7 +381,7 @@ export default function App() {
       </section>
 
       {/* Prezzi */}
-      <section id="prezzi" className="py-24 bg-gray-50">
+      <section id="prezzi" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4 italic">Quanto costa la tua App?</h2>
           <p className="text-gray-500 mb-6 max-w-2xl mx-auto">Prezzo chiaro, nessuna sorpresa. <strong>L'App costa una sola volta</strong> — il canone mensile copre solo hosting, aggiornamenti e assistenza.</p>
@@ -463,9 +463,9 @@ export default function App() {
       </section>
 
       {/* Form Contatti — Richiesta Preventivo */}
-      <section id="contatti" className="py-24 px-4 bg-white">
-        <div className="max-w-3xl mx-auto bg-gray-900 text-white rounded-3xl p-8 md:p-12 shadow-2xl">
-          <div className="text-center mb-10">
+      <section id="contatti" className="py-16 px-4 bg-white">
+        <div className="max-w-3xl mx-auto bg-gray-900 text-white rounded-3xl p-6 md:p-10 shadow-2xl">
+          <div className="text-center mb-8">
             <div className="inline-block bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Richiedi un Preventivo</div>
             <h2 className="text-3xl font-bold">Raccontaci la tua idea</h2>
             <p className="opacity-70 font-light mt-2">Analizziamo la fattibilità <strong>gratuitamente</strong> e ti rispondiamo entro 24 ore con un preventivo su misura.</p>
@@ -562,7 +562,7 @@ export default function App() {
       </div>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-200">
+      <footer className="py-8 px-4 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
           <div className="opacity-70 text-center md:text-left">
             © 2026 <strong>PromoApp.it</strong><br className="md:hidden" />
