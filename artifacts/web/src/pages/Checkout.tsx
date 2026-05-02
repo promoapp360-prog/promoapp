@@ -11,16 +11,28 @@ const PIANI = [
     prezzo: 690,
     mensile: 19,
     colore: "#6366f1",
-    features: ["App personalizzata", "10 pazienti + 10 appuntamenti demo gratuiti", "Notifiche Push", "Chiave di sblocco definitiva"],
+    features: [
+      "App personalizzata con logo e colori",
+      "Gestionale clienti e appuntamenti",
+      "Gestione magazzino base",
+      "Shop online per prodotti e servizi",
+      "App tua per sempre",
+    ],
   },
   {
     id: "pro",
     nome: "Piano Business Pro",
-    prezzo: 899,
-    mensile: 25,
+    prezzo: 890,
+    mensile: 29,
     colore: "#f59e0b",
     consigliato: true,
-    features: ["Tutto del Base", "Notifiche Push Illimitate", "Priorità supporto", "Aggiornamenti inclusi", "Chiave di sblocco definitiva"],
+    features: [
+      "Tutto del piano Base, più:",
+      "Integrazione con gestionali esistenti",
+      "Pagamenti online (Stripe, PayPal, bonifico)",
+      "Statistiche vendite e clienti",
+      "CRM avanzato e assistenza prioritaria",
+    ],
   },
 ];
 
@@ -366,7 +378,7 @@ export default function Checkout() {
             </div>
             <div className="text-right">
               <p className="text-xs text-gray-400">+ {pianoScelto.mensile}€/mese canone</p>
-              <p className="text-xs text-gray-400">✓ Chiave definitiva inclusa</p>
+              <p className="text-xs text-gray-400">✓ App tua per sempre</p>
             </div>
           </div>
 

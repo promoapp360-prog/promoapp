@@ -8,7 +8,7 @@ const router = Router();
 
 const PIANI: Record<string, { nome: string; prezzoBase: number; mensile: number }> = {
   base: { nome: "Piano Base", prezzoBase: 69000, mensile: 1900 },
-  pro: { nome: "Piano Business Pro", prezzoBase: 89900, mensile: 2500 },
+  pro: { nome: "Piano Business Pro", prezzoBase: 89000, mensile: 2900 },
 };
 
 router.get("/checkout/publishable-key", async (_req, res) => {
