@@ -149,9 +149,9 @@ export default function App() {
             {/* Immagine compatta */}
             <div className="flex justify-center">
               <img
-                src="/promo-app-mockup.png"
-                alt="PromoApp – La tua App e gestionale tutto in uno"
-                className="w-full max-w-[180px] md:max-w-[200px] object-contain rounded-2xl shadow-xl"
+                src="/promo-app-flyer.png"
+                alt="PromoApp – Tutte le funzioni in un'unica App"
+                className="w-full max-w-[200px] md:max-w-[220px] object-contain rounded-2xl shadow-xl"
               />
             </div>
 

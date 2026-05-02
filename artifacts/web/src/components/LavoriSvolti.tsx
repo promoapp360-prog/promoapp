@@ -1,14 +1,5 @@
 const PILLARS = [
   {
-    icon: "fa-flag",
-    color: "text-emerald-600",
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    title: "Azienda italiana reale",
-    text: "Sophia 2005 S.r.l. — P.IVA 08223951008. Fatturiamo regolarmente, sei tutelato dalla legge italiana.",
-    badge: "P.IVA verificabile",
-  },
-  {
     icon: "fa-code",
     color: "text-indigo-600",
     bg: "bg-indigo-50",
@@ -33,7 +24,7 @@ const COMPARISON: Row[] = [
   { label: "App davvero personalizzata",   promo: "Sì, su misura",  template: "No, schema fisso",      freelancer: "Variabile",        agenzia: "Sì",            promoOk: true },
   { label: "Tempi di consegna",             promo: "7 giorni",       template: "Subito ma generica",    freelancer: "1-3 mesi",         agenzia: "3-6 mesi",       promoOk: true },
   { label: "Codice sorgente incluso",       promo: "Sì, alla consegna", template: "No",                 freelancer: "A pagamento",      agenzia: "Sì",             promoOk: true },
-  { label: "Fattura italiana con P.IVA",    promo: "Sì, sempre",     template: "Spesso no",             freelancer: "Quasi mai",        agenzia: "Sì",             promoOk: true },
+  { label: "Fattura regolare",              promo: "Sì, sempre",     template: "Spesso no",             freelancer: "Quasi mai",        agenzia: "Sì",             promoOk: true },
   { label: "Hosting e aggiornamenti",       promo: "Inclusi nel canone", template: "A tuo carico",      freelancer: "A tuo carico",     agenzia: "Inclusi",        promoOk: true },
   { label: "Supporto in italiano",          promo: "Diretto via WhatsApp", template: "Forum / email", freelancer: "Spesso difficile",  agenzia: "Sì, ufficio",   promoOk: true },
   { label: "Prezzo realistico",             promo: "Da 890€ una tantum", template: "50-300€",          freelancer: "1.500-3.000€",     agenzia: "5.000-15.000€",  promoOk: true },
@@ -52,13 +43,13 @@ export default function LavoriSvolti() {
             Perché affidarti a <span className="text-indigo-600">PromoApp.it</span>
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Non un template. Non un freelancer dall'altra parte del mondo. Un partner italiano,
-            con <strong>P.IVA verificabile</strong> e responsabilità reale sul lavoro che facciamo per te.
+            Non un template. Non un freelancer dall'altra parte del mondo.
+            Un partner che si prende <strong>responsabilità reale</strong> sul lavoro che facciamo per te.
           </p>
         </div>
 
         {/* Pilastri di fiducia */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-16 max-w-3xl mx-auto">
           {PILLARS.map((p, i) => (
             <div key={i} className={`relative bg-white p-6 rounded-2xl border ${p.border} shadow-sm hover:shadow-lg transition group`}>
               <div className={`w-14 h-14 rounded-2xl ${p.bg} ${p.color} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition transform`}>
@@ -157,10 +148,6 @@ export default function LavoriSvolti() {
                 Parla con noi
               </a>
             </div>
-            <p className="text-xs text-indigo-200 mt-4">
-              <i className="fas fa-lock mr-1"></i>
-              Sophia 2005 S.r.l. · P.IVA 08223951008 · azienda registrata in Italia
-            </p>
           </div>
         </div>
       </div>
