@@ -84,6 +84,7 @@ export default function App() {
           <div className="hidden md:flex space-x-8 font-medium text-sm uppercase tracking-wide">
             <a href="#come-funziona" className="hover:text-indigo-600 transition">Come Funziona</a>
             <a href="#demo" className="hover:text-indigo-600 transition">Demo Settori</a>
+            <a href="#soluzioni-pronte" className="hover:text-indigo-600 transition">Soluzioni Pronte</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
           </div>
           <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
@@ -100,7 +101,7 @@ export default function App() {
             Realizziamo l'App<br />che <span className="text-yellow-300">la tua attività merita.</span>
           </h1>
           <p className="text-base md:text-lg mb-6 opacity-90 max-w-2xl mx-auto font-light">
-            Ogni attività è diversa. Per questo costruiamo <strong>app e gestionali su misura</strong> — qualunque sia il tuo settore. Tu ce la chiedi, noi la realizziamo.
+            Ogni attività è diversa. Per questo costruiamo <strong>app e gestionali su misura</strong> — qualunque sia il tuo settore. Tu ce la chiedi, noi la realizziamo. <a href="#soluzioni-pronte" className="underline decoration-yellow-300 decoration-2 underline-offset-4 hover:text-yellow-300 transition">Oppure scegli una delle nostre soluzioni già pronte →</a>
           </p>
           <div className="flex flex-col items-center gap-3">
             <a
@@ -320,6 +321,113 @@ export default function App() {
         </div>
       </section>
 
+      {/* Soluzioni Pronte all'uso — Prodotti operativi */}
+      <section id="soluzioni-pronte" className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Già operativi</span>
+            <h2 className="text-3xl md:text-4xl font-bold italic mb-3">Hai fretta? Abbiamo già <span className="text-indigo-600">due gestionali pronti</span></h2>
+            <p className="text-gray-500 max-w-2xl mx-auto font-light">
+              Per due dei settori più richiesti abbiamo già sviluppato gestionali completi, online e operativi.
+              Provali gratis e parti subito — oppure costruiamo la tua app su misura.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Gestionale360 */}
+            <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 rounded-3xl p-8 hover:shadow-xl transition flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-emerald-700 rounded-xl flex items-center justify-center text-white text-xl">
+                  <i className="fas fa-store"></i>
+                </div>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-emerald-700">Per Negozi & Retail</div>
+                  <h3 className="text-2xl font-bold text-gray-900">Gestionale<span className="text-emerald-700">360</span></h3>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-5 leading-relaxed">
+                Il gestionale italiano per il tuo negozio. <strong>Magazzino, vendite, arrivi, contabilità, clienti e fornitori</strong> in un'unica app — pensato per ferramenta, abbigliamento, alimentari, giocattoli ed elettronica.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-700 mb-6 flex-grow">
+                <li><i className="fas fa-check text-emerald-600 mr-2"></i> Magazzino sotto controllo con avvisi sotto scorta</li>
+                <li><i className="fas fa-check text-emerald-600 mr-2"></i> Cassa e vendite veloci con calcolo IVA</li>
+                <li><i className="fas fa-check text-emerald-600 mr-2"></i> Arrivi, fornitori e bolle di carico</li>
+                <li><i className="fas fa-check text-emerald-600 mr-2"></i> Contabilità chiara e clienti fidelizzati</li>
+              </ul>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="https://gestionale360.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-bold transition"
+                >
+                  Prova gratis 14 giorni <i className="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a
+                  href="https://gestionale360.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center border-2 border-emerald-700 text-emerald-700 hover:bg-emerald-50 px-5 py-3 rounded-xl font-bold transition"
+                >
+                  Scopri di più
+                </a>
+              </div>
+            </div>
+
+            {/* AgentiPro / Gestione Agenti */}
+            <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-200 rounded-3xl p-8 hover:shadow-xl transition flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center text-white text-xl">
+                  <i className="fas fa-briefcase"></i>
+                </div>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-orange-600">Per Agenti di Commercio</div>
+                  <h3 className="text-2xl font-bold text-gray-900">Agenti<span className="text-orange-600">Pro</span></h3>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-5 leading-relaxed">
+                Il gestionale dedicato agli <strong>agenti di commercio</strong>: clienti, ordini, provvigioni, visite e spese — tutto in mobilità, sempre a portata di mano anche fuori ufficio.
+              </p>
+              <ul className="space-y-2 text-sm text-gray-700 mb-6 flex-grow">
+                <li><i className="fas fa-check text-orange-600 mr-2"></i> Anagrafica clienti completa e georeferenziata</li>
+                <li><i className="fas fa-check text-orange-600 mr-2"></i> Ordini in mobilità e catalogo prodotti</li>
+                <li><i className="fas fa-check text-orange-600 mr-2"></i> Calcolo automatico provvigioni</li>
+                <li><i className="fas fa-check text-orange-600 mr-2"></i> Pianificazione visite e nota spese</li>
+              </ul>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="https://gestioneagenti.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl font-bold transition"
+                >
+                  Provalo ora <i className="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a
+                  href="https://gestioneagenti.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-5 py-3 rounded-xl font-bold transition"
+                >
+                  Scopri di più
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Bridge to custom */}
+          <div className="mt-10 text-center bg-gray-50 rounded-2xl p-6 border border-gray-200">
+            <p className="text-gray-700 mb-3">
+              <i className="fas fa-lightbulb text-yellow-500 mr-2"></i>
+              <strong>Il tuo settore non è qui?</strong> Nessun problema — la nostra specialità sono le <strong>app personalizzate</strong>.
+            </p>
+            <a href="#contatti" className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:underline">
+              Raccontaci la tua idea, la realizziamo per te <i className="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Prezzi */}
       <section id="prezzi" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -497,8 +605,35 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
+      <footer className="py-10 px-4 border-t border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 mb-8 text-sm">
+            <div>
+              <div className="text-xl font-bold text-indigo-600 tracking-tighter mb-2">
+                Promo<span className="text-emerald-500">App</span>.it
+              </div>
+              <p className="text-gray-500 font-light leading-relaxed">
+                App e gestionali su misura per qualunque attività italiana. Tu ce la chiedi, noi la realizziamo.
+              </p>
+            </div>
+            <div>
+              <div className="font-bold text-gray-900 mb-3 uppercase tracking-widest text-xs">Le nostre soluzioni</div>
+              <ul className="space-y-2 text-gray-600">
+                <li><a href="#contatti" className="hover:text-indigo-600 transition"><i className="fas fa-mobile-alt text-indigo-500 mr-2 w-4"></i>App personalizzata su misura</a></li>
+                <li><a href="https://gestionale360.com" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-700 transition"><i className="fas fa-store text-emerald-700 mr-2 w-4"></i>Gestionale360 — per negozi</a></li>
+                <li><a href="https://gestioneagenti.com" target="_blank" rel="noopener noreferrer" className="hover:text-orange-600 transition"><i className="fas fa-briefcase text-orange-600 mr-2 w-4"></i>AgentiPro — per agenti di commercio</a></li>
+              </ul>
+            </div>
+            <div>
+              <div className="font-bold text-gray-900 mb-3 uppercase tracking-widest text-xs">Contatti</div>
+              <ul className="space-y-2 text-gray-600">
+                <li><a href="https://wa.me/393793602035" target="_blank" rel="noopener noreferrer" className="hover:text-green-600 transition"><i className="fab fa-whatsapp text-green-500 mr-2 w-4"></i>WhatsApp +39 379 360 2035</a></li>
+                <li><a href="#contatti" className="hover:text-indigo-600 transition"><i className="fas fa-envelope text-indigo-500 mr-2 w-4"></i>Richiedi un preventivo</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
           <div className="opacity-70 text-center md:text-left">
             © 2026 <strong>PromoApp.it</strong><br className="md:hidden" />
             <span className="opacity-80"> · Sophia 2005 S.r.l. · P.IVA 08223951008</span>
@@ -526,7 +661,7 @@ export default function App() {
           <div className="opacity-60 italic flex gap-6">
             <a href="/privacy.html" className="hover:underline">Privacy Policy</a>
             <a href="/cookie.html" className="hover:underline">Cookie Policy</a>
-            <span>Creato con passione</span>
+          </div>
           </div>
         </div>
       </footer>
