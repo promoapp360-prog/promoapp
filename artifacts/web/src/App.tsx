@@ -327,15 +327,26 @@ export default function App() {
           <div className="text-center mb-10">
             <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Già operativi</span>
             <h2 className="text-3xl md:text-4xl font-bold italic mb-3">Hai fretta? Abbiamo già <span className="text-indigo-600">due gestionali pronti</span></h2>
-            <p className="text-gray-500 max-w-2xl mx-auto font-light">
+            <p className="text-gray-500 max-w-2xl mx-auto font-light mb-5">
               Per due dei settori più richiesti abbiamo già sviluppato gestionali completi, online e operativi.
               Provali gratis e parti subito — oppure costruiamo la tua app su misura.
             </p>
+            {/* Offerta Lancio Lifetime */}
+            <div className="inline-flex flex-col sm:flex-row items-center gap-3 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white rounded-2xl px-6 py-4 shadow-xl">
+              <i className="fas fa-fire text-yellow-300 text-2xl"></i>
+              <div className="text-left">
+                <div className="text-base md:text-lg font-extrabold">OFFERTA LANCIO — Licenza a vita a <span className="text-yellow-300">199€</span></div>
+                <div className="text-xs md:text-sm opacity-95 font-medium">Una tantum, <strong>zero canone mensile per sempre</strong> · Solo le prime <strong>1.000 licenze</strong></div>
+              </div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Gestionale360 */}
-            <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 rounded-3xl p-8 hover:shadow-xl transition flex flex-col">
+            <div className="relative bg-gradient-to-br from-emerald-50 to-white border-2 border-emerald-200 rounded-3xl p-8 hover:shadow-xl transition flex flex-col">
+              <span className="absolute -top-3 right-6 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-extrabold uppercase whitespace-nowrap shadow-lg">
+                <i className="fas fa-fire text-yellow-300 mr-1"></i> Offerta lancio
+              </span>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-emerald-700 rounded-xl flex items-center justify-center text-white text-xl">
                   <i className="fas fa-store"></i>
@@ -354,14 +365,28 @@ export default function App() {
                 <li><i className="fas fa-check text-emerald-600 mr-2"></i> Arrivi, fornitori e bolle di carico</li>
                 <li><i className="fas fa-check text-emerald-600 mr-2"></i> Contabilità chiara e clienti fidelizzati</li>
               </ul>
+
+              {/* Box Offerta Lifetime */}
+              <div className="bg-gradient-to-br from-emerald-700 to-emerald-900 text-white rounded-2xl p-5 mb-4 shadow-lg">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl font-extrabold">199€</span>
+                  <span className="text-xs uppercase tracking-widest opacity-80">una tantum</span>
+                </div>
+                <div className="text-sm font-semibold mb-2">Licenza a vita · zero canone mensile</div>
+                <div className="text-xs opacity-90 flex items-center gap-2">
+                  <i className="fas fa-bolt text-yellow-300"></i>
+                  <span>Solo per le prime <strong>1.000 licenze</strong></span>
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
                   href="https://gestionale360.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 text-center bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-bold transition"
+                  className="flex-1 text-center bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-bold transition shadow-md"
                 >
-                  Prova gratis 14 giorni <i className="fas fa-arrow-right ml-2"></i>
+                  Acquista a 199€ <i className="fas fa-arrow-right ml-2"></i>
                 </a>
                 <a
                   href="https://gestionale360.com"
@@ -369,13 +394,16 @@ export default function App() {
                   rel="noopener noreferrer"
                   className="flex-1 text-center border-2 border-emerald-700 text-emerald-700 hover:bg-emerald-50 px-5 py-3 rounded-xl font-bold transition"
                 >
-                  Scopri di più
+                  Prova gratis
                 </a>
               </div>
             </div>
 
             {/* AgentiPro / Gestione Agenti */}
-            <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-200 rounded-3xl p-8 hover:shadow-xl transition flex flex-col">
+            <div className="relative bg-gradient-to-br from-orange-50 to-white border-2 border-orange-200 rounded-3xl p-8 hover:shadow-xl transition flex flex-col">
+              <span className="absolute -top-3 right-6 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-extrabold uppercase whitespace-nowrap shadow-lg">
+                <i className="fas fa-fire text-yellow-300 mr-1"></i> Offerta lancio
+              </span>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center text-white text-xl">
                   <i className="fas fa-briefcase"></i>
@@ -394,14 +422,28 @@ export default function App() {
                 <li><i className="fas fa-check text-orange-600 mr-2"></i> Calcolo automatico provvigioni</li>
                 <li><i className="fas fa-check text-orange-600 mr-2"></i> Pianificazione visite e nota spese</li>
               </ul>
+
+              {/* Box Offerta Lifetime */}
+              <div className="bg-gradient-to-br from-orange-600 to-red-600 text-white rounded-2xl p-5 mb-4 shadow-lg">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-3xl font-extrabold">199€</span>
+                  <span className="text-xs uppercase tracking-widest opacity-80">una tantum</span>
+                </div>
+                <div className="text-sm font-semibold mb-2">Licenza a vita · zero canone mensile</div>
+                <div className="text-xs opacity-90 flex items-center gap-2">
+                  <i className="fas fa-bolt text-yellow-300"></i>
+                  <span>Solo per le prime <strong>1.000 licenze</strong></span>
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
                   href="https://gestioneagenti.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 text-center bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl font-bold transition"
+                  className="flex-1 text-center bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl font-bold transition shadow-md"
                 >
-                  Provalo ora <i className="fas fa-arrow-right ml-2"></i>
+                  Acquista a 199€ <i className="fas fa-arrow-right ml-2"></i>
                 </a>
                 <a
                   href="https://gestioneagenti.com"
@@ -409,7 +451,7 @@ export default function App() {
                   rel="noopener noreferrer"
                   className="flex-1 text-center border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-5 py-3 rounded-xl font-bold transition"
                 >
-                  Scopri di più
+                  Provalo ora
                 </a>
               </div>
             </div>
