@@ -72,32 +72,40 @@ export default function CartDrawer() {
                   </div>
                   <div>
                     <div className="font-bold text-gray-800">{item.nome}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">App personalizzata + gestionale</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      {item.mensile === 0 ? "Licenza a vita · zero canone mensile" : "App personalizzata + gestionale"}
+                    </div>
                     <div className="mt-2">
                       <span className="text-2xl font-extrabold text-indigo-700">{item.prezzo}€</span>
                       <span className="text-xs text-gray-400"> una tantum</span>
                     </div>
-                    <div className="text-xs text-indigo-600 font-medium">+ {item.mensile}€/mese · hosting & assistenza</div>
+                    {item.mensile > 0 && (
+                      <div className="text-xs text-indigo-600 font-medium">+ {item.mensile}€/mese · hosting & assistenza</div>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Promo 6+6 */}
-              <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl p-4 text-sm flex items-center gap-2">
-                <i className="fas fa-fire text-yellow-300"></i>
-                <span><strong>PROMO:</strong> Paghi 6 mesi, altri 6 sono <strong className="text-yellow-300">GRATIS</strong></span>
-              </div>
+              {/* Promo 6+6 — solo per piani con canone */}
+              {item.mensile > 0 && (
+                <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl p-4 text-sm flex items-center gap-2">
+                  <i className="fas fa-fire text-yellow-300"></i>
+                  <span><strong>PROMO:</strong> Paghi 6 mesi, altri 6 sono <strong className="text-yellow-300">GRATIS</strong></span>
+                </div>
+              )}
 
               {/* Riepilogo */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between text-gray-600">
-                  <span>App una tantum</span>
+                  <span>Licenza una tantum</span>
                   <span className="font-semibold">{item.prezzo}€</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Canone mensile</span>
-                  <span className="font-semibold">{item.mensile}€/mese</span>
-                </div>
+                {item.mensile > 0 && (
+                  <div className="flex justify-between text-gray-600">
+                    <span>Canone mensile</span>
+                    <span className="font-semibold">{item.mensile}€/mese</span>
+                  </div>
+                )}
                 <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-800">
                   <span>Totale ora</span>
                   <span className="text-indigo-700 text-base">{item.prezzo}€</span>

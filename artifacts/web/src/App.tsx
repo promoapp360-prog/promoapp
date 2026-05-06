@@ -470,14 +470,12 @@ export default function App() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="https://gestionale360.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => addItem("gestionale360")}
                   className="flex-1 text-center bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-3 rounded-xl font-bold transition shadow-md"
                 >
                   Acquista a 199€ <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </button>
                 <a
                   href="https://gestionale360.com"
                   target="_blank"
@@ -527,14 +525,12 @@ export default function App() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="https://gestioneagenti.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => addItem("agentipro")}
                   className="flex-1 text-center bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl font-bold transition shadow-md"
                 >
                   Acquista a 199€ <i className="fas fa-arrow-right ml-2"></i>
-                </a>
+                </button>
                 <a
                   href="https://gestioneagenti.com"
                   target="_blank"

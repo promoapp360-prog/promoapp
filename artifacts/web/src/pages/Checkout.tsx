@@ -34,6 +34,34 @@ const PIANI = [
       "CRM avanzato e assistenza prioritaria",
     ],
   },
+  {
+    id: "gestionale360",
+    nome: "Gestionale360",
+    prezzo: 199,
+    mensile: 0,
+    colore: "#059669",
+    features: [
+      "Magazzino sotto controllo con avvisi sotto scorta",
+      "Cassa e vendite veloci con calcolo IVA",
+      "Arrivi, fornitori e bolle di carico",
+      "Contabilità chiara e clienti fidelizzati",
+      "Licenza a vita · zero canone mensile",
+    ],
+  },
+  {
+    id: "agentipro",
+    nome: "AgentiPro",
+    prezzo: 199,
+    mensile: 0,
+    colore: "#ea580c",
+    features: [
+      "Anagrafica clienti completa e georeferenziata",
+      "Ordini in mobilità e catalogo prodotti",
+      "Calcolo automatico provvigioni",
+      "Pianificazione visite e nota spese",
+      "Licenza a vita · zero canone mensile",
+    ],
+  },
 ];
 
 function StripeForm({ clientSecret, importo, onSuccess }: { clientSecret: string; importo: number; onSuccess: () => void }) {
