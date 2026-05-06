@@ -17,9 +17,17 @@ pnpm workspace monorepo per il sito **PromoApp.it** — landing page italiana di
 
 ## Artifacts
 
-- `artifacts/web` — Landing page pubblica (`/`, `/checkout`, `/admin`)
+- `artifacts/web` — Landing page pubblica (`/`, `/checkout`, `/admin`, `/registrazione`)
 - `artifacts/api-server` — Express API (Stripe, sconti, contatti, admin)
 - `artifacts/mockup-sandbox` — Sandbox componenti (canvas)
+
+## Carrello & Auth (Clerk)
+
+- **Clerk**: autenticazione via `@clerk/react` (web) + `@clerk/express` (API). Secrets: `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`.
+- **Cart flow**: `src/lib/CartContext.tsx` (localStorage, singolo item) → `CartDrawer.tsx` (pannello laterale) → se non loggato `/registrazione?piano=X`, se loggato `/checkout?piano=X`.
+- **Registrazione** (`src/pages/Registrazione.tsx`): step machine scelta → accedi|registrati (Clerk SignIn/SignUp con `routing="hash"`) → dati fatturazione. Dati salvati in `sessionStorage("cliente_dati")` prima di navigare al checkout.
+- **Checkout**: legge `sessionStorage("cliente_dati")` per pre-compilare nome/email.
+- **ClerkProvider**: in `main.tsx` con `@refresh reset` e root persistente (`__reactRoot`) per evitare doppia inizializzazione HMR.
 
 ## Struttura della landing page
 

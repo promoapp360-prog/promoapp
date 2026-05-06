@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useCart } from "./lib/CartContext";
+import CartDrawer from "./components/CartDrawer";
 
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -122,7 +124,8 @@ export default function App() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [lockModal, setLockModal] = useState<string | null>(null); // projectId
+  const [lockModal, setLockModal] = useState<string | null>(null);
+  const { item, addItem, openCart } = useCart();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -162,7 +165,19 @@ export default function App() {
             <a href="#lavori" className="hover:text-indigo-600 transition">In Esecuzione</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
           </div>
-          <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={openCart}
+              className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-indigo-50 transition"
+              title="Carrello"
+            >
+              <i className="fas fa-shopping-cart text-indigo-600 text-lg"></i>
+              {item && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-xs font-bold rounded-full flex items-center justify-center">1</span>
+              )}
+            </button>
+            <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
+          </div>
         </div>
       </nav>
 
@@ -635,7 +650,13 @@ export default function App() {
                 <li><i className="fas fa-key text-orange-400 mr-2"></i> App tua per sempre</li>
                 <li><i className="fas fa-check text-emerald-500 mr-2"></i> Assistenza via email</li>
               </ul>
-              <a href="/checkout?piano=base" className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">Richiedi la Base →</a>
+              <button
+                onClick={() => addItem("base")}
+                className="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition flex items-center justify-center gap-2"
+              >
+                <i className="fas fa-shopping-cart text-sm"></i>
+                {item?.id === "base" ? "Nel carrello ✓" : "Aggiungi al Carrello"}
+              </button>
             </div>
             {/* Piano Pro — App Avanzata con Integrazioni */}
             <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white transform md:scale-105 relative flex flex-col">
@@ -657,7 +678,13 @@ export default function App() {
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> CRM avanzato e segmentazione clienti</li>
                 <li><i className="fas fa-check text-orange-400 mr-2"></i> Assistenza prioritaria</li>
               </ul>
-              <a href="/checkout?piano=pro" className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition">Richiedi la Pro →</a>
+              <button
+                onClick={() => addItem("pro")}
+                className="block w-full py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition flex items-center justify-center gap-2"
+              >
+                <i className="fas fa-shopping-cart text-sm"></i>
+                {item?.id === "pro" ? "Nel carrello ✓" : "Aggiungi al Carrello"}
+              </button>
             </div>
             {/* Piano Custom — Su Misura */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border-2 border-dashed border-gray-300 hover:shadow-xl transition flex flex-col">
@@ -853,6 +880,9 @@ export default function App() {
 
       {/* Lock Modal */}
       {lockModal && <LockModal projectId={lockModal} onClose={() => setLockModal(null)} />}
+
+      {/* Carrello */}
+      <CartDrawer />
     </>
   );
 }

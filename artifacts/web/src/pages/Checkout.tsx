@@ -78,14 +78,25 @@ function StripeForm({ clientSecret, importo, onSuccess }: { clientSecret: string
   );
 }
 
+function getClienteDati() {
+  try {
+    const raw = sessionStorage.getItem("cliente_dati");
+    if (raw) return JSON.parse(raw) as Record<string, string>;
+  } catch {}
+  return null;
+}
+
 export default function Checkout() {
   const [piano, setPiano] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const p = params.get("piano");
     return p === "pro" ? "pro" : "base";
   });
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
+  const [nome, setNome] = useState(() => {
+    const d = getClienteDati();
+    return d ? `${d.nome ?? ""} ${d.cognome ?? ""}`.trim() : "";
+  });
+  const [email, setEmail] = useState(() => getClienteDati()?.email ?? "");
   const [codiceSconto, setCodiceSconto] = useState("");
   const [scontoInfo, setScontoInfo] = useState<{ discountPercent: number; description: string } | null>(null);
   const [scontoError, setScontoError] = useState("");
