@@ -245,16 +245,27 @@ export default function Registrazione() {
         </div>
 
         {/* Indicatore piano */}
-        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-3 mb-6 flex items-center justify-between">
-          <div>
-            <span className="text-xs text-indigo-500 font-semibold uppercase tracking-widest">Piano selezionato</span>
-            <div className="font-bold text-gray-800">{piano === "pro" ? "Business Pro" : "Base"}</div>
-          </div>
-          <div className="text-right">
-            <span className="text-xl font-extrabold text-indigo-700">{piano === "pro" ? "890" : "690"}€</span>
-            <div className="text-xs text-gray-400">+ {piano === "pro" ? "29" : "19"}€/mese</div>
-          </div>
-        </div>
+        {(() => {
+          const PIANI_INFO: Record<string, { nome: string; prezzo: string; mensile: string }> = {
+            base:          { nome: "Base",         prezzo: "690", mensile: "+ 19€/mese" },
+            pro:           { nome: "Business Pro", prezzo: "890", mensile: "+ 29€/mese" },
+            gestionale360: { nome: "Gestionale360",prezzo: "199", mensile: "Licenza a vita" },
+            agentipro:     { nome: "AgentiPro",    prezzo: "199", mensile: "Licenza a vita" },
+          };
+          const info = PIANI_INFO[piano] ?? PIANI_INFO["base"];
+          return (
+            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-3 mb-6 flex items-center justify-between">
+              <div>
+                <span className="text-xs text-indigo-500 font-semibold uppercase tracking-widest">Piano selezionato</span>
+                <div className="font-bold text-gray-800">{info.nome}</div>
+              </div>
+              <div className="text-right">
+                <span className="text-xl font-extrabold text-indigo-700">{info.prezzo}€</span>
+                <div className="text-xs text-gray-400">{info.mensile}</div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Step: scelta o auth */}
         {step === "scelta" && (
