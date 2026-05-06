@@ -44,11 +44,64 @@ function CookieBanner() {
   );
 }
 
+function LockModal({ url, onClose }: { url: string; onClose: () => void }) {
+  const [pwd, setPwd] = useState("");
+  const [err, setErr] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (pwd.trim().toLowerCase() === "ciro") {
+      window.open(url, "_blank", "noopener,noreferrer");
+      onClose();
+    } else {
+      setErr(true);
+      setPwd("");
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10002] flex items-center justify-center px-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <i className="fas fa-lock text-indigo-600 text-2xl"></i>
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-1">Accesso protetto</h3>
+        <p className="text-gray-500 text-sm mb-6 font-light">Inserisci la password per visualizzare questo progetto</p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="password"
+            autoFocus
+            value={pwd}
+            onChange={(e) => { setPwd(e.target.value); setErr(false); }}
+            placeholder="Password"
+            className={`w-full border-2 rounded-xl px-4 py-3 text-center text-lg tracking-widest focus:outline-none transition ${err ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-indigo-500"}`}
+          />
+          {err && <p className="text-red-500 text-sm font-medium">Password errata. Riprova.</p>}
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition"
+          >
+            Apri il progetto <i className="fas fa-arrow-right ml-2"></i>
+          </button>
+        </form>
+        <button onClick={onClose} className="mt-4 text-gray-400 hover:text-gray-600 text-sm transition">Annulla</button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "Negozio", messaggio: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [lockModal, setLockModal] = useState<string | null>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -85,6 +138,7 @@ export default function App() {
             <a href="#come-funziona" className="hover:text-indigo-600 transition">Come Funziona</a>
             <a href="#demo" className="hover:text-indigo-600 transition">Demo Settori</a>
             <a href="#soluzioni-pronte" className="hover:text-indigo-600 transition">Soluzioni Pronte</a>
+            <a href="#lavori" className="hover:text-indigo-600 transition">In Esecuzione</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
           </div>
           <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
@@ -470,6 +524,61 @@ export default function App() {
         </div>
       </section>
 
+      {/* Lavori in Esecuzione */}
+      <section id="lavori" className="py-16 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="inline-block bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
+              <i className="fas fa-hammer mr-1"></i> In Lavorazione
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold italic mb-3">Lavori in Esecuzione</h2>
+            <p className="text-gray-500 max-w-xl mx-auto font-light">
+              Alcuni progetti sono visibili in anteprima ai clienti. Clicca su una card per richiedere l'accesso e visualizzare il lavoro in corso.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Progetto: DR Oggettistica */}
+            <button
+              onClick={() => setLockModal("https://dr-oggettistica.replit.app")}
+              className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full"
+            >
+              {/* Header card */}
+              <div className="bg-gradient-to-br from-violet-600 to-indigo-700 px-6 py-8 relative">
+                <div className="flex justify-between items-start">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl">
+                    <i className="fas fa-gift"></i>
+                  </div>
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
+                    In corso
+                  </span>
+                </div>
+                <div className="mt-4 text-white">
+                  <h4 className="text-xl font-bold">DR Oggettistica</h4>
+                  <p className="text-white/75 text-sm font-light mt-1">Vetrina online · Gestionale prodotti</p>
+                </div>
+                {/* Lock overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-none flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
+                  <div className="bg-white text-indigo-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
+                    <i className="fas fa-lock text-sm"></i>
+                  </div>
+                </div>
+              </div>
+              {/* Body card */}
+              <div className="px-6 py-5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <i className="fas fa-lock text-indigo-400 text-xs"></i>
+                  <span>Anteprima protetta da password</span>
+                </div>
+                <span className="text-indigo-600 group-hover:text-indigo-800 font-bold text-sm whitespace-nowrap transition">
+                  Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i>
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Prezzi */}
       <section id="prezzi" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -720,6 +829,9 @@ export default function App() {
 
       {/* Cookie Banner */}
       <CookieBanner />
+
+      {/* Lock Modal */}
+      {lockModal && <LockModal url={lockModal} onClose={() => setLockModal(null)} />}
     </>
   );
 }
