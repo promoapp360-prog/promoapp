@@ -44,18 +44,33 @@ function CookieBanner() {
   );
 }
 
-function LockModal({ url, onClose }: { url: string; onClose: () => void }) {
+function LockModal({ projectId, onClose }: { projectId: string; onClose: () => void }) {
   const [pwd, setPwd] = useState("");
-  const [err, setErr] = useState(false);
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (pwd.trim().toLowerCase() === "ciro") {
-      window.open(url, "_blank", "noopener,noreferrer");
-      onClose();
-    } else {
-      setErr(true);
-      setPwd("");
+    setLoading(true);
+    setErr("");
+    try {
+      const res = await fetch("/api/lavori/sblocca", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: projectId, password: pwd }),
+      });
+      const data = await res.json() as { success: boolean; url?: string; message?: string };
+      if (data.success && data.url) {
+        window.open(data.url, "_blank", "noopener,noreferrer");
+        onClose();
+      } else {
+        setErr(data.message ?? "Password errata. Riprova.");
+        setPwd("");
+      }
+    } catch {
+      setErr("Errore di rete. Riprova.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -78,16 +93,19 @@ function LockModal({ url, onClose }: { url: string; onClose: () => void }) {
             type="password"
             autoFocus
             value={pwd}
-            onChange={(e) => { setPwd(e.target.value); setErr(false); }}
+            onChange={(e) => { setPwd(e.target.value); setErr(""); }}
             placeholder="Password"
             className={`w-full border-2 rounded-xl px-4 py-3 text-center text-lg tracking-widest focus:outline-none transition ${err ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-indigo-500"}`}
           />
-          {err && <p className="text-red-500 text-sm font-medium">Password errata. Riprova.</p>}
+          {err && <p className="text-red-500 text-sm font-medium">{err}</p>}
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition"
+            disabled={loading || !pwd}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Apri il progetto <i className="fas fa-arrow-right ml-2"></i>
+            {loading
+              ? <><i className="fas fa-spinner fa-spin mr-2"></i>Verifica...</>
+              : <>Apri il progetto <i className="fas fa-arrow-right ml-2"></i></>}
           </button>
         </form>
         <button onClick={onClose} className="mt-4 text-gray-400 hover:text-gray-600 text-sm transition">Annulla</button>
@@ -101,7 +119,7 @@ export default function App() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [lockModal, setLockModal] = useState<string | null>(null);
+  const [lockModal, setLockModal] = useState<string | null>(null); // projectId
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -540,7 +558,7 @@ export default function App() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Progetto: DR Oggettistica */}
             <button
-              onClick={() => setLockModal("https://dr-oggettistica.replit.app")}
+              onClick={() => setLockModal("dr-oggettistica")}
               className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full"
             >
               {/* Header card */}
@@ -831,7 +849,7 @@ export default function App() {
       <CookieBanner />
 
       {/* Lock Modal */}
-      {lockModal && <LockModal url={lockModal} onClose={() => setLockModal(null)} />}
+      {lockModal && <LockModal projectId={lockModal} onClose={() => setLockModal(null)} />}
     </>
   );
 }
