@@ -33,6 +33,15 @@ function validateToken(token: string, projectId: string): boolean {
   return true;
 }
 
+// Controlla se esiste almeno una sessione attiva per il progetto (usata per asset/sub-risorse)
+function isProjectUnlocked(projectId: string): boolean {
+  const now = Date.now();
+  for (const s of sessions.values()) {
+    if (s.projectId === projectId && s.expires > now) return true;
+  }
+  return false;
+}
+
 // POST /api/lavori/sblocca
 router.post("/lavori/sblocca", (req, res) => {
   const { id, password } = req.body as { id?: string; password?: string };
@@ -66,7 +75,9 @@ router.use("/proxy/:id", async (req, res) => {
   const queryToken = typeof req.query.token === "string" ? req.query.token : undefined;
   const token = cookieToken ?? queryToken;
 
-  if (!token || !validateToken(token, id)) {
+  // Prima prova con token specifico (cookie o query), poi controlla se il progetto è sbloccato da chiunque
+  const tokenValid = token ? validateToken(token, id) : false;
+  if (!tokenValid && !isProjectUnlocked(id)) {
     res.status(401).send("Sessione non valida — torna alla home e inserisci la password.");
     return;
   }
