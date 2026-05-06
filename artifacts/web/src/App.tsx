@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -48,6 +49,7 @@ function LockModal({ projectId, onClose }: { projectId: string; onClose: () => v
   const [pwd, setPwd] = useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+  const [, navigate] = useLocation();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,7 +63,8 @@ function LockModal({ projectId, onClose }: { projectId: string; onClose: () => v
       });
       const data = await res.json() as { success: boolean; url?: string; message?: string };
       if (data.success && data.url) {
-        window.open(data.url, "_blank", "noopener,noreferrer");
+        sessionStorage.setItem(`preview_${projectId}`, data.url);
+        navigate(`/lavori/${projectId}`);
         onClose();
       } else {
         setErr(data.message ?? "Password errata. Riprova.");
