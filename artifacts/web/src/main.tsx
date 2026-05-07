@@ -7,6 +7,7 @@ import Checkout from "./pages/Checkout";
 import Admin from "./pages/Admin";
 import PreviewPage from "./pages/PreviewPage";
 import Registrazione from "./pages/Registrazione";
+import Acconto from "./pages/Acconto";
 import { CartProvider } from "./lib/CartContext";
 import "./index.css";
 
@@ -38,6 +39,7 @@ function Routes() {
           <Route path="/admin" component={Admin} />
           <Route path="/lavori/:id" component={PreviewPage} />
           <Route path="/registrazione/*?" component={Registrazione} />
+          <Route path="/acconto" component={Acconto} />
           <Route component={App} />
         </Switch>
       </CartProvider>
