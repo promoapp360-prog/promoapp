@@ -164,7 +164,7 @@ export default function App() {
             <a href="#soluzioni-pronte" className="hover:text-indigo-600 transition">Soluzioni Pronte</a>
             <a href="#lavori" className="hover:text-indigo-600 transition">In Esecuzione</a>
             <a href="#prezzi" className="hover:text-indigo-600 transition">Prezzi</a>
-            <a href="/acconto" className="text-emerald-600 font-semibold hover:text-emerald-700 transition">Acconto</a>
+            <a href="/pagamenti" className="text-emerald-600 font-semibold hover:text-emerald-700 transition">Pagamenti</a>
           </div>
           <div className="flex items-center gap-3">
             <button
