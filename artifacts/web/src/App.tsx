@@ -125,6 +125,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [lockModal, setLockModal] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { item, addItem, openCart } = useCart();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -177,7 +178,44 @@ export default function App() {
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-xs font-bold rounded-full flex items-center justify-center">1</span>
               )}
             </button>
-            <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
+            <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer" className="hidden md:inline-block bg-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:bg-indigo-700 transition shadow-md">Inizia Ora</a>
+            {/* Hamburger mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(o => !o)}
+              className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl hover:bg-indigo-50 transition"
+              aria-label="Menu"
+            >
+              <span className={`block w-6 h-0.5 bg-indigo-700 transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-2" : ""}`}></span>
+              <span className={`block w-6 h-0.5 bg-indigo-700 transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : ""}`}></span>
+              <span className={`block w-6 h-0.5 bg-indigo-700 transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
+            </button>
+          </div>
+        </div>
+        {/* Menu mobile a scomparsa */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileMenuOpen ? "max-h-screen border-t border-gray-100" : "max-h-0"}`}>
+          <div className="bg-white px-4 py-4 flex flex-col gap-1">
+            {[
+              { href: "#come-funziona", label: "Come Funziona", icon: "fa-info-circle" },
+              { href: "#demo", label: "Demo Settori", icon: "fa-th-large" },
+              { href: "#soluzioni-pronte", label: "Soluzioni Pronte", icon: "fa-box-open" },
+              { href: "#lavori", label: "In Esecuzione", icon: "fa-tasks" },
+              { href: "#prezzi", label: "Prezzi", icon: "fa-tag" },
+            ].map(({ href, label, icon }) => (
+              <a key={href} href={href} onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 font-medium hover:bg-indigo-50 hover:text-indigo-700 transition text-sm">
+                <i className={`fas ${icon} w-5 text-indigo-400`}></i> {label}
+              </a>
+            ))}
+            <a href="/pagamenti" onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-emerald-700 font-bold hover:bg-emerald-50 transition text-sm">
+              <i className="fab fa-paypal w-5 text-emerald-500"></i> Pagamenti
+            </a>
+            <div className="pt-2 border-t border-gray-100 mt-1">
+              <a href="https://promo-app.replit.app/prova-gratis" target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition text-sm">
+                <i className="fas fa-rocket"></i> Inizia Ora — Gratis
+              </a>
+            </div>
           </div>
         </div>
       </nav>
