@@ -8,6 +8,10 @@ const PROGETTI: Record<string, { password: string; url: string }> = {
     password: "ciro",
     url: "https://dr-oggettistica.replit.app",
   },
+  "enzo-acconciature": {
+    password: "Enzo",
+    url: "https://enzoacconciature.replit.app/admin/calendario",
+  },
 };
 
 // Session store (in-memory)
