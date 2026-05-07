@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { getUncachableStripeClient, getStripePublishableKey } from "../lib/stripeClient";
 import { db } from "@workspace/db";
 import { discountCodesTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
@@ -9,16 +8,9 @@ const router = Router();
 const PIANI: Record<string, { nome: string; prezzoBase: number; mensile: number }> = {
   base: { nome: "Piano Base", prezzoBase: 69000, mensile: 1900 },
   pro: { nome: "Piano Business Pro", prezzoBase: 89000, mensile: 2900 },
+  gestionale360: { nome: "Gestionale360", prezzoBase: 19900, mensile: 0 },
+  agentipro: { nome: "AgentiPro", prezzoBase: 19900, mensile: 0 },
 };
-
-router.get("/checkout/publishable-key", async (_req, res) => {
-  try {
-    const key = await getStripePublishableKey();
-    res.json({ publishableKey: key });
-  } catch (err) {
-    res.status(500).json({ error: "Impossibile recuperare la chiave Stripe" });
-  }
-});
 
 router.post("/checkout/validate-code", async (req, res) => {
   const { code } = req.body as { code: string };
@@ -44,60 +36,6 @@ router.post("/checkout/validate-code", async (req, res) => {
     discountPercent: discount.discountPercent,
     description: discount.description,
   });
-});
-
-router.post("/checkout/create-intent", async (req, res) => {
-  const { piano, discountCode, customerEmail, customerName } = req.body as {
-    piano: string;
-    discountCode?: string;
-    customerEmail: string;
-    customerName: string;
-  };
-
-  const pianoDati = PIANI[piano];
-  if (!pianoDati) return res.status(400).json({ error: "Piano non valido" });
-
-  let importo = pianoDati.prezzoBase;
-  let discountApplied = 0;
-  let discountId: string | null = null;
-
-  if (discountCode) {
-    const [discount] = await db
-      .select()
-      .from(discountCodesTable)
-      .where(eq(discountCodesTable.code, discountCode.trim().toUpperCase()));
-
-    if (discount && discount.active && (discount.maxUses === null || discount.usedCount < discount.maxUses)) {
-      discountApplied = discount.discountPercent;
-      discountId = discount.id;
-      importo = Math.round(importo * (1 - discountApplied / 100));
-    }
-  }
-
-  try {
-    const stripe = await getUncachableStripeClient();
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: importo,
-      currency: "eur",
-      receipt_email: customerEmail,
-      metadata: {
-        piano,
-        customerName,
-        discountCode: discountCode || "",
-        discountPercent: String(discountApplied),
-        discountId: discountId || "",
-      },
-      automatic_payment_methods: { enabled: true },
-    });
-
-    res.json({
-      clientSecret: paymentIntent.client_secret,
-      importo,
-      discountApplied,
-    });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message || "Errore creazione pagamento" });
-  }
 });
 
 router.post("/checkout/bonifico", async (req, res) => {

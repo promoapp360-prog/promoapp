@@ -1,17 +1,13 @@
-import { useState, useEffect } from "react";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const API_BASE = "";
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID as string;
 
 type Modalita = "scelta" | "acconto" | "saldo";
 type StepAcconto = "progetto" | "dati" | "pagamento" | "successo";
 type StepSaldo = "cerca" | "dettaglio" | "pagamento" | "successo";
 type TipoCliente = "privato" | "azienda";
-type MetodoPagamento = "stripe" | "paypal";
 
 interface FormData {
   progetto: string; importoTotaleEuro: string; importoEuro: string;
@@ -34,46 +30,6 @@ const EMPTY_FORM: FormData = {
 
 const inp = "w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white";
 const lbl = "block text-sm font-medium text-gray-700 mb-1";
-
-function StripeForm({ importo, onSuccess }: { importo: number; onSuccess: () => void }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handlePay(e: React.FormEvent) {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-    setLoading(true); setError("");
-    const { error: stripeErr, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      confirmParams: { return_url: window.location.origin + `${basePath}/pagamenti?success=1` },
-      redirect: "if_required",
-    });
-    if (stripeErr) { setError(stripeErr.message || "Errore nel pagamento"); setLoading(false); return; }
-    if (paymentIntent?.status === "succeeded") {
-      await fetch(`${API_BASE}/api/acconto/confirm`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentIntentId: paymentIntent.id }),
-      });
-      onSuccess();
-    }
-    setLoading(false);
-  }
-
-  return (
-    <form onSubmit={handlePay} className="space-y-4">
-      <PaymentElement />
-      {error && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{error}</p>}
-      <button type="submit" disabled={loading || !stripe}
-        className="w-full py-4 rounded-xl font-bold text-white text-base transition flex items-center justify-center gap-2"
-        style={{ background: loading ? "#9ca3af" : "#6366f1", cursor: loading ? "not-allowed" : "pointer" }}>
-        {loading ? <><i className="fas fa-spinner fa-spin"></i> Elaborazione...</> : <><i className="fas fa-lock"></i> Paga {(importo / 100).toFixed(2).replace(".", ",")}€ in modo sicuro</>}
-      </button>
-      <p className="text-xs text-center text-gray-400">🔒 Pagamento sicuro via Stripe · Riceverai subito la ricevuta via email</p>
-    </form>
-  );
-}
 
 function PayPalBox({ importoEuro, accontoId, confirmEndpoint, onSuccess }: {
   importoEuro: string; accontoId: string; confirmEndpoint: string; onSuccess: () => void;
@@ -106,33 +62,11 @@ function PayPalBox({ importoEuro, accontoId, confirmEndpoint, onSuccess }: {
             onSuccess();
           } catch { setErrore("Errore di connessione. Contattaci su WhatsApp al +39 379 360 2035"); }
         }}
-        onError={() => setErrore("Errore PayPal. Riprova o usa la carta di credito.")}
+        onError={() => setErrore("Errore PayPal. Riprova più tardi.")}
         onCancel={() => setErrore("Pagamento annullato.")}
       />
       {errore && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3 text-center">{errore}</p>}
       <p className="text-xs text-center text-gray-400">🔒 Pagamento sicuro via PayPal · Riceverai subito la ricevuta via email</p>
-    </div>
-  );
-}
-
-function MetodoBox({ metodo, onSelect }: { metodo: MetodoPagamento | null; onSelect: (m: MetodoPagamento) => void }) {
-  return (
-    <div className="space-y-3">
-      <p className="text-sm font-semibold text-gray-700 text-center">Scegli come pagare</p>
-      <div className="grid grid-cols-2 gap-3">
-        <button type="button" onClick={() => onSelect("stripe")}
-          className="flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-2 transition font-semibold text-sm"
-          style={{ borderColor: metodo === "stripe" ? "#6366f1" : "#e5e7eb", background: metodo === "stripe" ? "#eef2ff" : "white", color: metodo === "stripe" ? "#4338ca" : "#6b7280" }}>
-          <i className="fas fa-credit-card text-xl"></i>
-          Carta di credito
-        </button>
-        <button type="button" onClick={() => onSelect("paypal")}
-          className="flex flex-col items-center gap-2 py-4 px-3 rounded-2xl border-2 transition font-semibold text-sm"
-          style={{ borderColor: metodo === "paypal" ? "#003087" : "#e5e7eb", background: metodo === "paypal" ? "#e8f0fe" : "white", color: metodo === "paypal" ? "#003087" : "#6b7280" }}>
-          <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" className="h-5 object-contain" />
-          PayPal
-        </button>
-      </div>
     </div>
   );
 }
@@ -158,14 +92,11 @@ function Successo({ tipo }: { tipo: "acconto" | "saldo" }) {
 
 export default function Pagamenti() {
   const [modalita, setModalita] = useState<Modalita>("scelta");
-  const [stripePromise, setStripePromise] = useState<any>(null);
 
   const [stepA, setStepA] = useState<StepAcconto>("progetto");
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [errA, setErrA] = useState("");
   const [loadingA, setLoadingA] = useState(false);
-  const [csAcconto, setCsAcconto] = useState("");
-  const [metodoA, setMetodoA] = useState<MetodoPagamento | null>(null);
   const [accontoIdPaypal, setAccontoIdPaypal] = useState("");
 
   const [stepS, setStepS] = useState<StepSaldo>("cerca");
@@ -175,22 +106,7 @@ export default function Pagamenti() {
   const [importoSaldoEuro, setImportoSaldoEuro] = useState("");
   const [errS, setErrS] = useState("");
   const [loadingS, setLoadingS] = useState(false);
-  const [csSaldo, setCsSaldo] = useState("");
-  const [importoSaldoCent, setImportoSaldoCent] = useState(0);
-  const [metodoS, setMetodoS] = useState<MetodoPagamento | null>(null);
   const [saldoIdPaypal, setSaldoIdPaypal] = useState("");
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("success") === "1") {
-      setModalita(params.get("tipo") === "saldo" ? "saldo" : "acconto");
-      setStepA("successo"); setStepS("successo");
-    }
-    fetch(`${API_BASE}/api/checkout/publishable-key`)
-      .then(r => r.json())
-      .then(d => setStripePromise(loadStripe(d.publishableKey)))
-      .catch(() => {});
-  }, []);
 
   function setF(field: keyof FormData, val: string) { setForm(f => ({ ...f, [field]: val })); }
 
@@ -205,6 +121,7 @@ export default function Pagamenti() {
     if (form.importoTotaleEuro && acc > parseFloat(form.importoTotaleEuro)) { setErrA("L'acconto non può superare il totale del progetto"); return false; }
     return true;
   }
+
   function validaDati() {
     if (!form.nome || !form.cognome || !form.email || !form.telefono) { setErrA("Compila tutti i dati personali"); return false; }
     if (!form.indirizzo || !form.cap || !form.citta) { setErrA("Compila l'indirizzo completo"); return false; }
@@ -212,22 +129,7 @@ export default function Pagamenti() {
     return true;
   }
 
-  async function procediPagamentoAccontoStripe() {
-    setErrA(""); setLoadingA(true);
-    try {
-      const res = await fetch(`${API_BASE}/api/acconto/create-intent`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, tipoPagamento: "acconto" }),
-      });
-      const data = await res.json();
-      if (!res.ok) { setErrA(data.error); setLoadingA(false); return; }
-      setCsAcconto(data.clientSecret);
-      setStepA("pagamento");
-    } catch { setErrA("Errore di connessione. Riprova."); }
-    setLoadingA(false);
-  }
-
-  async function procediPagamentoAccontoPaypal() {
+  async function procediAccontoPaypal() {
     setErrA(""); setLoadingA(true);
     try {
       const res = await fetch(`${API_BASE}/api/acconto/paypal/create`, {
@@ -240,12 +142,6 @@ export default function Pagamenti() {
       setStepA("pagamento");
     } catch { setErrA("Errore di connessione. Riprova."); }
     setLoadingA(false);
-  }
-
-  async function procediMetodoAcconto() {
-    if (!metodoA) { setErrA("Scegli un metodo di pagamento"); return; }
-    if (metodoA === "stripe") await procediPagamentoAccontoStripe();
-    else await procediPagamentoAccontoPaypal();
   }
 
   async function cercaProgetti() {
@@ -261,27 +157,7 @@ export default function Pagamenti() {
     setLoadingS(false);
   }
 
-  async function procediPagamentoSaldoStripe() {
-    if (!progettoScelto) return;
-    const centesimi = Math.round(parseFloat(importoSaldoEuro) * 100);
-    if (!importoSaldoEuro || isNaN(centesimi) || centesimi < 100) { setErrS("Inserisci un importo valido (min. 1€)"); return; }
-    if (centesimi > progettoScelto.saldoRimanente) { setErrS(`Il saldo rimanente è ${(progettoScelto.saldoRimanente / 100).toFixed(2)}€`); return; }
-    setLoadingS(true); setErrS("");
-    try {
-      const res = await fetch(`${API_BASE}/api/acconto/saldo/create-intent`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ progettoRef: progettoScelto.id, importoEuro: importoSaldoEuro }),
-      });
-      const data = await res.json();
-      if (!res.ok) { setErrS(data.error); setLoadingS(false); return; }
-      setCsSaldo(data.clientSecret);
-      setImportoSaldoCent(centesimi);
-      setStepS("pagamento");
-    } catch { setErrS("Errore di connessione. Riprova."); }
-    setLoadingS(false);
-  }
-
-  async function procediPagamentoSaldoPaypal() {
+  async function procediSaldoPaypal() {
     if (!progettoScelto) return;
     const centesimi = Math.round(parseFloat(importoSaldoEuro) * 100);
     if (!importoSaldoEuro || isNaN(centesimi) || centesimi < 100) { setErrS("Inserisci un importo valido (min. 1€)"); return; }
@@ -294,21 +170,13 @@ export default function Pagamenti() {
       const data = await res.json();
       if (!res.ok) { setErrS(data.error); setLoadingS(false); return; }
       setSaldoIdPaypal(data.accontoId);
-      setImportoSaldoCent(centesimi);
       setStepS("pagamento");
     } catch { setErrS("Errore di connessione. Riprova."); }
     setLoadingS(false);
   }
 
-  async function procediMetodoSaldo() {
-    if (!metodoS) { setErrS("Scegli un metodo di pagamento"); return; }
-    if (metodoS === "stripe") await procediPagamentoSaldoStripe();
-    else await procediPagamentoSaldoPaypal();
-  }
-
-  if ((modalita === "acconto" && stepA === "successo") || (modalita === "saldo" && stepS === "successo")) {
-    return <Successo tipo={modalita === "saldo" ? "saldo" : "acconto"} />;
-  }
+  if (modalita === "acconto" && stepA === "successo") return <Successo tipo="acconto" />;
+  if (modalita === "saldo" && stepS === "successo") return <Successo tipo="saldo" />;
 
   return (
     <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "EUR", locale: "it_IT" }}>
@@ -320,7 +188,7 @@ export default function Pagamenti() {
             <p className="text-gray-500 text-sm mt-1">Versa un acconto o paga il saldo del tuo progetto</p>
           </div>
 
-          {/* SCELTA MODALITÀ */}
+          {/* SCELTA */}
           {modalita === "scelta" && (
             <div className="grid sm:grid-cols-2 gap-5">
               <button onClick={() => setModalita("acconto")}
@@ -330,9 +198,7 @@ export default function Pagamenti() {
                 </div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">Versa un Acconto</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">Hai già concordato un progetto con noi? Versa un acconto per iniziare.</p>
-                <div className="mt-5 inline-flex items-center gap-2 text-indigo-600 font-semibold text-sm">
-                  Inizia <i className="fas fa-arrow-right"></i>
-                </div>
+                <div className="mt-5 inline-flex items-center gap-2 text-indigo-600 font-semibold text-sm">Inizia <i className="fas fa-arrow-right"></i></div>
               </button>
               <button onClick={() => setModalita("saldo")}
                 className="bg-white rounded-3xl shadow-sm p-8 text-left hover:shadow-md hover:ring-2 hover:ring-emerald-400 transition group">
@@ -341,14 +207,12 @@ export default function Pagamenti() {
                 </div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">Paga il Saldo</h2>
                 <p className="text-gray-500 text-sm leading-relaxed">Hai già versato un acconto e vuoi saldare il resto? Troviamo il tuo progetto.</p>
-                <div className="mt-5 inline-flex items-center gap-2 text-emerald-600 font-semibold text-sm">
-                  Cerca progetto <i className="fas fa-arrow-right"></i>
-                </div>
+                <div className="mt-5 inline-flex items-center gap-2 text-emerald-600 font-semibold text-sm">Cerca progetto <i className="fas fa-arrow-right"></i></div>
               </button>
             </div>
           )}
 
-          {/* FLUSSO ACCONTO */}
+          {/* ACCONTO */}
           {modalita === "acconto" && (
             <div className="bg-white rounded-3xl shadow-sm p-8">
               {/* Stepper */}
@@ -368,13 +232,9 @@ export default function Pagamenti() {
                 })}
               </div>
 
-              {/* Step 1 - Progetto */}
               {stepA === "progetto" && (
                 <div className="space-y-5">
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-800 mb-1">Il tuo progetto</h2>
-                    <p className="text-gray-500 text-sm">Descrivici per cosa stai versando l'acconto</p>
-                  </div>
+                  <div><h2 className="text-xl font-bold text-gray-800 mb-1">Il tuo progetto</h2><p className="text-gray-500 text-sm">Descrivici per cosa stai versando l'acconto</p></div>
                   <div>
                     <label className={lbl}>Descrizione del progetto *</label>
                     <textarea value={form.progetto} onChange={e => setF("progetto", e.target.value)} rows={3}
@@ -416,7 +276,6 @@ export default function Pagamenti() {
                 </div>
               )}
 
-              {/* Step 2 - Dati */}
               {stepA === "dati" && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 mb-2">
@@ -470,24 +329,20 @@ export default function Pagamenti() {
                       {form.importoTotaleEuro && <div className="text-xs text-gray-400">su {parseFloat(form.importoTotaleEuro).toFixed(2)}€ totali</div>}
                     </div>
                   </div>
-
-                  <MetodoBox metodo={metodoA} onSelect={m => { setMetodoA(m); setErrA(""); }} />
-
                   {errA && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errA}</p>}
-                  <button onClick={() => { if (validaDati()) { setErrA(""); procediMetodoAcconto(); } }} disabled={loadingA || !metodoA}
+                  <button onClick={() => { if (validaDati()) { setErrA(""); procediAccontoPaypal(); } }} disabled={loadingA}
                     className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
-                    style={{ background: loadingA || !metodoA ? "#9ca3af" : "#6366f1", cursor: loadingA || !metodoA ? "not-allowed" : "pointer" }}>
-                    {loadingA ? <><i className="fas fa-spinner fa-spin"></i> Preparazione...</> : <><i className="fas fa-lock"></i> Procedi al pagamento</>}
+                    style={{ background: loadingA ? "#9ca3af" : "#6366f1", cursor: loadingA ? "not-allowed" : "pointer" }}>
+                    {loadingA ? <><i className="fas fa-spinner fa-spin"></i> Preparazione...</> : <><i className="fab fa-paypal"></i> Procedi al pagamento con PayPal</>}
                   </button>
                 </div>
               )}
 
-              {/* Step 3 - Pagamento */}
-              {stepA === "pagamento" && (
+              {stepA === "pagamento" && accontoIdPaypal && (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3">
                     <button onClick={() => setStepA("dati")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
-                    <div><h2 className="text-xl font-bold text-gray-800">Pagamento</h2></div>
+                    <div><h2 className="text-xl font-bold text-gray-800">Pagamento PayPal</h2></div>
                   </div>
                   <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-4 flex items-center justify-between">
                     <div>
@@ -499,27 +354,18 @@ export default function Pagamenti() {
                       {form.importoTotaleEuro && <div className="text-xs text-gray-400">su {parseFloat(form.importoTotaleEuro).toFixed(2)}€ totali</div>}
                     </div>
                   </div>
-
-                  {metodoA === "stripe" && csAcconto && stripePromise && (
-                    <Elements stripe={stripePromise} options={{ clientSecret: csAcconto, locale: "it" }}>
-                      <StripeForm importo={Math.round(parseFloat(form.importoEuro) * 100)} onSuccess={() => setStepA("successo")} />
-                    </Elements>
-                  )}
-
-                  {metodoA === "paypal" && accontoIdPaypal && (
-                    <PayPalBox
-                      importoEuro={parseFloat(form.importoEuro).toFixed(2)}
-                      accontoId={accontoIdPaypal}
-                      confirmEndpoint="/api/acconto/paypal/confirm"
-                      onSuccess={() => setStepA("successo")}
-                    />
-                  )}
+                  <PayPalBox
+                    importoEuro={parseFloat(form.importoEuro).toFixed(2)}
+                    accontoId={accontoIdPaypal}
+                    confirmEndpoint="/api/acconto/paypal/confirm"
+                    onSuccess={() => setStepA("successo")}
+                  />
                 </div>
               )}
             </div>
           )}
 
-          {/* FLUSSO SALDO */}
+          {/* SALDO */}
           {modalita === "saldo" && (
             <div className="bg-white rounded-3xl shadow-sm p-8">
               {stepS === "cerca" && (
@@ -539,7 +385,7 @@ export default function Pagamenti() {
                   </div>
                   {errS && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errS}</p>}
                   <button onClick={cercaProgetti} disabled={loadingS}
-                    className="w-full py-4 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2"
+                    className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
                     style={{ background: loadingS ? "#9ca3af" : "#059669" }}>
                     {loadingS ? <><i className="fas fa-spinner fa-spin"></i> Ricerca...</> : <><i className="fas fa-search"></i> Cerca il mio progetto</>}
                   </button>
@@ -558,23 +404,13 @@ export default function Pagamenti() {
                         className={`w-full text-left rounded-2xl border-2 p-4 transition ${progettoScelto?.id === p.id ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
                         <div className="font-bold text-gray-800 mb-2">{p.progetto}</div>
                         <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="bg-gray-100 rounded-lg p-2 text-center">
-                            <div className="text-gray-400 mb-0.5">Totale</div>
-                            <div className="font-bold text-gray-700">{(p.importoTotale / 100).toFixed(2)}€</div>
-                          </div>
-                          <div className="bg-indigo-50 rounded-lg p-2 text-center">
-                            <div className="text-indigo-400 mb-0.5">Versato</div>
-                            <div className="font-bold text-indigo-700">{(p.totaleVersato / 100).toFixed(2)}€</div>
-                          </div>
-                          <div className="bg-amber-50 rounded-lg p-2 text-center">
-                            <div className="text-amber-500 mb-0.5">Saldo</div>
-                            <div className="font-bold text-amber-600">{(p.saldoRimanente / 100).toFixed(2)}€</div>
-                          </div>
+                          <div className="bg-gray-100 rounded-lg p-2 text-center"><div className="text-gray-400 mb-0.5">Totale</div><div className="font-bold text-gray-700">{(p.importoTotale / 100).toFixed(2)}€</div></div>
+                          <div className="bg-indigo-50 rounded-lg p-2 text-center"><div className="text-indigo-400 mb-0.5">Versato</div><div className="font-bold text-indigo-700">{(p.totaleVersato / 100).toFixed(2)}€</div></div>
+                          <div className="bg-amber-50 rounded-lg p-2 text-center"><div className="text-amber-500 mb-0.5">Saldo</div><div className="font-bold text-amber-600">{(p.saldoRimanente / 100).toFixed(2)}€</div></div>
                         </div>
                       </button>
                     ))}
                   </div>
-
                   {progettoScelto && (
                     <div className="border-t border-gray-100 pt-4 space-y-4">
                       <div>
@@ -587,53 +423,36 @@ export default function Pagamenti() {
                         </div>
                         <p className="text-xs text-gray-400 mt-1">
                           Saldo massimo: <strong>{(progettoScelto.saldoRimanente / 100).toFixed(2).replace(".", ",")}€</strong>
-                          {importoSaldoEuro && parseFloat(importoSaldoEuro) === progettoScelto.saldoRimanente / 100 && (
-                            <span className="ml-2 text-emerald-600 font-semibold">✓ Saldo completo</span>
-                          )}
+                          {importoSaldoEuro && parseFloat(importoSaldoEuro) === progettoScelto.saldoRimanente / 100 && <span className="ml-2 text-emerald-600 font-semibold">✓ Saldo completo</span>}
                         </p>
                       </div>
-
-                      <MetodoBox metodo={metodoS} onSelect={m => { setMetodoS(m); setErrS(""); }} />
-
                       {errS && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errS}</p>}
-                      <button onClick={procediMetodoSaldo} disabled={loadingS || !metodoS}
+                      <button onClick={procediSaldoPaypal} disabled={loadingS}
                         className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
-                        style={{ background: loadingS || !metodoS ? "#9ca3af" : "#059669", cursor: loadingS || !metodoS ? "not-allowed" : "pointer" }}>
-                        {loadingS ? <><i className="fas fa-spinner fa-spin"></i> Preparazione...</> : <><i className="fas fa-lock"></i> Procedi al pagamento</>}
+                        style={{ background: loadingS ? "#9ca3af" : "#059669", cursor: loadingS ? "not-allowed" : "pointer" }}>
+                        {loadingS ? <><i className="fas fa-spinner fa-spin"></i> Preparazione...</> : <><i className="fab fa-paypal"></i> Procedi al pagamento con PayPal</>}
                       </button>
                     </div>
                   )}
                 </div>
               )}
 
-              {stepS === "pagamento" && (
+              {stepS === "pagamento" && saldoIdPaypal && (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3">
                     <button onClick={() => setStepS("dettaglio")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
-                    <div><h2 className="text-xl font-bold text-gray-800">Pagamento Saldo</h2></div>
+                    <div><h2 className="text-xl font-bold text-gray-800">Pagamento Saldo — PayPal</h2></div>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-emerald-500 font-semibold uppercase tracking-widest">Saldo per</div>
-                      <div className="font-bold text-gray-800 text-sm truncate max-w-[180px]">{progettoScelto?.progetto}</div>
-                    </div>
+                    <div><div className="text-xs text-emerald-500 font-semibold uppercase tracking-widest">Saldo per</div><div className="font-bold text-gray-800 text-sm truncate max-w-[180px]">{progettoScelto?.progetto}</div></div>
                     <div className="text-2xl font-extrabold text-emerald-700">€ {parseFloat(importoSaldoEuro || "0").toFixed(2)}</div>
                   </div>
-
-                  {metodoS === "stripe" && csSaldo && stripePromise && (
-                    <Elements stripe={stripePromise} options={{ clientSecret: csSaldo, locale: "it" }}>
-                      <StripeForm importo={importoSaldoCent} onSuccess={() => setStepS("successo")} />
-                    </Elements>
-                  )}
-
-                  {metodoS === "paypal" && saldoIdPaypal && (
-                    <PayPalBox
-                      importoEuro={parseFloat(importoSaldoEuro).toFixed(2)}
-                      accontoId={saldoIdPaypal}
-                      confirmEndpoint="/api/acconto/paypal/saldo/confirm"
-                      onSuccess={() => setStepS("successo")}
-                    />
-                  )}
+                  <PayPalBox
+                    importoEuro={parseFloat(importoSaldoEuro).toFixed(2)}
+                    accontoId={saldoIdPaypal}
+                    confirmEndpoint="/api/acconto/paypal/saldo/confirm"
+                    onSuccess={() => setStepS("successo")}
+                  />
                 </div>
               )}
             </div>
