@@ -126,7 +126,31 @@ export default function App() {
   const [error, setError] = useState("");
   const [lockModal, setLockModal] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [lavoriPwd, setLavoriPwd] = useState("");
+  const [lavoriPwdErr, setLavoriPwdErr] = useState(false);
+  const [progettoVisibile, setProgettoVisibile] = useState<string | null>(
+    () => sessionStorage.getItem("lavori_progetto")
+  );
   const { item, addItem, openCart } = useCart();
+
+  const LAVORI_PASSWORDS: Record<string, string> = {
+    "ciro": "dr-oggettistica",
+    "enzo": "enzo-acconciature",
+    "nano": "nano-caffe",
+  };
+
+  function sblocaLavori(e: React.FormEvent) {
+    e.preventDefault();
+    const progettoId = LAVORI_PASSWORDS[lavoriPwd.trim().toLowerCase()];
+    if (progettoId) {
+      sessionStorage.setItem("lavori_progetto", progettoId);
+      setProgettoVisibile(progettoId);
+      setLavoriPwdErr(false);
+    } else {
+      setLavoriPwdErr(true);
+      setLavoriPwd("");
+    }
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -608,112 +632,101 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Progetto: DR Oggettistica */}
-            <button
-              onClick={() => setLockModal("dr-oggettistica")}
-              className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full"
-            >
-              <div className="bg-gradient-to-br from-violet-600 to-indigo-700 px-6 py-8 relative">
-                <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl">
-                    <i className="fas fa-gift"></i>
+          {!progettoVisibile ? (
+            <div className="max-w-sm mx-auto">
+              <form onSubmit={sblocaLavori} className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 text-center">
+                <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <i className="fas fa-lock text-indigo-600 text-2xl"></i>
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-1">Area riservata</h3>
+                <p className="text-gray-400 text-sm mb-6">Inserisci la tua password per vedere il tuo progetto</p>
+                <input
+                  type="password"
+                  value={lavoriPwd}
+                  onChange={e => { setLavoriPwd(e.target.value); setLavoriPwdErr(false); }}
+                  placeholder="Password"
+                  className={`w-full border-2 rounded-xl px-4 py-3 text-center text-lg tracking-widest focus:outline-none transition mb-3 ${lavoriPwdErr ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-indigo-500"}`}
+                />
+                {lavoriPwdErr && <p className="text-red-500 text-sm mb-3">Password errata. Riprova.</p>}
+                <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">
+                  Accedi <i className="fas fa-arrow-right ml-2"></i>
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="max-w-md mx-auto">
+              {progettoVisibile === "dr-oggettistica" && (
+                <button onClick={() => setLockModal("dr-oggettistica")}
+                  className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
+                  <div className="bg-gradient-to-br from-violet-600 to-indigo-700 px-6 py-8 relative">
+                    <div className="flex justify-between items-start">
+                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl"><i className="fas fa-gift"></i></div>
+                      <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">In corso</span>
+                    </div>
+                    <div className="mt-4 text-white">
+                      <h4 className="text-xl font-bold">DR Oggettistica</h4>
+                      <p className="text-white/75 text-sm font-light mt-1">Vetrina online · Gestionale prodotti</p>
+                    </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
+                      <div className="bg-white text-indigo-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg"><i className="fas fa-lock text-sm"></i></div>
+                    </div>
                   </div>
-                  <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
-                    In corso
-                  </span>
-                </div>
-                <div className="mt-4 text-white">
-                  <h4 className="text-xl font-bold">DR Oggettistica</h4>
-                  <p className="text-white/75 text-sm font-light mt-1">Vetrina online · Gestionale prodotti</p>
-                </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-none flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
-                  <div className="bg-white text-indigo-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
-                    <i className="fas fa-lock text-sm"></i>
+                  <div className="px-6 py-5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-600"><i className="fas fa-lock text-indigo-400 text-xs"></i><span>Clicca per accedere all'anteprima</span></div>
+                    <span className="text-indigo-600 group-hover:text-indigo-800 font-bold text-sm whitespace-nowrap transition">Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i></span>
                   </div>
-                </div>
-              </div>
-              <div className="px-6 py-5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <i className="fas fa-lock text-indigo-400 text-xs"></i>
-                  <span>Anteprima protetta da password</span>
-                </div>
-                <span className="text-indigo-600 group-hover:text-indigo-800 font-bold text-sm whitespace-nowrap transition">
-                  Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i>
-                </span>
-              </div>
-            </button>
-
-            {/* Progetto: Nano Caffè */}
-            <button
-              onClick={() => setLockModal("nano-caffe")}
-              className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full"
-            >
-              <div className="bg-gradient-to-br from-amber-600 to-orange-500 px-6 py-8 relative">
-                <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl">
-                    <i className="fas fa-coffee"></i>
+                </button>
+              )}
+              {progettoVisibile === "enzo-acconciature" && (
+                <button onClick={() => setLockModal("enzo-acconciature")}
+                  className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
+                  <div className="bg-gradient-to-br from-rose-500 to-pink-600 px-6 py-8 relative">
+                    <div className="flex justify-between items-start">
+                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl"><i className="fas fa-cut"></i></div>
+                      <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">In corso</span>
+                    </div>
+                    <div className="mt-4 text-white">
+                      <h4 className="text-xl font-bold">Enzo Acconciature</h4>
+                      <p className="text-white/75 text-sm font-light mt-1">Gestionale appuntamenti · Calendario</p>
+                    </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
+                      <div className="bg-white text-rose-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg"><i className="fas fa-lock text-sm"></i></div>
+                    </div>
                   </div>
-                  <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
-                    In corso
-                  </span>
-                </div>
-                <div className="mt-4 text-white">
-                  <h4 className="text-xl font-bold">Nano Caffè</h4>
-                  <p className="text-white/75 text-sm font-light mt-1">App bar · Menù digitale · Gestionale</p>
-                </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-none flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
-                  <div className="bg-white text-amber-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
-                    <i className="fas fa-lock text-sm"></i>
+                  <div className="px-6 py-5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-600"><i className="fas fa-lock text-rose-400 text-xs"></i><span>Clicca per accedere all'anteprima</span></div>
+                    <span className="text-rose-600 group-hover:text-rose-800 font-bold text-sm whitespace-nowrap transition">Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i></span>
                   </div>
-                </div>
-              </div>
-              <div className="px-6 py-5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <i className="fas fa-lock text-amber-400 text-xs"></i>
-                  <span>Anteprima protetta da password</span>
-                </div>
-                <span className="text-amber-600 group-hover:text-amber-800 font-bold text-sm whitespace-nowrap transition">
-                  Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i>
-                </span>
-              </div>
-            </button>
-
-            {/* Progetto: Enzo Acconciature */}
-            <button
-              onClick={() => setLockModal("enzo-acconciature")}
-              className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full"
-            >
-              <div className="bg-gradient-to-br from-rose-500 to-pink-600 px-6 py-8 relative">
-                <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl">
-                    <i className="fas fa-cut"></i>
+                </button>
+              )}
+              {progettoVisibile === "nano-caffe" && (
+                <button onClick={() => setLockModal("nano-caffe")}
+                  className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
+                  <div className="bg-gradient-to-br from-amber-600 to-orange-500 px-6 py-8 relative">
+                    <div className="flex justify-between items-start">
+                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl"><i className="fas fa-coffee"></i></div>
+                      <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">In corso</span>
+                    </div>
+                    <div className="mt-4 text-white">
+                      <h4 className="text-xl font-bold">Nano Caffè</h4>
+                      <p className="text-white/75 text-sm font-light mt-1">App bar · Menù digitale · Gestionale</p>
+                    </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
+                      <div className="bg-white text-amber-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg"><i className="fas fa-lock text-sm"></i></div>
+                    </div>
                   </div>
-                  <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
-                    In corso
-                  </span>
-                </div>
-                <div className="mt-4 text-white">
-                  <h4 className="text-xl font-bold">Enzo Acconciature</h4>
-                  <p className="text-white/75 text-sm font-light mt-1">Gestionale appuntamenti · Calendario</p>
-                </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-none flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
-                  <div className="bg-white text-rose-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
-                    <i className="fas fa-lock text-sm"></i>
+                  <div className="px-6 py-5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-600"><i className="fas fa-lock text-amber-400 text-xs"></i><span>Clicca per accedere all'anteprima</span></div>
+                    <span className="text-amber-600 group-hover:text-amber-800 font-bold text-sm whitespace-nowrap transition">Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i></span>
                   </div>
-                </div>
-              </div>
-              <div className="px-6 py-5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <i className="fas fa-lock text-rose-400 text-xs"></i>
-                  <span>Anteprima protetta da password</span>
-                </div>
-                <span className="text-rose-600 group-hover:text-rose-800 font-bold text-sm whitespace-nowrap transition">
-                  Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i>
-                </span>
-              </div>
-            </button>
-          </div>
+                </button>
+              )}
+              <button onClick={() => { setProgettoVisibile(null); sessionStorage.removeItem("lavori_progetto"); setLavoriPwd(""); }}
+                className="mt-4 w-full text-sm text-gray-400 hover:text-gray-600 py-2 transition">
+                <i className="fas fa-sign-out-alt mr-1"></i> Esci dall'area riservata
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
