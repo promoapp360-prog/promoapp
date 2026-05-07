@@ -12,6 +12,10 @@ const PROGETTI: Record<string, { password: string; url: string }> = {
     password: "Enzo",
     url: "https://enzoacconciature.replit.app/admin/calendario",
   },
+  "nano-caffe": {
+    password: "nano",
+    url: "https://nanocaffe.replit.app",
+  },
 };
 
 // Session store (in-memory)

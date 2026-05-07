@@ -644,6 +644,41 @@ export default function App() {
               </div>
             </button>
 
+            {/* Progetto: Nano Caffè */}
+            <button
+              onClick={() => setLockModal("nano-caffe")}
+              className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full"
+            >
+              <div className="bg-gradient-to-br from-amber-600 to-orange-500 px-6 py-8 relative">
+                <div className="flex justify-between items-start">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl">
+                    <i className="fas fa-coffee"></i>
+                  </div>
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
+                    In corso
+                  </span>
+                </div>
+                <div className="mt-4 text-white">
+                  <h4 className="text-xl font-bold">Nano Caffè</h4>
+                  <p className="text-white/75 text-sm font-light mt-1">App bar · Menù digitale · Gestionale</p>
+                </div>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-none flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
+                  <div className="bg-white text-amber-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
+                    <i className="fas fa-lock text-sm"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="px-6 py-5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <i className="fas fa-lock text-amber-400 text-xs"></i>
+                  <span>Anteprima protetta da password</span>
+                </div>
+                <span className="text-amber-600 group-hover:text-amber-800 font-bold text-sm whitespace-nowrap transition">
+                  Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i>
+                </span>
+              </div>
+            </button>
+
             {/* Progetto: Enzo Acconciature */}
             <button
               onClick={() => setLockModal("enzo-acconciature")}
