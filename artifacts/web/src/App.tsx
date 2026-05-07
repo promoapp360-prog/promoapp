@@ -139,6 +139,12 @@ export default function App() {
     "nano": "nano-caffe",
   };
 
+  const LAVORI_URLS: Record<string, string> = {
+    "dr-oggettistica": "https://dr-oggettistica.replit.app",
+    "enzo-acconciature": "https://enzoacconciature.replit.app/admin/calendario",
+    "nano-caffe": "https://nanocaffe.replit.app",
+  };
+
   function sblocaLavori(e: React.FormEvent) {
     e.preventDefault();
     const progettoId = LAVORI_PASSWORDS[lavoriPwd.trim().toLowerCase()];
@@ -656,7 +662,7 @@ export default function App() {
           ) : (
             <div className="max-w-md mx-auto">
               {progettoVisibile === "dr-oggettistica" && (
-                <button onClick={() => setLockModal("dr-oggettistica")}
+                <button onClick={() => window.open(LAVORI_URLS["dr-oggettistica"], "_blank")}
                   className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
                   <div className="bg-gradient-to-br from-violet-600 to-indigo-700 px-6 py-8 relative">
                     <div className="flex justify-between items-start">
@@ -678,7 +684,7 @@ export default function App() {
                 </button>
               )}
               {progettoVisibile === "enzo-acconciature" && (
-                <button onClick={() => setLockModal("enzo-acconciature")}
+                <button onClick={() => window.open(LAVORI_URLS["enzo-acconciature"], "_blank")}
                   className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
                   <div className="bg-gradient-to-br from-rose-500 to-pink-600 px-6 py-8 relative">
                     <div className="flex justify-between items-start">
@@ -700,7 +706,7 @@ export default function App() {
                 </button>
               )}
               {progettoVisibile === "nano-caffe" && (
-                <button onClick={() => setLockModal("nano-caffe")}
+                <button onClick={() => window.open(LAVORI_URLS["nano-caffe"], "_blank")}
                   className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
                   <div className="bg-gradient-to-br from-amber-600 to-orange-500 px-6 py-8 relative">
                     <div className="flex justify-between items-start">
