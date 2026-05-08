@@ -7,6 +7,7 @@ import { publishableKeyFromHost } from "@clerk/shared/keys";
 import { CLERK_PROXY_PATH, clerkProxyMiddleware, getClerkProxyHost } from "./middlewares/clerkProxyMiddleware";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { stripeWebhookHandler } from "./lib/stripeWebhook";
 
 const app: Express = express();
 
@@ -28,6 +29,13 @@ app.use(
       },
     },
   }),
+);
+
+// Stripe webhook DEVE stare PRIMA di express.json() — richiede il body come Buffer grezzo
+app.post(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhookHandler,
 );
 
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());

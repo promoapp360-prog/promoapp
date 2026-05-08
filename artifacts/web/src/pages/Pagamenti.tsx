@@ -5,8 +5,8 @@ const API_BASE = "";
 const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID as string;
 
 type Modalita = "scelta" | "acconto" | "saldo";
-type StepAcconto = "progetto" | "dati" | "pagamento" | "successo";
-type StepSaldo = "cerca" | "dettaglio" | "pagamento" | "successo";
+type StepAcconto = "progetto" | "dati" | "metodo" | "pagamento" | "successo";
+type StepSaldo = "cerca" | "dettaglio" | "metodo" | "pagamento" | "successo";
 type TipoCliente = "privato" | "azienda";
 
 interface FormData {
@@ -90,13 +90,92 @@ function Successo({ tipo }: { tipo: "acconto" | "saldo" }) {
   );
 }
 
+function MetodoPagamento({ importoEuro, etichetta, onPaypal, onStripe, loading, errore }: {
+  importoEuro: string;
+  etichetta: string;
+  onPaypal: () => void;
+  onStripe: () => void;
+  loading: { paypal: boolean; stripe: boolean };
+  errore: string;
+}) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-xl font-bold text-gray-800 mb-1">Scegli il metodo di pagamento</h2>
+        <p className="text-gray-500 text-sm">Puoi pagare con PayPal o carta di credito</p>
+      </div>
+
+      <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-4 flex items-center justify-between">
+        <div>
+          <div className="text-xs text-indigo-500 font-semibold uppercase tracking-widest">{etichetta}</div>
+          <div className="text-2xl font-extrabold text-indigo-700 mt-0.5">€ {parseFloat(importoEuro || "0").toFixed(2)}</div>
+        </div>
+        <i className="fas fa-shield-alt text-indigo-300 text-3xl"></i>
+      </div>
+
+      <div className="space-y-3">
+        <button
+          onClick={onPaypal}
+          disabled={loading.paypal || loading.stripe}
+          className="w-full py-4 rounded-2xl font-bold text-base transition flex items-center justify-center gap-3 border-2"
+          style={{
+            background: loading.paypal ? "#f3f4f6" : "#ffc439",
+            borderColor: loading.paypal ? "#e5e7eb" : "#f0a500",
+            color: "#003087",
+            cursor: (loading.paypal || loading.stripe) ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading.paypal ? (
+            <><i className="fas fa-spinner fa-spin"></i> Preparazione PayPal...</>
+          ) : (
+            <><i className="fab fa-paypal text-xl"></i> Paga con PayPal</>
+          )}
+        </button>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-gray-200"></div>
+          <span className="text-xs text-gray-400 font-medium">oppure</span>
+          <div className="flex-1 h-px bg-gray-200"></div>
+        </div>
+
+        <button
+          onClick={onStripe}
+          disabled={loading.paypal || loading.stripe}
+          className="w-full py-4 rounded-2xl font-bold text-base transition flex items-center justify-center gap-3"
+          style={{
+            background: (loading.paypal || loading.stripe) ? "#9ca3af" : "#6366f1",
+            color: "white",
+            cursor: (loading.paypal || loading.stripe) ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading.stripe ? (
+            <><i className="fas fa-spinner fa-spin"></i> Apertura pagina sicura...</>
+          ) : (
+            <><i className="fas fa-credit-card text-xl"></i> Paga con Carta di Credito</>
+          )}
+        </button>
+      </div>
+
+      {errore && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errore}</p>}
+
+      <div className="grid grid-cols-2 gap-3 text-xs text-gray-400">
+        <div className="flex items-center gap-1.5"><i className="fas fa-lock text-green-500"></i> Pagamento crittografato</div>
+        <div className="flex items-center gap-1.5"><i className="fas fa-receipt text-indigo-400"></i> Ricevuta via email</div>
+        <div className="flex items-center gap-1.5"><i className="fab fa-paypal text-blue-500"></i> PayPal protegge l'acquisto</div>
+        <div className="flex items-center gap-1.5"><i className="fas fa-shield-alt text-purple-400"></i> Stripe sicuro al 100%</div>
+      </div>
+    </div>
+  );
+}
+
 export default function Pagamenti() {
   const [modalita, setModalita] = useState<Modalita>("scelta");
 
   const [stepA, setStepA] = useState<StepAcconto>("progetto");
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
   const [errA, setErrA] = useState("");
-  const [loadingA, setLoadingA] = useState(false);
+  const [loadingPaypalA, setLoadingPaypalA] = useState(false);
+  const [loadingStripeA, setLoadingStripeA] = useState(false);
   const [accontoIdPaypal, setAccontoIdPaypal] = useState("");
 
   const [stepS, setStepS] = useState<StepSaldo>("cerca");
@@ -105,20 +184,48 @@ export default function Pagamenti() {
   const [progettoScelto, setProgettoScelto] = useState<ProgettoTrovato | null>(null);
   const [importoSaldoEuro, setImportoSaldoEuro] = useState("");
   const [errS, setErrS] = useState("");
-  const [loadingS, setLoadingS] = useState(false);
+  const [loadingPaypalS, setLoadingPaypalS] = useState(false);
+  const [loadingStripeS, setLoadingStripeS] = useState(false);
   const [saldoIdPaypal, setSaldoIdPaypal] = useState("");
 
   function setF(field: keyof FormData, val: string) { setForm(f => ({ ...f, [field]: val })); }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const stripeSuccess = params.get("stripe_success");
+    const stripeCancel = params.get("stripe_cancel");
+    const tipoParam = params.get("tipo");
     const progetto = params.get("progetto");
     const totale = params.get("totale");
     const acconto = params.get("acconto");
+
+    if (stripeSuccess === "1") {
+      if (tipoParam === "saldo") {
+        setModalita("saldo");
+        setStepS("successo");
+      } else {
+        setModalita("acconto");
+        setStepA("successo");
+      }
+      return;
+    }
+
+    if (stripeCancel === "1") {
+      if (tipoParam === "saldo") {
+        setModalita("saldo");
+        setStepS("metodo");
+        setErrS("Pagamento annullato. Puoi riprovare.");
+      } else {
+        setModalita("acconto");
+        setStepA("metodo");
+        setErrA("Pagamento annullato. Puoi riprovare con PayPal o carta.");
+      }
+      return;
+    }
+
     if (progetto) {
       setForm(f => ({
-        ...f,
-        progetto,
+        ...f, progetto,
         importoTotaleEuro: totale ?? "",
         importoEuro: acconto ?? "",
       }));
@@ -145,54 +252,101 @@ export default function Pagamenti() {
     return true;
   }
 
+  function procediAMetodo() {
+    if (validaDati()) { setErrA(""); setStepA("metodo"); }
+  }
+
   async function procediAccontoPaypal() {
-    setErrA(""); setLoadingA(true);
+    setErrA(""); setLoadingPaypalA(true);
     try {
       const res = await fetch(`${API_BASE}/api/acconto/paypal/create`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) { setErrA(data.error); setLoadingA(false); return; }
+      if (!res.ok) { setErrA(data.error); setLoadingPaypalA(false); return; }
       setAccontoIdPaypal(data.accontoId);
       setStepA("pagamento");
     } catch { setErrA("Errore di connessione. Riprova."); }
-    setLoadingA(false);
+    setLoadingPaypalA(false);
+  }
+
+  async function procediAccontoStripe() {
+    setErrA(""); setLoadingStripeA(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/acconto/stripe/create-session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) { setErrA(data.error); setLoadingStripeA(false); return; }
+      window.location.href = data.url;
+    } catch {
+      setErrA("Errore di connessione. Riprova.");
+      setLoadingStripeA(false);
+    }
   }
 
   async function cercaProgetti() {
     if (!emailSaldo.trim()) { setErrS("Inserisci la tua email"); return; }
-    setLoadingS(true); setErrS("");
+    setLoadingPaypalS(true); setErrS("");
     try {
       const res = await fetch(`${API_BASE}/api/acconto/cerca-progetto?email=${encodeURIComponent(emailSaldo)}`);
       const data = await res.json();
-      if (!res.ok) { setErrS(data.error); setLoadingS(false); return; }
-      if (data.length === 0) { setErrS("Nessun progetto con saldo aperto trovato per questa email"); setLoadingS(false); return; }
+      if (!res.ok) { setErrS(data.error); setLoadingPaypalS(false); return; }
+      if (data.length === 0) { setErrS("Nessun progetto con saldo aperto trovato per questa email"); setLoadingPaypalS(false); return; }
       setProgetti(data); setStepS("dettaglio");
     } catch { setErrS("Errore di connessione. Riprova."); }
-    setLoadingS(false);
+    setLoadingPaypalS(false);
+  }
+
+  function procediSaldoAMetodo() {
+    const centesimi = Math.round(parseFloat(importoSaldoEuro) * 100);
+    if (!progettoScelto) return;
+    if (!importoSaldoEuro || isNaN(centesimi) || centesimi < 100) { setErrS("Inserisci un importo valido (min. 1€)"); return; }
+    setErrS(""); setStepS("metodo");
   }
 
   async function procediSaldoPaypal() {
     if (!progettoScelto) return;
-    const centesimi = Math.round(parseFloat(importoSaldoEuro) * 100);
-    if (!importoSaldoEuro || isNaN(centesimi) || centesimi < 100) { setErrS("Inserisci un importo valido (min. 1€)"); return; }
-    setLoadingS(true); setErrS("");
+    setErrS(""); setLoadingPaypalS(true);
     try {
       const res = await fetch(`${API_BASE}/api/acconto/saldo/paypal/create`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ progettoRef: progettoScelto.id, importoEuro: importoSaldoEuro }),
       });
       const data = await res.json();
-      if (!res.ok) { setErrS(data.error); setLoadingS(false); return; }
+      if (!res.ok) { setErrS(data.error); setLoadingPaypalS(false); return; }
       setSaldoIdPaypal(data.accontoId);
       setStepS("pagamento");
     } catch { setErrS("Errore di connessione. Riprova."); }
-    setLoadingS(false);
+    setLoadingPaypalS(false);
+  }
+
+  async function procediSaldoStripe() {
+    if (!progettoScelto) return;
+    setErrS(""); setLoadingStripeS(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/acconto/saldo/stripe/create-session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ progettoRef: progettoScelto.id, importoEuro: importoSaldoEuro }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setErrS(data.error); setLoadingStripeS(false); return; }
+      window.location.href = data.url;
+    } catch {
+      setErrS("Errore di connessione. Riprova.");
+      setLoadingStripeS(false);
+    }
   }
 
   if (modalita === "acconto" && stepA === "successo") return <Successo tipo="acconto" />;
   if (modalita === "saldo" && stepS === "successo") return <Successo tipo="saldo" />;
+
+  // Stepper acconto: mostra "metodo" e "pagamento" entrambi come step 3
+  const stepperIdxA = ["progetto", "dati", "metodo"].indexOf(
+    stepA === "pagamento" ? "metodo" : stepA
+  );
 
   return (
     <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "EUR", locale: "it_IT" }}>
@@ -233,10 +387,10 @@ export default function Pagamenti() {
             <div className="bg-white rounded-3xl shadow-sm p-8">
               {/* Stepper */}
               <div className="flex items-center justify-center gap-2 mb-7">
-                {(["progetto", "dati", "pagamento"] as const).map((s, i) => {
+                {(["progetto", "dati", "metodo"] as const).map((s, i) => {
                   const labels = ["Progetto", "Dati", "Pagamento"];
-                  const idx = ["progetto", "dati", "pagamento"].indexOf(stepA);
-                  const active = s === stepA; const done = i < idx;
+                  const active = i === stepperIdxA;
+                  const done = i < stepperIdxA;
                   return (
                     <div key={s} className="flex items-center gap-2">
                       {i > 0 && <div className={`h-px w-8 ${done || active ? "bg-indigo-400" : "bg-gray-200"}`}></div>}
@@ -248,6 +402,7 @@ export default function Pagamenti() {
                 })}
               </div>
 
+              {/* Step Progetto */}
               {stepA === "progetto" && (
                 <div className="space-y-5">
                   <div><h2 className="text-xl font-bold text-gray-800 mb-1">Il tuo progetto</h2><p className="text-gray-500 text-sm">Descrivici per cosa stai versando l'acconto</p></div>
@@ -292,6 +447,7 @@ export default function Pagamenti() {
                 </div>
               )}
 
+              {/* Step Dati */}
               {stepA === "dati" && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 mb-2">
@@ -346,18 +502,37 @@ export default function Pagamenti() {
                     </div>
                   </div>
                   {errA && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errA}</p>}
-                  <button onClick={() => { if (validaDati()) { setErrA(""); procediAccontoPaypal(); } }} disabled={loadingA}
+                  <button onClick={procediAMetodo}
                     className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
-                    style={{ background: loadingA ? "#9ca3af" : "#6366f1", cursor: loadingA ? "not-allowed" : "pointer" }}>
-                    {loadingA ? <><i className="fas fa-spinner fa-spin"></i> Preparazione...</> : <><i className="fab fa-paypal"></i> Procedi al pagamento con PayPal</>}
+                    style={{ background: "#6366f1" }}>
+                    Scegli metodo di pagamento <i className="fas fa-arrow-right"></i>
                   </button>
                 </div>
               )}
 
+              {/* Step Metodo */}
+              {stepA === "metodo" && (
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 mb-2">
+                    <button onClick={() => setStepA("dati")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
+                    <div></div>
+                  </div>
+                  <MetodoPagamento
+                    importoEuro={form.importoEuro}
+                    etichetta="Acconto per"
+                    onPaypal={procediAccontoPaypal}
+                    onStripe={procediAccontoStripe}
+                    loading={{ paypal: loadingPaypalA, stripe: loadingStripeA }}
+                    errore={errA}
+                  />
+                </div>
+              )}
+
+              {/* Step Pagamento PayPal */}
               {stepA === "pagamento" && accontoIdPaypal && (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setStepA("dati")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
+                    <button onClick={() => setStepA("metodo")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
                     <div><h2 className="text-xl font-bold text-gray-800">Pagamento PayPal</h2></div>
                   </div>
                   <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-4 flex items-center justify-between">
@@ -384,6 +559,7 @@ export default function Pagamenti() {
           {/* SALDO */}
           {modalita === "saldo" && (
             <div className="bg-white rounded-3xl shadow-sm p-8">
+
               {stepS === "cerca" && (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3">
@@ -391,19 +567,20 @@ export default function Pagamenti() {
                     <div><h2 className="text-xl font-bold text-gray-800">Paga il Saldo</h2><p className="text-gray-500 text-sm">Inserisci la tua email per trovare il progetto</p></div>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4 text-sm text-emerald-700">
-                    <i className="fas fa-info-circle mr-2"></i>Usa la stessa email con cui hai versato l'acconto
+                    <i className="fas fa-info-circle mr-2"></i>
+                    Cerchiamo tutti i tuoi progetti con saldo aperto in base all'email usata per l'acconto.
                   </div>
                   <div>
                     <label className={lbl}>La tua email *</label>
                     <input type="email" value={emailSaldo} onChange={e => setEmailSaldo(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && cercaProgetti()}
-                      className={inp} placeholder="mario@esempio.it" />
+                      className={inp} placeholder="mario@esempio.it"
+                      onKeyDown={e => e.key === "Enter" && cercaProgetti()} />
                   </div>
                   {errS && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errS}</p>}
-                  <button onClick={cercaProgetti} disabled={loadingS}
+                  <button onClick={cercaProgetti} disabled={loadingPaypalS}
                     className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
-                    style={{ background: loadingS ? "#9ca3af" : "#059669" }}>
-                    {loadingS ? <><i className="fas fa-spinner fa-spin"></i> Ricerca...</> : <><i className="fas fa-search"></i> Cerca il mio progetto</>}
+                    style={{ background: loadingPaypalS ? "#9ca3af" : "#059669", cursor: loadingPaypalS ? "not-allowed" : "pointer" }}>
+                    {loadingPaypalS ? <><i className="fas fa-spinner fa-spin"></i> Cercando...</> : <><i className="fas fa-search"></i> Cerca progetti</>}
                   </button>
                 </div>
               )}
@@ -411,57 +588,94 @@ export default function Pagamenti() {
               {stepS === "dettaglio" && (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setStepS("cerca")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
-                    <div><h2 className="text-xl font-bold text-gray-800">Seleziona il progetto</h2><p className="text-gray-500 text-sm">Trovati {progetti.length} progetto/i con saldo aperto</p></div>
+                    <button onClick={() => { setStepS("cerca"); setProgetti([]); setProgettoScelto(null); }} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
+                    <div><h2 className="text-xl font-bold text-gray-800">Scegli il progetto</h2></div>
                   </div>
-                  <div className="space-y-3 mb-4">
-                    {progetti.map(p => (
-                      <button key={p.id} onClick={() => { setProgettoScelto(p); setImportoSaldoEuro((p.saldoRimanente / 100).toFixed(2)); }}
-                        className={`w-full text-left rounded-2xl border-2 p-4 transition ${progettoScelto?.id === p.id ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
-                        <div className="font-bold text-gray-800 mb-2">{p.progetto}</div>
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                          <div className="bg-gray-100 rounded-lg p-2 text-center"><div className="text-gray-400 mb-0.5">Totale</div><div className="font-bold text-gray-700">{(p.importoTotale / 100).toFixed(2)}€</div></div>
-                          <div className="bg-indigo-50 rounded-lg p-2 text-center"><div className="text-indigo-400 mb-0.5">Versato</div><div className="font-bold text-indigo-700">{(p.totaleVersato / 100).toFixed(2)}€</div></div>
-                          <div className="bg-amber-50 rounded-lg p-2 text-center"><div className="text-amber-500 mb-0.5">Saldo</div><div className="font-bold text-amber-600">{(p.saldoRimanente / 100).toFixed(2)}€</div></div>
+
+                  {progetti.map(p => (
+                    <button key={p.id} onClick={() => setProgettoScelto(pc => pc?.id === p.id ? null : p)}
+                      className="w-full text-left rounded-2xl border-2 p-5 transition"
+                      style={{ borderColor: progettoScelto?.id === p.id ? "#059669" : "#e5e7eb", background: progettoScelto?.id === p.id ? "#f0fdf4" : "white" }}>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-bold text-gray-800">{p.progetto}</div>
+                          <div className="text-sm text-gray-500 mt-1">{p.nome} {p.cognome}</div>
                         </div>
-                      </button>
-                    ))}
-                  </div>
+                        <div className="text-right shrink-0 ml-4">
+                          <div className="text-xs text-gray-400">Saldo rimanente</div>
+                          <div className="text-xl font-extrabold text-emerald-600">€ {(p.saldoRimanente / 100).toFixed(2)}</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-gray-500">
+                        <div><span className="font-medium">Totale:</span> €{(p.importoTotale / 100).toFixed(2)}</div>
+                        <div><span className="font-medium">Versato:</span> €{(p.totaleVersato / 100).toFixed(2)}</div>
+                        <div><span className="font-medium">Da pagare:</span> €{(p.saldoRimanente / 100).toFixed(2)}</div>
+                      </div>
+                    </button>
+                  ))}
+
                   {progettoScelto && (
-                    <div className="border-t border-gray-100 pt-4 space-y-4">
+                    <div className="space-y-3">
                       <div>
                         <label className={lbl}>Importo da versare ora (€) *</label>
                         <div className="relative">
                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">€</span>
-                          <input type="number" min="1" step="0.01" max={(progettoScelto.saldoRimanente / 100).toFixed(2)}
+                          <input type="number" min="1" step="0.01"
+                            max={(progettoScelto.saldoRimanente / 100).toFixed(2)}
                             value={importoSaldoEuro} onChange={e => setImportoSaldoEuro(e.target.value)}
+                            placeholder={(progettoScelto.saldoRimanente / 100).toFixed(2)}
                             className="w-full border border-emerald-200 rounded-xl pl-8 pr-4 py-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-emerald-300 bg-white" />
                         </div>
-                        <p className="text-xs text-gray-400 mt-1">
-                          Saldo massimo: <strong>{(progettoScelto.saldoRimanente / 100).toFixed(2).replace(".", ",")}€</strong>
-                          {importoSaldoEuro && parseFloat(importoSaldoEuro) === progettoScelto.saldoRimanente / 100 && <span className="ml-2 text-emerald-600 font-semibold">✓ Saldo completo</span>}
-                        </p>
+                        <p className="text-xs text-gray-400 mt-1">Massimo: €{(progettoScelto.saldoRimanente / 100).toFixed(2)}</p>
                       </div>
-                      {errS && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errS}</p>}
-                      <button onClick={procediSaldoPaypal} disabled={loadingS}
-                        className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
-                        style={{ background: loadingS ? "#9ca3af" : "#059669", cursor: loadingS ? "not-allowed" : "pointer" }}>
-                        {loadingS ? <><i className="fas fa-spinner fa-spin"></i> Preparazione...</> : <><i className="fab fa-paypal"></i> Procedi al pagamento con PayPal</>}
+                      <button onClick={() => setImportoSaldoEuro((progettoScelto.saldoRimanente / 100).toFixed(2))}
+                        className="w-full py-2 rounded-xl border border-emerald-200 text-emerald-700 text-sm font-medium hover:bg-emerald-50 transition">
+                        Paga tutto il saldo (€{(progettoScelto.saldoRimanente / 100).toFixed(2)})
                       </button>
                     </div>
+                  )}
+
+                  {errS && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-4 py-3">{errS}</p>}
+
+                  {progettoScelto && (
+                    <button onClick={procediSaldoAMetodo}
+                      className="w-full py-4 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
+                      style={{ background: "#059669" }}>
+                      Scegli metodo di pagamento <i className="fas fa-arrow-right"></i>
+                    </button>
                   )}
                 </div>
               )}
 
-              {stepS === "pagamento" && saldoIdPaypal && (
+              {stepS === "metodo" && progettoScelto && (
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 mb-2">
+                    <button onClick={() => setStepS("dettaglio")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
+                    <div></div>
+                  </div>
+                  <MetodoPagamento
+                    importoEuro={importoSaldoEuro}
+                    etichetta="Saldo per"
+                    onPaypal={procediSaldoPaypal}
+                    onStripe={procediSaldoStripe}
+                    loading={{ paypal: loadingPaypalS, stripe: loadingStripeS }}
+                    errore={errS}
+                  />
+                </div>
+              )}
+
+              {stepS === "pagamento" && saldoIdPaypal && progettoScelto && (
                 <div className="space-y-5">
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setStepS("dettaglio")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
+                    <button onClick={() => setStepS("metodo")} className="text-gray-400 hover:text-gray-600"><i className="fas fa-arrow-left"></i></button>
                     <div><h2 className="text-xl font-bold text-gray-800">Pagamento Saldo — PayPal</h2></div>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-4 flex items-center justify-between">
-                    <div><div className="text-xs text-emerald-500 font-semibold uppercase tracking-widest">Saldo per</div><div className="font-bold text-gray-800 text-sm truncate max-w-[180px]">{progettoScelto?.progetto}</div></div>
-                    <div className="text-2xl font-extrabold text-emerald-700">€ {parseFloat(importoSaldoEuro || "0").toFixed(2)}</div>
+                    <div>
+                      <div className="text-xs text-emerald-600 font-semibold uppercase tracking-widest">Saldo per</div>
+                      <div className="font-bold text-gray-800 text-sm truncate max-w-[180px]">{progettoScelto.progetto}</div>
+                    </div>
+                    <div className="text-2xl font-extrabold text-emerald-600">€ {parseFloat(importoSaldoEuro).toFixed(2)}</div>
                   </div>
                   <PayPalBox
                     importoEuro={parseFloat(importoSaldoEuro).toFixed(2)}
