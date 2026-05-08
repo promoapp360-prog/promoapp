@@ -227,7 +227,7 @@ export default function Pagamenti() {
       setForm(f => ({
         ...f, progetto,
         importoTotaleEuro: totale ?? "",
-        importoEuro: acconto ?? "",
+        importoEuro: acconto ?? "100",
       }));
       setModalita("acconto");
     }
