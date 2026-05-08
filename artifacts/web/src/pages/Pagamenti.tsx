@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const API_BASE = "";
@@ -109,6 +109,22 @@ export default function Pagamenti() {
   const [saldoIdPaypal, setSaldoIdPaypal] = useState("");
 
   function setF(field: keyof FormData, val: string) { setForm(f => ({ ...f, [field]: val })); }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const progetto = params.get("progetto");
+    const totale = params.get("totale");
+    const acconto = params.get("acconto");
+    if (progetto) {
+      setForm(f => ({
+        ...f,
+        progetto,
+        importoTotaleEuro: totale ?? "",
+        importoEuro: acconto ?? "",
+      }));
+      setModalita("acconto");
+    }
+  }, []);
 
   function validaProgetto() {
     if (!form.progetto.trim()) { setErrA("Descrivi il progetto"); return false; }

@@ -47,6 +47,9 @@ function CookieBanner() {
   );
 }
 
+interface SchedaVoce { descrizione: string; importo: number; }
+interface Scheda { nome: string; voci: SchedaVoce[]; accontoVersato: number; totale: number; }
+
 function LockModal({ projectId, onClose }: { projectId: string; onClose: () => void }) {
   const [pwd, setPwd] = useState("");
   const [err, setErr] = useState("");
@@ -131,6 +134,9 @@ export default function App() {
   const [progettoVisibile, setProgettoVisibile] = useState<string | null>(
     () => sessionStorage.getItem("lavori_progetto")
   );
+  const [scheda, setScheda] = useState<Scheda | null>(() => {
+    try { const s = sessionStorage.getItem("lavori_scheda"); return s ? JSON.parse(s) as Scheda : null; } catch { return null; }
+  });
   const { item, addItem, openCart } = useCart();
 
   const LAVORI_PASSWORDS: Record<string, string> = {
@@ -145,16 +151,31 @@ export default function App() {
     "nano-caffe": "https://nanocaffe.replit.app",
   };
 
-  function sblocaLavori(e: React.FormEvent) {
+  async function sblocaLavori(e: React.FormEvent) {
     e.preventDefault();
     const progettoId = LAVORI_PASSWORDS[lavoriPwd.trim().toLowerCase()];
-    if (progettoId) {
-      sessionStorage.setItem("lavori_progetto", progettoId);
-      setProgettoVisibile(progettoId);
-      setLavoriPwdErr(false);
-    } else {
+    if (!progettoId) { setLavoriPwdErr(true); setLavoriPwd(""); return; }
+    try {
+      const res = await fetch("/api/lavori/sblocca", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: progettoId, password: lavoriPwd.trim() }),
+      });
+      const data = await res.json() as { success: boolean; scheda?: Scheda };
+      if (data.success) {
+        sessionStorage.setItem("lavori_progetto", progettoId);
+        setProgettoVisibile(progettoId);
+        if (data.scheda) {
+          sessionStorage.setItem("lavori_scheda", JSON.stringify(data.scheda));
+          setScheda(data.scheda);
+        }
+        setLavoriPwdErr(false);
+      } else {
+        setLavoriPwdErr(true);
+        setLavoriPwd("");
+      }
+    } catch {
       setLavoriPwdErr(true);
-      setLavoriPwd("");
     }
   }
 
@@ -727,7 +748,53 @@ export default function App() {
                   </div>
                 </button>
               )}
-              <button onClick={() => { setProgettoVisibile(null); sessionStorage.removeItem("lavori_progetto"); setLavoriPwd(""); }}
+              {scheda && (
+                <div className="mt-5 bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <i className="fas fa-file-invoice text-indigo-600"></i>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-800 text-sm">Riepilogo del progetto</h4>
+                      <p className="text-xs text-gray-400">{scheda.nome}</p>
+                    </div>
+                  </div>
+                  <div className="px-6 py-5 space-y-3">
+                    {scheda.voci.map((v, i) => (
+                      <div key={i} className="flex justify-between text-sm">
+                        <span className="text-gray-600">{v.descrizione}</span>
+                        <span className="font-semibold text-gray-800">€ {v.importo.toLocaleString("it-IT")}</span>
+                      </div>
+                    ))}
+                    <div className="border-t border-gray-100 pt-3 flex justify-between font-bold">
+                      <span className="text-gray-700">Totale progetto</span>
+                      <span className="text-gray-900">€ {scheda.totale.toLocaleString("it-IT")}</span>
+                    </div>
+                    {scheda.accontoVersato > 0 && (
+                      <div className="flex justify-between text-sm text-emerald-600">
+                        <span>Acconto versato</span>
+                        <span>− € {scheda.accontoVersato.toLocaleString("it-IT")}</span>
+                      </div>
+                    )}
+                    <div className="bg-indigo-50 rounded-2xl px-4 py-3 flex justify-between items-center">
+                      <span className="font-bold text-indigo-700 text-sm">Residuo da saldare</span>
+                      <span className="font-extrabold text-indigo-700 text-lg">€ {(scheda.totale - scheda.accontoVersato).toLocaleString("it-IT")}</span>
+                    </div>
+                  </div>
+                  {(scheda.totale - scheda.accontoVersato) > 0 && (
+                    <div className="px-6 pb-6">
+                      <a
+                        href={`/pagamenti?progetto=${encodeURIComponent(scheda.nome)}&totale=${scheda.totale}&acconto=${scheda.totale - scheda.accontoVersato}`}
+                        className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-center transition"
+                      >
+                        Vai al pagamento <i className="fas fa-arrow-right ml-2"></i>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button onClick={() => { setProgettoVisibile(null); sessionStorage.removeItem("lavori_progetto"); sessionStorage.removeItem("lavori_scheda"); setScheda(null); setLavoriPwd(""); }}
                 className="mt-4 w-full text-sm text-gray-400 hover:text-gray-600 py-2 transition">
                 <i className="fas fa-sign-out-alt mr-1"></i> Esci dall'area riservata
               </button>
@@ -827,6 +894,23 @@ export default function App() {
               <a href="#contatti" className="block w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-indigo-600 transition">Richiedi un Preventivo →</a>
             </div>
           </div>
+
+          {/* App Desktop add-on */}
+          <div className="mt-10 max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl px-6 py-5 flex gap-4 items-start text-left shadow-sm">
+            <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
+              <i className="fas fa-desktop text-white text-xl"></i>
+            </div>
+            <div>
+              <h4 className="font-bold text-gray-800 mb-1">
+                App Desktop installabile su PC e Mac
+                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold align-middle">Opzione aggiuntiva</span>
+              </h4>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Ogni app che realizziamo può essere trasformata in un <strong>programma installabile sul computer</strong> del cliente, con la sua icona personalizzata sul desktop. Funziona su <strong>Windows (.exe)</strong> e <strong>macOS (.dmg)</strong> — si apre come qualsiasi altro software, senza browser. Ideale per gestionali, casse, magazzino e strumenti di uso quotidiano. Richiedilo nel preventivo.
+              </p>
+            </div>
+          </div>
+
         </div>
       </section>
 
