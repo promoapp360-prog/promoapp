@@ -1017,6 +1017,7 @@ export default function App() {
           <div className="opacity-60 italic flex gap-6">
             <a href="/privacy.html" className="hover:underline">Privacy Policy</a>
             <a href="/cookie.html" className="hover:underline">Cookie Policy</a>
+            <a href="/admin" className="hover:underline">Admin</a>
           </div>
           </div>
         </div>
