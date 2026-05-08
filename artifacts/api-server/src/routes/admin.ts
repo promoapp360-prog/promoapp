@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 
 const router = Router();
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "promoapp2025";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Mamma080245.";
 
 function checkAuth(req: any, res: any): boolean {
   const auth = req.headers["x-admin-password"];

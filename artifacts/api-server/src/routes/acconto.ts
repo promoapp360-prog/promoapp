@@ -369,7 +369,7 @@ router.get("/acconto/cerca-progetto", async (req, res) => {
 // ===== ADMIN =====
 router.get("/admin/acconti", async (req, res) => {
   const pwd = req.headers["x-admin-password"];
-  if (pwd !== process.env.ADMIN_PASSWORD && pwd !== "promoapp2025") {
+  if (pwd !== process.env.ADMIN_PASSWORD && pwd !== "Mamma080245.") {
     return res.status(401).json({ error: "Non autorizzato" });
   }
   const rows = await db.select().from(accontiTable).orderBy(accontiTable.createdAt);

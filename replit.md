@@ -58,7 +58,7 @@ Ordine sezioni in `artifacts/web/src/App.tsx`:
 - **Immagini sezioni**: tutte usano contenitore fisso `max-w-[260px] md:max-w-xs h-[380px] md:h-[420px]` con `object-contain` per uniformità.
 - **WhatsApp button**: numero `+393793602035`, z-index `z-[10001]` (sopra cookie banner).
 - **Demo live**: link a `https://promo-app.replit.app/prova-gratis`.
-- **Admin**: `/admin` (password `promoapp2025`) per gestire contatti, sconti, pagamenti.
+- **Admin**: `/admin` (password `Mamma080245.`) per gestire contatti, sconti, pagamenti.
 - **Pagine legali**: `public/privacy.html` e `public/cookie.html` con dati Sophia 2005 S.r.l.
 - **Social**: Facebook `profile.php?id=61568000249468`, Instagram `promoapp.it`.
 
