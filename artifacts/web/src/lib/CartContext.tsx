@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-export type PianoId = "base" | "pro" | "gestionale360" | "agentipro";
+export type PianoId = "base" | "pro" | "gestionale360" | "agentipro" | "sitoistituzionale";
 
 export interface CartItem {
   id: PianoId;
@@ -13,7 +13,8 @@ const PIANI: Record<PianoId, CartItem> = {
   base:          { id: "base",          nome: "Piano Base",          prezzo: 690, mensile: 19 },
   pro:           { id: "pro",           nome: "Piano Business Pro",  prezzo: 890, mensile: 29 },
   gestionale360: { id: "gestionale360", nome: "Gestionale360",       prezzo: 199, mensile: 0  },
-  agentipro:     { id: "agentipro",     nome: "AgentiPro",           prezzo: 199, mensile: 0  },
+  agentipro:          { id: "agentipro",          nome: "AgentiPro",                prezzo: 199, mensile: 0  },
+  sitoistituzionale:  { id: "sitoistituzionale",  nome: "Sito Web Istituzionale",   prezzo: 399, mensile: 0  },
 };
 
 interface CartContextValue {

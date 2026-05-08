@@ -10,6 +10,7 @@ const PIANI: Record<string, { nome: string; prezzoBase: number; mensile: number 
   pro: { nome: "Piano Business Pro", prezzoBase: 89000, mensile: 2900 },
   gestionale360: { nome: "Gestionale360", prezzoBase: 19900, mensile: 0 },
   agentipro: { nome: "AgentiPro", prezzoBase: 19900, mensile: 0 },
+  sitoistituzionale: { nome: "Sito Web Istituzionale", prezzoBase: 39900, mensile: 0 },
 };
 
 router.post("/checkout/validate-code", async (req, res) => {

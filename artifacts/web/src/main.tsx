@@ -8,6 +8,7 @@ import Admin from "./pages/Admin";
 import PreviewPage from "./pages/PreviewPage";
 import Registrazione from "./pages/Registrazione";
 import Pagamenti from "./pages/Pagamenti";
+import SitoWeb from "./pages/SitoWeb";
 import { CartProvider } from "./lib/CartContext";
 import "./index.css";
 
@@ -40,6 +41,7 @@ function Routes() {
           <Route path="/lavori/:id" component={PreviewPage} />
           <Route path="/registrazione/*?" component={Registrazione} />
           <Route path="/pagamenti" component={Pagamenti} />
+          <Route path="/sito-web" component={SitoWeb} />
           <Route component={App} />
         </Switch>
       </CartProvider>

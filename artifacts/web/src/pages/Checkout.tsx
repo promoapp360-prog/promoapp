@@ -60,6 +60,20 @@ const PIANI = [
       "Licenza a vita · zero canone mensile",
     ],
   },
+  {
+    id: "sitoistituzionale",
+    nome: "Sito Web Istituzionale",
+    prezzo: 399,
+    mensile: 0,
+    colore: "#0ea5e9",
+    features: [
+      "5 pagine: Home, Chi Siamo, Servizi, Contatti, Privacy",
+      "Design responsive per mobile, tablet e PC",
+      "Form di contatto + Google Maps integrata",
+      "SEO base e link profili social",
+      "30 giorni di assistenza · consegna in 7 gg lavorativi",
+    ],
+  },
 ];
 
 function getClienteDati() {
