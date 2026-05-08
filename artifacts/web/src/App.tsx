@@ -306,6 +306,46 @@ export default function App() {
         </div>
       </section>
 
+      {/* Promo Sito Web — in bella vista */}
+      <section className="py-14 bg-gradient-to-br from-[#0a1628] to-[#1e3a6e] text-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-10">
+          <div className="flex-1 order-2 lg:order-1">
+            <span className="inline-block bg-sky-500 text-white text-xs font-bold px-4 py-1 rounded-full mb-4 tracking-widest uppercase">
+              <i className="fas fa-fire mr-1 text-yellow-300"></i>Offerta Limitata — Solo 50 siti
+            </span>
+            <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
+              Realizzazione<br />
+              <span className="text-sky-400">Siti Web</span><br />
+              Professionali
+            </h2>
+            <ul className="space-y-2 text-gray-300 text-sm mb-6">
+              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Design moderno e personalizzato</li>
+              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Veloci, sicuri e ottimizzati per Google</li>
+              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Perfetti su tutti i dispositivi</li>
+              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Assistenza e supporto dedicato</li>
+            </ul>
+            <div className="flex items-end gap-4 mb-6">
+              <span className="text-5xl font-black">399€</span>
+              <span className="text-gray-400 line-through text-xl">599€</span>
+              <span className="text-sky-300 text-sm font-semibold">una tantum</span>
+            </div>
+            <a
+              href="/sito-web"
+              className="inline-block bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-lg px-10 py-4 rounded-2xl shadow-xl transition hover:scale-105 active:scale-95"
+            >
+              <i className="fas fa-arrow-right mr-2"></i>Scopri e Ordina
+            </a>
+          </div>
+          <div className="flex-1 order-1 lg:order-2 flex justify-center">
+            <img
+              src="/promo-sito-web.png"
+              alt="Siti web professionali PromoApp"
+              className="w-full max-w-md rounded-2xl shadow-2xl"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Cosa fa la tua App — sezione UNICA combinata (clienti + team) */}
       <section className="py-14 bg-gradient-to-b from-white to-indigo-50/40 overflow-hidden">
         <div className="max-w-6xl mx-auto px-4">
@@ -752,46 +792,6 @@ export default function App() {
               </button>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Promo Sito Web */}
-      <section className="py-16 bg-gradient-to-br from-[#0a1628] to-[#1e3a6e] text-white overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-10">
-          <div className="flex-1 order-2 lg:order-1">
-            <span className="inline-block bg-sky-500 text-white text-xs font-bold px-4 py-1 rounded-full mb-4 tracking-widest uppercase">
-              <i className="fas fa-fire mr-1 text-yellow-300"></i>Offerta Limitata — Solo 50 siti
-            </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
-              Realizzazione<br />
-              <span className="text-sky-400">Siti Web</span><br />
-              Professionali
-            </h2>
-            <ul className="space-y-2 text-gray-300 text-sm mb-6">
-              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Design moderno e personalizzato</li>
-              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Veloci, sicuri e ottimizzati per Google</li>
-              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Perfetti su tutti i dispositivi</li>
-              <li><i className="fas fa-check text-emerald-400 mr-2"></i>Assistenza e supporto dedicato</li>
-            </ul>
-            <div className="flex items-end gap-4 mb-6">
-              <span className="text-5xl font-black">399€</span>
-              <span className="text-gray-400 line-through text-xl">599€</span>
-              <span className="text-sky-300 text-sm font-semibold">una tantum</span>
-            </div>
-            <a
-              href="/sito-web"
-              className="inline-block bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-lg px-10 py-4 rounded-2xl shadow-xl transition hover:scale-105 active:scale-95"
-            >
-              <i className="fas fa-arrow-right mr-2"></i>Scopri e Ordina
-            </a>
-          </div>
-          <div className="flex-1 order-1 lg:order-2 flex justify-center">
-            <img
-              src="/promo-sito-web.png"
-              alt="Siti web professionali PromoApp"
-              className="w-full max-w-md rounded-2xl shadow-2xl"
-            />
-          </div>
         </div>
       </section>
 
