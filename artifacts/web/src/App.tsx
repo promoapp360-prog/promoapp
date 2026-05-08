@@ -131,11 +131,23 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [lavoriPwd, setLavoriPwd] = useState("");
   const [lavoriPwdErr, setLavoriPwdErr] = useState(false);
-  const [progettoVisibile, setProgettoVisibile] = useState<string | null>(
-    () => sessionStorage.getItem("lavori_progetto")
-  );
+  const [progettoVisibile, setProgettoVisibile] = useState<string | null>(null);
   const [scheda, setScheda] = useState<Scheda | null>(() => {
-    try { const s = sessionStorage.getItem("lavori_scheda"); return s ? JSON.parse(s) as Scheda : null; } catch { return null; }
+    try {
+      const s = sessionStorage.getItem("lavori_scheda");
+      if (!s) return null;
+      const parsed = JSON.parse(s) as Scheda;
+      if (!parsed.id) {
+        sessionStorage.removeItem("lavori_scheda");
+        sessionStorage.removeItem("lavori_progetto");
+        return null;
+      }
+      return parsed;
+    } catch {
+      sessionStorage.removeItem("lavori_scheda");
+      sessionStorage.removeItem("lavori_progetto");
+      return null;
+    }
   });
   const { item, addItem, openCart } = useCart();
 
@@ -644,7 +656,7 @@ export default function App() {
             </p>
           </div>
 
-          {!progettoVisibile ? (
+          {!scheda ? (
             <div className="max-w-sm mx-auto">
               <form onSubmit={sblocaLavori} className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 text-center">
                 <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -665,7 +677,7 @@ export default function App() {
                 </button>
               </form>
             </div>
-          ) : scheda ? (
+          ) : (
             <div className="max-w-lg mx-auto">
               {/* Header progetto */}
               <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-3xl px-7 py-6 mb-4 text-white shadow-lg">
@@ -738,10 +750,6 @@ export default function App() {
                 className="mt-4 w-full text-sm text-gray-400 hover:text-gray-600 py-2 transition">
                 <i className="fas fa-sign-out-alt mr-1"></i> Esci dall'area riservata
               </button>
-            </div>
-          ) : (
-            <div className="max-w-sm mx-auto text-center py-8">
-              <p className="text-gray-400">Caricamento progetto...</p>
             </div>
           )}
         </div>
