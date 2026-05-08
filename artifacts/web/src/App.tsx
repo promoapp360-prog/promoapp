@@ -47,8 +47,8 @@ function CookieBanner() {
   );
 }
 
-interface SchedaVoce { descrizione: string; importo: number; }
-interface Scheda { nome: string; voci: SchedaVoce[]; accontoVersato: number; totale: number; }
+interface SchedaVoce { descrizione: string; importo: number | null; }
+interface Scheda { id: string; nome: string; url: string; descrizione: string; voci: SchedaVoce[]; accontoVersato: number; totale: number; }
 
 function LockModal({ projectId, onClose }: { projectId: string; onClose: () => void }) {
   const [pwd, setPwd] = useState("");
@@ -139,36 +139,21 @@ export default function App() {
   });
   const { item, addItem, openCart } = useCart();
 
-  const LAVORI_PASSWORDS: Record<string, string> = {
-    "ciro": "dr-oggettistica",
-    "enzo": "enzo-acconciature",
-    "nano": "nano-caffe",
-  };
-
-  const LAVORI_URLS: Record<string, string> = {
-    "dr-oggettistica": "https://dr-oggettistica.replit.app",
-    "enzo-acconciature": "https://enzoacconciature.replit.app/admin/calendario",
-    "nano-caffe": "https://nanocaffe.replit.app",
-  };
-
   async function sblocaLavori(e: React.FormEvent) {
     e.preventDefault();
-    const progettoId = LAVORI_PASSWORDS[lavoriPwd.trim().toLowerCase()];
-    if (!progettoId) { setLavoriPwdErr(true); setLavoriPwd(""); return; }
+    if (!lavoriPwd.trim()) { setLavoriPwdErr(true); return; }
     try {
       const res = await fetch("/api/lavori/sblocca", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: progettoId, password: lavoriPwd.trim() }),
+        body: JSON.stringify({ password: lavoriPwd.trim() }),
       });
-      const data = await res.json() as { success: boolean; scheda?: Scheda };
-      if (data.success) {
-        sessionStorage.setItem("lavori_progetto", progettoId);
-        setProgettoVisibile(progettoId);
-        if (data.scheda) {
-          sessionStorage.setItem("lavori_scheda", JSON.stringify(data.scheda));
-          setScheda(data.scheda);
-        }
+      const data = await res.json() as { success: boolean; scheda?: Scheda; message?: string };
+      if (data.success && data.scheda) {
+        sessionStorage.setItem("lavori_progetto", data.scheda.id);
+        sessionStorage.setItem("lavori_scheda", JSON.stringify(data.scheda));
+        setProgettoVisibile(data.scheda.id);
+        setScheda(data.scheda);
         setLavoriPwdErr(false);
       } else {
         setLavoriPwdErr(true);
@@ -665,8 +650,8 @@ export default function App() {
                 <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <i className="fas fa-lock text-indigo-600 text-2xl"></i>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-1">Area riservata</h3>
-                <p className="text-gray-400 text-sm mb-6">Inserisci la tua password per vedere il tuo progetto</p>
+                <h3 className="text-lg font-bold text-gray-800 mb-1">Area riservata clienti</h3>
+                <p className="text-gray-400 text-sm mb-6">Inserisci la password ricevuta da PromoApp per vedere il tuo progetto</p>
                 <input
                   type="password"
                   value={lavoriPwd}
@@ -674,130 +659,89 @@ export default function App() {
                   placeholder="Password"
                   className={`w-full border-2 rounded-xl px-4 py-3 text-center text-lg tracking-widest focus:outline-none transition mb-3 ${lavoriPwdErr ? "border-red-400 bg-red-50" : "border-gray-200 focus:border-indigo-500"}`}
                 />
-                {lavoriPwdErr && <p className="text-red-500 text-sm mb-3">Password errata. Riprova.</p>}
+                {lavoriPwdErr && <p className="text-red-500 text-sm mb-3">Password non riconosciuta. Riprova.</p>}
                 <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">
-                  Accedi <i className="fas fa-arrow-right ml-2"></i>
+                  Accedi al progetto <i className="fas fa-arrow-right ml-2"></i>
                 </button>
               </form>
             </div>
-          ) : (
-            <div className="max-w-md mx-auto">
-              {progettoVisibile === "dr-oggettistica" && (
-                <button onClick={() => window.open(LAVORI_URLS["dr-oggettistica"], "_blank")}
-                  className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
-                  <div className="bg-gradient-to-br from-violet-600 to-indigo-700 px-6 py-8 relative">
-                    <div className="flex justify-between items-start">
-                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl"><i className="fas fa-gift"></i></div>
-                      <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">In corso</span>
-                    </div>
-                    <div className="mt-4 text-white">
-                      <h4 className="text-xl font-bold">DR Oggettistica</h4>
-                      <p className="text-white/75 text-sm font-light mt-1">Vetrina online · Gestionale prodotti</p>
-                    </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
-                      <div className="bg-white text-indigo-700 rounded-full w-10 h-10 flex items-center justify-center shadow-lg"><i className="fas fa-lock text-sm"></i></div>
-                    </div>
-                  </div>
-                  <div className="px-6 py-5 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600"><i className="fas fa-lock text-indigo-400 text-xs"></i><span>Clicca per accedere all'anteprima</span></div>
-                    <span className="text-indigo-600 group-hover:text-indigo-800 font-bold text-sm whitespace-nowrap transition">Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i></span>
-                  </div>
-                </button>
-              )}
-              {progettoVisibile === "enzo-acconciature" && (
-                <button onClick={() => window.open(LAVORI_URLS["enzo-acconciature"], "_blank")}
-                  className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
-                  <div className="bg-gradient-to-br from-rose-500 to-pink-600 px-6 py-8 relative">
-                    <div className="flex justify-between items-start">
-                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl"><i className="fas fa-cut"></i></div>
-                      <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">In corso</span>
-                    </div>
-                    <div className="mt-4 text-white">
-                      <h4 className="text-xl font-bold">Enzo Acconciature</h4>
-                      <p className="text-white/75 text-sm font-light mt-1">Gestionale appuntamenti · Calendario</p>
-                    </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
-                      <div className="bg-white text-rose-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg"><i className="fas fa-lock text-sm"></i></div>
-                    </div>
-                  </div>
-                  <div className="px-6 py-5 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600"><i className="fas fa-lock text-rose-400 text-xs"></i><span>Clicca per accedere all'anteprima</span></div>
-                    <span className="text-rose-600 group-hover:text-rose-800 font-bold text-sm whitespace-nowrap transition">Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i></span>
-                  </div>
-                </button>
-              )}
-              {progettoVisibile === "nano-caffe" && (
-                <button onClick={() => window.open(LAVORI_URLS["nano-caffe"], "_blank")}
-                  className="group bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all text-left overflow-hidden w-full">
-                  <div className="bg-gradient-to-br from-amber-600 to-orange-500 px-6 py-8 relative">
-                    <div className="flex justify-between items-start">
-                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl"><i className="fas fa-coffee"></i></div>
-                      <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">In corso</span>
-                    </div>
-                    <div className="mt-4 text-white">
-                      <h4 className="text-xl font-bold">Nano Caffè</h4>
-                      <p className="text-white/75 text-sm font-light mt-1">App bar · Menù digitale · Gestionale</p>
-                    </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-end pr-5 opacity-0 group-hover:opacity-100">
-                      <div className="bg-white text-amber-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg"><i className="fas fa-lock text-sm"></i></div>
-                    </div>
-                  </div>
-                  <div className="px-6 py-5 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600"><i className="fas fa-lock text-amber-400 text-xs"></i><span>Clicca per accedere all'anteprima</span></div>
-                    <span className="text-amber-600 group-hover:text-amber-800 font-bold text-sm whitespace-nowrap transition">Visualizza <i className="fas fa-arrow-right ml-1 group-hover:translate-x-1 inline-block transition-transform"></i></span>
-                  </div>
-                </button>
-              )}
-              {scheda && (
-                <div className="mt-5 bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                  <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <i className="fas fa-file-invoice text-indigo-600"></i>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-gray-800 text-sm">Riepilogo del progetto</h4>
-                      <p className="text-xs text-gray-400">{scheda.nome}</p>
-                    </div>
-                  </div>
-                  <div className="px-6 py-5 space-y-3">
+          ) : scheda ? (
+            <div className="max-w-lg mx-auto">
+              {/* Header progetto */}
+              <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-3xl px-7 py-6 mb-4 text-white shadow-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
+                    <i className="fas fa-hammer mr-1"></i> In corso
+                  </span>
+                  {scheda.url && (
+                    <a href={scheda.url} target="_blank" rel="noopener noreferrer"
+                      className="bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
+                      <i className="fas fa-external-link-alt text-xs"></i> Apri app
+                    </a>
+                  )}
+                </div>
+                <h3 className="text-2xl font-bold">{scheda.nome}</h3>
+                {scheda.descrizione && <p className="text-white/75 text-sm mt-1 font-light">{scheda.descrizione}</p>}
+              </div>
+
+              {/* Scheda costi */}
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="px-6 pt-5 pb-2">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Riepilogo costi</h4>
+                  <div className="space-y-3">
                     {scheda.voci.map((v, i) => (
-                      <div key={i} className="flex justify-between text-sm">
+                      <div key={i} className="flex justify-between items-center text-sm py-1">
                         <span className="text-gray-600">{v.descrizione}</span>
-                        <span className="font-semibold text-gray-800">€ {v.importo.toLocaleString("it-IT")}</span>
+                        {v.importo !== null
+                          ? <span className="font-semibold text-gray-800">€ {v.importo.toLocaleString("it-IT")}</span>
+                          : <span className="text-gray-400 italic text-xs bg-gray-100 px-2 py-0.5 rounded-full">Da definire</span>
+                        }
                       </div>
                     ))}
-                    <div className="border-t border-gray-100 pt-3 flex justify-between font-bold">
+                  </div>
+                </div>
+
+                {scheda.totale > 0 && (
+                  <div className="px-6 py-4 border-t border-gray-100 space-y-2">
+                    <div className="flex justify-between font-bold text-sm">
                       <span className="text-gray-700">Totale progetto</span>
                       <span className="text-gray-900">€ {scheda.totale.toLocaleString("it-IT")}</span>
                     </div>
                     {scheda.accontoVersato > 0 && (
                       <div className="flex justify-between text-sm text-emerald-600">
                         <span>Acconto versato</span>
-                        <span>− € {scheda.accontoVersato.toLocaleString("it-IT")}</span>
+                        <span className="font-semibold">− € {scheda.accontoVersato.toLocaleString("it-IT")}</span>
                       </div>
                     )}
-                    <div className="bg-indigo-50 rounded-2xl px-4 py-3 flex justify-between items-center">
+                    <div className="bg-indigo-50 rounded-2xl px-4 py-3 flex justify-between items-center mt-2">
                       <span className="font-bold text-indigo-700 text-sm">Residuo da saldare</span>
-                      <span className="font-extrabold text-indigo-700 text-lg">€ {(scheda.totale - scheda.accontoVersato).toLocaleString("it-IT")}</span>
+                      <span className="font-extrabold text-indigo-700 text-lg">
+                        € {Math.max(0, scheda.totale - scheda.accontoVersato).toLocaleString("it-IT")}
+                      </span>
                     </div>
                   </div>
-                  {(scheda.totale - scheda.accontoVersato) > 0 && (
-                    <div className="px-6 pb-6">
-                      <a
-                        href={`/pagamenti?progetto=${encodeURIComponent(scheda.nome)}&totale=${scheda.totale}&acconto=${scheda.totale - scheda.accontoVersato}`}
-                        className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-center transition"
-                      >
-                        Vai al pagamento <i className="fas fa-arrow-right ml-2"></i>
-                      </a>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+
+                {(scheda.totale - scheda.accontoVersato) > 0 && (
+                  <div className="px-6 pb-6">
+                    <a
+                      href={`/pagamenti?progetto=${encodeURIComponent(scheda.nome)}&totale=${scheda.totale}&acconto=${scheda.totale - scheda.accontoVersato}`}
+                      className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-center transition"
+                    >
+                      <i className="fas fa-credit-card mr-2"></i>Vai al pagamento
+                    </a>
+                  </div>
+                )}
+              </div>
 
               <button onClick={() => { setProgettoVisibile(null); sessionStorage.removeItem("lavori_progetto"); sessionStorage.removeItem("lavori_scheda"); setScheda(null); setLavoriPwd(""); }}
                 className="mt-4 w-full text-sm text-gray-400 hover:text-gray-600 py-2 transition">
                 <i className="fas fa-sign-out-alt mr-1"></i> Esci dall'area riservata
               </button>
+            </div>
+          ) : (
+            <div className="max-w-sm mx-auto text-center py-8">
+              <p className="text-gray-400">Caricamento progetto...</p>
             </div>
           )}
         </div>
