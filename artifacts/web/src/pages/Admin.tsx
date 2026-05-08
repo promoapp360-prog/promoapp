@@ -78,7 +78,7 @@ export default function Admin() {
   const [progetti, setProgetti] = useState<ProgettoAdmin[]>([]);
   const [loadingProgetti, setLoadingProgetti] = useState(false);
   const [progettoForm, setProgettoForm] = useState<typeof EMPTY_PROGETTO>(EMPTY_PROGETTO);
-  const [vociForm, setVociForm] = useState<VoceForm[]>([{ descrizione: "", importo: "" }]);
+  const [vociForm, setVociForm] = useState<VoceForm[]>(DEFAULT_VOCI.map(v => ({ ...v })));
   const [editingProgettoId, setEditingProgettoId] = useState<string | null>(null);
   const [progettoError, setProgettoError] = useState("");
   const [progettoSuccess, setProgettoSuccess] = useState("");
