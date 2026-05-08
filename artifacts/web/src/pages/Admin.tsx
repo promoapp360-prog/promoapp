@@ -113,10 +113,18 @@ export default function Admin() {
     setLoadingProgetti(false);
   }, [password]);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!password.trim()) { setAuthError("Inserisci la password"); return; }
-    setAutenticato(true); setAuthError("");
+    setAuthError("Verifica in corso...");
+    const res = await fetch(`${API_BASE}/api/admin/verify`, {
+      headers: { "x-admin-password": password }
+    });
+    if (res.ok) {
+      setAutenticato(true); setAuthError("");
+    } else {
+      setAuthError("Password errata");
+    }
   }
 
   useEffect(() => {

@@ -17,6 +17,12 @@ function checkAuth(req: any, res: any): boolean {
   return true;
 }
 
+// ============ VERIFY ============
+router.get("/admin/verify", (req, res) => {
+  if (!checkAuth(req, res)) return;
+  res.json({ ok: true });
+});
+
 // ============ DISCOUNT CODES ============
 
 router.get("/admin/codes", async (req, res) => {
