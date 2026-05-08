@@ -737,7 +737,7 @@ export default function App() {
                 {(scheda.totale - scheda.accontoVersato) > 0 && (
                   <div className="px-6 pb-6">
                     <a
-                      href={`/pagamenti?progetto=${encodeURIComponent(scheda.nome)}&totale=${scheda.totale}&acconto=${scheda.totale - scheda.accontoVersato}`}
+                      href={`/pagamenti?progetto=${encodeURIComponent(scheda.nome)}&totale=${scheda.totale}`}
                       className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-center transition"
                     >
                       <i className="fas fa-credit-card mr-2"></i>Vai al pagamento
