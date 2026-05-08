@@ -22,7 +22,7 @@ interface ProgettoTrovato {
 }
 
 const EMPTY_FORM: FormData = {
-  progetto: "", importoTotaleEuro: "", importoEuro: "",
+  progetto: "", importoTotaleEuro: "", importoEuro: "100",
   tipo: "privato", nome: "", cognome: "", email: "", telefono: "",
   indirizzo: "", cap: "", citta: "", provincia: "", codiceFiscale: "",
   ragioneSociale: "", piva: "", sdi: "", pec: "",
