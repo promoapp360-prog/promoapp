@@ -43,6 +43,11 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 }
 
 const EMPTY_PROGETTO = { clienteId: "", nome: "", url: "", password: "", descrizione: "", accontoVersato: "" };
+const DEFAULT_VOCI: VoceForm[] = [
+  { descrizione: "Realizzazione app", importo: "0" },
+  { descrizione: "Costi aggiornamento", importo: "0" },
+  { descrizione: "Costo dominio", importo: "0" },
+];
 
 export default function Admin() {
   const [password, setPassword] = useState("");
@@ -121,7 +126,7 @@ export default function Admin() {
   function apriNuovoProgetto() {
     setEditingProgettoId(null);
     setProgettoForm(EMPTY_PROGETTO);
-    setVociForm([{ descrizione: "", importo: "" }]);
+    setVociForm(DEFAULT_VOCI.map(v => ({ ...v })));
     setProgettoError(""); setProgettoSuccess("");
   }
 
@@ -146,7 +151,7 @@ export default function Admin() {
 
     const vociPulite = vociForm
       .filter(v => v.descrizione.trim())
-      .map(v => ({ descrizione: v.descrizione.trim(), importo: v.importo ? parseInt(v.importo) : null }));
+      .map(v => ({ descrizione: v.descrizione.trim(), importo: v.importo !== "" ? parseInt(v.importo) : null }));
 
     const body = {
       ...progettoForm,
