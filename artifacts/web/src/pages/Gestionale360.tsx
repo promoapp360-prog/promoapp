@@ -287,64 +287,6 @@ function ScreenStatistiche() {
 /* ══════════════════════════════════════════
    COMPONENTE PRINCIPALE
 ══════════════════════════════════════════ */
-/* ── Mockup telefono mobile ── */
-function ScreenMobile() {
-  return (
-    <div className="mx-auto" style={{ width: 220 }}>
-      <div className="rounded-[2.5rem] overflow-hidden border-[6px] border-gray-800 bg-white shadow-2xl font-sans select-none">
-        <div className="bg-gray-800 py-2 flex justify-center">
-          <div className="w-16 h-1.5 bg-gray-600 rounded-full"></div>
-        </div>
-        {/* status bar */}
-        <div className="bg-[#1a2e1a] px-4 py-2 flex items-center justify-between">
-          <span className="text-white text-[10px] font-bold">Gestionale360</span>
-          <span className="text-emerald-400 text-[9px]">● Online</span>
-        </div>
-        {/* header cassa */}
-        <div className="bg-emerald-700 px-4 py-3">
-          <div className="text-white font-extrabold text-sm">Nuova vendita</div>
-          <div className="text-emerald-200 text-[10px]">Ferramenta Bianchi · Cassa 1</div>
-        </div>
-        {/* prodotti */}
-        <div className="p-3 space-y-2 bg-gray-50">
-          {[
-            { nome: "Chiave inglese 30mm", qt: "1", pr: "€14,90" },
-            { nome: "Guanti da lavoro L",  qt: "2", pr: "€8,00" },
-            { nome: "Nastro isolante 20m", qt: "1", pr: "€5,70" },
-          ].map(p => (
-            <div key={p.nome} className="bg-white rounded-xl px-3 py-2 flex justify-between items-center shadow-sm border border-gray-100">
-              <div>
-                <div className="font-semibold text-gray-800 text-[11px]">{p.nome}</div>
-                <div className="text-gray-400 text-[9px]">Qt: {p.qt}</div>
-              </div>
-              <div className="text-emerald-700 font-extrabold text-xs">{p.pr}</div>
-            </div>
-          ))}
-          <div className="flex justify-between items-center px-1 pt-1">
-            <span className="text-gray-500 text-xs font-semibold">Totale</span>
-            <span className="text-emerald-700 font-extrabold text-base">€28,60</span>
-          </div>
-        </div>
-        {/* footer cassa */}
-        <div className="p-3 pt-0 bg-gray-50">
-          <button className="w-full bg-emerald-600 text-white font-extrabold text-sm py-3 rounded-2xl shadow-md">
-            <i className="fas fa-check mr-2"></i>Emetti scontrino
-          </button>
-          <div className="flex gap-2 mt-2">
-            <button className="flex-1 bg-white border border-gray-200 text-gray-600 text-[10px] font-semibold py-2 rounded-xl">Sconto %</button>
-            <button className="flex-1 bg-white border border-gray-200 text-gray-600 text-[10px] font-semibold py-2 rounded-xl">+ Prodotto</button>
-          </div>
-        </div>
-        <div className="bg-gray-800 py-2 flex justify-center gap-6 px-4">
-          {["fa-house","fa-boxes-stacked","fa-cash-register","fa-chart-bar"].map(ic => (
-            <i key={ic} className={`fas ${ic} text-gray-500 text-sm`}></i>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Gestionale360() {
   const [modalAperto, setModalAperto] = useState(false);
   const [faqAperta, setFaqAperta] = useState<number | null>(null);
@@ -491,35 +433,6 @@ export default function Gestionale360() {
             {schermataAttiva === "statistiche"  && <ScreenStatistiche />}
           </div>
 
-          {/* Mockup mobile */}
-          <div className="mt-14 grid md:grid-cols-2 gap-10 items-center">
-            <div className="order-2 md:order-1">
-              <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Anche da smartphone</span>
-              <h3 className="text-xl md:text-2xl font-extrabold text-gray-900 mb-3">La cassa dal telefono,<br />ovunque ti trovi.</h3>
-              <p className="text-gray-500 text-sm leading-relaxed mb-5">Hai un cliente davanti? Apri il telefono, cerca il prodotto, batti lo scontrino. Tutto in meno di 10 secondi — anche senza PC.</p>
-              <ul className="space-y-2.5">
-                {[
-                  "Cassa veloce ottimizzata per touch",
-                  "Ricerca prodotti istantanea",
-                  "Aggiornamento magazzino in tempo reale",
-                  "Scontrino via email al cliente",
-                ].map(v => (
-                  <li key={v} className="flex items-start gap-2 text-sm text-gray-700">
-                    <i className="fas fa-check text-emerald-500 mt-0.5 flex-shrink-0 text-xs"></i>{v}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => setModalAperto(true)}
-                className="mt-6 inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition"
-              >
-                <i className="fas fa-play-circle"></i> Prova gratis 15 giorni
-              </button>
-            </div>
-            <div className="order-1 md:order-2 flex justify-center">
-              <ScreenMobile />
-            </div>
-          </div>
         </div>
       </section>
 
