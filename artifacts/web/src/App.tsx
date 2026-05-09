@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useCart } from "./lib/CartContext";
 import CartDrawer from "./components/CartDrawer";
+import RichiestaGestionaleModal from "./components/RichiestaGestionaleModal";
 
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -150,6 +151,7 @@ export default function App() {
     }
   });
   const { item, addItem, openCart } = useCart();
+  const [modalGestionale, setModalGestionale] = useState<null | "gestionale360" | "agentipro">(null);
 
   async function sblocaLavori(e: React.FormEvent) {
     e.preventDefault();
@@ -349,81 +351,72 @@ export default function App() {
       {/* Cosa fa la tua App — sezione UNICA combinata (clienti + team) */}
       <section className="py-14 bg-gradient-to-b from-white to-indigo-50/40 overflow-hidden">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
               Cosa fa la tua App
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
               Tutto in <span className="text-indigo-600">un'unica App</span>.
             </h2>
-            <p className="text-gray-500 mt-2 max-w-2xl mx-auto">
+            <p className="text-gray-500 mt-3 max-w-2xl mx-auto text-lg">
               Una soluzione completa: per i tuoi <strong>clienti</strong> e per la <strong>gestione interna</strong> della tua attività.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-[200px_1fr] gap-8 items-center">
-            {/* Immagine compatta */}
-            <div className="flex justify-center">
-              <img
-                src="/promo-app-flyer.png"
-                alt="PromoApp – Tutte le funzioni in un'unica App"
-                width="220"
-                height="320"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full max-w-[200px] md:max-w-[220px] h-auto object-contain rounded-2xl shadow-xl"
-              />
+          <div className="grid md:grid-cols-2 gap-6 mb-10">
+            {/* Colonna clienti */}
+            <div className="bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+                  <i className="fas fa-users text-white text-sm"></i>
+                </div>
+                <h3 className="font-bold text-indigo-700 uppercase tracking-wider text-sm">Per i tuoi clienti</h3>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  { icon: "fa-calendar-check", bg: "bg-indigo-100", color: "text-indigo-600", label: "Prenotazioni e appuntamenti online" },
+                  { icon: "fa-star", bg: "bg-yellow-100", color: "text-yellow-600", label: "Fidelity card e promozioni mirate" },
+                  { icon: "fa-credit-card", bg: "bg-emerald-100", color: "text-emerald-600", label: "Pagamenti online sicuri" },
+                  { icon: "fa-bell", bg: "bg-orange-100", color: "text-orange-500", label: "Notifiche e promemoria automatici" },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center flex-shrink-0`}>
+                      <i className={`fas ${item.icon} ${item.color}`}></i>
+                    </div>
+                    <span className="text-gray-700 font-medium">{item.label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* Due colonne di feature */}
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-600 mb-3 flex items-center gap-2">
-                  <i className="fas fa-users"></i> Per i tuoi clienti
-                </h3>
-                <ul className="space-y-2.5">
-                  {[
-                    { icon: "fa-calendar-check", color: "text-indigo-500", label: "Prenotazioni e appuntamenti online" },
-                    { icon: "fa-star", color: "text-yellow-500", label: "Fidelity card e promozioni mirate" },
-                    { icon: "fa-credit-card", color: "text-emerald-500", label: "Pagamenti online sicuri" },
-                    { icon: "fa-bell", color: "text-orange-500", label: "Notifiche e promemoria automatici" },
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm">
-                      <div className={`w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center ${item.color} flex-shrink-0`}>
-                        <i className={`fas ${item.icon} text-xs`}></i>
-                      </div>
-                      <span className="text-gray-700">{item.label}</span>
-                    </li>
-                  ))}
-                </ul>
+            {/* Colonna team */}
+            <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center">
+                  <i className="fas fa-briefcase text-white text-sm"></i>
+                </div>
+                <h3 className="font-bold text-emerald-700 uppercase tracking-wider text-sm">Per te e il tuo team</h3>
               </div>
-
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-600 mb-3 flex items-center gap-2">
-                  <i className="fas fa-briefcase"></i> Per te e il tuo team
-                </h3>
-                <ul className="space-y-2.5">
-                  {[
-                    { icon: "fa-address-book", color: "text-indigo-500", label: "CRM clienti centralizzato" },
-                    { icon: "fa-file-invoice-dollar", color: "text-emerald-500", label: "Preventivi, fatture e contabilità" },
-                    { icon: "fa-chart-bar", color: "text-blue-500", label: "Statistiche e agenda team" },
-                    { icon: "fa-sync-alt", color: "text-purple-500", label: "Sincronizzato su PC, tablet, mobile" },
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm">
-                      <div className={`w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center ${item.color} flex-shrink-0`}>
-                        <i className={`fas ${item.icon} text-xs`}></i>
-                      </div>
-                      <span className="text-gray-700">{item.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="space-y-3">
+                {[
+                  { icon: "fa-address-book", bg: "bg-indigo-100", color: "text-indigo-600", label: "CRM clienti centralizzato" },
+                  { icon: "fa-file-invoice-dollar", bg: "bg-emerald-100", color: "text-emerald-600", label: "Preventivi, fatture e contabilità" },
+                  { icon: "fa-chart-bar", bg: "bg-blue-100", color: "text-blue-600", label: "Statistiche e agenda team" },
+                  { icon: "fa-sync-alt", bg: "bg-purple-100", color: "text-purple-600", label: "Sincronizzato su PC, tablet, mobile" },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center flex-shrink-0`}>
+                      <i className={`fas ${item.icon} ${item.color}`}></i>
+                    </div>
+                    <span className="text-gray-700 font-medium">{item.label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
           {/* CTA centrali */}
-          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
             <a
               href="https://promo-app.replit.app/prova-gratis"
               target="_blank"
@@ -603,14 +596,12 @@ export default function App() {
                 >
                   Acquista a 199€ <i className="fas fa-arrow-right ml-2"></i>
                 </button>
-                <a
-                  href="https://gestionale360.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => setModalGestionale("gestionale360")}
                   className="flex-1 text-center border-2 border-emerald-700 text-emerald-700 hover:bg-emerald-50 px-5 py-3 rounded-xl font-bold transition"
                 >
-                  Prova gratis
-                </a>
+                  Richiedi gratis la tua prova
+                </button>
               </div>
             </div>
 
@@ -658,14 +649,12 @@ export default function App() {
                 >
                   Acquista a 199€ <i className="fas fa-arrow-right ml-2"></i>
                 </button>
-                <a
-                  href="https://gestioneagenti.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => setModalGestionale("agentipro")}
                   className="flex-1 text-center border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-5 py-3 rounded-xl font-bold transition"
                 >
-                  Provalo ora
-                </a>
+                  Richiedi gratis la tua prova
+                </button>
               </div>
             </div>
           </div>
@@ -1078,6 +1067,14 @@ export default function App() {
 
       {/* Lock Modal */}
       {lockModal && <LockModal projectId={lockModal} onClose={() => setLockModal(null)} />}
+
+      {/* Modal richiesta prova gestionale */}
+      {modalGestionale && (
+        <RichiestaGestionaleModal
+          tipo={modalGestionale}
+          onClose={() => setModalGestionale(null)}
+        />
+      )}
 
       {/* Carrello */}
       <CartDrawer />

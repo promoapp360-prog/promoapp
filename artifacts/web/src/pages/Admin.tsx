@@ -28,7 +28,15 @@ interface ProgettoAdmin {
   voci: { id: string; descrizione: string; importo: number | null; ordine: number }[];
 }
 
-type Tab = "acconti" | "progetti" | "sconti";
+type Tab = "acconti" | "progetti" | "sconti" | "gestionali";
+
+interface RichiestaGestionale {
+  id: string; tipo: string; nome: string; cognome: string; email: string;
+  telefono: string; tipoSoggetto: string; ragioneSociale: string | null;
+  piva: string | null; codiceFiscale: string | null; settore: string | null;
+  note: string | null; stato: string; username: string | null;
+  passwordGestionale: string | null; createdAt: string;
+}
 
 const inp = "w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white";
 const lbl = "block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide";
@@ -78,6 +86,12 @@ export default function Admin() {
   const [progetti, setProgetti] = useState<ProgettoAdmin[]>([]);
   const [loadingProgetti, setLoadingProgetti] = useState(false);
   const [progettoForm, setProgettoForm] = useState<typeof EMPTY_PROGETTO>(EMPTY_PROGETTO);
+
+  // Richieste gestionale
+  const [richieste, setRichieste] = useState<RichiestaGestionale[]>([]);
+  const [loadingRichieste, setLoadingRichieste] = useState(false);
+  const [richiestaAperta, setRichiestaAperta] = useState<RichiestaGestionale | null>(null);
+  const [richiestaEdit, setRichiestaEdit] = useState({ username: "", passwordGestionale: "", stato: "" });
   const [vociForm, setVociForm] = useState<VoceForm[]>(DEFAULT_VOCI.map(v => ({ ...v })));
   const [editingProgettoId, setEditingProgettoId] = useState<string | null>(null);
   const [progettoError, setProgettoError] = useState("");
@@ -113,6 +127,13 @@ export default function Admin() {
     setLoadingProgetti(false);
   }, [password]);
 
+  const caricaRichieste = useCallback(async () => {
+    setLoadingRichieste(true);
+    const res = await fetch(`${API_BASE}/api/admin/richieste-gestionale`, { headers: { "x-admin-password": password } });
+    if (res.ok) setRichieste(await res.json());
+    setLoadingRichieste(false);
+  }, [password]);
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!password.trim()) { setAuthError("Inserisci la password"); return; }
@@ -128,8 +149,8 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    if (autenticato) { caricaAcconti(); caricaCodici(); caricaClienti(); caricaProgetti(); }
-  }, [autenticato, caricaAcconti, caricaCodici, caricaClienti, caricaProgetti]);
+    if (autenticato) { caricaAcconti(); caricaCodici(); caricaClienti(); caricaProgetti(); caricaRichieste(); }
+  }, [autenticato, caricaAcconti, caricaCodici, caricaClienti, caricaProgetti, caricaRichieste]);
 
   function apriNuovoProgetto() {
     setEditingProgettoId(null);
@@ -272,10 +293,13 @@ export default function Admin() {
         </div>
 
         <div className="flex gap-2 mb-6 flex-wrap">
-          {([["progetti", "🗂️ Progetti"], ["acconti", "💰 Acconti"], ["sconti", "🏷️ Codici Sconto"]] as [Tab, string][]).map(([t, label]) => (
+          {([["progetti", "🗂️ Progetti"], ["gestionali", "💻 Gestionali"], ["acconti", "💰 Acconti"], ["sconti", "🏷️ Codici Sconto"]] as [Tab, string][]).map(([t, label]) => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition ${tab === t ? "bg-indigo-600 text-white shadow" : "bg-white text-gray-600 hover:bg-gray-50"}`}>
               {label}
+              {t === "gestionali" && richieste.filter(r => r.stato === "nuova").length > 0 && (
+                <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{richieste.filter(r => r.stato === "nuova").length}</span>
+              )}
             </button>
           ))}
         </div>
@@ -578,6 +602,117 @@ export default function Admin() {
               </div>
             )}
           </>
+        )}
+
+        {/* =================== TAB GESTIONALI =================== */}
+        {tab === "gestionali" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-gray-800 text-lg">💻 Richieste prova gratuita gestionali</h2>
+              <button onClick={caricaRichieste} className="text-sm text-indigo-600 hover:underline"><i className="fas fa-sync-alt mr-1"></i> Aggiorna</button>
+            </div>
+            {loadingRichieste ? <p className="text-gray-400 text-sm text-center py-12">Caricamento...</p>
+              : richieste.length === 0 ? (
+                <div className="bg-white rounded-2xl shadow p-12 text-center">
+                  <i className="fas fa-inbox text-4xl text-gray-200 mb-3 block"></i>
+                  <p className="text-gray-400 text-sm">Nessuna richiesta ancora.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {richieste.map(r => (
+                    <div key={r.id} className="bg-white rounded-2xl shadow p-5">
+                      <div className="flex items-start justify-between gap-3 flex-wrap">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold ${r.tipo === "gestionale360" ? "bg-emerald-700" : "bg-orange-600"}`}>
+                            {r.tipo === "gestionale360" ? "G" : "A"}
+                          </div>
+                          <div>
+                            <div className="font-bold text-gray-800">{r.nome} {r.cognome}</div>
+                            <div className="text-xs text-gray-400">{r.tipo === "gestionale360" ? "Gestionale360" : "AgentiPro"} · {new Date(r.createdAt).toLocaleDateString("it-IT")}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${r.stato === "nuova" ? "bg-red-100 text-red-700" : r.stato === "inviata" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}>
+                            {r.stato === "nuova" ? "🔴 Nuova" : r.stato === "inviata" ? "🟡 Inviata" : "🟢 Attiva"}
+                          </span>
+                          <button onClick={() => { setRichiestaAperta(r); setRichiestaEdit({ username: r.username ?? "", passwordGestionale: r.passwordGestionale ?? "", stato: r.stato }); }}
+                            className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                            Gestisci
+                          </button>
+                        </div>
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-500">
+                        <span><i className="fas fa-envelope mr-1"></i>{r.email}</span>
+                        {r.telefono && <span><i className="fas fa-phone mr-1"></i>{r.telefono}</span>}
+                        {r.piva && <span><i className="fas fa-building mr-1"></i>P.IVA {r.piva}</span>}
+                        {r.settore && <span><i className="fas fa-tag mr-1"></i>{r.settore}</span>}
+                        {r.username && <span><i className="fas fa-user-check mr-1 text-emerald-600"></i>User: <strong>{r.username}</strong></span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            {/* Modal gestisci richiesta */}
+            {richiestaAperta && (
+              <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setRichiestaAperta(null)}>
+                <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-7" onClick={e => e.stopPropagation()}>
+                  <div className="flex items-center justify-between mb-5">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800">Gestisci richiesta</h3>
+                      <p className="text-xs text-gray-400">{richiestaAperta.nome} {richiestaAperta.cognome} · {richiestaAperta.tipo === "gestionale360" ? "Gestionale360" : "AgentiPro"}</p>
+                    </div>
+                    <button onClick={() => setRichiestaAperta(null)} className="text-gray-300 hover:text-gray-500 text-2xl leading-none">&times;</button>
+                  </div>
+                  <div className="space-y-3 text-sm mb-5">
+                    <div className="grid grid-cols-2 gap-2 bg-gray-50 rounded-xl p-4">
+                      <div><span className="text-gray-400 text-xs">Email</span><p className="font-medium">{richiestaAperta.email}</p></div>
+                      <div><span className="text-gray-400 text-xs">Telefono</span><p className="font-medium">{richiestaAperta.telefono || "—"}</p></div>
+                      {richiestaAperta.ragioneSociale && <div><span className="text-gray-400 text-xs">Ragione Sociale</span><p className="font-medium">{richiestaAperta.ragioneSociale}</p></div>}
+                      {richiestaAperta.piva && <div><span className="text-gray-400 text-xs">P.IVA</span><p className="font-medium">{richiestaAperta.piva}</p></div>}
+                      {richiestaAperta.codiceFiscale && <div><span className="text-gray-400 text-xs">C.F.</span><p className="font-medium">{richiestaAperta.codiceFiscale}</p></div>}
+                      {richiestaAperta.settore && <div><span className="text-gray-400 text-xs">Settore</span><p className="font-medium">{richiestaAperta.settore}</p></div>}
+                      {richiestaAperta.note && <div className="col-span-2"><span className="text-gray-400 text-xs">Note</span><p className="font-medium">{richiestaAperta.note}</p></div>}
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className={lbl}>Username gestionale</label>
+                        <input className={inp} value={richiestaEdit.username} onChange={e => setRichiestaEdit(f => ({ ...f, username: e.target.value }))} placeholder="es. mario.rossi" />
+                      </div>
+                      <div>
+                        <label className={lbl}>Password gestionale</label>
+                        <input className={inp} value={richiestaEdit.passwordGestionale} onChange={e => setRichiestaEdit(f => ({ ...f, passwordGestionale: e.target.value }))} placeholder="es. Rossi2025!" />
+                      </div>
+                      <div>
+                        <label className={lbl}>Stato</label>
+                        <select className={inp} value={richiestaEdit.stato} onChange={e => setRichiestaEdit(f => ({ ...f, stato: e.target.value }))}>
+                          <option value="nuova">🔴 Nuova</option>
+                          <option value="inviata">🟡 Inviata</option>
+                          <option value="attiva">🟢 Attiva</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={async () => {
+                      await fetch(`${API_BASE}/api/admin/richieste-gestionale/${richiestaAperta.id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json", "x-admin-password": password },
+                        body: JSON.stringify(richiestaEdit),
+                      });
+                      setRichiestaAperta(null); caricaRichieste();
+                    }} className="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition">
+                      💾 Salva credenziali
+                    </button>
+                    <a href={`mailto:${richiestaAperta.email}?subject=Accesso%20${richiestaAperta.tipo === "gestionale360" ? "Gestionale360" : "AgentiPro"}&body=Username%3A%20${richiestaEdit.username}%0APassword%3A%20${richiestaEdit.passwordGestionale}`}
+                      className="px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition flex items-center gap-2">
+                      <i className="fas fa-envelope"></i> Invia
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {/* =================== TAB SCONTI =================== */}

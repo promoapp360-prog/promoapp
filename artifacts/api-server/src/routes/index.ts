@@ -5,6 +5,7 @@ import checkoutRouter from "./checkout";
 import adminRouter from "./admin";
 import lavoriRouter from "./lavori";
 import accontoRouter from "./acconto";
+import gestionaliRouter from "./gestionali";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use(checkoutRouter);
 router.use(adminRouter);
 router.use(lavoriRouter);
 router.use(accontoRouter);
+router.use(gestionaliRouter);
 
 export default router;
