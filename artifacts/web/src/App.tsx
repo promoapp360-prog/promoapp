@@ -661,6 +661,11 @@ export default function App() {
                   Richiedi gratis la tua prova
                 </button>
               </div>
+              <div className="mt-3 text-center">
+                <a href="/agentipro" className="text-sm text-orange-600 hover:underline font-medium">
+                  <i className="fas fa-circle-info mr-1"></i> Scopri tutti i dettagli di AgentiPro →
+                </a>
+              </div>
             </div>
           </div>
 
@@ -1011,7 +1016,7 @@ export default function App() {
               <ul className="space-y-2 text-gray-600">
                 <li><a href="#contatti" className="hover:text-indigo-600 transition"><i className="fas fa-mobile-alt text-indigo-500 mr-2 w-4"></i>App personalizzata su misura</a></li>
                 <li><a href="/gestionale360" className="hover:text-emerald-700 transition"><i className="fas fa-store text-emerald-700 mr-2 w-4"></i>Gestionale360 — per negozi</a></li>
-                <li><a href="https://gestioneagenti.com" target="_blank" rel="noopener noreferrer" className="hover:text-orange-600 transition"><i className="fas fa-briefcase text-orange-600 mr-2 w-4"></i>AgentiPro — per agenti di commercio</a></li>
+                <li><a href="/agentipro" className="hover:text-orange-600 transition"><i className="fas fa-briefcase text-orange-600 mr-2 w-4"></i>AgentiPro — per agenti di commercio</a></li>
               </ul>
             </div>
             <div>
