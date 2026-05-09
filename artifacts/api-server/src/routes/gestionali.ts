@@ -105,6 +105,21 @@ router.patch("/admin/richieste-gestionale/:id", async (req, res) => {
   res.json({ ok: true });
 });
 
+/* ── Contatore visite Gestionale360 (pubblico) ── */
+router.post("/gestionale/visita", async (_req, res) => {
+  await db.execute(sql`
+    INSERT INTO app_settings (key, value) VALUES ('visite_g360', '1')
+    ON CONFLICT (key) DO UPDATE SET value = (CAST(app_settings.value AS INTEGER) + 1)::TEXT
+  `);
+  res.json({ ok: true });
+});
+
+router.get("/gestionale/visite", async (_req, res) => {
+  const row = await db.execute(sql`SELECT value FROM app_settings WHERE key = 'visite_g360'`);
+  const value = (row.rows[0] as any)?.value ?? "0";
+  res.json({ visite: parseInt(value, 10) });
+});
+
 /* ── Contatore licenze (pubblico) ── */
 router.get("/gestionale/contatore", async (_req, res) => {
   const row = await db.execute(sql`SELECT value FROM app_settings WHERE key = 'licenze_g360'`);

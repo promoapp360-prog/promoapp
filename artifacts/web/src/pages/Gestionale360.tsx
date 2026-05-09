@@ -295,7 +295,7 @@ export default function Gestionale360() {
 
   useEffect(() => {
     fetch("/api/gestionale/contatore").then(r => r.ok ? r.json() : null).then(d => { if (d) setLicenze(d.licenze); }).catch(() => {});
-
+    fetch("/api/gestionale/visita", { method: "POST" }).catch(() => {});
   }, []);
 
   function apriModale() {

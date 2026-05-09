@@ -95,6 +95,9 @@ export default function Admin() {
   const [licenze, setLicenze] = useState<number | null>(null);
   const [licenzeInput, setLicenzeInput] = useState("");
   const [licenzeSaving, setLicenzeSaving] = useState(false);
+
+  // Contatore visite G360
+  const [visite, setVisite] = useState<number | null>(null);
   const [richiestaAperta, setRichiestaAperta] = useState<RichiestaGestionale | null>(null);
   const [richiestaEdit, setRichiestaEdit] = useState({ username: "", passwordGestionale: "", stato: "" });
   const [vociForm, setVociForm] = useState<VoceForm[]>(DEFAULT_VOCI.map(v => ({ ...v })));
@@ -142,6 +145,8 @@ export default function Admin() {
   const caricaContatore = useCallback(async () => {
     const res = await fetch(`${API_BASE}/api/gestionale/contatore`);
     if (res.ok) { const d = await res.json(); setLicenze(d.licenze); setLicenzeInput(String(d.licenze)); }
+    const res2 = await fetch(`${API_BASE}/api/gestionale/visite`);
+    if (res2.ok) { const d = await res2.json(); setVisite(d.visite); }
   }, []);
 
   async function salvaContatore(val: number) {
@@ -634,7 +639,11 @@ export default function Admin() {
             </div>
 
             {/* ── Statistiche richieste ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="bg-white rounded-2xl shadow p-4 text-center col-span-2 md:col-span-3 border-l-4 border-sky-400">
+                <div className="text-4xl font-extrabold text-sky-600">{visite ?? "—"}</div>
+                <div className="text-xs text-gray-400 mt-1 font-semibold uppercase tracking-wide">Visite totali pagina Gestionale360</div>
+              </div>
               <div className="bg-white rounded-2xl shadow p-4 text-center">
                 <div className="text-3xl font-extrabold text-indigo-600">{richieste.length}</div>
                 <div className="text-xs text-gray-400 mt-1">Richieste totali</div>
@@ -642,10 +651,6 @@ export default function Admin() {
               <div className="bg-white rounded-2xl shadow p-4 text-center">
                 <div className="text-3xl font-extrabold text-emerald-600">{richieste.filter(r => r.tipo === "gestionale360").length}</div>
                 <div className="text-xs text-gray-400 mt-1">Gestionale360</div>
-              </div>
-              <div className="bg-white rounded-2xl shadow p-4 text-center">
-                <div className="text-3xl font-extrabold text-orange-500">{richieste.filter(r => r.tipo === "agentipro").length}</div>
-                <div className="text-xs text-gray-400 mt-1">AgentiPro</div>
               </div>
               <div className="bg-white rounded-2xl shadow p-4 text-center">
                 <div className="text-3xl font-extrabold text-red-500">{richieste.filter(r => r.stato === "nuova").length}</div>
