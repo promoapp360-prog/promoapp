@@ -603,6 +603,11 @@ export default function App() {
                   Richiedi gratis la tua prova
                 </button>
               </div>
+              <div className="mt-3 text-center">
+                <a href="/gestionale360" className="text-sm text-emerald-600 hover:underline font-medium">
+                  <i className="fas fa-circle-info mr-1"></i> Scopri tutti i dettagli di Gestionale360 →
+                </a>
+              </div>
             </div>
 
             {/* AgentiPro / Gestione Agenti */}
@@ -1005,7 +1010,7 @@ export default function App() {
               <div className="font-bold text-gray-900 mb-3 uppercase tracking-widest text-xs">Le nostre soluzioni</div>
               <ul className="space-y-2 text-gray-600">
                 <li><a href="#contatti" className="hover:text-indigo-600 transition"><i className="fas fa-mobile-alt text-indigo-500 mr-2 w-4"></i>App personalizzata su misura</a></li>
-                <li><a href="https://gestionale360.com" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-700 transition"><i className="fas fa-store text-emerald-700 mr-2 w-4"></i>Gestionale360 — per negozi</a></li>
+                <li><a href="/gestionale360" className="hover:text-emerald-700 transition"><i className="fas fa-store text-emerald-700 mr-2 w-4"></i>Gestionale360 — per negozi</a></li>
                 <li><a href="https://gestioneagenti.com" target="_blank" rel="noopener noreferrer" className="hover:text-orange-600 transition"><i className="fas fa-briefcase text-orange-600 mr-2 w-4"></i>AgentiPro — per agenti di commercio</a></li>
               </ul>
             </div>

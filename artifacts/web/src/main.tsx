@@ -9,6 +9,7 @@ import PreviewPage from "./pages/PreviewPage";
 import Registrazione from "./pages/Registrazione";
 import Pagamenti from "./pages/Pagamenti";
 import SitoWeb from "./pages/SitoWeb";
+import Gestionale360 from "./pages/Gestionale360";
 import { CartProvider } from "./lib/CartContext";
 import "./index.css";
 
@@ -42,6 +43,7 @@ function Routes() {
           <Route path="/registrazione/*?" component={Registrazione} />
           <Route path="/pagamenti" component={Pagamenti} />
           <Route path="/sito-web" component={SitoWeb} />
+          <Route path="/gestionale360" component={Gestionale360} />
           <Route component={App} />
         </Switch>
       </CartProvider>

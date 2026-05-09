@@ -17,9 +17,17 @@ pnpm workspace monorepo per il sito **PromoApp.it** — landing page italiana di
 
 ## Artifacts
 
-- `artifacts/web` — Landing page pubblica (`/`, `/checkout`, `/admin`, `/registrazione`)
-- `artifacts/api-server` — Express API (Stripe, sconti, contatti, admin)
+- `artifacts/web` — Landing page pubblica (`/`, `/checkout`, `/admin`, `/registrazione`, `/gestionale360`, `/sito-web`)
+- `artifacts/api-server` — Express API (Stripe, sconti, contatti, admin, richieste-gestionale)
 - `artifacts/mockup-sandbox` — Sandbox componenti (canvas)
+
+## Pagina Gestionale360 (`/gestionale360`)
+
+Pagina dedicata al prodotto Gestionale360 — target: negozi, ferramenta, ricambi auto, alimentari, elettronica, pet shop, piccoli retail.
+Sezioni: Hero → Settori target → Web App vs Desktop (scelta esclusiva) → 8 funzionalità → 3 passi → Prezzo 199€ → FAQ → CTA finale.
+CTA apre `RichiestaGestionaleModal` (tipo `gestionale360`).
+
+**Nota importante modale Web App vs Desktop**: le due modalità si escludono a vicenda. Non è possibile usarle entrambe.
 
 ## Carrello & Auth (Clerk)
 
