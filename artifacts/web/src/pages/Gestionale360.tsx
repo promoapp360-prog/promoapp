@@ -295,7 +295,25 @@ export default function Gestionale360() {
 
   useEffect(() => {
     fetch("/api/gestionale/contatore").then(r => r.ok ? r.json() : null).then(d => { if (d) setLicenze(d.licenze); }).catch(() => {});
+
+    // Meta Pixel
+    const pixelId = "1017699674250556";
+    if (!(window as any).fbq) {
+      (function(f: any,b: any,e: any,v: any,n?: any,t?: any,s?: any){
+        if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=true;n.version="2.0";n.queue=[];
+        t=b.createElement(e);t.async=true;t.src=v;
+        s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+      })(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");
+    }
+    (window as any).fbq("init", pixelId);
+    (window as any).fbq("track", "PageView");
   }, []);
+
+  function apriModale() {
+    (window as any).fbq?.("track", "Lead");
+    setModalAperto(true);
+  }
 
   const schermate = [
     { id: "dashboard", label: "Dashboard", icon: "fa-gauge-high" },
@@ -315,7 +333,7 @@ export default function Gestionale360() {
             Promo<span className="text-emerald-500">App</span>.it
           </a>
           <button
-            onClick={() => setModalAperto(true)}
+            onClick={() => apriModale()}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition shadow-sm"
           >
             Prova gratis 15 giorni
@@ -344,7 +362,7 @@ export default function Gestionale360() {
           {/* CTA */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-3">
             <button
-              onClick={() => setModalAperto(true)}
+              onClick={() => apriModale()}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-4 rounded-2xl font-extrabold text-lg transition shadow-2xl"
             >
               <i className="fas fa-play-circle text-xl"></i>
@@ -558,7 +576,7 @@ export default function Gestionale360() {
           <div className="text-2xl md:text-3xl font-extrabold mb-2">Inizia gratis oggi.</div>
           <p className="text-emerald-100/80 text-sm mb-6">15 giorni di prova. Configurato con i tuoi dati. Nessun impegno.</p>
           <button
-            onClick={() => setModalAperto(true)}
+            onClick={() => apriModale()}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white text-emerald-700 px-10 py-4 rounded-2xl font-extrabold text-lg hover:bg-emerald-50 transition shadow-xl"
           >
             <i className="fas fa-play-circle"></i>
@@ -623,7 +641,7 @@ export default function Gestionale360() {
           <h2 className="text-2xl md:text-3xl font-extrabold mb-3">Pronto a semplificare il tuo negozio?</h2>
           <p className="text-emerald-100/60 text-sm mb-7">Richiedi la prova gratis. Nessun impegno, nessuna carta di credito.</p>
           <button
-            onClick={() => setModalAperto(true)}
+            onClick={() => apriModale()}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-emerald-500 hover:bg-emerald-400 text-white px-10 py-4 rounded-2xl font-extrabold text-lg transition shadow-2xl"
           >
             <i className="fas fa-play-circle text-xl"></i>
