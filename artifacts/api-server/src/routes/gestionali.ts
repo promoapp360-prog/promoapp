@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { richiesteGestionaleTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { Resend } from "resend";
 
@@ -103,6 +103,22 @@ router.patch("/admin/richieste-gestionale/:id", async (req, res) => {
     ...(passwordGestionale !== undefined ? { passwordGestionale } : {}),
   }).where(eq(richiesteGestionaleTable.id, id));
   res.json({ ok: true });
+});
+
+/* ── Contatore licenze (pubblico) ── */
+router.get("/gestionale/contatore", async (_req, res) => {
+  const row = await db.execute(sql`SELECT value FROM app_settings WHERE key = 'licenze_g360'`);
+  const value = (row.rows[0] as any)?.value ?? "47";
+  res.json({ licenze: parseInt(value, 10) });
+});
+
+/* ── Aggiorna contatore (admin) ── */
+router.patch("/admin/gestionale/contatore", async (req, res) => {
+  if (!checkAuth(req, res)) return;
+  const { licenze } = req.body as { licenze: number };
+  if (typeof licenze !== "number" || licenze < 0) { res.status(400).json({ error: "Valore non valido" }); return; }
+  await db.execute(sql`INSERT INTO app_settings (key, value) VALUES ('licenze_g360', ${String(licenze)}) ON CONFLICT (key) DO UPDATE SET value = ${String(licenze)}`);
+  res.json({ ok: true, licenze });
 });
 
 export default router;

@@ -90,6 +90,11 @@ export default function Admin() {
   // Richieste gestionale
   const [richieste, setRichieste] = useState<RichiestaGestionale[]>([]);
   const [loadingRichieste, setLoadingRichieste] = useState(false);
+
+  // Contatore licenze G360
+  const [licenze, setLicenze] = useState<number | null>(null);
+  const [licenzeInput, setLicenzeInput] = useState("");
+  const [licenzeSaving, setLicenzeSaving] = useState(false);
   const [richiestaAperta, setRichiestaAperta] = useState<RichiestaGestionale | null>(null);
   const [richiestaEdit, setRichiestaEdit] = useState({ username: "", passwordGestionale: "", stato: "" });
   const [vociForm, setVociForm] = useState<VoceForm[]>(DEFAULT_VOCI.map(v => ({ ...v })));
@@ -134,6 +139,22 @@ export default function Admin() {
     setLoadingRichieste(false);
   }, [password]);
 
+  const caricaContatore = useCallback(async () => {
+    const res = await fetch(`${API_BASE}/api/gestionale/contatore`);
+    if (res.ok) { const d = await res.json(); setLicenze(d.licenze); setLicenzeInput(String(d.licenze)); }
+  }, []);
+
+  async function salvaContatore(val: number) {
+    setLicenzeSaving(true);
+    const res = await fetch(`${API_BASE}/api/admin/gestionale/contatore`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-admin-password": password },
+      body: JSON.stringify({ licenze: val }),
+    });
+    if (res.ok) { const d = await res.json(); setLicenze(d.licenze); setLicenzeInput(String(d.licenze)); }
+    setLicenzeSaving(false);
+  }
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!password.trim()) { setAuthError("Inserisci la password"); return; }
@@ -149,8 +170,8 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    if (autenticato) { caricaAcconti(); caricaCodici(); caricaClienti(); caricaProgetti(); caricaRichieste(); }
-  }, [autenticato, caricaAcconti, caricaCodici, caricaClienti, caricaProgetti, caricaRichieste]);
+    if (autenticato) { caricaAcconti(); caricaCodici(); caricaClienti(); caricaProgetti(); caricaRichieste(); caricaContatore(); }
+  }, [autenticato, caricaAcconti, caricaCodici, caricaClienti, caricaProgetti, caricaRichieste, caricaContatore]);
 
   function apriNuovoProgetto() {
     setEditingProgettoId(null);
@@ -609,7 +630,57 @@ export default function Admin() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-bold text-gray-800 text-lg">💻 Richieste prova gratuita gestionali</h2>
-              <button onClick={caricaRichieste} className="text-sm text-indigo-600 hover:underline"><i className="fas fa-sync-alt mr-1"></i> Aggiorna</button>
+              <button onClick={() => { caricaRichieste(); caricaContatore(); }} className="text-sm text-indigo-600 hover:underline"><i className="fas fa-sync-alt mr-1"></i> Aggiorna</button>
+            </div>
+
+            {/* ── Statistiche richieste ── */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="bg-white rounded-2xl shadow p-4 text-center">
+                <div className="text-3xl font-extrabold text-indigo-600">{richieste.length}</div>
+                <div className="text-xs text-gray-400 mt-1">Richieste totali</div>
+              </div>
+              <div className="bg-white rounded-2xl shadow p-4 text-center">
+                <div className="text-3xl font-extrabold text-emerald-600">{richieste.filter(r => r.tipo === "gestionale360").length}</div>
+                <div className="text-xs text-gray-400 mt-1">Gestionale360</div>
+              </div>
+              <div className="bg-white rounded-2xl shadow p-4 text-center">
+                <div className="text-3xl font-extrabold text-orange-500">{richieste.filter(r => r.tipo === "agentipro").length}</div>
+                <div className="text-xs text-gray-400 mt-1">AgentiPro</div>
+              </div>
+              <div className="bg-white rounded-2xl shadow p-4 text-center">
+                <div className="text-3xl font-extrabold text-red-500">{richieste.filter(r => r.stato === "nuova").length}</div>
+                <div className="text-xs text-gray-400 mt-1">Da gestire</div>
+              </div>
+            </div>
+
+            {/* ── Contatore licenze G360 ── */}
+            <div className="bg-white rounded-2xl shadow p-5 border-l-4 border-emerald-500">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <div className="font-bold text-gray-800 flex items-center gap-2">
+                    <i className="fas fa-ticket text-emerald-600"></i>
+                    Contatore licenze Gestionale360
+                  </div>
+                  <p className="text-xs text-gray-400 mt-0.5">Visibile sulla landing page come "licenze rimaste"</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => salvaContatore(Math.max(0, (licenze ?? 0) - 1))} disabled={licenzeSaving || licenze === 0}
+                    className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center disabled:opacity-40 transition">−</button>
+                  <input
+                    type="number" min={0} max={9999}
+                    value={licenzeInput}
+                    onChange={e => setLicenzeInput(e.target.value)}
+                    onBlur={() => { const n = parseInt(licenzeInput, 10); if (!isNaN(n) && n >= 0) salvaContatore(n); else setLicenzeInput(String(licenze ?? 0)); }}
+                    className="w-20 text-center text-2xl font-extrabold text-emerald-700 border-2 border-emerald-200 rounded-xl py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                  />
+                  <button onClick={() => salvaContatore((licenze ?? 0) + 1)} disabled={licenzeSaving}
+                    className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg flex items-center justify-center disabled:opacity-40 transition">+</button>
+                  {licenzeSaving && <span className="text-xs text-gray-400 ml-1">Salvo...</span>}
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">
+                Sulla landing appare: <span className="text-emerald-700 font-semibold">⚡ Solo {licenze ?? "..."} licenze disponibili a questo prezzo</span>
+              </p>
             </div>
             {loadingRichieste ? <p className="text-gray-400 text-sm text-center py-12">Caricamento...</p>
               : richieste.length === 0 ? (

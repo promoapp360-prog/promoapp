@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RichiestaGestionaleModal from "../components/RichiestaGestionaleModal";
 
 const FAQ = [
@@ -287,10 +287,73 @@ function ScreenStatistiche() {
 /* ══════════════════════════════════════════
    COMPONENTE PRINCIPALE
 ══════════════════════════════════════════ */
+/* ── Mockup telefono mobile ── */
+function ScreenMobile() {
+  return (
+    <div className="mx-auto" style={{ width: 220 }}>
+      <div className="rounded-[2.5rem] overflow-hidden border-[6px] border-gray-800 bg-white shadow-2xl font-sans select-none">
+        <div className="bg-gray-800 py-2 flex justify-center">
+          <div className="w-16 h-1.5 bg-gray-600 rounded-full"></div>
+        </div>
+        {/* status bar */}
+        <div className="bg-[#1a2e1a] px-4 py-2 flex items-center justify-between">
+          <span className="text-white text-[10px] font-bold">Gestionale360</span>
+          <span className="text-emerald-400 text-[9px]">● Online</span>
+        </div>
+        {/* header cassa */}
+        <div className="bg-emerald-700 px-4 py-3">
+          <div className="text-white font-extrabold text-sm">Nuova vendita</div>
+          <div className="text-emerald-200 text-[10px]">Ferramenta Bianchi · Cassa 1</div>
+        </div>
+        {/* prodotti */}
+        <div className="p-3 space-y-2 bg-gray-50">
+          {[
+            { nome: "Chiave inglese 30mm", qt: "1", pr: "€14,90" },
+            { nome: "Guanti da lavoro L",  qt: "2", pr: "€8,00" },
+            { nome: "Nastro isolante 20m", qt: "1", pr: "€5,70" },
+          ].map(p => (
+            <div key={p.nome} className="bg-white rounded-xl px-3 py-2 flex justify-between items-center shadow-sm border border-gray-100">
+              <div>
+                <div className="font-semibold text-gray-800 text-[11px]">{p.nome}</div>
+                <div className="text-gray-400 text-[9px]">Qt: {p.qt}</div>
+              </div>
+              <div className="text-emerald-700 font-extrabold text-xs">{p.pr}</div>
+            </div>
+          ))}
+          <div className="flex justify-between items-center px-1 pt-1">
+            <span className="text-gray-500 text-xs font-semibold">Totale</span>
+            <span className="text-emerald-700 font-extrabold text-base">€28,60</span>
+          </div>
+        </div>
+        {/* footer cassa */}
+        <div className="p-3 pt-0 bg-gray-50">
+          <button className="w-full bg-emerald-600 text-white font-extrabold text-sm py-3 rounded-2xl shadow-md">
+            <i className="fas fa-check mr-2"></i>Emetti scontrino
+          </button>
+          <div className="flex gap-2 mt-2">
+            <button className="flex-1 bg-white border border-gray-200 text-gray-600 text-[10px] font-semibold py-2 rounded-xl">Sconto %</button>
+            <button className="flex-1 bg-white border border-gray-200 text-gray-600 text-[10px] font-semibold py-2 rounded-xl">+ Prodotto</button>
+          </div>
+        </div>
+        <div className="bg-gray-800 py-2 flex justify-center gap-6 px-4">
+          {["fa-house","fa-boxes-stacked","fa-cash-register","fa-chart-bar"].map(ic => (
+            <i key={ic} className={`fas ${ic} text-gray-500 text-sm`}></i>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Gestionale360() {
   const [modalAperto, setModalAperto] = useState(false);
   const [faqAperta, setFaqAperta] = useState<number | null>(null);
   const [schermataAttiva, setSchermataAttiva] = useState<"dashboard" | "magazzino" | "clienti" | "ordini" | "statistiche">("dashboard");
+  const [licenze, setLicenze] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/gestionale/contatore").then(r => r.ok ? r.json() : null).then(d => { if (d) setLicenze(d.licenze); }).catch(() => {});
+  }, []);
 
   const schermate = [
     { id: "dashboard", label: "Dashboard", icon: "fa-gauge-high" },
@@ -358,6 +421,15 @@ export default function Gestionale360() {
             <i className="fas fa-check mr-1 text-emerald-400"></i>Nessuna installazione &nbsp;·&nbsp;
             <i className="fas fa-check mr-1 text-emerald-400"></i>Attivazione immediata
           </p>
+          {/* Badge licenze rimaste */}
+          {licenze !== null && (
+            <div className="flex justify-center mt-4">
+              <div className="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-400/40 text-amber-300 rounded-full px-4 py-1.5 text-xs font-bold animate-pulse">
+                <i className="fas fa-bolt text-amber-400"></i>
+                Solo {licenze} licenze disponibili a questo prezzo
+              </div>
+            </div>
+          )}
           {/* hero screenshot */}
           <div className="mt-10 max-w-4xl mx-auto">
             <ScreenDashboard />
@@ -390,13 +462,13 @@ export default function Gestionale360() {
         </div>
       </section>
 
-      {/* ══ DEMO VIDEO ══ */}
+      {/* ══ DEMO SCHERMATE ══ */}
       <section id="demo" className="py-14 bg-white">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-8">
             <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">Demo</span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">Guarda come funziona</h2>
-            <p className="text-gray-500 mt-2 text-sm">Sfoglia le schermate reali del gestionale qui sotto</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">Sfoglia le schermate reali</h2>
+            <p className="text-gray-500 mt-2 text-sm">Clicca su ogni sezione per vedere come appare il gestionale</p>
           </div>
           {/* tabs */}
           <div className="flex flex-wrap gap-2 justify-center mb-6">
@@ -418,18 +490,35 @@ export default function Gestionale360() {
             {schermataAttiva === "ordini"       && <ScreenOrdini />}
             {schermataAttiva === "statistiche"  && <ScreenStatistiche />}
           </div>
-          {/* video demo placeholder */}
-          <div className="mt-8 relative rounded-2xl overflow-hidden border border-gray-200 shadow-lg bg-gray-900 cursor-pointer group"
-            onClick={() => setModalAperto(true)}
-            style={{ aspectRatio: "16/7" }}>
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <div className="w-16 h-16 bg-emerald-500/90 group-hover:bg-emerald-400 rounded-full flex items-center justify-center shadow-2xl transition">
-                <i className="fas fa-play text-white text-2xl ml-1"></i>
-              </div>
-              <div className="text-white font-bold text-base">Video demo completo — richiedi l'accesso</div>
-              <div className="text-emerald-300 text-xs">Clicca per richiedere la demo guidata personalizzata</div>
+
+          {/* Mockup mobile */}
+          <div className="mt-14 grid md:grid-cols-2 gap-10 items-center">
+            <div className="order-2 md:order-1">
+              <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Anche da smartphone</span>
+              <h3 className="text-xl md:text-2xl font-extrabold text-gray-900 mb-3">La cassa dal telefono,<br />ovunque ti trovi.</h3>
+              <p className="text-gray-500 text-sm leading-relaxed mb-5">Hai un cliente davanti? Apri il telefono, cerca il prodotto, batti lo scontrino. Tutto in meno di 10 secondi — anche senza PC.</p>
+              <ul className="space-y-2.5">
+                {[
+                  "Cassa veloce ottimizzata per touch",
+                  "Ricerca prodotti istantanea",
+                  "Aggiornamento magazzino in tempo reale",
+                  "Scontrino via email al cliente",
+                ].map(v => (
+                  <li key={v} className="flex items-start gap-2 text-sm text-gray-700">
+                    <i className="fas fa-check text-emerald-500 mt-0.5 flex-shrink-0 text-xs"></i>{v}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setModalAperto(true)}
+                className="mt-6 inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition"
+              >
+                <i className="fas fa-play-circle"></i> Prova gratis 15 giorni
+              </button>
             </div>
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(135deg, #064e3b 0%, #0f172a 100%)" }}></div>
+            <div className="order-1 md:order-2 flex justify-center">
+              <ScreenMobile />
+            </div>
           </div>
         </div>
       </section>
