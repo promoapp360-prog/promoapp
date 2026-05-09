@@ -363,6 +363,9 @@ export default function Gestionale360() {
             <i className="fas fa-check mr-1 text-emerald-400"></i>Nessuna installazione &nbsp;·&nbsp;
             <i className="fas fa-check mr-1 text-emerald-400"></i>Attivazione immediata
           </p>
+          <p className="text-center text-sm text-emerald-200/60 mt-2">
+            Dopo la prova: <span className="text-white font-bold">199€ una tantum</span> · nessun abbonamento
+          </p>
           {/* Badge licenze rimaste */}
           {licenze !== null && (
             <div className="flex justify-center mt-4">
@@ -565,14 +568,15 @@ export default function Gestionale360() {
         </div>
       </section>
 
-      {/* ══ PREZZO (downplayed) ══ */}
-      <section className="py-12 bg-white border-b border-gray-100">
+      {/* ══ PREZZO ══ */}
+      <section className="py-14 bg-white border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <span className="inline-block bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5">Dopo la prova gratuita</span>
-          <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 mb-6">Se ti convince, paghi solo una volta.</h2>
-          <div className="border border-gray-200 rounded-2xl p-6 text-left max-w-md mx-auto bg-gray-50">
+          <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5">Prezzo</span>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Paghi una volta sola. Per sempre.</h2>
+          <p className="text-gray-500 text-sm mb-8">Nessun abbonamento mensile, nessun costo nascosto. Il gestionale è tuo.</p>
+          <div className="border-2 border-emerald-200 rounded-2xl p-8 text-left max-w-md mx-auto bg-emerald-50 shadow-md">
             <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-3xl font-extrabold text-gray-800">199€</span>
+              <span className="text-5xl font-extrabold text-emerald-700">199€</span>
               <span className="text-sm text-gray-400">una tantum · IVA esclusa</span>
             </div>
             <div className="text-xs text-gray-400 mb-4">Licenza a vita — zero canone mensile</div>
