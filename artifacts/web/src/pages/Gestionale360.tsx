@@ -619,26 +619,48 @@ export default function Gestionale360() {
       </section>
 
       {/* ══ PREZZO ══ */}
-      <section className="py-14 bg-white border-b border-gray-100">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5">Prezzo</span>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Paghi una volta sola. Per sempre.</h2>
-          <p className="text-gray-500 text-sm mb-8">Nessun abbonamento mensile, nessun costo nascosto. Il gestionale è tuo.</p>
-          <div className="border-2 border-emerald-200 rounded-2xl p-8 text-left max-w-md mx-auto bg-emerald-50 shadow-md">
-            <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-5xl font-extrabold text-emerald-700">199€</span>
-              <span className="text-sm text-gray-400">una tantum · IVA esclusa</span>
+      <section className="py-16 bg-gradient-to-b from-[#0d2318] to-[#0f2e1e]">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <span className="inline-block bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">Prezzo</span>
+          <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-2">Paghi una volta sola.<br className="hidden md:block"/> Per sempre.</h2>
+          <p className="text-emerald-200/60 text-sm mb-10">Nessun abbonamento mensile, nessun costo nascosto. Il gestionale è tuo.</p>
+
+          {/* Box prezzo */}
+          <div className="relative bg-white rounded-3xl p-8 md:p-10 shadow-2xl text-left overflow-hidden">
+            {/* Badge angolo */}
+            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-extrabold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl uppercase tracking-wide">
+              Licenza a vita
             </div>
-            <div className="text-xs text-gray-400 mb-4">Licenza a vita — zero canone mensile</div>
-            <div className="space-y-1.5">
-              {["Configurazione completa con i tuoi dati", "Logo e colori personalizzati", "Videocall di formazione inclusa", "30 giorni di supporto tecnico"].map(v => (
-                <div key={v} className="flex items-start gap-2 text-sm text-gray-700">
-                  <i className="fas fa-check text-emerald-500 mt-0.5 flex-shrink-0 text-xs"></i>{v}
+            {/* Prezzo */}
+            <div className="flex items-baseline gap-3 mb-1 mt-2">
+              <span className="text-7xl font-extrabold text-emerald-700 leading-none">199€</span>
+              <div>
+                <div className="text-gray-400 text-sm font-semibold">una tantum</div>
+                <div className="text-gray-400 text-xs">IVA esclusa</div>
+              </div>
+            </div>
+            <p className="text-emerald-700 font-bold text-sm mb-6">Zero canone mensile — mai.</p>
+            <div className="grid sm:grid-cols-2 gap-2.5 mb-8">
+              {[
+                "Configurazione completa con i tuoi dati",
+                "Logo e colori personalizzati",
+                "Videocall di formazione inclusa",
+                "30 giorni di supporto tecnico",
+              ].map(v => (
+                <div key={v} className="flex items-center gap-2.5 bg-emerald-50 rounded-xl px-3 py-2.5">
+                  <i className="fas fa-circle-check text-emerald-500 flex-shrink-0"></i>
+                  <span className="text-sm text-gray-700 font-medium">{v}</span>
                 </div>
               ))}
             </div>
+            <button
+              onClick={() => apriModale()}
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-lg py-4 rounded-2xl transition shadow-lg"
+            >
+              <i className="fab fa-whatsapp mr-2"></i>Richiedi demo gratuita — è gratis
+            </button>
+            <p className="text-center text-xs text-gray-400 mt-3">Se dopo i 15 giorni non ti convince, non paghi nulla. Punto.</p>
           </div>
-          <p className="text-xs text-gray-400 mt-4">Se dopo i 15 giorni non ti convince, non paghi nulla. Punto.</p>
         </div>
       </section>
 
