@@ -341,11 +341,14 @@ export default function Gestionale360() {
           </div>
           {/* headline */}
           <h1 className="text-3xl md:text-5xl font-extrabold text-center leading-tight mb-4 text-white">
-            Il gestionale semplice per<br className="hidden md:block" />
-            <span className="text-emerald-400"> negozi e attività locali</span>
+            Gestisci il tuo negozio<br className="hidden md:block" />
+            <span className="text-emerald-400"> senza caos</span>
           </h1>
-          <p className="text-center text-base md:text-lg text-emerald-100/70 max-w-xl mx-auto mb-8">
-            Magazzino, clienti, ordini e fornitori in un'unica piattaforma semplice da usare.<br className="hidden md:block" /> Nessuna installazione. Funziona subito.
+          <p className="text-center text-base md:text-lg text-emerald-100/70 max-w-xl mx-auto mb-3">
+            Magazzino, clienti, ordini e vendite in un'unica app semplice da usare, accessibile da telefono e PC.
+          </p>
+          <p className="text-center text-sm text-emerald-300/70 max-w-lg mx-auto mb-8">
+            Perfetto per negozi, ferramenta, ricambisti, magazzini e attività locali.
           </p>
           {/* CTA */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-3">
@@ -353,8 +356,8 @@ export default function Gestionale360() {
               onClick={() => apriModale()}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-4 rounded-2xl font-extrabold text-lg transition shadow-2xl"
             >
-              <i className="fas fa-play-circle text-xl"></i>
-              Prova gratis 15 giorni
+              <i className="fab fa-whatsapp text-xl"></i>
+              Richiedi demo gratuita su WhatsApp
             </button>
             <a
               href="#demo"
@@ -364,13 +367,11 @@ export default function Gestionale360() {
               Guarda la demo
             </a>
           </div>
-          <p className="text-center text-xs text-emerald-300/50">
-            <i className="fas fa-check mr-1 text-emerald-400"></i>Nessuna carta di credito &nbsp;·&nbsp;
-            <i className="fas fa-check mr-1 text-emerald-400"></i>Nessuna installazione &nbsp;·&nbsp;
-            <i className="fas fa-check mr-1 text-emerald-400"></i>Attivazione immediata
+          <p className="text-center text-sm text-emerald-200/60 mt-1 mb-2">
+            Nessun impegno: ti mostriamo prima come potrebbe funzionare per la tua attività.
           </p>
-          <p className="text-center text-sm text-emerald-200/60 mt-2">
-            Dopo la prova: <span className="text-white font-bold">199€ una tantum</span> · nessun abbonamento
+          <p className="text-center text-xs text-emerald-300/40 mt-1">
+            Dopo la prova: <span className="text-white/70 font-bold">199€ una tantum</span> · nessun abbonamento
           </p>
           {/* Badge licenze rimaste */}
           {licenze !== null && (
@@ -388,27 +389,70 @@ export default function Gestionale360() {
         </div>
       </section>
 
-      {/* ══ PROBLEMI DEL CLIENTE ══ */}
-      <section className="py-12 bg-gray-50 border-b border-gray-100">
+      {/* ══ PRIMA / DOPO ══ */}
+      <section className="py-14 bg-gray-50 border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4">
-          <p className="text-center text-sm font-bold uppercase tracking-widest text-gray-400 mb-6">Ti riconosci in qualcuna di queste situazioni?</p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {[
-              { prefix: "fab", icon: "fa-whatsapp",   iconColor: "text-green-500 bg-green-50",  testo: "Ordini sparsi su WhatsApp e difficili da ritrovare?" },
-              { prefix: "fas", icon: "fa-box",         iconColor: "text-orange-500 bg-orange-50", testo: "Magazzino difficile da tenere aggiornato?" },
-              { prefix: "fas", icon: "fa-table",       iconColor: "text-blue-500 bg-blue-50",    testo: "Clienti e fornitori gestiti su fogli Excel?" },
-              { prefix: "fas", icon: "fa-clock",       iconColor: "text-red-500 bg-red-50",      testo: "Troppo tempo perso tra app diverse?" },
-            ].map(p => (
-              <div key={p.testo} className="flex items-center gap-4 bg-white rounded-2xl px-5 py-4 shadow-sm border border-gray-100">
-                <div className={`w-10 h-10 rounded-xl ${p.iconColor} flex items-center justify-center flex-shrink-0`}>
-                  <i className={`${p.prefix} ${p.icon} text-lg`}></i>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-center text-gray-900 mb-10">
+            Prima lavori nel caos.<br className="hidden md:block" /> <span className="text-emerald-600">Dopo hai tutto sotto controllo.</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Prima */}
+            <div className="bg-white rounded-2xl border border-red-100 p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <i className="fas fa-times text-red-500 text-sm"></i>
                 </div>
-                <p className="font-semibold text-gray-700 text-sm">{p.testo}</p>
+                <span className="font-extrabold text-red-600 text-lg">Prima</span>
               </div>
-            ))}
+              <ul className="space-y-3">
+                {[
+                  "Ordini sparsi tra WhatsApp, fogli e appunti",
+                  "Magazzino difficile da controllare",
+                  "Clienti non organizzati",
+                  "Vendite e movimenti poco chiari",
+                ].map(v => (
+                  <li key={v} className="flex items-start gap-3 text-sm text-gray-600">
+                    <i className="fas fa-circle-xmark text-red-300 mt-0.5 flex-shrink-0"></i>
+                    {v}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Dopo */}
+            <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-200 flex items-center justify-center flex-shrink-0">
+                  <i className="fas fa-check text-emerald-700 text-sm"></i>
+                </div>
+                <span className="font-extrabold text-emerald-700 text-lg">Dopo</span>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  "Ordini, clienti e prodotti in un solo gestionale",
+                  "Magazzino sempre aggiornato",
+                  "Dati consultabili da telefono e PC",
+                  "Più controllo sulla tua attività",
+                ].map(v => (
+                  <li key={v} className="flex items-start gap-3 text-sm text-gray-700 font-medium">
+                    <i className="fas fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                    {v}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <p className="text-center text-gray-500 mt-6 text-sm">
-            Gestionale360 risolve tutto questo in un unico posto. <strong className="text-emerald-700">Semplice da usare dal primo giorno.</strong>
+        </div>
+      </section>
+
+      {/* ══ SEZIONE FIDUCIA ══ */}
+      <section className="py-10 bg-white border-b border-gray-100">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <i className="fas fa-handshake text-emerald-600 text-xl"></i>
+          </div>
+          <p className="text-gray-700 text-base md:text-lg font-semibold leading-relaxed">
+            Non devi essere esperto di tecnologia.<br className="hidden md:block" />
+            <span className="text-emerald-700"> Ti aiutiamo noi a configurare il gestionale in base alla tua attività.</span>
           </p>
         </div>
       </section>

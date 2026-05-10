@@ -1,0 +1,51 @@
+Modifica SOLO la landing page /gestionale360, senza stravolgere grafica, struttura generale, colori, font, header, footer e sezioni già presenti.
+
+Obiettivo: migliorare la conversione della parte iniziale della pagina.
+
+INTERVENTI DA FARE:
+
+1. Nella hero section iniziale, sostituisci il titolo principale con:
+“Gestisci il tuo negozio senza caos”
+
+2. Sotto il titolo inserisci questo sottotitolo:
+“Magazzino, clienti, ordini e vendite in un’unica app semplice da usare, accessibile da telefono e PC.”
+
+3. Subito sotto il sottotitolo aggiungi una riga con questi punti:
+“Perfetto per negozi, ferramenta, ricambisti, magazzini e attività locali.”
+
+4. Modifica il bottone principale della hero con questo testo:
+“Richiedi demo gratuita su WhatsApp”
+
+5. Aggiungi sotto il bottone una piccola frase rassicurante:
+“Nessun impegno: ti mostriamo prima come potrebbe funzionare per la tua attività.”
+
+6. Aggiungi una sezione subito dopo la hero, mantenendo lo stesso stile grafico della pagina, con titolo:
+“Prima lavori nel caos. Dopo hai tutto sotto controllo.”
+
+La sezione deve avere due colonne:
+
+Colonna sinistra titolo:
+“Prima”
+- Ordini sparsi tra WhatsApp, fogli e appunti
+- Magazzino difficile da controllare
+- Clienti non organizzati
+- Vendite e movimenti poco chiari
+
+Colonna destra titolo:
+“Dopo”
+- Ordini, clienti e prodotti in un solo gestionale
+- Magazzino sempre aggiornato
+- Dati consultabili da telefono e PC
+- Più controllo sulla tua attività
+
+7. Aggiungi una breve sezione fiducia, subito dopo quella “Prima/Dopo”, con questo testo:
+“Non devi essere esperto di tecnologia. Ti aiutiamo noi a configurare il gestionale in base alla tua attività.”
+
+IMPORTANTE:
+- Non cambiare il design generale.
+- Non rimuovere sezioni esistenti.
+- Non modificare il menu, il footer o altre pagine.
+- Non inventare nuove funzioni tecniche.
+- Mantieni la pagina veloce e pulita.
+- I bottoni devono continuare a portare alla richiesta demo/contatto già esistente.
+- Se esistono componenti riutilizzabili, modifica solo quelli necessari per /gestionale360.
