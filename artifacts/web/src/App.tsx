@@ -1032,6 +1032,8 @@ export default function App() {
           <div className="opacity-70 text-center md:text-left">
             © 2026 <strong>PromoApp.it</strong><br className="md:hidden" />
             <span className="opacity-80"> · Sophia 2005 S.r.l. · P.IVA 08223951008</span>
+            <br />
+            <span className="text-xs opacity-60 italic">Sito in fase di realizzazione — non ancora operativo</span>
           </div>
           <div className="flex items-center gap-5">
             <a
