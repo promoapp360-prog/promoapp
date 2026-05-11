@@ -463,7 +463,7 @@ export default function AgentiPro() {
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <div className="text-lg font-extrabold mb-1">Promo<span className="text-emerald-400">App</span>.it</div>
-            <p className="text-gray-400 text-xs">Sophia 2005 S.r.l. · P.IVA 08223951008</p>
+            <p className="text-gray-400 text-xs">P.IVA 08223951008</p>
           </div>
           <div className="flex gap-4 text-sm text-gray-400">
             <a href="/" className="hover:text-white transition">Sito principale</a>

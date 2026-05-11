@@ -689,7 +689,7 @@ export default function Pagamenti() {
           )}
 
           <p className="text-center text-xs text-gray-400 mt-6">
-            Dati protetti · <a href="/privacy.html" className="underline hover:text-gray-600">Privacy Policy</a> · Sophia 2005 S.r.l. · P.IVA 08223951008
+            Dati protetti · <a href="/privacy.html" className="underline hover:text-gray-600">Privacy Policy</a> · P.IVA 08223951008
           </p>
         </div>
       </div>

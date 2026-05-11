@@ -192,7 +192,7 @@ export default function SitoWeb() {
 
       {/* Footer minimal */}
       <footer className="bg-gray-900 text-gray-400 text-center py-8 px-4 text-sm">
-        <p className="font-bold text-white mb-1">PromoApp.it — Sophia 2005 S.r.l.</p>
+        <p className="font-bold text-white mb-1">PromoApp.it</p>
         <p>P.IVA 08223951008 · <a href="/privacy.html" className="hover:underline">Privacy</a> · <a href="/cookie.html" className="hover:underline">Cookie</a></p>
       </footer>
 

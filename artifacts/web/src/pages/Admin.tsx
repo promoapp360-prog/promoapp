@@ -310,7 +310,7 @@ export default function Admin() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Pannello Admin</h1>
-            <p className="text-gray-500 text-sm">PromoApp.it · Sophia 2005 S.r.l.</p>
+            <p className="text-gray-500 text-sm">PromoApp.it</p>
           </div>
           <div className="flex gap-3">
             <a href="/" className="text-sm text-indigo-600 hover:underline">← Sito</a>

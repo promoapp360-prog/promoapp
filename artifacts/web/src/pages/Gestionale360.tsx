@@ -706,7 +706,7 @@ export default function Gestionale360() {
       <footer className="bg-gray-900 text-white py-6">
         <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-gray-500">
           <span className="flex flex-col gap-0.5">
-            <span>Promo<span className="text-emerald-400">App</span>.it · Sophia 2005 S.r.l. · P.IVA 08223951008</span>
+            <span>Promo<span className="text-emerald-400">App</span>.it</span>
             <span className="text-xs italic opacity-60">Sito in fase di realizzazione — non ancora operativo</span>
           </span>
           <div className="flex gap-4">
