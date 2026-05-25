@@ -731,12 +731,12 @@ export default function App() {
                 </div>
                 <h3 className="text-2xl font-bold">{scheda.nome}</h3>
                 {scheda.descrizione && <p className="text-white/75 text-sm mt-1 font-light">{scheda.descrizione}</p>}
-                <button
-                  onClick={() => navigate(`/lavori/${scheda.id}`)}
-                  className="mt-4 w-full bg-white text-indigo-700 font-extrabold py-3 rounded-2xl text-sm hover:bg-indigo-50 transition flex items-center justify-center gap-2 shadow"
+                <a
+                  href={`/lavori/${scheda.id}`}
+                  className="mt-4 w-full bg-white text-indigo-700 font-extrabold py-3 rounded-2xl text-sm hover:bg-indigo-50 transition flex items-center justify-center gap-2 shadow block text-center"
                 >
-                  <i className="fas fa-eye"></i> Visualizza il tuo progetto
-                </button>
+                  <i className="fas fa-eye mr-1"></i> Visualizza il tuo progetto
+                </a>
               </div>
 
               {/* Scheda costi */}
