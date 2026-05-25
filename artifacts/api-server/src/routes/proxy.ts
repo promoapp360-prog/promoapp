@@ -57,6 +57,18 @@ router.use("/proxy/:id", async (req, res, next) => {
           }
           headers["cache-control"] = "no-store";
 
+          // Riscrivi Location header per evitare che il browser esca dal proxy
+          const loc = proxyRes.headers["location"];
+          if (typeof loc === "string") {
+            let newLoc = loc;
+            if (loc.startsWith(targetBase)) {
+              newLoc = `/api/proxy/${id}${loc.slice(targetBase.length)}`;
+            } else if (loc.startsWith("/") && !loc.startsWith("//") && !loc.startsWith(`/api/proxy/${id}`)) {
+              newLoc = `/api/proxy/${id}${loc}`;
+            }
+            headers["location"] = newLoc;
+          }
+
           (res as import("express").Response).writeHead(
             proxyRes.statusCode || 200,
             headers
