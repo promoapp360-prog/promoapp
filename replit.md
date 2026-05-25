@@ -59,6 +59,31 @@ Ordine sezioni in `artifacts/web/src/App.tsx`:
 10. **Banner test** giallo (rimuovere prima di andare live)
 11. **Footer** — Sophia 2005 S.r.l. · P.IVA 08223951008 · social FB/IG
 
+## Sistema Proxy "Lavori in corso" (`/lavori/:id`)
+
+Permette ai clienti di vedere il loro progetto Replit ospitato altrove sotto il dominio `promoapp.it/{nome-slug}`, nascondendo completamente l'URL `*.replit.app`.
+
+**Flusso**:
+1. Admin crea progetto via `POST /api/admin/progetti` con `{ nome, url, password, scheda? }` (DB: `progetti_lavori`)
+2. Cliente clicca card in homepage → `LockModal` chiede password
+3. `POST /api/lavori/sblocca` valida password e restituisce `{ token, nome, scheda }`. Frontend salva `preview_token_${id}`, `preview_nome_${id}` in sessionStorage
+4. Bottone "Visualizza il tuo progetto" apre `/lavori/:id` → `PreviewPage` renderizza iframe con `src=/api/proxy/{id}/`
+5. Barra falsa sopra l'iframe mostra `promoapp.it/{slug}` — il browser vede solo `promoapp.it` ovunque
+
+**Proxy (`artifacts/api-server/src/routes/proxy.ts`)** — punti critici, NON rompere:
+- **Niente check token**: l'UUID dell'id è il segreto (sub-resources JS/CSS/img non possono passare token)
+- **Cache headers stripped**: rimuove `if-none-match`/`if-modified-since` dalla request (altrimenti 304 → browser usa HTML cached vecchio senza inject)
+- **Response headers stripped**: rimuove `x-frame-options`, `content-security-policy`, `etag`, `last-modified`, `cache-control`; forza `cache-control: no-store`
+- **Location header riscritto**: redirect 30x con `Location` assoluto/relativo verso target → riscritti a `/api/proxy/{id}/...` per non far uscire il browser dal proxy
+- **HTML injection**: aggiunge `<base href="/api/proxy/{id}/">` + uno script che:
+  - Decomprime gzip/brotli/deflate
+  - Riscrive `src/href/action/poster/data-src="/..."` e `url(/...)` assoluti in HTML
+  - A runtime intercetta: `history.pushState/replaceState`, `window.fetch`, `XMLHttpRequest.open`, setter `src/href` su `HTMLImageElement|Script|Link|Source|Iframe|Anchor|Media`, e `Element.setAttribute` — tutti prependono il prefisso proxy a path assoluti
+  - Strippa il prefisso dal `pathname` iniziale con `replaceState` così il React Router del progetto vede `/`
+- Risposte non-HTML (asset) passano dirette tramite `proxyRes.pipe(res)`
+
+**Auth (Clerk)**: il middleware Clerk in `app.ts` NON blocca `/api/proxy/*` perché clerkMiddleware solo aggiunge contesto (non `requireAuth`). Header `x-clerk-auth-status: signed-out` è informativo.
+
 ## Convenzioni importanti
 
 - **Sempre rispondere in italiano** quando si lavora su questo progetto.
