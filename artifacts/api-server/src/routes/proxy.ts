@@ -75,11 +75,28 @@ router.use("/proxy/:id", async (req, res, next) => {
           proxyRes.on("end", () => {
             const buffer = Buffer.concat(chunks);
 
-            const injectBase = (html: string): string =>
-              html.replace(
+            const proxyPrefix = `/api/proxy/${id}`;
+            const injectBase = (html: string): string => {
+              let out = html.replace(
                 /<head([^>]*)>/i,
-                `<head$1><base href="${targetBase}/">`
+                `<head$1><base href="${proxyPrefix}/">`
               );
+              // Riscrivi percorsi assoluti (src="/x", href="/x", url(/x)) → /api/proxy/{id}/x
+              // Evita //... (protocol-relative) e già /api/proxy/...
+              out = out.replace(
+                /(src|href|action|data-src|poster)="\/(?!\/|api\/proxy\/)/g,
+                `$1="${proxyPrefix}/`
+              );
+              out = out.replace(
+                /(src|href|action|data-src|poster)='\/(?!\/|api\/proxy\/)/g,
+                `$1='${proxyPrefix}/`
+              );
+              out = out.replace(
+                /url\(\/(?!\/|api\/proxy\/)/g,
+                `url(${proxyPrefix}/`
+              );
+              return out;
+            };
 
             const send = (buf: Buffer) => {
               try {
