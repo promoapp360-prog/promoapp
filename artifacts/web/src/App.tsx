@@ -724,12 +724,6 @@ export default function App() {
                   <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold uppercase px-3 py-1 rounded-full">
                     <i className="fas fa-hammer mr-1"></i> In corso
                   </span>
-                  {scheda.url && (
-                    <a href={scheda.url} target="_blank" rel="noopener noreferrer"
-                      className="bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition flex items-center gap-1">
-                      <i className="fas fa-external-link-alt text-xs"></i> Apri app
-                    </a>
-                  )}
                 </div>
                 <h3 className="text-2xl font-bold">{scheda.nome}</h3>
                 {scheda.descrizione && <p className="text-white/75 text-sm mt-1 font-light">{scheda.descrizione}</p>}
