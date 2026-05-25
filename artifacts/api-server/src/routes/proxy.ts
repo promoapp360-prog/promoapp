@@ -73,10 +73,13 @@ router.use("/proxy/:id", async (req, res, next) => {
             const buffer = Buffer.concat(chunks);
 
             const proxyPrefix = `/api/proxy/${id}`;
+            const fixUrlScript = `<script>(function(){var p=${JSON.stringify(
+              proxyPrefix,
+            )};function strip(u){if(!u)return u;if(u.indexOf(p)===0)return u.slice(p.length)||'/';return u;}try{var loc=window.location;if(loc.pathname.indexOf(p)===0){history.replaceState(null,'',strip(loc.pathname)+loc.search+loc.hash);}var op=history.pushState.bind(history),orp=history.replaceState.bind(history);history.pushState=function(s,t,u){return op(s,t,typeof u==='string'?(u.charAt(0)==='/'&&u.indexOf(p)!==0?p+u:u):u);};history.replaceState=function(s,t,u){return orp(s,t,typeof u==='string'?(u.charAt(0)==='/'&&u.indexOf(p)!==0?p+u:u):u);};}catch(e){}})();</script>`;
             const injectBase = (html: string): string => {
               let out = html.replace(
                 /<head([^>]*)>/i,
-                `<head$1><base href="${proxyPrefix}/">`
+                `<head$1><base href="${proxyPrefix}/">${fixUrlScript}`
               );
               // Riscrivi percorsi assoluti (src="/x", href="/x", url(/x)) → /api/proxy/{id}/x
               // Evita //... (protocol-relative) e già /api/proxy/...
