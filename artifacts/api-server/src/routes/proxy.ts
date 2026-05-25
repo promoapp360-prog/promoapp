@@ -26,6 +26,11 @@ router.use("/proxy/:id", async (req, res, next) => {
 
     const targetBase = progetto.url.replace(/\/$/, "");
 
+    // Rimuovi header di cache dalla richiesta in arrivo così l'origine risponde sempre 200
+    delete req.headers["if-none-match"];
+    delete req.headers["if-modified-since"];
+    delete req.headers["if-range"];
+
     const proxy = createProxyMiddleware({
       target: targetBase,
       changeOrigin: true,
@@ -38,18 +43,22 @@ router.use("/proxy/:id", async (req, res, next) => {
           const isHtml = contentType.includes("text/html");
           const encoding = proxyRes.headers["content-encoding"];
 
+          const SKIP = new Set([
+            "x-frame-options",
+            "content-security-policy",
+            "x-content-type-options",
+            "etag",
+            "last-modified",
+            "cache-control",
+          ]);
           const headers: Record<string, string | string[]> = {};
           for (const [k, v] of Object.entries(proxyRes.headers)) {
-            if (
-              k === "x-frame-options" ||
-              k === "content-security-policy" ||
-              k === "x-content-type-options"
-            )
-              continue;
+            if (SKIP.has(k)) continue;
             if (isHtml && (k === "content-encoding" || k === "content-length"))
               continue;
             if (v !== undefined) headers[k] = v as string | string[];
           }
+          headers["cache-control"] = "no-store";
 
           (res as import("express").Response).writeHead(
             proxyRes.statusCode || 200,
