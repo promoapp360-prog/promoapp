@@ -9,18 +9,20 @@ export default function PreviewPage() {
 
   useEffect(() => {
     const token = sessionStorage.getItem(`preview_token_${id}`);
-    if (!token) {
+    const url = sessionStorage.getItem(`preview_url_${id}`);
+    if (!token || !url) {
       navigate("/");
       return;
     }
     const nome = sessionStorage.getItem(`preview_nome_${id}`) || "";
     setNomeProgetto(nome);
-    setIframeSrc(`/api/proxy/${id}/?token=${token}`);
+    setIframeSrc(url);
   }, [id, navigate]);
 
   function handleBack() {
     sessionStorage.removeItem(`preview_token_${id}`);
     sessionStorage.removeItem(`preview_nome_${id}`);
+    sessionStorage.removeItem(`preview_url_${id}`);
     navigate("/");
   }
 

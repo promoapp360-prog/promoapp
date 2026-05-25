@@ -170,6 +170,7 @@ export default function App() {
         sessionStorage.setItem("lavori_scheda", JSON.stringify(data.scheda));
         if (data.token) sessionStorage.setItem(`preview_token_${data.scheda.id}`, data.token);
         if (data.nome) sessionStorage.setItem(`preview_nome_${data.scheda.id}`, data.nome);
+        if (data.scheda.url) sessionStorage.setItem(`preview_url_${data.scheda.id}`, data.scheda.url);
         setProgettoVisibile(data.scheda.id);
         setScheda(data.scheda);
         setLavoriPwdErr(false);
