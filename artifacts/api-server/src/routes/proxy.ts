@@ -8,9 +8,6 @@ const router = Router();
 
 router.use("/proxy/:id", async (req, res, next) => {
   const { id } = req.params;
-  const token =
-    (req.query.token as string) ||
-    (req.headers["x-preview-token"] as string);
 
   try {
     const [progetto] = await db
@@ -19,7 +16,7 @@ router.use("/proxy/:id", async (req, res, next) => {
       .where(eq(progettiLavoriTable.id, id))
       .limit(1);
 
-    if (!progetto || token !== progetto.id || !progetto.url) {
+    if (!progetto || !progetto.url) {
       res.status(403).send("Accesso negato");
       return;
     }
