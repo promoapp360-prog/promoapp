@@ -9,14 +9,13 @@ export default function PreviewPage() {
 
   useEffect(() => {
     const token = sessionStorage.getItem(`preview_token_${id}`);
-    const url = sessionStorage.getItem(`preview_url_${id}`);
-    if (!token || !url) {
+    if (!token) {
       navigate("/");
       return;
     }
     const nome = sessionStorage.getItem(`preview_nome_${id}`) || "";
     setNomeProgetto(nome);
-    setIframeSrc(url);
+    setIframeSrc(`/api/proxy/${id}/?token=${encodeURIComponent(token)}`);
   }, [id, navigate]);
 
   function handleBack() {
