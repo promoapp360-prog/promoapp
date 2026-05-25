@@ -67,9 +67,10 @@ function LockModal({ projectId, onClose }: { projectId: string; onClose: () => v
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: projectId, password: pwd }),
       });
-      const data = await res.json() as { success: boolean; token?: string; message?: string };
+      const data = await res.json() as { success: boolean; token?: string; nome?: string; message?: string };
       if (data.success && data.token) {
         sessionStorage.setItem(`preview_token_${projectId}`, data.token);
+        if (data.nome) sessionStorage.setItem(`preview_nome_${projectId}`, data.nome);
         navigate(`/lavori/${projectId}`);
         onClose();
       } else {

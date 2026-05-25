@@ -6,6 +6,7 @@ import adminRouter from "./admin";
 import lavoriRouter from "./lavori";
 import accontoRouter from "./acconto";
 import gestionaliRouter from "./gestionali";
+import proxyRouter from "./proxy";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(adminRouter);
 router.use(lavoriRouter);
 router.use(accontoRouter);
 router.use(gestionaliRouter);
+router.use(proxyRouter);
 
 export default router;

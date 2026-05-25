@@ -32,6 +32,8 @@ router.post("/lavori/sblocca", async (req, res) => {
 
     res.json({
       success: true,
+      token: progetto.id,
+      nome: progetto.nome,
       scheda: {
         id: progetto.id,
         nome: progetto.nome,
