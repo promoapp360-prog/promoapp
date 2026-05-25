@@ -125,6 +125,7 @@ function LockModal({ projectId, onClose }: { projectId: string; onClose: () => v
 }
 
 export default function App() {
+  const [, navigate] = useLocation();
   const [form, setForm] = useState({ nome_attivita: "", email: "", settore: "Negozio", messaggio: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -163,10 +164,12 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: lavoriPwd.trim() }),
       });
-      const data = await res.json() as { success: boolean; scheda?: Scheda; message?: string };
+      const data = await res.json() as { success: boolean; token?: string; nome?: string; scheda?: Scheda; message?: string };
       if (data.success && data.scheda) {
         sessionStorage.setItem("lavori_progetto", data.scheda.id);
         sessionStorage.setItem("lavori_scheda", JSON.stringify(data.scheda));
+        if (data.token) sessionStorage.setItem(`preview_token_${data.scheda.id}`, data.token);
+        if (data.nome) sessionStorage.setItem(`preview_nome_${data.scheda.id}`, data.nome);
         setProgettoVisibile(data.scheda.id);
         setScheda(data.scheda);
         setLavoriPwdErr(false);
@@ -728,6 +731,12 @@ export default function App() {
                 </div>
                 <h3 className="text-2xl font-bold">{scheda.nome}</h3>
                 {scheda.descrizione && <p className="text-white/75 text-sm mt-1 font-light">{scheda.descrizione}</p>}
+                <button
+                  onClick={() => navigate(`/lavori/${scheda.id}`)}
+                  className="mt-4 w-full bg-white text-indigo-700 font-extrabold py-3 rounded-2xl text-sm hover:bg-indigo-50 transition flex items-center justify-center gap-2 shadow"
+                >
+                  <i className="fas fa-eye"></i> Visualizza il tuo progetto
+                </button>
               </div>
 
               {/* Scheda costi */}
