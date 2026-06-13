@@ -1,0 +1,1 @@
+- [Aggiunta progetti lavori](aggiunta-progetti-lavori.md) — procedura esatta per creare un progetto cliente nel sistema proxy senza errori
