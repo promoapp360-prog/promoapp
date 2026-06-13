@@ -62,7 +62,21 @@ router.use("/proxy/:id", async (req, res, next) => {
             if (SKIP.has(k)) continue;
             if (isHtml && (k === "content-encoding" || k === "content-length"))
               continue;
-            if (v !== undefined) headers[k] = v as string | string[];
+            if (v !== undefined) {
+              // Riscrivi Set-Cookie: rimuovi Domain/Secure/SameSite così il browser
+              // li salva per promoapp.it e li rimanda con ogni richiesta proxy
+              if (k === "set-cookie") {
+                const cookies = (Array.isArray(v) ? v : [v]) as string[];
+                headers[k] = cookies.map((c) =>
+                  c
+                    .replace(/;\s*domain=[^;]*/gi, "")
+                    .replace(/;\s*secure/gi, "")
+                    .replace(/;\s*samesite=[^;]*/gi, "")
+                );
+              } else {
+                headers[k] = v as string | string[];
+              }
+            }
           }
           headers["cache-control"] = "no-store";
 
@@ -98,7 +112,24 @@ router.use("/proxy/:id", async (req, res, next) => {
             const proxyPrefix = `/api/proxy/${id}`;
             const fixUrlScript = `<script>(function(){var p=${JSON.stringify(
               proxyPrefix,
-            )};var sp=${JSON.stringify(targetSubPath || "")};var O=location.origin;function wrap(u){try{if(u==null)return u;if(typeof URL!=='undefined'&&u instanceof URL)u=u.toString();if(typeof u!=='string')return u;if(u.indexOf(p)===0||u.indexOf(p+'/')===0)return u;if(u.charAt(0)==='/'&&u.charAt(1)!=='/')return p+u;if(u.indexOf(O+'/')===0){var rest=u.slice(O.length);if(rest.indexOf(p)===0)return u;return O+p+rest;}return u;}catch(e){return u;}}function strip(u){if(!u)return u;if(u.indexOf(p)===0)return u.slice(p.length)||'/';return u;}function safe(fn){try{fn();}catch(e){console.warn('proxy hook fail',e);}}safe(function(){var loc=window.location;if(loc.pathname.indexOf(p)===0){var stripped=strip(loc.pathname);var initial=(stripped==='/'||stripped==='')?( sp||'/'):stripped;history.replaceState(null,'',initial+loc.search+loc.hash);}});safe(function(){var op=history.pushState.bind(history);history.pushState=function(s,t,u){return op(s,t,wrap(u));};});safe(function(){var orp=history.replaceState.bind(history);history.replaceState=function(s,t,u){return orp(s,t,wrap(u));};});safe(function(){var of=window.fetch;if(!of)return;window.fetch=function(i,init){try{if(typeof i==='string'){i=wrap(i);}else if(i&&typeof Request!=='undefined'&&i instanceof Request){var w=wrap(i.url);if(w!==i.url)i=new Request(w,i);}else if(typeof URL!=='undefined'&&i instanceof URL){i=wrap(i.toString());}}catch(e){}return of.call(this,i,init);};});safe(function(){var ox=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){try{arguments[1]=wrap(u);}catch(e){}return ox.apply(this,arguments);};});['src','href'].forEach(function(prop){['HTMLImageElement','HTMLScriptElement','HTMLLinkElement','HTMLSourceElement','HTMLIFrameElement','HTMLAnchorElement','HTMLMediaElement','HTMLFormElement'].forEach(function(cn){safe(function(){var C=window[cn];if(!C)return;var d=Object.getOwnPropertyDescriptor(C.prototype,prop);if(!d||!d.set)return;Object.defineProperty(C.prototype,prop,{get:d.get,set:function(v){d.set.call(this,wrap(v));},configurable:true});});});});safe(function(){var sa=Element.prototype.setAttribute;Element.prototype.setAttribute=function(n,v){try{var ln=(n||'').toLowerCase();if((ln==='src'||ln==='href'||ln==='action'||ln==='formaction'||ln==='poster'||ln==='data-src')&&typeof v==='string')v=wrap(v);}catch(e){}return sa.call(this,n,v);};});})();</script>`;
+            )};var sp=${JSON.stringify(targetSubPath || "")};var O=location.origin;
+/* wrap: aggiunge prefisso proxy solo alle richieste HTTP reali (fetch/XHR/assets).
+   NON usare su pushState/replaceState: React Router deve vedere path puliti. */
+function wrap(u){try{if(u==null)return u;if(typeof URL!=='undefined'&&u instanceof URL)u=u.toString();if(typeof u!=='string')return u;if(u.indexOf(p)===0||u.indexOf(p+'/')===0)return u;if(u.charAt(0)==='/'&&u.charAt(1)!=='/')return p+u;if(u.indexOf(O+'/')===0){var rest=u.slice(O.length);if(rest.indexOf(p)===0)return u;return O+p+rest;}return u;}catch(e){return u;}}
+function strip(u){if(!u)return u;if(u.indexOf(p)===0)return u.slice(p.length)||'/';return u;}
+function safe(fn){try{fn();}catch(e){console.warn('proxy hook fail',e);}}
+/* Imposta il path iniziale corretto per React Router (es. /admin invece di /api/proxy/id/) */
+safe(function(){var loc=window.location;if(loc.pathname.indexOf(p)===0){var stripped=strip(loc.pathname);var initial=(stripped==='/'||stripped==='')?( sp||'/'):stripped;history.replaceState(null,'',initial+loc.search+loc.hash);}});
+/* fetch e XHR: aggiungi prefisso proxy per le chiamate API */
+safe(function(){var of=window.fetch;if(!of)return;window.fetch=function(i,init){try{if(typeof i==='string'){i=wrap(i);}else if(i&&typeof Request!=='undefined'&&i instanceof Request){var w=wrap(i.url);if(w!==i.url)i=new Request(w,i);}else if(typeof URL!=='undefined'&&i instanceof URL){i=wrap(i.toString());}}catch(e){}return of.call(this,i,init);};});
+safe(function(){var ox=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){try{arguments[1]=wrap(u);}catch(e){}return ox.apply(this,arguments);};});
+/* Asset src/href: aggiungi prefisso proxy per img, script, link, form */
+['src','href'].forEach(function(prop){['HTMLImageElement','HTMLScriptElement','HTMLLinkElement','HTMLSourceElement','HTMLIFrameElement','HTMLMediaElement'].forEach(function(cn){safe(function(){var C=window[cn];if(!C)return;var d=Object.getOwnPropertyDescriptor(C.prototype,prop);if(!d||!d.set)return;Object.defineProperty(C.prototype,prop,{get:d.get,set:function(v){d.set.call(this,wrap(v));},configurable:true});});});});
+/* <a href> e form action: wrap per navigazioni full-page e submit */
+safe(function(){var sa=Element.prototype.setAttribute;Element.prototype.setAttribute=function(n,v){try{var ln=(n||'').toLowerCase();if((ln==='src'||ln==='action'||ln==='formaction'||ln==='poster'||ln==='data-src')&&typeof v==='string')v=wrap(v);}catch(e){}return sa.call(this,n,v);};});
+/* window.location.assign e replace: wrap per navigazioni programmatiche */
+safe(function(){var oa=location.assign.bind(location),or2=location.replace.bind(location);location.assign=function(u){oa(wrap(u));};location.replace=function(u){or2(wrap(u));};});
+})();</script>`;
             const injectBase = (html: string): string => {
               let out = html.replace(
                 /<head([^>]*)>/i,
