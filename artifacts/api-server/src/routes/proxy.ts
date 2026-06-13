@@ -22,6 +22,11 @@ router.use("/proxy/:id", async (req, res, next) => {
     }
 
     const targetBase = progetto.url.replace(/\/$/, "");
+    // Separa origin da subpath (es. https://host.app/admin → origin=https://host.app, subPath=/admin)
+    const targetUrlParsed = new URL(targetBase);
+    const targetOrigin = targetUrlParsed.origin;
+    const targetSubPath =
+      targetUrlParsed.pathname === "/" ? "" : targetUrlParsed.pathname.replace(/\/$/, "");
 
     // Rimuovi header di cache dalla richiesta in arrivo così l'origine risponde sempre 200
     delete req.headers["if-none-match"];
@@ -29,11 +34,15 @@ router.use("/proxy/:id", async (req, res, next) => {
     delete req.headers["if-range"];
 
     const proxy = createProxyMiddleware({
-      target: targetBase,
+      target: targetOrigin,
       changeOrigin: true,
       selfHandleResponse: true,
-      pathRewrite: (path) =>
-        path.replace(new RegExp(`^/api/proxy/${id}`), "") || "/",
+      pathRewrite: (path) => {
+        const stripped = path.replace(new RegExp(`^/api/proxy/${id}`), "") || "/";
+        // Se siamo alla root del proxy E il target ha un subpath, servi quel subpath
+        if ((stripped === "/" || stripped === "") && targetSubPath) return targetSubPath;
+        return stripped;
+      },
       on: {
         proxyRes: (proxyRes, _req, res) => {
           const contentType = proxyRes.headers["content-type"] || "";
@@ -61,7 +70,9 @@ router.use("/proxy/:id", async (req, res, next) => {
           const loc = proxyRes.headers["location"];
           if (typeof loc === "string") {
             let newLoc = loc;
-            if (loc.startsWith(targetBase)) {
+            if (loc.startsWith(targetOrigin)) {
+              newLoc = `/api/proxy/${id}${loc.slice(targetOrigin.length)}`;
+            } else if (loc.startsWith(targetBase)) {
               newLoc = `/api/proxy/${id}${loc.slice(targetBase.length)}`;
             } else if (loc.startsWith("/") && !loc.startsWith("//") && !loc.startsWith(`/api/proxy/${id}`)) {
               newLoc = `/api/proxy/${id}${loc}`;
@@ -87,7 +98,7 @@ router.use("/proxy/:id", async (req, res, next) => {
             const proxyPrefix = `/api/proxy/${id}`;
             const fixUrlScript = `<script>(function(){var p=${JSON.stringify(
               proxyPrefix,
-            )};var O=location.origin;function wrap(u){try{if(u==null)return u;if(typeof URL!=='undefined'&&u instanceof URL)u=u.toString();if(typeof u!=='string')return u;if(u.indexOf(p)===0||u.indexOf(p+'/')===0)return u;if(u.charAt(0)==='/'&&u.charAt(1)!=='/')return p+u;if(u.indexOf(O+'/')===0){var rest=u.slice(O.length);if(rest.indexOf(p)===0)return u;return O+p+rest;}return u;}catch(e){return u;}}function strip(u){if(!u)return u;if(u.indexOf(p)===0)return u.slice(p.length)||'/';return u;}function safe(fn){try{fn();}catch(e){console.warn('proxy hook fail',e);}}safe(function(){var loc=window.location;if(loc.pathname.indexOf(p)===0){history.replaceState(null,'',strip(loc.pathname)+loc.search+loc.hash);}});safe(function(){var op=history.pushState.bind(history);history.pushState=function(s,t,u){return op(s,t,wrap(u));};});safe(function(){var orp=history.replaceState.bind(history);history.replaceState=function(s,t,u){return orp(s,t,wrap(u));};});safe(function(){var of=window.fetch;if(!of)return;window.fetch=function(i,init){try{if(typeof i==='string'){i=wrap(i);}else if(i&&typeof Request!=='undefined'&&i instanceof Request){var w=wrap(i.url);if(w!==i.url)i=new Request(w,i);}else if(typeof URL!=='undefined'&&i instanceof URL){i=wrap(i.toString());}}catch(e){}return of.call(this,i,init);};});safe(function(){var ox=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){try{arguments[1]=wrap(u);}catch(e){}return ox.apply(this,arguments);};});['src','href'].forEach(function(prop){['HTMLImageElement','HTMLScriptElement','HTMLLinkElement','HTMLSourceElement','HTMLIFrameElement','HTMLAnchorElement','HTMLMediaElement','HTMLFormElement'].forEach(function(cn){safe(function(){var C=window[cn];if(!C)return;var d=Object.getOwnPropertyDescriptor(C.prototype,prop);if(!d||!d.set)return;Object.defineProperty(C.prototype,prop,{get:d.get,set:function(v){d.set.call(this,wrap(v));},configurable:true});});});});safe(function(){var sa=Element.prototype.setAttribute;Element.prototype.setAttribute=function(n,v){try{var ln=(n||'').toLowerCase();if((ln==='src'||ln==='href'||ln==='action'||ln==='formaction'||ln==='poster'||ln==='data-src')&&typeof v==='string')v=wrap(v);}catch(e){}return sa.call(this,n,v);};});})();</script>`;
+            )};var sp=${JSON.stringify(targetSubPath || "")};var O=location.origin;function wrap(u){try{if(u==null)return u;if(typeof URL!=='undefined'&&u instanceof URL)u=u.toString();if(typeof u!=='string')return u;if(u.indexOf(p)===0||u.indexOf(p+'/')===0)return u;if(u.charAt(0)==='/'&&u.charAt(1)!=='/')return p+u;if(u.indexOf(O+'/')===0){var rest=u.slice(O.length);if(rest.indexOf(p)===0)return u;return O+p+rest;}return u;}catch(e){return u;}}function strip(u){if(!u)return u;if(u.indexOf(p)===0)return u.slice(p.length)||'/';return u;}function safe(fn){try{fn();}catch(e){console.warn('proxy hook fail',e);}}safe(function(){var loc=window.location;if(loc.pathname.indexOf(p)===0){var stripped=strip(loc.pathname);var initial=(stripped==='/'||stripped==='')?( sp||'/'):stripped;history.replaceState(null,'',initial+loc.search+loc.hash);}});safe(function(){var op=history.pushState.bind(history);history.pushState=function(s,t,u){return op(s,t,wrap(u));};});safe(function(){var orp=history.replaceState.bind(history);history.replaceState=function(s,t,u){return orp(s,t,wrap(u));};});safe(function(){var of=window.fetch;if(!of)return;window.fetch=function(i,init){try{if(typeof i==='string'){i=wrap(i);}else if(i&&typeof Request!=='undefined'&&i instanceof Request){var w=wrap(i.url);if(w!==i.url)i=new Request(w,i);}else if(typeof URL!=='undefined'&&i instanceof URL){i=wrap(i.toString());}}catch(e){}return of.call(this,i,init);};});safe(function(){var ox=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){try{arguments[1]=wrap(u);}catch(e){}return ox.apply(this,arguments);};});['src','href'].forEach(function(prop){['HTMLImageElement','HTMLScriptElement','HTMLLinkElement','HTMLSourceElement','HTMLIFrameElement','HTMLAnchorElement','HTMLMediaElement','HTMLFormElement'].forEach(function(cn){safe(function(){var C=window[cn];if(!C)return;var d=Object.getOwnPropertyDescriptor(C.prototype,prop);if(!d||!d.set)return;Object.defineProperty(C.prototype,prop,{get:d.get,set:function(v){d.set.call(this,wrap(v));},configurable:true});});});});safe(function(){var sa=Element.prototype.setAttribute;Element.prototype.setAttribute=function(n,v){try{var ln=(n||'').toLowerCase();if((ln==='src'||ln==='href'||ln==='action'||ln==='formaction'||ln==='poster'||ln==='data-src')&&typeof v==='string')v=wrap(v);}catch(e){}return sa.call(this,n,v);};});})();</script>`;
             const injectBase = (html: string): string => {
               let out = html.replace(
                 /<head([^>]*)>/i,
