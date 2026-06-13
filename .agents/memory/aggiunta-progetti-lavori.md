@@ -56,7 +56,7 @@ curl -s -X POST https://www.promoapp.it/api/admin/progetti \
 | Facciamo | https://web-app-facciamo.replit.app | Sergio | c5938a69-37d7-4d27-a1f9-877df3411de4 | a2a9f973-eeb3-4c92-a332-400e96559c93 |
 | nixmilano | https://nyx-milano-club.replit.app | angelo | 1bb87c5f-4c75-451a-b10e-36ac3dabf0fb | 2b277a9d-f2ba-44bc-8912-60398b4cf6f3 |
 | NYX MILANO | https://nyx-milano-club.replit.app | angeloi | 8e6117bd-2f13-42db-80a8-50c7bdbaf648 | f9de2b94-b3ff-47e4-ba4d-9c42b948dc94 |
-| NYX MILANO Staff | https://nyx-milano-club.replit.app/admin | angeloistaff | 45fa9db1-ae48-450a-bd3d-c6e037480f24 | c9e43956-1858-4343-9e33-e2ca01520c72 |
+| NYX MILANO Staff | https://nyx-milano-club.replit.app/admin | angelostaff | 45fa9db1-ae48-450a-bd3d-c6e037480f24 | c9e43956-1858-4343-9e33-e2ca01520c72 |
 
 ## Sub-path nei target URL
 
