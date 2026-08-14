@@ -1,46 +1,94 @@
 @layer theme, base, clerk, components, utilities;
 @import "tailwindcss";
 
-.gradient-bg {
-  background: linear-gradient(135deg, #4F46E5 0%, #10B981 100%);
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-}
-
 html {
   scroll-behavior: smooth;
 }
 
+/* ─── WhatsApp float ─── */
 .whatsapp-float {
   animation: whatsapp-bob 2.8s ease-in-out infinite,
     whatsapp-glow 2.8s ease-in-out infinite;
 }
 
 @keyframes whatsapp-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-7px);
-  }
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
 }
 
 @keyframes whatsapp-glow {
-  0%,
-  100% {
-    box-shadow: 0 10px 24px rgba(20, 83, 45, 0.28);
-  }
-  50% {
-    box-shadow: 0 14px 30px rgba(34, 197, 94, 0.5);
-  }
+  0%,100% { box-shadow: 0 10px 24px rgba(20,83,45,0.28); }
+  50%      { box-shadow: 0 14px 30px rgba(34,197,94,0.5); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .whatsapp-float {
-    animation: none;
-  }
+  .whatsapp-float { animation: none; }
+}
+
+/* ─── Glass card ─── */
+.glass-card {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+/* ─── Shimmer badge ─── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-badge {
+  background: linear-gradient(
+    90deg,
+    rgba(52,211,153,0.2) 0%,
+    rgba(167,243,208,0.5) 40%,
+    rgba(52,211,153,0.2) 80%
+  );
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ─── Feature icon pulse ─── */
+@keyframes icon-pop {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+.feature-icon:hover { animation: icon-pop 0.6s ease; }
+
+/* ─── Star rating interactive ─── */
+.star-btn { transition: transform 0.15s ease; }
+.star-btn:hover { transform: scale(1.25); }
+
+/* ─── Gradient text ─── */
+.gradient-text {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Floating orbs in hero ─── */
+@keyframes orb-drift {
+  0%,100% { transform: translate(0,0) scale(1); opacity: 0.18; }
+  33%      { transform: translate(12px,-18px) scale(1.08); opacity: 0.24; }
+  66%      { transform: translate(-8px,10px) scale(0.95); opacity: 0.16; }
+}
+.orb { animation: orb-drift 9s ease-in-out infinite; }
+.orb-2 { animation-delay: -3s; }
+.orb-3 { animation-delay: -6s; }
+
+/* ─── Review card entrance ─── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.review-card { animation: fade-up 0.45s ease both; }
+
+/* ─── Divider wave ─── */
+.section-divider {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C300,60 900,0 1200,60 L1200,0 L0,0 Z' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
+  background-size: cover;
+  height: 48px;
+  width: 100%;
 }

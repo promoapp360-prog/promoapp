@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, schema } from "@workspace/db";
+import { db, recensioniTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
@@ -33,7 +33,7 @@ router.post("/recensioni", async (req, res) => {
   }
 
   try {
-    await db.insert(schema.recensioniTable).values({
+    await db.insert(recensioniTable).values({
       id: randomUUID(),
       nome: nome.trim(),
       attivita: attivita.trim(),
@@ -55,9 +55,9 @@ router.get("/recensioni", async (req, res) => {
   try {
     const rows = await db
       .select()
-      .from(schema.recensioniTable)
-      .where(eq(schema.recensioniTable.verificata, true))
-      .orderBy(desc(schema.recensioniTable.createdAt))
+      .from(recensioniTable)
+      .where(eq(recensioniTable.verificata, true))
+      .orderBy(desc(recensioniTable.createdAt))
       .limit(20);
 
     res.json({ success: true, data: rows });
@@ -78,9 +78,9 @@ router.patch("/recensioni/:id/verifica", async (req, res) => {
   const { id } = req.params;
   try {
     await db
-      .update(schema.recensioniTable)
+      .update(recensioniTable)
       .set({ verificata: true })
-      .where(eq(schema.recensioniTable.id, id));
+      .where(eq(recensioniTable.id, id));
 
     req.log.info({ id }, "Recensione verificata");
     res.json({ success: true });
@@ -101,9 +101,9 @@ router.get("/recensioni/pending", async (req, res) => {
   try {
     const rows = await db
       .select()
-      .from(schema.recensioniTable)
-      .where(eq(schema.recensioniTable.verificata, false))
-      .orderBy(desc(schema.recensioniTable.createdAt));
+      .from(recensioniTable)
+      .where(eq(recensioniTable.verificata, false))
+      .orderBy(desc(recensioniTable.createdAt));
 
     res.json({ success: true, data: rows });
   } catch (err) {
