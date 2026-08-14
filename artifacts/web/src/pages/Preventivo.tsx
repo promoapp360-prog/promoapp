@@ -89,11 +89,11 @@ export default function Preventivo() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contattaci su WhatsApp"
-        className="fixed right-3 bottom-5 sm:right-5 sm:bottom-6 z-50 inline-flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white px-3.5 py-3 sm:px-4 sm:py-3.5 rounded-full font-black text-sm shadow-xl shadow-green-950/30 transition hover:scale-105 active:scale-95"
+        title="Scrivici su WhatsApp"
+        className="whatsapp-float fixed right-4 bottom-5 sm:right-6 sm:bottom-6 z-50 w-14 h-14 sm:w-16 sm:h-16 inline-flex items-center justify-center bg-green-500 hover:bg-green-400 text-white rounded-full shadow-xl shadow-green-950/30 transition hover:scale-110 active:scale-95"
         data-testid="link-floating-whatsapp"
       >
-        <i className="fab fa-whatsapp text-xl"></i>
-        <span>WhatsApp</span>
+        <i className="fab fa-whatsapp text-2xl sm:text-3xl"></i>
       </a>
 
       {/* ── HERO + FORM ── */}
