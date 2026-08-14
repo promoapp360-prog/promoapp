@@ -80,7 +80,7 @@ export default function Preventivo() {
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-bold text-sm transition shadow"
             data-testid="link-nav-cta"
           >
-            Richiedi gratis
+            Richiedi informazioni
           </a>
         </div>
       </nav>
@@ -93,7 +93,7 @@ export default function Preventivo() {
         </div>
         <div className="max-w-4xl mx-auto text-center relative">
           <span className="inline-block bg-white/20 text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">
-            <i className="fas fa-bolt text-yellow-300 mr-1"></i> Pronta in 7 giorni · Preventivo gratuito
+            <i className="fas fa-bolt text-yellow-300 mr-1"></i> Pronta in 7 giorni · Soluzione su misura
           </span>
           <h1 className="text-4xl md:text-6xl font-black leading-tight mb-5">
             La tua attività merita<br />
@@ -111,12 +111,12 @@ export default function Preventivo() {
               data-testid="button-hero-cta"
             >
               <i className="fas fa-lightbulb text-yellow-300"></i>
-              Raccontaci la tua idea — è gratis
+              Raccontaci la tua idea
               <i className="fas fa-arrow-right"></i>
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-indigo-200 text-sm">
-            <span><i className="fas fa-check-circle text-emerald-400 mr-1.5"></i>Preventivo gratuito</span>
+            <span><i className="fas fa-check-circle text-emerald-400 mr-1.5"></i>Progetto su misura</span>
             <span><i className="fas fa-check-circle text-emerald-400 mr-1.5"></i>Pronta in 7 giorni</span>
             <span><i className="fas fa-check-circle text-emerald-400 mr-1.5"></i>Senza anticipo</span>
             <span><i className="fas fa-check-circle text-emerald-400 mr-1.5"></i>Assistenza dedicata</span>
@@ -212,8 +212,8 @@ export default function Preventivo() {
                 n: "2", color: "bg-emerald-600", border: "border-emerald-100", bg: "bg-emerald-50",
                 icon: "fa-file-pdf", iconColor: "text-emerald-500",
                 title: "Ti prepariamo il progetto",
-                desc: "Ricevi un PDF dettagliato con tutte le funzioni e una dashboard di anteprima già navigabile. Gratis.",
-                badge: "Gratis e senza impegno", badgeColor: "text-emerald-700 bg-white border-emerald-200",
+                desc: "Ricevi un PDF dettagliato con tutte le funzioni e una dashboard di anteprima già navigabile.",
+                badge: "Progetto personalizzato", badgeColor: "text-emerald-700 bg-white border-emerald-200",
               },
               {
                 n: "3", color: "bg-orange-500", border: "border-orange-100", bg: "bg-orange-50",
@@ -247,13 +247,13 @@ export default function Preventivo() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
-              Preventivo gratuito
+              Richiedi informazioni
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
               Raccontaci la tua idea.
             </h2>
             <p className="text-gray-500 font-light">
-              Compila il form — ti ricontattiamo entro 24 ore con il progetto PDF gratuito.
+              Compila il form — ti ricontattiamo entro 24 ore per parlare del tuo progetto.
             </p>
           </div>
 
@@ -264,7 +264,7 @@ export default function Preventivo() {
               </div>
               <h3 className="text-2xl font-black text-emerald-700 mb-2">Richiesta inviata!</h3>
               <p className="text-gray-600 mb-6 max-w-sm mx-auto font-light leading-relaxed">
-                Grazie! Ti contatteremo entro 24 ore con il tuo progetto PDF gratuito e la dashboard di anteprima.
+                Grazie! Ti contatteremo entro 24 ore per parlare del tuo progetto e della dashboard di anteprima.
               </p>
               <a
                 href="https://wa.me/393793602035"
@@ -402,7 +402,7 @@ export default function Preventivo() {
               </button>
 
               <p className="text-center text-gray-400 text-xs">
-                Nessun anticipo. Nessun vincolo. Ricevi il progetto PDF gratis e decidi con calma.
+                Nessun anticipo. Nessun vincolo. Parliamo del progetto e decidi con calma.
               </p>
             </form>
           )}
