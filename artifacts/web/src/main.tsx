@@ -1,57 +1,23 @@
 // @refresh reset
 import { createRoot } from "react-dom/client";
-import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
-import { ClerkProvider } from "@clerk/react";
-import App from "./App";
-import Checkout from "./pages/Checkout";
-import Admin from "./pages/Admin";
+import { Switch, Route, Router as WouterRouter } from "wouter";
 import PreviewPage from "./pages/PreviewPage";
-import Registrazione from "./pages/Registrazione";
-import Pagamenti from "./pages/Pagamenti";
-import SitoWeb from "./pages/SitoWeb";
-import Gestionale360 from "./pages/Gestionale360";
-import AgentiPro from "./pages/AgentiPro";
 import Preventivo from "./pages/Preventivo";
-import { CartProvider } from "./lib/CartContext";
 import "./index.css";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL || undefined;
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string;
-
-function stripBase(path: string): string {
-  return basePath && path.startsWith(basePath)
-    ? path.slice(basePath.length) || "/"
-    : path;
-}
 
 function Routes() {
-  const [, setLocation] = useLocation();
-
   return (
-    <ClerkProvider
-      publishableKey={clerkPubKey}
-      proxyUrl={clerkProxyUrl}
-      signInUrl={`${basePath}/registrazione`}
-      signUpUrl={`${basePath}/registrazione`}
-      routerPush={(to) => setLocation(stripBase(to))}
-      routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
-    >
-      <CartProvider>
-        <Switch>
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/admin" component={Admin} />
-          <Route path="/lavori/:id" component={PreviewPage} />
-          <Route path="/registrazione/*?" component={Registrazione} />
-          <Route path="/pagamenti" component={Pagamenti} />
-          <Route path="/sito-web" component={SitoWeb} />
-          <Route path="/gestionale360" component={Gestionale360} />
-          <Route path="/agentipro" component={AgentiPro} />
-          <Route path="/preventivo" component={Preventivo} />
-          <Route component={App} />
-        </Switch>
-      </CartProvider>
-    </ClerkProvider>
+    <Switch>
+      {/* Le anteprime private dei lavori restano raggiungibili tramite il loro link. */}
+      <Route path="/lavori/:id" component={PreviewPage} />
+      {/* Alias mantenuto per non interrompere eventuali link già condivisi. */}
+      <Route path="/preventivo" component={Preventivo} />
+      {/* La landing è l'unica pagina pubblica del sito. */}
+      <Route path="/" component={Preventivo} />
+      <Route component={Preventivo} />
+    </Switch>
   );
 }
 

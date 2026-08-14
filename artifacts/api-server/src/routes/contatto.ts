@@ -15,7 +15,7 @@ router.post("/invia-contatto", async (req, res) => {
     messaggio?: string;
   };
 
-  if (!nome_attivita?.trim() || !email?.trim() || !messaggio?.trim()) {
+  if (!nome_attivita?.trim() || !settore?.trim() || !email?.trim() || !whatsapp?.trim() || !messaggio?.trim()) {
     res.status(400).json({ success: false, message: "Per favore compila tutti i campi." });
     return;
   }
