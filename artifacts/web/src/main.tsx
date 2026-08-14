@@ -11,6 +11,7 @@ import Pagamenti from "./pages/Pagamenti";
 import SitoWeb from "./pages/SitoWeb";
 import Gestionale360 from "./pages/Gestionale360";
 import AgentiPro from "./pages/AgentiPro";
+import Preventivo from "./pages/Preventivo";
 import { CartProvider } from "./lib/CartContext";
 import "./index.css";
 
@@ -46,6 +47,7 @@ function Routes() {
           <Route path="/sito-web" component={SitoWeb} />
           <Route path="/gestionale360" component={Gestionale360} />
           <Route path="/agentipro" component={AgentiPro} />
+          <Route path="/preventivo" component={Preventivo} />
           <Route component={App} />
         </Switch>
       </CartProvider>

@@ -7,10 +7,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const DESTINATARIO = "derosa.lazio@gmail.com";
 
 router.post("/invia-contatto", async (req, res) => {
-  const { nome_attivita, settore, email, messaggio } = req.body as {
+  const { nome_attivita, settore, email, whatsapp, messaggio } = req.body as {
     nome_attivita?: string;
     settore?: string;
     email?: string;
+    whatsapp?: string;
     messaggio?: string;
   };
 
@@ -19,7 +20,7 @@ router.post("/invia-contatto", async (req, res) => {
     return;
   }
 
-  req.log.info({ nome_attivita, settore, email }, "Nuova richiesta contatto");
+  req.log.info({ nome_attivita, settore, email, whatsapp }, "Nuova richiesta contatto");
 
   try {
     await resend.emails.send({
@@ -41,6 +42,10 @@ router.post("/invia-contatto", async (req, res) => {
             <tr>
               <td style="padding: 8px 0; font-weight: bold; color: #374151;">Email cliente</td>
               <td style="padding: 8px 0; color: #111827;"><a href="mailto:${email}" style="color: #4f46e5;">${email ?? "—"}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold; color: #374151;">WhatsApp</td>
+              <td style="padding: 8px 0; color: #111827;">${whatsapp ? `<a href="https://wa.me/${whatsapp.replace(/\D/g,"")}" style="color: #16a34a;">${whatsapp}</a>` : "—"}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: bold; color: #374151; vertical-align: top;">Messaggio</td>
