@@ -83,6 +83,19 @@ export default function Preventivo() {
         </a>
       </nav>
 
+      {/* WhatsApp sempre disponibile durante lo scroll */}
+      <a
+        href="https://wa.me/393793602035?text=Ciao!%20Vorrei%20informazioni%20sulle%20web%20app."
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contattaci su WhatsApp"
+        className="fixed right-3 bottom-5 sm:right-5 sm:bottom-6 z-50 inline-flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white px-3.5 py-3 sm:px-4 sm:py-3.5 rounded-full font-black text-sm shadow-xl shadow-green-950/30 transition hover:scale-105 active:scale-95"
+        data-testid="link-floating-whatsapp"
+      >
+        <i className="fab fa-whatsapp text-xl"></i>
+        <span>WhatsApp</span>
+      </a>
+
       {/* ── HERO + FORM ── */}
       <section className="px-4 pt-2 pb-14">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 items-start">
