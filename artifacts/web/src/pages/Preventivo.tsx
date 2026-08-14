@@ -207,7 +207,7 @@ export default function Preventivo() {
       />
 
       {/* ── NAV ── */}
-      <nav className="relative z-10 w-full px-5 pt-5 pb-4 flex justify-between items-center max-w-5xl mx-auto">
+      <nav className="relative z-10 w-full px-5 pt-4 pb-2 flex justify-between items-center max-w-5xl mx-auto">
         <span className="text-[1.35rem] font-black tracking-tighter text-white select-none">
           Promo<span className="text-emerald-400">App</span>
           <span className="text-indigo-300">.it</span>
@@ -240,23 +240,23 @@ export default function Preventivo() {
       {/* ══════════════════════════════════════════
           HERO + FORM
       ══════════════════════════════════════════ */}
-      <section className="relative z-10 px-4 pt-2 pb-16">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
+      <section className="relative z-10 px-4 pt-2 pb-10">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-[1.1fr_0.9fr] gap-7 items-start">
 
           {/* LEFT copy */}
           <div className="text-white">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-5">
+            <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-3">
               <i className="fas fa-mobile-screen-button text-emerald-400"></i>
               Web app su misura · tutti i sistemi operativi
             </div>
 
             {/* Headline */}
-            <h1 className="text-[2.6rem] md:text-[3.2rem] font-black leading-[1.06] mb-4 tracking-tight">
+            <h1 className="text-[2.6rem] md:text-[3.2rem] font-black leading-[1.06] mb-3 tracking-tight">
               La tua attività<br />
               <span className="gradient-text">in un'App.</span>
             </h1>
-            <p className="text-indigo-200/80 text-base leading-relaxed mb-7 max-w-md">
+            <p className="text-indigo-200/80 text-base leading-relaxed mb-4 max-w-md">
               Creiamo web app personalizzate per attività italiane, utilizzabili
               su Android, iOS e tutti i sistemi operativi — con prenotazioni,
               fidelity card, pagamenti e notifiche.
@@ -264,7 +264,7 @@ export default function Preventivo() {
 
             {/* Prezzo in evidenza */}
             <div
-              className="relative overflow-hidden inline-flex items-center gap-3 rounded-2xl border border-amber-300/35 bg-gradient-to-r from-amber-300/20 via-orange-300/15 to-amber-300/5 px-4 py-3.5 mb-7 shadow-lg shadow-amber-950/15"
+              className="relative overflow-hidden inline-flex items-center gap-3 rounded-2xl border border-amber-300/35 bg-gradient-to-r from-amber-300/20 via-orange-300/15 to-amber-300/5 px-4 py-3.5 mb-3 shadow-lg shadow-amber-950/15"
               aria-label="Prezzo a partire da 399 euro più IVA"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-300 text-indigo-950 shadow-md shadow-amber-950/20">
@@ -282,12 +282,22 @@ export default function Preventivo() {
               <span className="absolute -right-3 -top-5 h-14 w-14 rounded-full bg-amber-300/10" />
             </div>
 
+            <a
+              href="#recensioni"
+              className="ml-1 mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-black text-white transition hover:border-emerald-300/50 hover:bg-white/15"
+              data-testid="link-see-reviews"
+            >
+              <i className="fas fa-star text-amber-300"></i>
+              Leggi le recensioni
+              <i className="fas fa-arrow-down text-[10px] text-emerald-300"></i>
+            </a>
+
             {/* Feature list */}
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-1 gap-1.5">
               {FEATURES.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 glass-card rounded-xl px-3.5 py-2.5 hover:bg-white/10 transition"
+                  className="flex items-center gap-3 glass-card rounded-xl px-3.5 py-2 hover:bg-white/10 transition"
                 >
                   <span className="feature-icon w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/30 to-emerald-500/20 flex items-center justify-center flex-shrink-0 shadow-inner">
                     <i className={`fas ${item.icon} text-emerald-300 text-sm`}></i>
@@ -444,12 +454,12 @@ export default function Preventivo() {
       {/* ══════════════════════════════════════════
           RECENSIONI
       ══════════════════════════════════════════ */}
-      <section className="relative z-10 px-4 py-14" id="recensioni">
+      <section className="relative z-10 px-4 py-9" id="recensioni">
         <div className="max-w-5xl mx-auto">
 
           {/* Section header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-4">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-3">
               <i className="fas fa-shield-halved"></i>
               Esperienze reali
             </div>
@@ -461,15 +471,15 @@ export default function Preventivo() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-6 items-start">
+          <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-5 items-start">
 
             {/* Reviews list */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {reviews.length > 0 ? (
                 reviews.map((review, idx) => (
                   <article
                     key={review.id}
-                    className="review-card glass-card rounded-2xl p-5 shadow-xl hover:bg-white/10 transition"
+                    className="review-card glass-card rounded-2xl p-4 shadow-xl hover:bg-white/10 transition"
                     style={{ animationDelay: `${idx * 80}ms` }}
                   >
                     <div className="flex items-start justify-between gap-3 mb-2">
@@ -502,8 +512,8 @@ export default function Preventivo() {
                   </article>
                 ))
               ) : (
-                <div className="glass-card rounded-2xl p-8 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4">
+                <div className="glass-card rounded-2xl p-6 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-3">
                     <i className="fas fa-comments text-2xl text-emerald-300"></i>
                   </div>
                   <p className="text-white font-bold text-sm mb-1">Le prime recensioni verificate arriveranno qui.</p>
@@ -513,7 +523,7 @@ export default function Preventivo() {
             </div>
 
             {/* Review form */}
-            <div className="bg-white rounded-3xl p-6 shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
               {reviewSent ? (
                 <div className="text-center py-6" data-testid="message-review-sent">
                   <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-200">
@@ -525,7 +535,7 @@ export default function Preventivo() {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleReviewSubmit} className="space-y-3.5" data-testid="form-recensione">
+                <form onSubmit={handleReviewSubmit} className="space-y-3" data-testid="form-recensione">
                   <div className="pb-2 border-b border-gray-100">
                     <h3 className="text-base font-black text-gray-900">Lascia una recensione</h3>
                     <p className="text-[11px] text-gray-400 mt-0.5">Ogni recensione viene verificata prima della pubblicazione.</p>
