@@ -262,6 +262,26 @@ export default function Preventivo() {
               fidelity card, pagamenti e notifiche.
             </p>
 
+            {/* Prezzo in evidenza */}
+            <div
+              className="relative overflow-hidden inline-flex items-center gap-3 rounded-2xl border border-amber-300/35 bg-gradient-to-r from-amber-300/20 via-orange-300/15 to-amber-300/5 px-4 py-3.5 mb-7 shadow-lg shadow-amber-950/15"
+              aria-label="Prezzo a partire da 399 euro più IVA"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-300 text-indigo-950 shadow-md shadow-amber-950/20">
+                <i className="fas fa-tag text-base"></i>
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">
+                  Prezzo di partenza
+                </p>
+                <p className="mt-0.5 text-2xl font-black leading-none text-white">
+                  A partire da <span className="text-amber-300">399€</span>
+                  <span className="ml-1 text-sm font-bold text-amber-100">+ IVA</span>
+                </p>
+              </div>
+              <span className="absolute -right-3 -top-5 h-14 w-14 rounded-full bg-amber-300/10" />
+            </div>
+
             {/* Feature list */}
             <div className="grid grid-cols-1 gap-2">
               {FEATURES.map((item, i) => (
