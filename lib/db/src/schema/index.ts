@@ -21,3 +21,4 @@ export * from "./discount_codes";
 export * from "./acconti";
 export * from "./progetti";
 export * from "./gestionali";
+export * from "./recensioni";
