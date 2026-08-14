@@ -15,31 +15,6 @@ const SETTORI = [
   "Altro",
 ];
 
-const LAVORI = [
-  {
-    nome: "Movieverse",
-    settore: "Cinema & Streaming",
-    desc: "App con catalogo film, prenotazioni sala, fidelity card digitale e notifiche push per i fan del grande schermo.",
-    emoji: "🎬",
-    gradient: "from-slate-900 via-indigo-950 to-slate-900",
-    badge: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
-    accent: "text-indigo-300",
-    tags: ["Catalogo film", "Prenotazioni", "Fidelity card", "Push notifications"],
-    tagStyle: "bg-indigo-500/20 text-indigo-200",
-  },
-  {
-    nome: "La Locanda nei Sassi",
-    settore: "Ristorante / Hospitality",
-    desc: "App per il ristorante nel cuore di Matera: prenotazioni tavoli, menù digitale, eventi speciali e programma fedeltà.",
-    emoji: "🪨",
-    gradient: "from-amber-950 via-stone-900 to-amber-950",
-    badge: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-    accent: "text-amber-300",
-    tags: ["Prenotazioni tavoli", "Menù digitale", "Eventi", "Loyalty"],
-    tagStyle: "bg-amber-500/20 text-amber-200",
-  },
-];
-
 export default function Preventivo() {
   const [form, setForm] = useState({
     nome_attivita: "",
@@ -143,10 +118,6 @@ export default function Preventivo() {
               ))}
             </div>
 
-            <div className="bg-white/10 border border-white/15 rounded-2xl px-4 py-3 text-sm text-indigo-200 flex items-center gap-2">
-              <i className="fas fa-shield-halved text-emerald-400 flex-shrink-0"></i>
-              <span><strong className="text-white">Nessun anticipo</strong> — prima vedi il progetto, poi decidi.</span>
-            </div>
           </div>
 
           {/* RIGHT: form */}
@@ -283,99 +254,13 @@ export default function Preventivo() {
         </div>
       </section>
 
-      {/* ── PORTFOLIO ── */}
-      <section className="bg-gray-950 px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-8 text-center">
-            <span className="inline-block bg-white/10 text-gray-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-3">
-              Alcuni lavori
-            </span>
-            <h2 className="text-2xl md:text-3xl font-black text-white">
-              App che abbiamo realizzato.
-            </h2>
-            <p className="text-gray-400 text-sm mt-1.5">Ogni progetto è sviluppato su misura, da zero.</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5">
-            {LAVORI.map((l) => (
-              <div
-                key={l.nome}
-                className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${l.gradient} border border-white/10 p-6 flex flex-col gap-4`}
-                data-testid={`card-lavoro-${l.nome.replace(/\s+/g, "-").toLowerCase()}`}
-              >
-                {/* Glow decorativo */}
-                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
-
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className={`inline-flex items-center gap-1.5 border text-xs font-bold px-2.5 py-1 rounded-full mb-2 ${l.badge}`}>
-                      {l.settore}
-                    </div>
-                    <h3 className="text-2xl font-black text-white leading-tight flex items-center gap-2">
-                      <span className="text-3xl">{l.emoji}</span>
-                      {l.nome}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Desc */}
-                <p className="text-gray-300 text-sm leading-relaxed">{l.desc}</p>
-
-                {/* Tag features */}
-                <div className="flex flex-wrap gap-2">
-                  {l.tags.map((t) => (
-                    <span key={t} className={`text-xs font-semibold px-2.5 py-1 rounded-full ${l.tagStyle}`}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Mock screen */}
-                <div className="mt-1 bg-white/5 border border-white/10 rounded-2xl p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-2 h-2 rounded-full bg-red-400/70"></div>
-                    <div className="w-2 h-2 rounded-full bg-yellow-400/70"></div>
-                    <div className="w-2 h-2 rounded-full bg-green-400/70"></div>
-                    <div className={`ml-2 text-xs font-bold ${l.accent}`}>{l.nome} · App</div>
-                  </div>
-                  <div className="space-y-2">
-                    {l.tags.slice(0, 3).map((t, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded bg-white/10 flex-shrink-0"></div>
-                        <div className="h-2 rounded bg-white/10 flex-1" style={{ width: `${70 - i * 12}%` }}></div>
-                        <div className={`text-xs ${l.accent} font-bold flex-shrink-0`}>✓</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA sotto il portfolio */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-400 text-sm mb-4">La tua attività potrebbe essere la prossima.</p>
-            <a
-              href="#top"
-              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-black px-7 py-3.5 rounded-2xl transition shadow-xl text-sm"
-              data-testid="button-portfolio-cta"
-            >
-              <i className="fas fa-arrow-up"></i>
-              Richiedi il tuo progetto
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* ── FOOTER ── */}
-      <footer className="bg-gray-950 border-t border-white/10 py-6 px-4">
+      <footer className="border-t border-indigo-600 py-6 px-4">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-          <span>© 2024 Promo<strong className="text-gray-300">App</strong>.it — Sophia 2005 S.r.l. · P.IVA 08223951008</span>
+          <span>© 2024 Promo<strong className="text-white">App</strong>.it — Sophia 2005 S.r.l. · P.IVA 08223951008</span>
           <div className="flex gap-5">
-            <a href="/privacy.html" className="hover:text-gray-300 transition">Privacy</a>
-            <a href="/cookie.html" className="hover:text-gray-300 transition">Cookie</a>
+            <a href="/privacy.html" className="hover:text-white transition">Privacy</a>
+            <a href="/cookie.html" className="hover:text-white transition">Cookie</a>
           </div>
         </div>
       </footer>
