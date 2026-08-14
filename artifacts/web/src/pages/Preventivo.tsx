@@ -91,14 +91,14 @@ export default function Preventivo() {
           <div className="text-white">
             <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 text-indigo-100 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
               <i className="fas fa-mobile-screen-button text-emerald-400 text-xs"></i>
-              App su misura · iOS &amp; Android
+              Web app su misura · tutti i sistemi operativi
             </div>
             <h1 className="text-[2.4rem] md:text-5xl font-black leading-[1.1] mb-3">
               La tua attività<br />
               <span className="text-yellow-300">in un'App.</span>
             </h1>
             <p className="text-indigo-200 text-base leading-relaxed mb-5">
-              Creiamo app personalizzate per attività italiane — prenotazioni, fidelity card, pagamenti e notifiche, tutto pronto in 7 giorni.
+              Creiamo web app personalizzate per attività italiane, utilizzabili su Android, iOS e tutti i sistemi operativi — con prenotazioni, fidelity card, pagamenti e notifiche.
             </p>
 
             <div className="space-y-2 mb-5">
