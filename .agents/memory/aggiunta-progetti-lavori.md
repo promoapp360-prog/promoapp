@@ -48,6 +48,7 @@ curl -s -X POST https://www.promoapp.it/api/admin/progetti \
 - `url` senza slash finale
 - Il DB di produzione non è modificabile direttamente con executeSql (read-only) — usare sempre l'API https://www.promoapp.it
 - La risposta include l'`id` UUID che diventa il path proxy: `/api/proxy/{id}/`
+- Per dati applicativi da trasferire in produzione, non usare l'opzione Publish "sovrascrivi dati" se il DB live contiene altri dati: usare un endpoint API admin idempotente o una procedura equivalente.
 
 ## Progetti esistenti (riferimento)
 

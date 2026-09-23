@@ -5,7 +5,9 @@ import { randomUUID } from "crypto";
 
 const router = Router();
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "";
+// Keep review moderation aligned with the other admin routes. In this project
+// the admin API also supports the built-in fallback when no env var is set.
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Mamma080245.";
 
 // ── POST /api/recensioni — invio pubblica (va in moderazione) ──
 router.post("/recensioni", async (req, res) => {
