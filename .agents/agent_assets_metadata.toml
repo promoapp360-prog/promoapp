@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "SJna8E22WligK_3MdAmdg"
@@ -120,3 +119,17 @@ id = "DMJMDNDA8e4Pf5iyJ8FMf"
 uri = "file://artifacts/web/public/lavori/legale.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "uE0uSWMQKu6wzLMkbwwPx"
+uri = "file://attached_assets/recensioni-testo-senza-esempio.txt"
+type = "text"
+title = "Testo senza la parola Esempio"
+description = "Copia del file allegato con la sola dicitura Esempio rimossa. Le etichette sul sito non sono state modificate."
+logical_id = "acd3edd8-dccd-4dfe-afdd-e69315c01b49"
+content_hash = "sha256:30d53c83ea6ce9e82d388dbd38e91cd9f83e8f26586653668602fd8f8ae4bc8d"
+size = 4286
+mtime_ms = 1790191214131
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/acd3edd8-dccd-4dfe-afdd-e69315c01b49/41bffd04-e5dd-423a-bb42-d88f063c8709"
+storage_version_token = "1790191214952592"
+content_type = "text/plain"
