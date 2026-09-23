@@ -58,7 +58,7 @@ router.get("/recensioni", async (req, res) => {
       .from(recensioniTable)
       .where(eq(recensioniTable.verificata, true))
       .orderBy(desc(recensioniTable.createdAt))
-      .limit(20);
+      .limit(30);
 
     res.json({ success: true, data: rows });
   } catch (err) {
