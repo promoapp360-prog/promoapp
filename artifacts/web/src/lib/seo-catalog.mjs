@@ -20,7 +20,7 @@ export default {
   "/web-app": {
     title: "Web app e gestionali personalizzati su preventivo | PromoApp.it",
     description: "Strumenti su misura per organizzare appuntamenti, prenotazioni, clienti, ordini e lavoro quotidiano. Funzionalità e costi definiti nel preventivo.",
-    h1: "Un’app su misura per organizzare la tua attività.",
+    h1: "Un’app su misura per semplificare il lavoro della tua attività.",
   },
   "/grazie": { title: "Richiesta ricevuta | PromoApp.it", description: "La tua richiesta è stata salvata. Ti ricontatteremo al numero indicato.", noindex: true },
   "/gestione-contatti": { title: "Gestione contatti | PromoApp.it", description: "Area amministrativa riservata.", noindex: true },

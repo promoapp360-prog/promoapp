@@ -8,7 +8,17 @@
     "name": "Ristoranti", "activity": "Ristorante / Bar / Pizzeria", "menu": true,
     "headline": "Più organizzazione per il tuo ristorante, meno tempo perso al telefono.",
     "intro": "Riduci le chiamate durante il servizio e rendi menu, informazioni e richieste di prenotazione accessibili dal telefono dei tuoi clienti.",
-    "benefits": ["Meno interruzioni durante il servizio", "Menu sempre consultabile da smartphone", "Richieste di prenotazione ordinate", "Informazioni chiare su orari e contatti"],
+    "benefits": [
+      { "title": "Menu QR a portata di tavolo", "description": "Il cliente inquadra il QR e legge piatti e prezzi sul telefono: può scegliere senza aspettare una copia cartacea." },
+      { "title": "Prenotazioni da organizzare", "description": "Raccogli giorno, orario e numero di ospiti in una richiesta ordinata, così puoi valutare i tavoli prima di confermare." },
+      { "title": "Richieste senza messaggi sparsi", "description": "Una soluzione dedicata può riunire le richieste del locale e aiutarti a seguirle anche durante i momenti di servizio." },
+      { "title": "Un rapporto che continua", "description": "Valutiamo strumenti di fidelizzazione per invitare i clienti a tornare, con regole e consensi definiti per il tuo locale." }
+    ],
+    "mockup": { "kind": "menu", "title": "Menu del locale", "tabs": ["Antipasti", "Primi", "Dolci"], "rows": [
+      { "title": "Primo del giorno", "detail": "Descrizione e ingredienti", "badge": "12,00 €" },
+      { "title": "Piatto della casa", "detail": "Informazioni fornite dal locale", "badge": "18,00 €" },
+      { "title": "Dolce di esempio", "detail": "Descrizione del prodotto", "badge": "6,00 €" }
+    ] },
     "features": ["Menu QR aggiornabile", "Richieste di prenotazione tavoli", "Gestione clienti e preferenze", "Informazioni su allergeni inserite dal locale", "Promozioni e fidelity su richiesta"],
     "example": "Un cliente consulta il menu dal QR sul tavolo; un altro chiede disponibilità prima di arrivare. Tu gestisci le richieste in un unico spazio.",
     "faq": [
@@ -26,7 +36,17 @@
     "name": "B&B e hotel", "activity": "B&B / Hotel", "menu": false,
     "headline": "Gestisci disponibilità, camere e prenotazioni in modo più semplice.",
     "intro": "Presenta la tua struttura e organizza le richieste degli ospiti senza rincorrere messaggi e appunti. Definiamo insieme il flusso adatto alla tua accoglienza.",
-    "benefits": ["Richieste degli ospiti più ordinate", "Informazioni della struttura sempre accessibili", "Meno passaggi manuali", "Contatto diretto prima del soggiorno"],
+    "benefits": [
+      { "title": "Camere presentate con chiarezza", "description": "Foto, caratteristiche e servizi aiutano l'ospite a capire quale camera risponde alle sue esigenze prima di contattarti." },
+      { "title": "Disponibilità in un calendario", "description": "Uno strumento su misura può riunire periodi disponibili e occupati, rendendo più semplice valutare nuove richieste." },
+      { "title": "Prenotazioni da seguire", "description": "Raccogli date e preferenze dell'ospite in un flusso definito, senza confondere una richiesta con una prenotazione confermata." },
+      { "title": "Ospiti informati prima dell'arrivo", "description": "Condividi indicazioni su accesso, check-in e servizi attraverso i canali concordati: l'ospite sa dove trovare le informazioni utili." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Disponibilità camere", "tabs": ["Camere", "Calendario", "Richieste"], "rows": [
+      { "title": "Camera doppia", "detail": "Periodo selezionato", "badge": "Disponibile" },
+      { "title": "Camera familiare", "detail": "Periodo selezionato", "badge": "Occupata" },
+      { "title": "Richiesta soggiorno", "detail": "Date e preferenze raccolte", "badge": "Da valutare" }
+    ] },
     "features": ["Presentazione camere e servizi", "Calendario disponibilità su misura", "Richieste di prenotazione", "Archivio contatti degli ospiti", "Indicazioni di arrivo e check-in"],
     "example": "L'ospite legge le informazioni sulla camera e invia una richiesta con le date desiderate. Tu valuti disponibilità e condizioni prima della conferma.",
     "faq": [
@@ -44,7 +64,17 @@
     "name": "Centri estetici", "activity": "Centro Estetico / SPA", "menu": false,
     "headline": "Organizza gli appuntamenti del tuo centro estetico e dedica più tempo alle clienti.",
     "intro": "Dedica più attenzione ai trattamenti. Una soluzione su misura aiuta i clienti a trovare i servizi e a richiedere appuntamenti senza interromperti al telefono.",
-    "benefits": ["Meno telefonate durante i trattamenti", "Agenda più leggibile", "Servizi e durate più chiari", "Relazioni con i clienti più semplici"],
+    "benefits": [
+      { "title": "Agenda per operatrici e cabine", "description": "Organizza trattamenti, durata e spazi in una vista condivisa, per capire come distribuire gli appuntamenti della giornata." },
+      { "title": "Prenotazioni senza interromperti", "description": "Le clienti possono consultare i trattamenti e inviare una richiesta dal telefono mentre tu ti dedichi al servizio." },
+      { "title": "Promemoria da concordare", "description": "Valutiamo avvisi sugli appuntamenti con contenuti, canali e costi definiti, così le clienti ritrovano data e orario." },
+      { "title": "Continuità con le clienti abituali", "description": "Uno spazio organizzato per contatti e preferenze ti aiuta a seguire i percorsi concordati, senza cercare appunti separati." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Prenotazione trattamenti", "tabs": ["Trattamenti", "Cabine", "Agenda"], "rows": [
+      { "title": "Trattamento viso", "detail": "09:30 · Cabina 1", "badge": "45 min" },
+      { "title": "Manicure", "detail": "11:00 · Postazione 2", "badge": "30 min" },
+      { "title": "Richiesta appuntamento", "detail": "Scegli trattamento e orario", "badge": "Da confermare" }
+    ] },
     "features": ["Catalogo trattamenti", "Agenda per operatore e cabina", "Prenotazioni con regole personalizzate", "Promemoria su richiesta", "Pacchetti e fidelity su misura"],
     "example": "La cliente sceglie il trattamento e richiede un orario. Il centro organizza cabine e operatori seguendo le proprie regole di disponibilità.",
     "faq": [
@@ -62,7 +92,17 @@
     "name": "Parrucchieri e barber", "activity": "Parrucchiere / Barber", "menu": false,
     "headline": "Meno chiamate per prenotare, più tempo per il tuo salone.",
     "intro": "Rendi servizi e disponibilità più facili da consultare. Organizza appuntamenti e collaboratori con uno strumento costruito sulle esigenze del tuo salone.",
-    "benefits": ["Meno interruzioni durante il lavoro", "Appuntamenti ordinati per collaboratore", "Servizi comprensibili prima della prenotazione", "Più continuità nel rapporto con i clienti"],
+    "benefits": [
+      { "title": "Appuntamenti per collaboratore", "description": "Collega le richieste a servizi, durata e persona scelta, così puoi verificare la disponibilità prima di fissare l'orario." },
+      { "title": "Giornate organizzate meglio", "description": "Una vista dell'agenda aiuta a distribuire tagli, colori e tempi di posa rispettando i vincoli del tuo salone." },
+      { "title": "Orari facili da ricordare", "description": "I promemoria, se previsti nel progetto, riportano i dettagli dell'appuntamento sui canali concordati con il cliente." },
+      { "title": "Clienti che ritrovi facilmente", "description": "Raccogli contatti e preferenze utili per dare continuità al servizio; eventuali programmi fedeltà seguono le tue regole." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Agenda del salone", "tabs": ["Agenda", "Collaboratori", "Servizi"], "rows": [
+      { "title": "Taglio", "detail": "09:00 · Collaboratore A", "badge": "30 min" },
+      { "title": "Colore", "detail": "10:00 · Collaboratore B", "badge": "90 min" },
+      { "title": "Piega", "detail": "12:00 · Collaboratore A", "badge": "45 min" }
+    ] },
     "features": ["Agenda del salone", "Servizi con durate differenti", "Scelta del collaboratore", "Richieste di appuntamento", "Promemoria e raccolta punti su richiesta"],
     "example": "Il cliente sceglie taglio e collaboratore dal telefono. Le disponibilità rispettano le durate che hai definito per ciascun servizio.",
     "faq": [
@@ -79,8 +119,18 @@
     "offers": ["website", "webapp"],
     "name": "Studi medici", "activity": "Studio Medico / Dentista", "menu": false,
     "headline": "Una gestione più semplice degli appuntamenti del tuo studio.",
-    "intro": "Aiuta i pazienti a trovare recapiti, prestazioni e orari. Progettiamo flussi di prenotazione che riducono il lavoro organizzativo della segreteria. I dettagli sul trattamento dei dati vengono definiti nel preventivo.",
-    "benefits": ["Recapiti e informazioni facilmente reperibili", "Richieste più ordinate per la segreteria", "Agende distinte per professionista", "Meno passaggi per fissare un appuntamento"],
+    "intro": "Aiuta i pazienti a trovare recapiti, prestazioni e orari. Progettiamo flussi di gestione appuntamenti che semplificano il lavoro organizzativo della segreteria. I dettagli sul trattamento dei dati si definiscono nel preventivo.",
+    "benefits": [
+      { "title": "Gestione appuntamenti ordinata", "description": "Raccogli richieste di appuntamento senza chiedere dettagli clinici nel modulo pubblico e lascia alla segreteria la conferma." },
+      { "title": "Agenda online per professionista", "description": "Disponibilità e appuntamenti possono essere distinti per professionista, per aiutare lo studio a organizzare gli orari." },
+      { "title": "Promemoria automatici da definire", "description": "Canali, contenuti e trattamento dei dati dei promemoria si concordano nel preventivo, senza includere informazioni sanitarie non necessarie." },
+      { "title": "Segreteria con richieste chiare", "description": "Organizza le richieste e i recapiti in un flusso condiviso, senza promettere cartelle cliniche o integrazioni non verificate." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Agenda appuntamenti", "tabs": ["Agenda online", "Richieste", "Disponibilità"], "rows": [
+      { "title": "Appuntamento A", "detail": "09:00 · Professionista 1", "badge": "Confermato" },
+      { "title": "Appuntamento B", "detail": "10:30 · Professionista 2", "badge": "Da confermare" },
+      { "title": "Fascia disponibile", "detail": "11:30 · Nessun dato clinico", "badge": "Libera" }
+    ] },
     "features": ["Presentazione dello studio e delle prestazioni", "Richieste di appuntamento", "Agenda per professionista", "Gestione disponibilità", "Promemoria concordati con lo studio"],
     "example": "Il paziente consulta le informazioni e richiede un appuntamento. La segreteria gestisce disponibilità e conferma senza chiedere dati clinici nel modulo pubblico.",
     "faq": [
@@ -98,7 +148,17 @@
     "name": "Palestre e fitness", "activity": "Palestra / Fitness", "menu": false,
     "headline": "Gestisci iscrizioni, lezioni e prenotazioni in un unico strumento.",
     "intro": "Fai trovare orari e attività ai tuoi iscritti e organizza le richieste per i corsi. Scegliamo insieme le funzioni utili al tuo centro fitness.",
-    "benefits": ["Orari dei corsi sempre consultabili", "Richieste di partecipazione ordinate", "Disponibilità più chiare", "Comunicazioni agli iscritti più semplici"],
+    "benefits": [
+      { "title": "Calendario corsi sul telefono", "description": "Gli iscritti trovano giorni, orari e attività in una vista semplice, senza dover chiedere ogni volta il programma." },
+      { "title": "Iscrizioni da tenere in ordine", "description": "Uno strumento dedicato può organizzare iscritti e pacchetti secondo le condizioni del centro, senza sostituire automaticamente il gestionale." },
+      { "title": "Prenotazioni con regole chiare", "description": "Definisci capienza e modalità di richiesta per ciascuna lezione, così puoi valutare i posti e le eventuali liste d'attesa." },
+      { "title": "Avvisi dove servono", "description": "Concordiamo comunicazioni su variazioni di orario e attività, con canali e costi di invio esplicitati nel progetto." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Prenotazione corsi", "tabs": ["Corsi", "Prenotazioni", "Iscritti"], "rows": [
+      { "title": "Pilates", "detail": "Lunedì · 18:00", "badge": "Posti disponibili" },
+      { "title": "Allenamento funzionale", "detail": "Martedì · 19:00", "badge": "Su richiesta" },
+      { "title": "Yoga", "detail": "Mercoledì · 17:30", "badge": "Lista d'attesa" }
+    ] },
     "features": ["Calendario corsi", "Prenotazioni con limite posti", "Gestione iscritti", "Pacchetti lezioni su misura", "Avvisi e scadenze su richiesta"],
     "example": "L'iscritto consulta il calendario e prenota un corso. Il centro controlla i posti disponibili e le regole del pacchetto acquistato.",
     "faq": [
@@ -116,7 +176,17 @@
     "name": "Negozi e retail", "activity": "Negozio / Retail", "menu": false,
     "headline": "Prodotti, clienti e magazzino: organizza meglio il tuo negozio.",
     "intro": "Fai trovare il tuo negozio online e rendi più ordinati catalogo, richieste e contatti. Le integrazioni seguono i processi che usi davvero.",
-    "benefits": ["Prodotti e recapiti facili da trovare", "Richieste dei clienti raccolte con ordine", "Catalogo consultabile da smartphone", "Relazioni commerciali più continue"],
+    "benefits": [
+      { "title": "Un catalogo da consultare", "description": "Presenta prodotti e caratteristiche sul telefono, così il cliente può chiederti informazioni con un riferimento preciso." },
+      { "title": "Magazzino da organizzare", "description": "Valutiamo strumenti per seguire movimenti e disponibilità, verificando prima i collegamenti al software che usi già." },
+      { "title": "Inventario più leggibile", "description": "Un elenco ordinato di articoli e varianti aiuta a confrontare le scorte con i prodotti effettivamente presenti in negozio." },
+      { "title": "Richieste collegate ai clienti", "description": "Associa contatti e richieste ai prodotti interessati per riprendere una conversazione senza cercarla fra messaggi diversi." }
+    ],
+    "mockup": { "kind": "stock", "title": "Prodotti e magazzino", "tabs": ["Catalogo", "Scorte", "Clienti"], "rows": [
+      { "title": "Articolo A", "detail": "Variante standard", "badge": "Disponibile" },
+      { "title": "Articolo B", "detail": "Variante grande", "badge": "Da riordinare" },
+      { "title": "Articolo C", "detail": "Variante speciale", "badge": "Su richiesta" }
+    ] },
     "features": ["Sito del negozio", "Catalogo prodotti", "Richieste disponibilità", "Gestione clienti", "Magazzino e fidelity su preventivo"],
     "example": "Un cliente vede un prodotto dal telefono e chiede disponibilità. Tu rispondi con le informazioni utili e organizzi il ritiro.",
     "faq": [
@@ -134,7 +204,17 @@
     "name": "Officine e autorimesse", "activity": "Autorimessa / Meccanico", "menu": false,
     "headline": "Appuntamenti, clienti e interventi: organizza il lavoro della tua officina.",
     "intro": "Raccogli le richieste dei clienti e prepara il lavoro senza inseguire messaggi sparsi. Una soluzione su misura mette ordine nella parte organizzativa.",
-    "benefits": ["Richieste di intervento più ordinate", "Agenda facilmente consultabile", "Contatti dei clienti a portata di mano", "Informazioni sui servizi più chiare"],
+    "benefits": [
+      { "title": "Appuntamenti secondo il carico", "description": "Raccogli il tipo di servizio richiesto e verifica l'agenda prima di concordare consegna e ritiro del veicolo." },
+      { "title": "Schede intervento da ritrovare", "description": "Una soluzione dedicata può collegare attività, veicolo e indicazioni operative, evitando fogli separati sul banco." },
+      { "title": "Promemoria per i controlli", "description": "Valutiamo avvisi sulle scadenze concordate con il cliente, definendo consensi e costi dei canali utilizzati." },
+      { "title": "Clienti e recapiti in ordine", "description": "Organizza i contatti associati ai veicoli e alle richieste, così sai a chi comunicare aggiornamenti sull'intervento." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Appuntamenti e interventi", "tabs": ["Agenda", "Interventi", "Veicoli"], "rows": [
+      { "title": "Controllo programmato", "detail": "09:00 · Veicolo A", "badge": "In agenda" },
+      { "title": "Scheda intervento", "detail": "Attività concordate · Veicolo B", "badge": "In lavorazione" },
+      { "title": "Richiesta appuntamento", "detail": "Servizio da valutare", "badge": "Da confermare" }
+    ] },
     "features": ["Presentazione servizi", "Richieste di appuntamento", "Agenda dell'officina", "Schede clienti e veicoli su richiesta", "Promemoria interventi concordati"],
     "example": "Il cliente richiede un appuntamento per un controllo. L'officina verifica il carico di lavoro e concorda giorno e modalità di consegna.",
     "faq": [
@@ -152,7 +232,17 @@
     "name": "Agenzie immobiliari", "activity": "Agenzia Immobiliare", "menu": false,
     "headline": "Organizza immobili, richieste e appuntamenti in un unico posto.",
     "intro": "Presenta gli immobili e raccogli richieste di visita in modo chiaro. Uno strumento personalizzato aiuta il tuo team a seguire i contatti.",
-    "benefits": ["Immobili consultabili da smartphone", "Richieste di visita più ordinate", "Contatti organizzati per interesse", "Calendario condiviso più leggibile"],
+    "benefits": [
+      { "title": "Immobili presentati bene", "description": "Schede con caratteristiche e immagini permettono al visitatore di individuare l'immobile di interesse prima di chiedere una visita." },
+      { "title": "Richieste associate all'annuncio", "description": "Raccogli il riferimento dell'immobile insieme alla richiesta, così il team capisce subito su quale proposta ricontattare la persona." },
+      { "title": "Visite da coordinare", "description": "Un calendario dedicato può organizzare appuntamenti e disponibilità degli agenti, con conferme secondo le regole dell'agenzia." },
+      { "title": "Contatti da seguire nel tempo", "description": "Organizza gli interessi e i ricontatti in uno spazio comune, per non perdere il seguito delle conversazioni già avviate." }
+    ],
+    "mockup": { "kind": "properties", "title": "Immobili e richieste", "tabs": ["Immobili", "Visite", "Contatti"], "rows": [
+      { "title": "Bilocale di esempio", "detail": "Scheda e caratteristiche", "badge": "Richiesta visita" },
+      { "title": "Trilocale di esempio", "detail": "Immagini e informazioni", "badge": "Disponibile" },
+      { "title": "Appuntamento visita", "detail": "Agente A · Orario concordato", "badge": "In agenda" }
+    ] },
     "features": ["Vetrina immobili", "Filtri di ricerca pertinenti", "Richieste di visita", "Agenda del team", "Archivio contatti su misura"],
     "example": "Un visitatore legge la scheda di un immobile e richiede una visita. Il team associa la richiesta all'immobile e organizza il ricontatto.",
     "faq": [
@@ -170,7 +260,17 @@
     "name": "Studi legali e notarili", "activity": "Studio Legale / Notarile", "menu": false,
     "headline": "Organizza appuntamenti e attività del tuo studio con strumenti su misura.",
     "intro": "Presenta ambiti di attività e recapiti con chiarezza. Organizza le richieste di appuntamento senza chiedere documenti riservati in un modulo pubblico.",
-    "benefits": ["Presentazione dello studio chiara", "Richieste di appuntamento ordinate", "Recapiti facilmente accessibili", "Meno passaggi per il primo contatto"],
+    "benefits": [
+      { "title": "Appuntamenti senza documenti pubblici", "description": "Le persone possono richiedere un incontro tramite i recapiti, senza inviare fascicoli o documentazione riservata nel modulo." },
+      { "title": "Agenda per le attività dello studio", "description": "Organizza incontri e impegni operativi in una vista condivisa, con accessi e responsabilità da definire nel progetto." },
+      { "title": "Promemoria degli impegni", "description": "Valutiamo avvisi organizzativi sui canali concordati: non sostituiscono il controllo professionale delle scadenze legali." },
+      { "title": "Richieste gestite con un flusso", "description": "Aiuta il personale a distinguere primi contatti e appuntamenti, senza promettere un gestionale pratiche nel sito base." }
+    ],
+    "mockup": { "kind": "calendar", "title": "Agenda attività dello studio", "tabs": ["Appuntamenti", "Attività", "Richieste"], "rows": [
+      { "title": "Incontro conoscitivo", "detail": "09:30 · Professionista A", "badge": "In agenda" },
+      { "title": "Attività organizzativa", "detail": "11:00 · Nessun fascicolo pubblico", "badge": "Da seguire" },
+      { "title": "Richiesta di contatto", "detail": "Canale riservato da concordare", "badge": "Nuova" }
+    ] },
     "features": ["Sito dello studio", "Presentazione ambiti professionali", "Richieste di appuntamento", "Agenda organizzativa", "Area riservata soltanto su progetto dedicato"],
     "example": "Una persona trova l'ambito professionale dello studio e richiede un contatto. Il professionista concorda poi un canale adatto per i dettagli riservati.",
     "faq": [
@@ -188,7 +288,17 @@
     "name": "Agenti di commercio", "activity": "Agente di Commercio", "menu": false,
     "headline": "Clienti, visite e ordini sempre a portata di mano.",
     "intro": "Porta sul telefono gli strumenti utili al tuo lavoro commerciale. Progettiamo una soluzione per seguire clienti e attività anche mentre sei in visita.",
-    "benefits": ["Clienti facilmente consultabili", "Visite pianificate con ordine", "Richieste e ordini meno dispersivi", "Attività commerciali più leggibili"],
+    "benefits": [
+      { "title": "Clienti a portata di visita", "description": "Consulta anagrafiche e riferimenti dal telefono per preparare gli incontri senza portare elenchi e appunti separati." },
+      { "title": "Visite pianificate con ordine", "description": "Organizza appuntamenti e attività per zona o cliente, scegliendo un flusso coerente con il tuo modo di lavorare." },
+      { "title": "Ordini raccolti con riferimenti chiari", "description": "Una soluzione su misura può riunire articoli e richieste durante la visita, rispettando listini e regole della mandante." },
+      { "title": "Report sulle attività svolte", "description": "Valutiamo riepiloghi di visite, richieste e ordini per leggere il lavoro registrato, senza promettere risultati commerciali automatici." }
+    ],
+    "mockup": { "kind": "clients", "title": "Clienti e ordini", "tabs": ["Clienti", "Visite", "Ordini"], "rows": [
+      { "title": "Cliente A", "detail": "Visita pianificata", "badge": "In agenda" },
+      { "title": "Cliente B", "detail": "Richiesta dal catalogo", "badge": "Da seguire" },
+      { "title": "Ordine di esempio", "detail": "Regole della mandante", "badge": "Bozza" }
+    ] },
     "features": ["Rubrica clienti", "Agenda visite", "Cataloghi e listini riservati", "Raccolta ordini su misura", "Report attività e integrazioni da valutare"],
     "example": "Prima di una visita consulti il cliente e il catalogo. Durante l'incontro raccogli una richiesta d'ordine secondo le regole concordate con la mandante.",
     "faq": [

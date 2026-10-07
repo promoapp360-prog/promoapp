@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PromoApp — Verifica commerciale</title>
+<style>body{margin:0;background:#f6f4ee;color:#211d44;font-family:Poppins,Arial,sans-serif;line-height:1.65}main{max-width:960px;margin:auto;padding:28px 20px}header,section{padding:24px;border-radius:16px;margin-bottom:18px;background:white;border:1px solid #e2ddd0}header{background:#211d55;color:white}h1,h2{line-height:1.2}h2{font-size:21px}li{margin:5px 0}code{overflow-wrap:anywhere;font-size:13px}.warn{border-left:5px solid #dd9a00;background:#fff7dd}small{display:block}details{margin:14px 0}summary{cursor:pointer;font-weight:bold}@media print{body{background:white}section{break-inside:avoid}}</style></head><body><main>
+<header><h1>PromoApp: report finale commerciale</h1><p>8 ottobre 2026 · Intervento sul progetto esistente.</p><strong>Modifiche disponibili in anteprima. Nessuna pubblicazione automatica, campagna attivata o comunicazione di prova reale inviata.</strong></header>
+<section><h2>1. Analisi iniziale in cinque righe</h2><ol>
+<li>Il progetto esistente usa React/Vite, API Express e PostgreSQL: va conservato, non ricostruito.</li>
+<li>Le landing settoriali usavano una descrizione generica ripetuta sotto benefici diversi.</li>
+<li>Servivano esempi visivi specifici e maggiore coerenza fra incentivo, CTA, moduli e conferme.</li>
+<li>Salvataggio, deduplicazione e notifiche erano già presenti: riutilizzare questi flussi.</li>
+<li>Footer, promesse commerciali, tracking e gestione degli indirizzi settoriali inesistenti richiedevano chiarimenti o correzioni.</li></ol></section>
+<section><h2>2. Problemi trovati e interventi completati</h2><ul>
+<li>Corretti i 44 benefici: quattro titoli e descrizioni specifici per ciascuno degli 11 settori.</li>
+<li>Aggiunti 11 mockup con un solo componente configurabile. Sono etichettati come esempi illustrativi, non applicazioni operative; mostrano il nome inserito nel modulo.</li>
+<li>Centralizzati incentivo, conferma richiesta e condizioni commerciali. Modalità standard attiva; demo entro 48 ore disabilitata fino alla conferma operativa.</li>
+<li>Sezione “Perché PromoApp” con cinque punti prudenti. Pagamento a fasi, assistenza inclusa e referente con foto compaiono solo con configurazioni complete e confermate.</li>
+<li>Admin rimosso dai footer pubblici; accesso amministrativo conservato e protetto.</li>
+<li>Conservato un solo modulo commerciale per landing, con settore precompilato. La pagina studi medici mantiene l'avvertenza sui dati clinici e i vincoli sulle funzionalità sanitarie.</li>
+<li>Settori inesistenti: pagina utile con ritorno alla homepage, HTTP 404 e noindex, invece del redirect generico alla homepage. Alias menu con redirect 301 e parametri mantenuti.</li>
+<li>Tracking con servizio, settore, posizione e identificativo evento; tipologia attività ammessa controllata, nessun nome o telefono trasmesso negli eventi verificati.</li></ul></section>
+<section><h2>3. Offerte e funzionalità conservate</h2><ul>
+<li>Siti web: <strong>da 399 € + IVA</strong>.</li>
+<li>Menu digitale QR: <strong>99 € + IVA una tantum, realizzazione base</strong>. Hosting, aggiornamenti e assistenza non sono automaticamente inclusi.</li>
+<li>Web app e gestionali: <strong>su preventivo</strong>. Prezzo iniziale facoltativo non attivato, perché non approvato.</li>
+<li>Conservati progetto, dominio, dati, recensioni, progetti cliente, numero WhatsApp originale, servizi esistenti e flussi di pagamento. Nessuna migrazione o sostituzione del database durante questo intervento.</li>
+<li>Landing corrette: ristoranti, B&amp;B/hotel, centri estetici, parrucchieri, studi medici, palestre, negozi, officine, agenzie immobiliari, studi legali e agenti di commercio.</li>
+</ul><p>I prezzi indicati sono quelli conservati nella configurazione del progetto e nell'anteprima aggiornata. Questo intervento non ha pubblicato la nuova versione.</p></section>
+<section><h2>4. Verifiche effettuate</h2><ul>
+<li>Typecheck frontend e build web/API: riusciti. I servizi di anteprima sono avviati.</li>
+<li>Controlli automatici: 44 descrizioni distinte, 11 mockup, 33 FAQ, personalizzazione del nome con escaping, condizioni commerciali inattive senza conferma.</li>
+<li>Handler HTTP reale del modulo con database e notifiche simulati: salvataggio riuscito, duplicato senza seconda notifica, notifica inviata/in attesa, privacy, honeypot, origine, attribuzione consentita e fallimento salvataggio verificati.</li>
+<li>Ricevuta disponibile solo dopo risposta riuscita e marcatura anti-ripetizione verificate. Il codice del modulo passa a <code>/grazie</code> dopo la ricevuta; il percorso completo con invio reale e redirect nel browser non è stato ripetuto.</li>
+<li>Browser simulato: consenso negato, consenso accordato, revoca, deduplicazione Google/Meta, WhatsApp separato dai lead, esclusione delle pagine private e assenza di dati personali nei casi verificati.</li>
+<li>HTML prerenderizzato: H1 singolo, modulo unico, settore selezionato, contenuti specifici, nessun Admin nel footer, sitemap e noindex corretti.</li>
+<li>Gateway reale di anteprima: 11 landing HTTP 200; indirizzo inesistente 404; alias 301 conserva UTM; endpoint amministrativi senza credenziali 401.</li>
+<li>Routing di produzione isolato: 11 HTML specifici, 404 noindex e alias 301. Nessun avvio Stripe e nessun accesso al database reale in questa prova.</li>
+<li>Screenshot mobile della homepage e dell'esempio centri estetici: contenuti leggibili, Poppins conservato e nessun errore bloccante nella console catturata.</li>
+</ul><p>Misura locale indicativa: HTML centri estetici 51.440 byte, risposta completa circa 7 ms. Non è una misura di produzione né un punteggio Lighthouse; Lighthouse non è stato eseguito.</p></section>
+<section class="warn"><h2>5. Verifiche e configurazioni ancora aperte</h2><ul>
+<li><strong>Google e Meta:</strong> GTM, GA4, ID conversione Google Ads, relativa etichetta e Meta Pixel risultano mancanti nella configurazione runtime verificata. La logica è predisposta e testata con provider simulati; ricezione effettiva degli eventi non verificata.</li>
+<li><strong>Notifiche:</strong> gestione del risultato e dei guasti verificata in isolamento. Consegna email reale non ripetuta in questo intervento.</li>
+<li><strong>Admin:</strong> protezione senza credenziale verificata; login con password corretta non ripetuto.</li>
+<li><strong>Conferme commerciali:</strong> capacità di consegnare demo entro 48 ore, tempi WhatsApp, servizi con pagamento a fasi, durata/perimetro assistenza inclusa, eventuale prezzo iniziale web app e dati autentici del referente.</li>
+<li><strong>Backend:</strong> restano 17 diagnostici TypeScript preesistenti nei moduli amministrativi/pagamenti; non sono stati ampliati o corretti fuori perimetro.</li>
+<li><strong>Prima di pubblicare:</strong> nei log della pubblicazione precedente compare un errore Stripe relativo a un webhook inesistente. Non è stato modificato il sistema di pagamenti; va verificata la conferma dei pagamenti prima di dichiararla operativa.</li>
+</ul></section>
+<section><h2>6. Come verificare l'anteprima e fare una prova</h2><ol>
+<li>Apri l'anteprima Web App: controlla homepage e offerte, poi <code>/per/centri-estetici</code> oppure un altro settore.</li>
+<li>Inserisci il nome di un'attività di prova: l'esempio illustrativo deve mostrare quel nome. Controlla settore precompilato e link WhatsApp, senza inviare messaggi a clienti.</li>
+<li>Per una richiesta reale usa esclusivamente un recapito interno autorizzato, compila i tre campi e accetta la privacy. L'invio crea un contatto reale e può inviare una notifica: non usare numeri di clienti.</li>
+<li>Dopo l'invio controlla <code>/grazie</code> e il contatto in <code>/gestione-contatti</code>, accedendo con la credenziale amministrativa tramite il modulo protetto.</li>
+</ol><p>Prove automatiche senza comunicazioni reali: <code>node artifacts/web/scripts/verify-commercial.mjs</code>, dopo la build web.</p></section>
+<section><h2>7. File modificati in questo intervento</h2><p>Percorsi frontend relativi a <code>artifacts/web/</code>:</p>
+<ul><li><code>src/lib/sector-config.json</code>, <code>commercial-config.json</code>, <code>commercial.ts</code>, <code>marketing.ts</code>, <code>analytics.ts</code>, <code>lead-receipt.ts</code>, <code>seo-catalog.mjs</code>.</li>
+<li><code>src/components/marketing/SectorMockup.tsx</code> e <code>TrustPoints.tsx</code> (nuovi); <code>HomeContactForm.tsx</code>, <code>LeadForm.tsx</code>, <code>MarketingLayout.tsx</code>, <code>PageSEO.tsx</code>.</li>
+<li><code>src/pages/SectorLanding.tsx</code>, <code>Preventivo.tsx</code>, <code>ServiceLanding.tsx</code>, <code>ThankYou.tsx</code>; <code>src/styles/commercial.css</code>.</li>
+<li><code>scripts/seo-build.mjs</code>, <code>seo-html.mjs</code>, <code>verify-commercial.mjs</code> (nuovo); HTML e risorse di build rigenerati.</li>
+<li>Backend: <code>artifacts/api-server/src/lib/public-routing.ts</code>.</li></ul><small>Aggiornate anche le istruzioni persistenti sui vincoli commerciali e prodotto. Nessuna credenziale inserita nel codice o in questo report.</small></section>
+</main></body></html>

@@ -1,6 +1,6 @@
 import type { TrackingConfig } from "@workspace/api-client-react";
-import { appPath, captureAttribution, persistAttribution, readConsent, type Service, type Consent } from "./marketing";
-import { commercialVariant } from "./commercial";
+import { appPath, captureAttribution, persistAttribution, readConsent, serviceCodes, type Service, type Consent } from "./marketing";
+import { commercialVariant, sectors } from "./commercial";
 
 declare global {
   interface Window {
@@ -15,7 +15,9 @@ let ready = false, googleStarted = false, metaStarted = false, gtmStarted = fals
 let activePath = "/", lastPage = "";
 let gaConfigured = false, adsConfigured = false;
 const sentLeads = new Set<string>();
-const privatePage = () => /^\/(?:admin|gestione-contatti|lavori)(?:\/|$)/.test(activePath);
+const privatePage = () => /^\/(?:admin|gestione-contatti|lavori)(?:\/|$)/.test(activePath) ||
+  (activePath.startsWith("/per/") && !Object.hasOwn(sectors, activePath.slice(5)));
+let eventSequence = 0;
 function gtag(..._args: unknown[]) {
   window.dataLayer ??= [];
   window.dataLayer.push(arguments);
@@ -95,12 +97,14 @@ export async function initTracking() {
 }
 export function updateTrackingConsent(consent: Consent) { configure(consent); }
 export function trackPage(path: string) { activePath = path; captureAttribution(); configure(readConsent()); }
-export function trackEvent(event: string, service: Service = "generale", placement = "form", slug = "generale", eventId?: string) {
+export function trackEvent(event: string, service: Service = "generale", placement = "form", slug = "generale", eventId?: string, extra: { business_type?: string } = {}) {
   if (privatePage()) return;
   const consent = readConsent();
   if (!consent.analytics && !consent.marketing) return;
   // No names, phone numbers, email, free text, URL query or raw advertising parameters.
-  const context = { service, placement, page_path: activePath, sector: slug, variant: commercialVariant().key, ...(eventId ? { event_id: eventId } : {}) };
+  const context = { service, placement, position: placement, posizione: placement, page_path: activePath, sector: slug, slug,
+    servizio: slug === "generale" ? serviceCodes[service] : "sector_custom", variant: commercialVariant().key,
+    event_id: eventId ?? globalThis.crypto?.randomUUID?.() ?? `ui-${Date.now()}-${++eventSequence}`, ...extra };
   if (gtmStarted) {
     window.dataLayer ??= [];
     window.dataLayer.push({ event, ...context });
@@ -108,14 +112,15 @@ export function trackEvent(event: string, service: Service = "generale", placeme
     window.gtag?.("event", event, { ...context, send_to: config.ga4Id });
   }
 }
-export function trackConversion(service: Service, placement = "form", leadId?: string, slug = "generale") {
+export function trackConversion(service: Service, placement = "form", leadId?: string, slug = "generale", businessType?: string) {
   if (!leadId || sentLeads.has(leadId)) return;
   try { if (sessionStorage.getItem(`promoapp-counted-${leadId}`)) return; } catch { /* In-memory dedup still works. */ }
   const consent = readConsent();
   if (!consent.analytics && !consent.marketing) return;
   sentLeads.add(leadId);
   try { sessionStorage.setItem(`promoapp-counted-${leadId}`, "1"); } catch { /* Optional. */ }
-  trackEvent("generate_lead", service, placement, slug, leadId);
+  const safeType = Object.values(sectors).some((sector) => sector.activity === businessType) ? businessType : "Altro";
+  trackEvent("generate_lead", service, placement, slug, leadId, { business_type: safeType });
   if (!gtmStarted && consent.marketing && googleStarted && config.googleAdsId && config.googleAdsLeadLabel)
     window.gtag?.("event", "conversion", { send_to: `${config.googleAdsId}/${config.googleAdsLeadLabel}`, transaction_id: leadId });
   if (consent.marketing && metaStarted) window.fbq?.("track", "Lead", { service }, { eventID: leadId });

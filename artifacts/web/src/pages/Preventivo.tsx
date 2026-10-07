@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { appPath, getAttribution, readConsent, whatsappUrl } from "../lib/marketing";
 import { trackConversion, trackWhatsApp, trackEvent } from "../lib/analytics";
 import { rememberLead } from "../lib/lead-receipt";
-import { commercialVariant, sectors, prices } from "../lib/commercial";
+import { commercialVariant, commercialIncentive, sectors, prices } from "../lib/commercial";
+import TrustPoints from "../components/marketing/TrustPoints";
 import type { ContactResponse } from "@workspace/api-client-react";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import HomeContactForm from "../components/marketing/HomeContactForm";
@@ -88,6 +89,7 @@ export default function Preventivo() {
   useMobileFormVisibility();
   const [, navigate] = useLocation();
   const variant = commercialVariant();
+  const incentive = commercialIncentive();
   const [form, setForm] = useState({
     nome_attivita: "",
     email: "",
@@ -159,7 +161,7 @@ export default function Preventivo() {
       if (!res.ok || !data.success) throw new Error(data.message ?? "Errore server");
       setSent(true);
       rememberLead(data, "generale");
-      if (!data.duplicate) trackConversion("generale", "homepage", data.leadId);
+      if (!data.duplicate) trackConversion("generale", "homepage", data.leadId, "generale", form.settore);
       navigate("/grazie");
     } catch {
       setError("Errore nell'invio. Puoi scriverci direttamente su WhatsApp.");
@@ -302,6 +304,8 @@ export default function Preventivo() {
               className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
               {variant.cta}
             </a>
+            <p className="text-indigo-100 text-sm mb-3">{incentive.promise}</p>
+            <p className="text-indigo-200 text-xs mb-4">{incentive.responseNote}</p>
             <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
               className="inline-flex items-center gap-2 text-emerald-300 font-bold text-sm mb-4">
               <i className="fab fa-whatsapp" aria-hidden="true" /> {variant.whatsappLabel}
@@ -569,7 +573,9 @@ export default function Preventivo() {
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-bold text-white text-2xl mb-5">Prima di iniziare</h2>
+          <h2 className="font-bold text-white text-2xl mb-5">Perché PromoApp</h2>
+          <TrustPoints />
+          <h2 className="font-bold text-white text-2xl mb-5 mt-8">Prima di iniziare</h2>
           <div className="space-y-3">
             {[["Non so quale soluzione scegliere: posso contattarvi?", "Sì. Partiamo dalle tue attività quotidiane e ti aiutiamo a capire cosa serve, senza richiederti competenze tecniche."],
               ["Il sito da 399 € comprende un gestionale?", "No. Il sito professionale parte da 399 € + IVA. Prenotazioni, gestionali, pagamenti e altre integrazioni sono su preventivo."],
@@ -594,7 +600,6 @@ export default function Preventivo() {
             <a href={appPath("/dati-societari.html")} className="hover:text-white transition">Dati societari</a>
             <a href={appPath("/privacy.html")} className="hover:text-white transition">Privacy</a>
             <a href={appPath("/cookie.html")} className="hover:text-white transition">Cookie</a>
-            <Link href="/admin" className="hover:text-white transition">Admin</Link>
             <span>·</span>
             <button type="button" className="hover:text-white transition" onClick={() => window.dispatchEvent(new Event("promoapp-cookie-settings"))}>Preferenze cookie</button>
           </div>

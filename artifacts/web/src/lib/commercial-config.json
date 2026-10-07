@@ -6,13 +6,29 @@
     "management": { "label": "Su preventivo" },
     "note": "Funzionalità extra, hosting e dominio vengono definiti nel preventivo."
   },
+  "incentive": {
+    "mode": "standard",
+    "demoDeliveryConfirmed": false,
+    "demoDeliveryHours": 48,
+    "whatsappResponseConfirmed": false,
+    "whatsappResponseHours": null
+  },
+  "webappStartingPrice": { "approved": false, "amount": null },
+  "trust": {
+    "stagedPaymentConfirmed": false,
+    "stagedPaymentServices": [],
+    "initialSupportConfirmed": false,
+    "initialSupportDays": null,
+    "initialSupportServices": [],
+    "projectContact": { "name": "", "photo": "", "role": "", "bio": "" }
+  },
   "experiments": {
     "enabled": false,
     "activeVariant": "control",
     "variants": {
       "control": {
         "headline": "Il digitale su misura per far crescere la tua attività.",
-        "cta": "Richiedi una proposta gratuita",
+        "cta": "Richiedi un’anteprima gratuita",
         "whatsappLabel": "Scrivici su WhatsApp",
         "formPosition": "hero",
         "pricePresentation": "cards"

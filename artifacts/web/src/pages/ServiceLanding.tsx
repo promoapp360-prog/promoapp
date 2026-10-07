@@ -7,6 +7,8 @@ import WhatsAppLink from "../components/marketing/WhatsAppLink";
 import { appPath, serviceCta } from "../lib/marketing";
 import { trackEvent } from "../lib/analytics";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
+import { commercialIncentive, webappStartingPrice } from "../lib/commercial";
+import TrustPoints from "../components/marketing/TrustPoints";
 
 type Service = "siti-web" | "web-app" | "menu-digitali";
 type Item = { t: string; d: string };
@@ -107,7 +109,9 @@ function Scope({ inc, ext, title }: { inc: string[]; ext: string[]; title: strin
 function Contact({ service, title, lead }: { service: Service; title: string; lead: string }) {
   return (
     <section className="sl-section">
-      <div className="marketing-container sl-contact">
+      <div className="marketing-container">
+        <h2 className="sl-h2">Perché PromoApp</h2><TrustPoints service={service} />
+        <div className="sl-contact mt-8">
         <div className="sl-alt">
           <p className="sl-eyebrow">Contatto diretto</p>
           <h2 className="sl-h2">{title}</h2>
@@ -115,6 +119,7 @@ function Contact({ service, title, lead }: { service: Service; title: string; le
           <div><WhatsAppLink service={service} placement="form" className="whatsapp-link">Scrivici su WhatsApp</WhatsAppLink></div>
         </div>
         <a className="whatsapp-link" href="#preventivo" onClick={() => trackEvent("cta_click", service, "product-final")}>{serviceCta[service]}</a>
+        </div>
       </div>
     </section>
   );
@@ -139,6 +144,8 @@ function Hero({ service, kicker, h1, sub, price, priceNote, note, side }: {
             <WhatsAppLink service={service} placement="hero" className="sl-ghost">Scrivici su WhatsApp</WhatsAppLink>
           </div>
           <p className="sl-note">{note}</p>
+          <p className="sl-note">{commercialIncentive().promise}</p>
+          <p className="sl-note">{commercialIncentive().responseNote}</p>
         </div>
         <div>
           {side}
@@ -155,7 +162,7 @@ function SitiWeb() {
       <Hero
         service="siti-web" kicker="Siti web per attività italiane"
         h1={<>Il tuo sito web professionale da <b>399 € + IVA.</b></>}
-        sub="Fai trovare la tua attività online, presenta i tuoi servizi e ricevi richieste dai clienti."
+        sub="Presenta la tua attività online, valorizza i tuoi servizi e fatti contattare facilmente dai clienti."
         price={["399 €", "+ IVA"]} priceNote="hosting e dominio a parte"
         note="Parli direttamente con chi realizza il sito."
       />
@@ -231,10 +238,10 @@ function WebApp() {
     <>
       <Hero
         service="web-app" kicker="Web app e strumenti su misura"
-        h1={<>Un&apos;app su misura per <b>organizzare la tua attività.</b></>}
-        sub="Progettiamo strumenti personalizzati per gestire appuntamenti, prenotazioni, clienti, ordini e attività quotidiane."
+        h1={<>Un&apos;app su misura per <b>semplificare il lavoro della tua attività.</b></>}
+        sub="Realizziamo soluzioni personalizzate per organizzare prenotazioni, appuntamenti, clienti, ordini e attività quotidiane."
         price={["Su preventivo", "ambito, tempi e manutenzione definiti sul progetto"]}
-        note="Nessun pacchetto standard: parti dal tuo caso concreto."
+        note={webappStartingPrice() ?? "Nessun pacchetto standard: parti dal tuo caso concreto."}
       />
       <section className="sl-section">
         <div className="marketing-container">

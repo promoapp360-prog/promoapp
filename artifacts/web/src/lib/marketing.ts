@@ -1,12 +1,14 @@
 import type { ContactRequestAttribution } from "@workspace/api-client-react";
-import { sectors } from "./commercial";
+import { sectors, commercialIncentive } from "./commercial";
 
 export type Service = "generale" | "siti-web" | "web-app" | "menu-digitali";
 export const serviceCodes = { generale: "general", "siti-web": "website_399", "web-app": "webapp_custom", "menu-digitali": "menu_qr_99" } as const;
-export const serviceCta: Record<Service, string> = {
-  generale: "Richiedi una proposta gratuita", "siti-web": "Richiedi il tuo sito da 399 €",
-  "menu-digitali": "Richiedi il menu digitale a 99 €", "web-app": "Raccontaci il tuo progetto",
+const standardServiceCta: Record<Service, string> = {
+  generale: commercialIncentive().cta, "siti-web": "Richiedi il tuo sito da 399 €",
+  "menu-digitali": "Richiedi il menu digitale a 99 €", "web-app": "Scopri la soluzione per la tua attività",
 };
+export const serviceCta = Object.fromEntries(Object.entries(standardServiceCta).map(([service, label]) =>
+  [service, commercialIncentive().demoActive ? commercialIncentive().cta : label])) as Record<Service, string>;
 export const PUBLIC_ORIGIN = "https://www.promoapp.it";
 export const appPath = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}${path}`;
 export const serviceNames: Record<Service, string> = {
@@ -14,14 +16,18 @@ export const serviceNames: Record<Service, string> = {
 };
 const messages: Record<Service, string> = {
   generale: "Buongiorno, ho visto PromoApp e vorrei una proposta gratuita e senza impegno per la mia attività.",
-  "siti-web": "Ciao PromoApp! Vorrei informazioni per un sito web professionale a partire da 399 €. La mia attività è...",
+  "siti-web": "Buongiorno, vorrei informazioni sul sito web da 399 € + IVA.",
   "web-app": "Ciao PromoApp! Vorrei un preventivo per una web app o un gestionale personalizzato. La mia idea è...",
   "menu-digitali": "Buongiorno, vorrei informazioni sul menu digitale QR a 99 € + IVA una tantum per il mio locale.",
 };
 export const WHATSAPP_NUMBER = "393793602035";
 export const whatsappUrl = (service: Service = "generale", slug?: string) => {
   const sector = slug && sectors[slug as keyof typeof sectors];
-  const message = sector ? sector.whatsappMessage : messages[service];
+  const base = sector ? sector.whatsappMessage : messages[service];
+  const incentive = commercialIncentive();
+  const message = `${base} ${incentive.demoActive ?
+    `Vorrei richiedere la demo illustrativa gratuita con il nome della mia attività. ${incentive.promise}` :
+    "Posso richiedere un’anteprima gratuita?"}`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 

@@ -2,11 +2,13 @@ import { useId, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { submitContact } from "@workspace/api-client-react";
 import { appPath, getAttribution, readConsent, serviceCodes, serviceCta, type Service } from "../../lib/marketing";
-import { commercialVariant, sectors } from "../../lib/commercial";
+import { commercialVariant, commercialIncentive, sectors } from "../../lib/commercial";
 import { trackConversion, trackEvent } from "../../lib/analytics";
 import { rememberLead } from "../../lib/lead-receipt";
 
-export default function LeadForm({ service = "generale", slug = "generale", activity = "", cta }: { service?: Service; slug?: string; activity?: string; cta?: string }) {
+export default function LeadForm({ service = "generale", slug = "generale", activity = "", cta, onBusinessNameChange }: {
+  service?: Service; slug?: string; activity?: string; cta?: string; onBusinessNameChange?: (name: string) => void;
+}) {
   const id = useId();
   const [, navigate] = useLocation();
   const started = useRef(false);
@@ -14,7 +16,9 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
   const [privacy, setPrivacy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const incentive = commercialIncentive();
   function change(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    if (e.target.name === "nome_attivita") onBusinessNameChange?.(e.target.value);
     setForm((previous) => ({ ...previous, [e.target.name]: e.target.value })); setError("");
   }
   async function submit(e: React.FormEvent) {
@@ -31,7 +35,7 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
         slug, pagina: window.location.pathname, variant: commercialVariant().key,
         attribution: getAttribution(), marketingConsent: consent.marketing, analyticsConsent: consent.analytics });
       rememberLead(result, service, slug);
-      if (!result.duplicate) trackConversion(service, "form", result.leadId, slug);
+      if (!result.duplicate) trackConversion(service, "form", result.leadId, slug, form.settore);
       navigate("/grazie");
     } catch { setError("La richiesta non è stata confermata. Riprova oppure scrivici su WhatsApp."); }
     finally { setLoading(false); }
@@ -39,7 +43,7 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
   return <form className="lead-form" onSubmit={submit} data-testid={`form-${slug}`}
     onFocusCapture={() => { if (!started.current) { trackEvent("form_start", service, "form", slug); started.current = true; } }}>
     <h3>{cta ?? serviceCta[service]}</h3>
-    <p className="text-sm text-gray-500">Tre dati, nessun impegno. Ti aiutiamo anche se non sai quale soluzione scegliere.</p>
+    <p className="text-sm text-gray-500">Tre dati, nessun impegno. {incentive.promise}</p>
     <div><label htmlFor={`${id}-name`}>Nome attività *</label><input id={`${id}-name`} name="nome_attivita" autoComplete="organization"
       value={form.nome_attivita} onChange={change} required minLength={2} maxLength={160} placeholder="Il nome della tua attività" /></div>
     <div><label htmlFor={`${id}-business`}>Tipo attività *</label><select id={`${id}-business`} name="settore" value={form.settore} onChange={change} required>
@@ -54,7 +58,8 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
     <label className="lead-privacy"><input type="checkbox" required checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} />
       <span>Ho letto l'<a href={appPath("/privacy.html")} target="_blank" rel="noopener noreferrer">informativa privacy</a> e acconsento al trattamento per rispondere alla richiesta. Nessuna iscrizione pubblicitaria.</span></label>
     {error && <p className="lead-form-status" role="alert" data-testid="lead-error">{error}</p>}
-    <button type="submit" disabled={loading}>{loading ? "Invio in corso…" : cta ?? serviceCta[service]}</button>
+    <button type="submit" disabled={loading}>{loading ? "Invio in corso…" : incentive.formCta}</button>
+    <p className="text-sm text-gray-500">{incentive.responseNote}</p>
     <small>I campi con * sono obbligatori.</small>
   </form>;
 }

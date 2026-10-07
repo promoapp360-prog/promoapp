@@ -1,10 +1,12 @@
 import type { ContactResponse } from "@workspace/api-client-react";
 import type { Service } from "./marketing";
-type Receipt = { leadId: string; service: Service; slug: string; at: number; notification: string; viewed?: boolean };
+import { commercialIncentive } from "./commercial";
+type Receipt = { leadId: string; service: Service; slug: string; at: number; notification: string; viewed?: boolean; offerConfirmation?: string };
 let memory: Receipt | null = null;
 export function rememberLead(result: ContactResponse, service: Service, slug = "generale") {
   if (!result.success || !result.leadId) throw new Error("Richiesta non confermata");
-  memory = { leadId: result.leadId, service, slug, at: Date.now(), notification: result.notification ?? "pending" };
+  memory = { leadId: result.leadId, service, slug, at: Date.now(), notification: result.notification ?? "pending",
+    offerConfirmation: commercialIncentive().confirmation };
   try { sessionStorage.setItem("promoapp-receipt", JSON.stringify(memory)); } catch { /* Necessary receipt remains in memory. */ }
 }
 export function getReceipt(): Receipt | null {

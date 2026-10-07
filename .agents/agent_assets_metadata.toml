@@ -147,3 +147,17 @@ mtime_ms = 1791408246042
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/aafb082a-16c2-4ec8-9112-2a359671c95b/264278b8-c958-412d-9449-9fc9c5f0091e"
 storage_version_token = "1791408330236263"
 content_type = "text/html"
+
+[[outputs]]
+id = "PwQ1x3lLn1E6KGpixNI9N"
+uri = "file://reports/promoapp-verifica-commerciale.html"
+type = "html"
+title = "PromoApp — Report finale commerciale"
+description = "Interventi, file modificati, sette gruppi di verifiche, condizioni da confermare e controlli prima di pubblicare."
+logical_id = "018a8545-9665-40ad-abdd-b2009c97d708"
+content_hash = "sha256:4fe668f61560da0364c901ef5b9fd6d2b79ceba5064aec50b0ecd4db45656034"
+size = 9284
+mtime_ms = 1791412303533
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/018a8545-9665-40ad-abdd-b2009c97d708/0f52ab22-cf11-4aad-8986-0e1cab94bc87"
+storage_version_token = "1791412329436827"
+content_type = "text/html"

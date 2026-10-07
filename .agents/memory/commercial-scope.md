@@ -21,15 +21,15 @@ Non mostrare la parte dedicata a un progetto già realizzato nella homepage o ne
 
 **How to apply:** non reinserire il portfolio dei progetti realizzati senza una nuova richiesta; non eliminare i dati dei progetti cliente.
 
-Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati societari; mantenere la denominazione completa nelle informazioni legali. Il modulo per scrivere una recensione deve aprirsi al clic.
+Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati societari; mantenere la denominazione completa nelle informazioni legali. Non mostrare Admin nel footer pubblico. Il modulo per scrivere una recensione deve aprirsi al clic.
 
-**Why:** l'utente ha approvato questa soluzione per rendere la pagina più compatta senza eliminare l'identità della società dalle informazioni legali.
+**Why:** l'utente ha approvato questa soluzione per rendere la pagina più compatta senza eliminare l'identità della società dalle informazioni legali e ha scelto esplicitamente «Rimuovi Admin dal footer».
 
 **How to apply:** mantenere le recensioni pubbliche visibili e non interpretare il footer compatto come una richiesta di rimuovere la società dalle informative privacy.
 
-L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie, con proposta iniziale gratuita e senza impegno. Non promettere una demo personalizzata entro 48 ore.
+L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie, con anteprima illustrativa gratuita e senza impegno. Demo personalizzata entro 48 ore e tempi di risposta WhatsApp richiedono conferma della reale disponibilità operativa.
 
-**Why:** il documento commerciale più recente sostituisce le precedenti CTA demo/consulenza, preservando identità grafica e approccio mobile-first.
+**Why:** il documento definitivo consente di predisporre la modalità demo ma vieta di attivare promesse temporali non confermate; preserva identità grafica e approccio mobile-first.
 
 **How to apply:** conservare la distinzione fra siti web e funzioni personalizzate; non cambiare prezzi, promesse o dati aziendali senza approvazione.
 

@@ -13,12 +13,12 @@ export function registerPublicRouting(app: Express) {
   app.get("/per", (_req, res) => { res.redirect(302, "/"); });
   app.get("/per/:slug", async (req, res) => {
     const slug = req.params.slug;
-    if (!Object.hasOwn(sectors, slug)) { res.redirect(302, "/"); return; }
+    const found = Object.hasOwn(sectors, slug);
     if (process.env.NODE_ENV !== "production") {
       try {
         const upstream = await fetch(`http://127.0.0.1:22333${req.originalUrl}`);
         if (!upstream.ok) throw new Error("Preview unavailable");
-        res.set("Cache-Control", "no-store").type("html").send(await upstream.text());
+        res.status(found ? 200 : 404).set("Cache-Control", "no-store").type("html").send(await upstream.text());
       } catch {
         req.log.error("Anteprima della landing settoriale non disponibile");
         res.status(503).send("Anteprima temporaneamente non disponibile.");
@@ -29,6 +29,6 @@ export function registerPublicRouting(app: Express) {
     // In the production bundle import.meta.url belongs to api-server/dist/index.mjs.
     const bundleDir = fileURLToPath(new URL("../../web/dist/public/", import.meta.url));
     const dir = import.meta.url.includes("/src/lib/") ? publicDir : bundleDir;
-    res.sendFile(resolve(dir, "per", slug, "index.html"));
+    res.status(found ? 200 : 404).sendFile(found ? resolve(dir, "per", slug, "index.html") : resolve(dir, "404.html"));
   });
 }

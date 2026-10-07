@@ -38,6 +38,13 @@ try {
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, html);
   }
+  const notFoundPath = "/per/non-disponibile";
+  const notFoundBody = renderToString(React.createElement(Router, { ssrPath: notFoundPath },
+    React.createElement(SectorLanding, { slug: "non-disponibile" })));
+  const notFoundHtml = seoHtml(template, notFoundPath)
+    .replace(/<link rel="canonical"[^>]*>/, "")
+    .replace('<div id="root"></div>', `<div id="root">${notFoundBody}</div>`);
+  await writeFile(resolve(out, "404.html"), notFoundHtml);
   const urls = Object.entries(pages).filter(([, page]) => !page.noindex && !page.canonical)
     .map(([path]) => `<url><loc>https://www.promoapp.it${path === "/" ? "/" : path}</loc></url>`).join("\n");
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
