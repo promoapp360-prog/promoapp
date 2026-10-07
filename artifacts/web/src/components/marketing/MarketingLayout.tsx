@@ -11,9 +11,9 @@ export default function MarketingLayout({ service = "generale", children }: { se
     </div></header>
     <main>{children}</main>
     <footer className="marketing-footer"><div className="marketing-container">
-      <p><strong>PromoApp.it</strong> · Sophia 2005 S.r.l. · P.IVA 08223951008</p>
+      <p><strong>PromoApp.it</strong> · P.IVA 08223951008</p>
       <nav aria-label="Informazioni legali" className="flex flex-wrap gap-4 mt-3">
-        <Link href="/">Homepage</Link><a href={appPath("/privacy.html")}>Privacy</a>
+        <Link href="/">Homepage</Link><a href={appPath("/dati-societari.html")}>Dati societari</a><a href={appPath("/privacy.html")}>Privacy</a>
         <a href={appPath("/cookie.html")}>Cookie</a>
         <button type="button" onClick={() => window.dispatchEvent(new Event("promoapp-cookie-settings"))}>Preferenze cookie</button>
       </nav>

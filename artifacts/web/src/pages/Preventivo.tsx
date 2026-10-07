@@ -164,6 +164,7 @@ export default function Preventivo() {
 
   async function handleReviewSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (reviewLoading || reviewSent) return;
     if (
       !reviewForm.nome.trim() ||
       !reviewForm.attivita.trim() ||
@@ -570,7 +571,12 @@ export default function Preventivo() {
             </div>
 
             {/* Review form */}
-            <div className="bg-white rounded-3xl p-5 shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
+            <details className="group bg-white rounded-2xl p-5 shadow-[0_24px_60px_rgba(0,0,0,0.3)]" data-testid="review-disclosure">
+              <summary className="cursor-pointer flex items-center justify-between gap-3 text-sm font-bold text-indigo-700 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-500" data-testid="button-write-review">
+                <span><i className="fas fa-pen mr-2" aria-hidden="true" />Scrivi una recensione</span>
+                <i className="fas fa-chevron-down text-xs transition-transform group-open:rotate-180" aria-hidden="true" />
+              </summary>
+              <div className="mt-4">
               {reviewSent ? (
                 <div className="text-center py-6" data-testid="message-review-sent">
                   <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-200">
@@ -666,7 +672,8 @@ export default function Preventivo() {
                   </button>
                 </form>
               )}
-            </div>
+              </div>
+            </details>
           </div>
         </div>
       </section>
@@ -675,9 +682,10 @@ export default function Preventivo() {
       <footer className="relative z-10 border-t border-white/10 py-7 px-4 mt-2">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <span className="text-xs text-indigo-300/60">
-            © 2024 Promo<strong className="text-white/70">App</strong>.it — Sophia 2005 S.r.l. · P.IVA 08223951008
+            © 2024 Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
           </span>
-          <div className="flex gap-5 text-xs text-indigo-300/60">
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-indigo-300/60">
+            <a href={appPath("/dati-societari.html")} className="hover:text-white transition">Dati societari</a>
             <a href={appPath("/privacy.html")} className="hover:text-white transition">Privacy</a>
             <a href={appPath("/cookie.html")} className="hover:text-white transition">Cookie</a>
             <span>·</span>

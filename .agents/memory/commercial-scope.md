@@ -20,3 +20,9 @@ Non mostrare la parte dedicata a un progetto già realizzato nella homepage o ne
 **Why:** l'utente ha chiesto di togliere questa parte.
 
 **How to apply:** non reinserire il portfolio dei progetti realizzati senza una nuova richiesta; non eliminare i dati dei progetti cliente.
+
+Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati societari; mantenere la denominazione completa nelle informazioni legali. Il modulo per scrivere una recensione deve aprirsi al clic.
+
+**Why:** l'utente ha approvato questa soluzione per rendere la pagina più compatta senza eliminare l'identità della società dalle informazioni legali.
+
+**How to apply:** mantenere le recensioni pubbliche visibili e non interpretare il footer compatto come una richiesta di rimuovere la società dalle informative privacy.
