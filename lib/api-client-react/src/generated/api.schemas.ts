@@ -5,6 +5,71 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export type ContactRequestServizio =
+  (typeof ContactRequestServizio)[keyof typeof ContactRequestServizio];
+
+export const ContactRequestServizio = {
+  generale: "generale",
+  "siti-web": "siti-web",
+  "web-app": "web-app",
+  "menu-digitali": "menu-digitali",
+} as const;
+
+export type ContactRequestAttribution = {
+  /** @maxLength 200 */
+  utm_source?: string;
+  /** @maxLength 200 */
+  utm_medium?: string;
+  /** @maxLength 200 */
+  utm_campaign?: string;
+  /** @maxLength 200 */
+  utm_term?: string;
+  /** @maxLength 200 */
+  utm_content?: string;
+  /** @maxLength 200 */
+  gclid?: string;
+  /** @maxLength 200 */
+  gbraid?: string;
+  /** @maxLength 200 */
+  wbraid?: string;
+};
+
+export interface ContactRequest {
+  /**
+   * @minLength 2
+   * @maxLength 160
+   */
+  nome_attivita: string;
+  /**
+   * @minLength 2
+   * @maxLength 120
+   */
+  settore: string;
+  /**
+   * @minLength 6
+   * @maxLength 30
+   */
+  whatsapp: string;
+  /**
+   * @minLength 10
+   * @maxLength 5000
+   */
+  messaggio: string;
+  /** @maxLength 254 */
+  email?: string;
+  servizio?: ContactRequestServizio;
+  /** @maxLength 200 */
+  pagina?: string;
+  attribution?: ContactRequestAttribution;
+  /** @maxLength 0 */
+  website?: string;
+}
+
+export interface ContactResponse {
+  success: boolean;
+  message?: string;
+}
+
 export interface HealthStatus {
   status: string;
 }

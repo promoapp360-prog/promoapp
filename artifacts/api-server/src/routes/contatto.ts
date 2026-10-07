@@ -1,67 +1,62 @@
 import { Router } from "express";
 import { Resend } from "resend";
+import { SubmitContactBody } from "@workspace/api-zod";
 
 const router = Router();
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const DESTINATARIO = "derosa.lazio@gmail.com";
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
 
-router.post("/invia-contatto", async (req, res) => {
-  const { nome_attivita, settore, email, whatsapp, messaggio } = req.body as {
-    nome_attivita?: string;
-    settore?: string;
-    email?: string;
-    whatsapp?: string;
-    messaggio?: string;
-  };
-
-  if (!nome_attivita?.trim() || !settore?.trim() || !email?.trim() || !whatsapp?.trim() || !messaggio?.trim()) {
-    res.status(400).json({ success: false, message: "Per favore compila tutti i campi." });
+router.post("/invia-contatto", async (req, res): Promise<void> => {
+  const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? { ...req.body } : {};
+  for (const field of ["nome_attivita", "settore", "email", "whatsapp", "messaggio"]) {
+    if (typeof body[field] === "string") body[field] = body[field].trim();
+  }
+  if (body.email === "") delete body.email;
+  const parsed = SubmitContactBody.safeParse(body);
+  if (!parsed.success || !/^[+\d\s().-]{6,30}$/.test(parsed.data?.whatsapp ?? "") ||
+    (parsed.data?.whatsapp.replace(/\D/g, "").length ?? 0) < 6) {
+    res.status(400).json({ success: false, message: "Controlla nome, telefono, tipo di attività e richiesta (almeno 10 caratteri)." });
     return;
   }
-
-  req.log.info({ nome_attivita, settore, email, whatsapp }, "Nuova richiesta contatto");
-
+  if (!process.env.RESEND_API_KEY) {
+    req.log.error("Servizio email non configurato");
+    res.status(500).json({ success: false, message: "Invio momentaneamente non disponibile. Contattaci su WhatsApp." });
+    return;
+  }
+  const data = parsed.data;
+  const labels: Record<string, string> = {
+    generale: "Preventivo generale", "siti-web": "Sito web", "web-app": "Web app / gestionale", "menu-digitali": "Menu digitale",
+  };
+  const service = labels[data.servizio ?? "generale"]!;
+  const fields: [string, string][] = [
+    ["Nome / attività", data.nome_attivita], ["Tipo di attività", data.settore],
+    ["Telefono / WhatsApp", data.whatsapp], ["Email", data.email ?? "Non indicata"],
+    ["Servizio", service], ["Pagina", data.pagina ?? "Non indicata"], ["Richiesta", data.messaggio],
+    ...Object.entries(data.attribution ?? {}).filter((pair): pair is [string, string] => typeof pair[1] === "string"),
+  ];
   try {
-    await resend.emails.send({
-      from: "PromoApp.it <onboarding@resend.dev>",
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const result = await resend.emails.send({
+      from: process.env.CONTACT_FROM_EMAIL || "PromoApp.it <onboarding@resend.dev>",
       to: DESTINATARIO,
-      subject: `Nuova richiesta da ${nome_attivita} (${settore})`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e5e7eb; border-radius: 12px;">
-          <h2 style="color: #4f46e5; margin-top: 0;">Nuova Richiesta — PromoApp.it</h2>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #374151; width: 140px;">Attività</td>
-              <td style="padding: 8px 0; color: #111827;">${nome_attivita ?? "—"}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #374151;">Settore</td>
-              <td style="padding: 8px 0; color: #111827;">${settore ?? "—"}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #374151;">Email cliente</td>
-              <td style="padding: 8px 0; color: #111827;"><a href="mailto:${email}" style="color: #4f46e5;">${email ?? "—"}</a></td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #374151;">WhatsApp</td>
-              <td style="padding: 8px 0; color: #111827;">${whatsapp ? `<a href="https://wa.me/${whatsapp.replace(/\D/g,"")}" style="color: #16a34a;">${whatsapp}</a>` : "—"}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; font-weight: bold; color: #374151; vertical-align: top;">Messaggio</td>
-              <td style="padding: 8px 0; color: #111827;">${messaggio ?? "—"}</td>
-            </tr>
-          </table>
-          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
-          <p style="color: #6b7280; font-size: 13px; margin: 0;">Ricevuto tramite il form di PromoApp.it</p>
-        </div>
-      `,
+      ...(data.email ? { replyTo: data.email } : {}),
+      subject: `[PromoApp] ${service} — ${data.nome_attivita.replace(/[\r\n]/g, " ")}`,
+      text: fields.map(([label, value]) => `${label}: ${value}`).join("\n\n"),
+      html: `<div style="font-family:sans-serif;max-width:640px;padding:24px"><h2>Nuova richiesta — PromoApp.it</h2><table>${fields.map(([label, value]) =>
+        `<tr><th style="text-align:left;vertical-align:top;padding:8px">${escapeHtml(label)}</th><td style="padding:8px;white-space:pre-wrap">${escapeHtml(value)}</td></tr>`).join("")}</table></div>`,
     });
-
-    res.json({ success: true });
+    // Resend reports delivery API errors in `error` without necessarily throwing.
+    if (result.error || !result.data?.id) {
+      req.log.error({ error: result.error?.name }, "Richiesta contatto non accettata dal servizio email");
+      res.status(500).json({ success: false, message: "Non siamo riusciti a inviare la richiesta. Riprova o scrivici su WhatsApp." });
+      return;
+    }
+    req.log.info({ emailId: result.data.id, servizio: data.servizio ?? "generale" }, "Richiesta contatto accettata dal servizio email");
+    res.json({ success: true, message: "Richiesta inviata. Ti ricontatteremo ai recapiti indicati." });
   } catch (err) {
-    req.log.error({ err }, "Errore invio email Resend");
-    res.status(500).json({ success: false, message: "Errore nell'invio email" });
+    req.log.error({ err }, "Errore invio contatto");
+    res.status(500).json({ success: false, message: "Errore nell'invio. Riprova o contattaci su WhatsApp." });
   }
 });
 

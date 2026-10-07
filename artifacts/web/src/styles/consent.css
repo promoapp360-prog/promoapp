@@ -1,0 +1,18 @@
+.consent-panel{position:fixed;bottom:0;left:0;right:0;z-index:10000;background:#fff;color:#211d44;border-top:1px solid #dad9e4;box-shadow:0 -12px 40px #100c3020;font-family:Poppins,system-ui,sans-serif;padding:20px 90px 20px 20px;max-height:75dvh;overflow-y:auto}
+.consent-content{max-width:1120px;margin:auto;display:flex;align-items:center;gap:28px}
+.consent-content h2{font-weight:700;font-size:16px;margin-bottom:8px}
+.consent-content p{font-size:12px;line-height:1.65;max-width:650px}
+.consent-content a{color:#32267f;text-decoration:underline;margin-left:4px}
+.consent-actions{display:flex;flex-wrap:wrap;gap:8px;min-width:260px;max-width:300px}
+.consent-actions button{flex:1;min-width:125px;padding:10px 12px;min-height:44px;border:1px solid #32267f;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+.consent-actions button.consent-accept{background:#32267f;color:#fff}
+.consent-options{display:grid;gap:10px;margin-top:12px;font-size:12px}
+.consent-options label{display:flex;align-items:center;gap:8px}
+.consent-options input{width:18px;height:18px;accent-color:#32267f}
+.lead-honeypot{position:absolute;left:-9999px;opacity:0;pointer-events:none}
+.lead-form .lead-privacy{display:flex;align-items:flex-start;gap:10px;font-size:11px;font-weight:400}
+.lead-form .lead-privacy input{width:18px;min-width:18px;height:18px;padding:0;margin-top:3px;accent-color:#32267f}
+.lead-form .lead-privacy a{text-decoration:underline;color:#32267f}
+.reviews-expand{border:1px solid #342779;padding:10px 16px;border-radius:999px;color:#342779;margin-top:18px;font-weight:600;font-size:13px;cursor:pointer;min-height:44px}
+.marketing-page :focus-visible{outline:3px solid #e3a638;outline-offset:3px}
+@media(max-width:700px){.consent-panel{padding:16px 16px 82px}.consent-content{display:block}.consent-actions{margin-top:12px;max-width:none}.consent-actions button:last-child{flex-basis:100%}.consent-content p{font-size:11px}}

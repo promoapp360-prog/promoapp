@@ -8,6 +8,106 @@
 import * as zod from "zod";
 
 /**
+ * @summary Invia una richiesta di preventivo
+ */
+export const submitContactBodyNomeAttivitaMin = 2;
+export const submitContactBodyNomeAttivitaMax = 160;
+
+export const submitContactBodySettoreMin = 2;
+export const submitContactBodySettoreMax = 120;
+
+export const submitContactBodyWhatsappMin = 6;
+export const submitContactBodyWhatsappMax = 30;
+
+export const submitContactBodyMessaggioMin = 10;
+export const submitContactBodyMessaggioMax = 5000;
+
+export const submitContactBodyEmailMax = 254;
+
+export const submitContactBodyPaginaMax = 200;
+
+export const submitContactBodyAttributionUtmSourceMax = 200;
+
+export const submitContactBodyAttributionUtmMediumMax = 200;
+
+export const submitContactBodyAttributionUtmCampaignMax = 200;
+
+export const submitContactBodyAttributionUtmTermMax = 200;
+
+export const submitContactBodyAttributionUtmContentMax = 200;
+
+export const submitContactBodyAttributionGclidMax = 200;
+
+export const submitContactBodyAttributionGbraidMax = 200;
+
+export const submitContactBodyAttributionWbraidMax = 200;
+
+export const submitContactBodyWebsiteMax = 0;
+
+export const SubmitContactBody = zod.object({
+  nome_attivita: zod
+    .string()
+    .min(submitContactBodyNomeAttivitaMin)
+    .max(submitContactBodyNomeAttivitaMax),
+  settore: zod
+    .string()
+    .min(submitContactBodySettoreMin)
+    .max(submitContactBodySettoreMax),
+  whatsapp: zod
+    .string()
+    .min(submitContactBodyWhatsappMin)
+    .max(submitContactBodyWhatsappMax),
+  messaggio: zod
+    .string()
+    .min(submitContactBodyMessaggioMin)
+    .max(submitContactBodyMessaggioMax),
+  email: zod.string().email().max(submitContactBodyEmailMax).optional(),
+  servizio: zod
+    .enum(["generale", "siti-web", "web-app", "menu-digitali"])
+    .optional(),
+  pagina: zod.string().max(submitContactBodyPaginaMax).optional(),
+  attribution: zod
+    .object({
+      utm_source: zod
+        .string()
+        .max(submitContactBodyAttributionUtmSourceMax)
+        .optional(),
+      utm_medium: zod
+        .string()
+        .max(submitContactBodyAttributionUtmMediumMax)
+        .optional(),
+      utm_campaign: zod
+        .string()
+        .max(submitContactBodyAttributionUtmCampaignMax)
+        .optional(),
+      utm_term: zod
+        .string()
+        .max(submitContactBodyAttributionUtmTermMax)
+        .optional(),
+      utm_content: zod
+        .string()
+        .max(submitContactBodyAttributionUtmContentMax)
+        .optional(),
+      gclid: zod.string().max(submitContactBodyAttributionGclidMax).optional(),
+      gbraid: zod
+        .string()
+        .max(submitContactBodyAttributionGbraidMax)
+        .optional(),
+      wbraid: zod
+        .string()
+        .max(submitContactBodyAttributionWbraidMax)
+        .optional(),
+    })
+    .optional(),
+  website: zod.string().max(submitContactBodyWebsiteMax).optional(),
+});
+
+export const SubmitContactResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
+/**
  * Returns server health status
  * @summary Health check
  */

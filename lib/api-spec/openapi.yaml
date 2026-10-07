@@ -11,6 +11,36 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /invia-contatto:
+    post:
+      operationId: submitContact
+      tags: [contacts]
+      summary: Invia una richiesta di preventivo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactRequest"
+      responses:
+        "200":
+          description: Email accettata dal servizio di invio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactResponse"
+        "400":
+          description: Dati non validi
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactResponse"
+        "500":
+          description: Invio non riuscito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactResponse"
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +56,59 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    ContactRequest:
+      type: object
+      required: [nome_attivita, settore, whatsapp, messaggio]
+      properties:
+        nome_attivita:
+          type: string
+          minLength: 2
+          maxLength: 160
+        settore:
+          type: string
+          minLength: 2
+          maxLength: 120
+        whatsapp:
+          type: string
+          minLength: 6
+          maxLength: 30
+        messaggio:
+          type: string
+          minLength: 10
+          maxLength: 5000
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        servizio:
+          type: string
+          enum: [generale, siti-web, web-app, menu-digitali]
+        pagina:
+          type: string
+          maxLength: 200
+        attribution:
+          type: object
+          additionalProperties: false
+          properties:
+            utm_source: { type: string, maxLength: 200 }
+            utm_medium: { type: string, maxLength: 200 }
+            utm_campaign: { type: string, maxLength: 200 }
+            utm_term: { type: string, maxLength: 200 }
+            utm_content: { type: string, maxLength: 200 }
+            gclid: { type: string, maxLength: 200 }
+            gbraid: { type: string, maxLength: 200 }
+            wbraid: { type: string, maxLength: 200 }
+        website:
+          type: string
+          maxLength: 0
+    ContactResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
     HealthStatus:
       type: object
       properties:

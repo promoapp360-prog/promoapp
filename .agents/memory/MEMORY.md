@@ -1,1 +1,2 @@
-- [Aggiunta progetti lavori](aggiunta-progetti-lavori.md) — procedura esatta per creare un progetto cliente nel sistema proxy senza errori
+- [Aggiunta progetti lavori](aggiunta-progetti-lavori.md) — sviluppo e produzione hanno dati distinti; mai sovrascrivere il DB pubblico per trasferire un progetto.
+- [Vincoli commerciali](commercial-scope.md) — PromoApp serve le PMI con diversi servizi digitali; preservare il progetto e usare solo prove commerciali autentiche.

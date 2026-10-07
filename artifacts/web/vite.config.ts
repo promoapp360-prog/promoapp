@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { seoHtml } from "./scripts/seo-html.mjs";
 
 const rawPort = process.env.PORT;
 
@@ -29,6 +30,15 @@ if (!basePath) {
 export default defineConfig({
   base: basePath,
   plugins: [
+    {
+      name: "promoapp-route-metadata",
+      transformIndexHtml: {
+        order: "pre",
+        handler(html, context) {
+          return seoHtml(html, (context.originalUrl ?? context.path).split("?")[0]);
+        },
+      },
+    },
     react(),
     tailwindcss({ optimize: false }),
     runtimeErrorOverlay(),

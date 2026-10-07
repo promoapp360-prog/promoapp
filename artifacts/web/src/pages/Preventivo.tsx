@@ -1,4 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
+import { appPath, getAttribution, whatsappUrl } from "../lib/marketing";
+import { trackConversion, trackWhatsApp } from "../lib/analytics";
+import "../styles/commercial.css";
+
+const SERVICES = [
+  { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: "Da 399 €", desc: "Presenta la tua attività e fatti contattare.", cta: "Scopri i siti web" },
+  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: "Su preventivo", desc: "Strumenti su misura per il tuo lavoro.", cta: "Scopri le web app" },
+  { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali per ristoranti", price: "Da 99 €", desc: "Il tuo menu su smartphone, con QR code.", cta: "Scopri i menu digitali" },
+];
 
 const SETTORI = [
   "Negozio / Retail",
@@ -81,6 +91,9 @@ export default function Preventivo() {
   const [error, setError] = useState("");
 
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [reviewsError, setReviewsError] = useState(false);
+  const [privacy, setPrivacy] = useState(false);
   const [reviewForm, setReviewForm] = useState({
     nome: "",
     attivita: "",
@@ -92,12 +105,12 @@ export default function Preventivo() {
   const [reviewError, setReviewError] = useState("");
 
   useEffect(() => {
-    fetch("/api/recensioni")
+    fetch(appPath("/api/recensioni"))
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data: { success?: boolean; data?: Review[] }) => {
         if (data.success) setReviews(data.data ?? []);
       })
-      .catch(() => {});
+      .catch(() => setReviewsError(true));
   }, []);
 
   function handleChange(
@@ -109,9 +122,9 @@ export default function Preventivo() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading || sent) return;
     if (
       !form.nome_attivita.trim() ||
-      !form.email.trim() ||
       !form.whatsapp.trim() ||
       !form.settore ||
       !form.messaggio.trim()
@@ -119,16 +132,22 @@ export default function Preventivo() {
       setError("Compila tutti i campi per continuare.");
       return;
     }
+    if (!privacy) { setError("Accetta l'informativa privacy per inviare la richiesta."); return; }
+    if (!/^[+\d\s().-]{6,30}$/.test(form.whatsapp) || form.whatsapp.replace(/\D/g, "").length < 6) {
+      setError("Inserisci un numero di telefono valido."); return;
+    }
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/invia-contatto", {
+      const res = await fetch(appPath("/api/invia-contatto"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, servizio: "generale", pagina: window.location.pathname, attribution: getAttribution() }),
       });
-      if (!res.ok) throw new Error("Errore server");
+      const data = await res.json() as { success?: boolean; message?: string };
+      if (!res.ok || !data.success) throw new Error(data.message ?? "Errore server");
       setSent(true);
+      trackConversion("generale", "homepage");
     } catch {
       setError("Errore nell'invio. Puoi scriverci direttamente su WhatsApp.");
     } finally {
@@ -157,7 +176,7 @@ export default function Preventivo() {
     setReviewLoading(true);
     setReviewError("");
     try {
-      const res = await fetch("/api/recensioni", {
+      const res = await fetch(appPath("/api/recensioni"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reviewForm),
@@ -213,7 +232,8 @@ export default function Preventivo() {
           <span className="text-indigo-300">.it</span>
         </span>
         <a
-          href="https://wa.me/393793602035"
+          href={whatsappUrl()}
+          onClick={() => trackWhatsApp("generale", "nav")}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-full font-bold text-sm transition shadow-lg shadow-emerald-900/30 hover:shadow-emerald-500/30"
@@ -226,12 +246,13 @@ export default function Preventivo() {
 
       {/* ── WhatsApp float ── */}
       <a
-        href="https://wa.me/393793602035?text=Ciao!%20Vorrei%20informazioni%20sulle%20web%20app."
+        href={whatsappUrl()}
+        onClick={() => trackWhatsApp("generale", "floating")}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contattaci su WhatsApp"
         title="Scrivici su WhatsApp"
-        className="whatsapp-float fixed right-4 bottom-5 sm:right-6 sm:bottom-6 z-50 w-14 h-14 sm:w-16 sm:h-16 inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white rounded-full shadow-xl shadow-green-950/30 transition hover:scale-110 active:scale-95"
+        className="whatsapp-float fixed right-4 bottom-5 sm:right-6 sm:bottom-6 z-[10001] w-14 h-14 sm:w-16 sm:h-16 inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white rounded-full shadow-xl shadow-green-950/30 transition hover:scale-110 active:scale-95"
         data-testid="link-floating-whatsapp"
       >
         <i className="fab fa-whatsapp text-2xl sm:text-3xl"></i>
@@ -248,18 +269,15 @@ export default function Preventivo() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-3">
               <i className="fas fa-mobile-screen-button text-emerald-400"></i>
-              Web app su misura · tutti i sistemi operativi
+               Siti web · Web app · Menu digitali
             </div>
 
             {/* Headline */}
-            <h1 className="text-[2.6rem] md:text-[3.2rem] font-black leading-[1.06] mb-3 tracking-tight">
-              La tua attività<br />
-              <span className="gradient-text">in un'App.</span>
+            <h1 className="text-[2.3rem] md:text-[2.8rem] font-black leading-[1.12] mb-4 tracking-tight">
+              La tua attività merita di più. <span className="gradient-text">Portala online con PromoApp.</span>
             </h1>
             <p className="text-indigo-200/80 text-base leading-relaxed mb-4 max-w-md">
-              Creiamo web app personalizzate per attività italiane, utilizzabili
-              su Android, iOS e tutti i sistemi operativi — con prenotazioni,
-              fidelity card, pagamenti e notifiche.
+              Realizziamo siti web professionali, applicazioni e soluzioni digitali su misura per far crescere la tua attività. Prezzi accessibili, progetti personalizzati e contatto diretto.
             </p>
 
             {/* Prezzo in evidenza */}
@@ -272,7 +290,7 @@ export default function Preventivo() {
               </div>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">
-                  Prezzo di partenza
+                  Siti web professionali
                 </p>
                 <p className="mt-0.5 text-2xl font-black leading-none text-white">
                   A partire da <span className="text-amber-300">399€</span>
@@ -280,6 +298,28 @@ export default function Preventivo() {
                 </p>
               </div>
               <span className="absolute -right-3 -top-5 h-14 w-14 rounded-full bg-amber-300/10" />
+            </div>
+
+            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer"
+              onClick={() => trackWhatsApp("generale", "hero")}
+              className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
+              <i className="fab fa-whatsapp text-lg" aria-hidden="true" /> Richiedi un preventivo su WhatsApp
+            </a>
+            <div className="grid gap-2 mb-4" id="servizi" aria-label="I servizi PromoApp">
+              {SERVICES.map((service) => <Link key={service.path} href={service.path}
+                className="glass-card rounded-2xl p-4 flex gap-3 items-start hover:bg-white/15 transition"
+                data-testid={`service-${service.path.slice(1)}`}>
+                <i className={`fas ${service.icon} text-emerald-300 mt-1 text-lg w-6`} aria-hidden="true" />
+                <div className="flex-1">
+                  <div className="flex flex-wrap justify-between items-start gap-2">
+                    <h2 className="font-bold text-sm max-w-[240px]">{service.title}</h2>
+                    <span className="text-amber-300 font-bold text-sm whitespace-nowrap">{service.price}</span>
+                  </div>
+                  <p className="text-xs text-indigo-200 mt-1">{service.desc}</p>
+                  <span className="block text-emerald-300 font-semibold text-xs mt-2">{service.cta} →</span>
+                </div>
+              </Link>)}
+              <p className="text-[10px] text-indigo-200/70">Prezzi di partenza + IVA. Extra, hosting e dominio definiti nel preventivo.</p>
             </div>
 
             <a
@@ -292,24 +332,10 @@ export default function Preventivo() {
               <i className="fas fa-arrow-down text-[10px] text-emerald-300"></i>
             </a>
 
-            {/* Feature list */}
-            <div className="grid grid-cols-1 gap-1.5">
-              {FEATURES.map((item, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 glass-card rounded-xl px-3.5 py-2 hover:bg-white/10 transition"
-                >
-                  <span className="feature-icon w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/30 to-emerald-500/20 flex items-center justify-center flex-shrink-0 shadow-inner">
-                    <i className={`fas ${item.icon} text-emerald-300 text-sm`}></i>
-                  </span>
-                  <span className="text-white/90 font-semibold text-sm">{item.text}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* RIGHT form */}
-          <div className="relative z-10">
+          <div className="relative z-10 scroll-mt-5" id="preventivo">
             {sent ? (
               <div
                 className="bg-white rounded-3xl p-8 text-center shadow-2xl"
@@ -320,10 +346,11 @@ export default function Preventivo() {
                 </div>
                 <h3 className="text-2xl font-black text-gray-900 mb-2">Richiesta inviata!</h3>
                 <p className="text-gray-500 mb-6 leading-relaxed text-sm">
-                  Ti contatteremo entro 24 ore con il progetto completo.
+                  Grazie. Ti ricontatteremo ai recapiti indicati per parlare del tuo progetto.
                 </p>
                 <a
-                  href="https://wa.me/393793602035"
+                  href={whatsappUrl()}
+                  onClick={() => trackWhatsApp("generale", "thanks")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-md"
@@ -341,16 +368,16 @@ export default function Preventivo() {
               >
                 {/* Form header */}
                 <div className="pb-1 border-b border-gray-100">
-                  <h2 className="text-lg font-black text-gray-900">Richiedi il tuo progetto</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">Ti rispondiamo entro 24 ore.</p>
+                  <h2 className="text-lg font-black text-gray-900">Richiedi il tuo preventivo</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Parla direttamente con chi realizza il progetto.</p>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="nome_attivita">
-                    Nome attività <span className="text-red-500">*</span>
+                    Nome / attività <span className="text-red-500">*</span>
                   </label>
                   <input
-                    id="nome_attivita" name="nome_attivita" type="text" required
+                    id="nome_attivita" name="nome_attivita" type="text" required minLength={2} maxLength={160} autoComplete="name"
                     value={form.nome_attivita} onChange={handleChange}
                     placeholder="Es. Parrucchiere Mario Rossi"
                     className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm placeholder:text-gray-300"
@@ -376,10 +403,10 @@ export default function Preventivo() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="email">
-                      Email <span className="text-red-500">*</span>
+                      Email (facoltativa)
                     </label>
                     <input
-                      id="email" name="email" type="email" required
+                      id="email" name="email" type="email" maxLength={254} autoComplete="email"
                       value={form.email} onChange={handleChange}
                       placeholder="nome@email.it"
                       className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm placeholder:text-gray-300"
@@ -391,7 +418,7 @@ export default function Preventivo() {
                       WhatsApp <span className="text-red-500">*</span>
                     </label>
                     <input
-                      id="whatsapp" name="whatsapp" type="tel" required
+                      id="whatsapp" name="whatsapp" type="tel" required minLength={6} maxLength={30} autoComplete="tel"
                       value={form.whatsapp} onChange={handleChange}
                       placeholder="+39 340..."
                       className="w-full border-2 border-gray-100 focus:border-emerald-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm placeholder:text-gray-300"
@@ -405,14 +432,18 @@ export default function Preventivo() {
                     Cosa ti serve? <span className="text-red-500">*</span>
                   </label>
                   <textarea
-                    id="messaggio" name="messaggio" required rows={3}
+                    id="messaggio" name="messaggio" required rows={3} minLength={10} maxLength={5000}
                     value={form.messaggio} onChange={handleChange}
-                    placeholder="Descrivi brevemente la tua attività e cosa vorresti dall'App..."
+                    placeholder="Raccontaci cosa ti serve: sito web, web app, gestionale o menu digitale..."
                     className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm resize-none placeholder:text-gray-300"
                     data-testid="textarea-messaggio"
                   />
                 </div>
 
+                <label className="flex items-start gap-2 text-[10px] text-gray-500">
+                  <input type="checkbox" required checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} className="mt-1 accent-indigo-600" />
+                  <span>Ho letto l'<a href={appPath("/privacy.html")} target="_blank" rel="noopener noreferrer" className="underline text-indigo-700">informativa privacy</a> e acconsento al trattamento per ricevere risposta alla richiesta. Nessuna iscrizione pubblicitaria.</span>
+                </label>
                 {error && (
                   <p className="text-red-500 text-xs font-semibold flex items-center gap-1.5 bg-red-50 rounded-lg px-3 py-2" data-testid="text-error">
                     <i className="fas fa-exclamation-circle"></i> {error}
@@ -431,7 +462,8 @@ export default function Preventivo() {
 
                 <div className="text-center pt-0.5">
                   <a
-                    href="https://wa.me/393793602035?text=Ciao!%20Vorrei%20un%20preventivo%20per%20la%20mia%20App."
+                    href={whatsappUrl()}
+                    onClick={() => trackWhatsApp("generale", "form")}
                     target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 text-sm font-bold transition"
                     data-testid="link-whatsapp-alt"
@@ -443,6 +475,17 @@ export default function Preventivo() {
               </form>
             )}
           </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-bold text-white text-2xl mb-2">Oltre il sito, strumenti per lavorare meglio</h2>
+          <p className="text-indigo-200 text-sm mb-5">Funzionalità sviluppabili su richiesta. Non sono tutte comprese nel sito da 399 €.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
+            <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
+          </div>)}</div>
+          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Scopri le web app e i gestionali →</Link>
         </div>
       </section>
 
@@ -476,7 +519,7 @@ export default function Preventivo() {
             {/* Reviews list */}
             <div className="space-y-3">
               {reviews.length > 0 ? (
-                reviews.map((review, idx) => (
+                 (showAllReviews ? reviews : reviews.slice(0, 3)).map((review, idx) => (
                   <article
                     key={review.id}
                     className="review-card glass-card rounded-2xl p-4 shadow-xl hover:bg-white/10 transition"
@@ -516,10 +559,14 @@ export default function Preventivo() {
                   <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-3">
                     <i className="fas fa-comments text-2xl text-emerald-300"></i>
                   </div>
-                  <p className="text-white font-bold text-sm mb-1">Le prime recensioni verificate arriveranno qui.</p>
+                  <p className="text-white font-bold text-sm mb-1">{reviewsError ? "Recensioni momentaneamente non disponibili." : "Caricamento recensioni verificate…"}</p>
                   <p className="text-indigo-300 text-xs">Lascia la tua esperienza: la pubblicheremo dopo la verifica.</p>
                 </div>
               )}
+              {reviews.length > 3 && <button type="button" onClick={() => setShowAllReviews(!showAllReviews)} aria-expanded={showAllReviews}
+                className="rounded-full border border-white/30 px-5 py-3 text-white text-xs font-bold hover:bg-white/10">
+                {showAllReviews ? "Mostra meno recensioni" : `Leggi tutte le ${reviews.length} recensioni`}
+              </button>}
             </div>
 
             {/* Review form */}
@@ -631,8 +678,10 @@ export default function Preventivo() {
             © 2024 Promo<strong className="text-white/70">App</strong>.it — Sophia 2005 S.r.l. · P.IVA 08223951008
           </span>
           <div className="flex gap-5 text-xs text-indigo-300/60">
-            <a href="/privacy.html" className="hover:text-white transition">Privacy</a>
-            <a href="/cookie.html" className="hover:text-white transition">Cookie</a>
+            <a href={appPath("/privacy.html")} className="hover:text-white transition">Privacy</a>
+            <a href={appPath("/cookie.html")} className="hover:text-white transition">Cookie</a>
+            <span>·</span>
+            <button type="button" className="hover:text-white transition" onClick={() => window.dispatchEvent(new Event("promoapp-cookie-settings"))}>Preferenze cookie</button>
           </div>
         </div>
       </footer>

@@ -1,8 +1,24 @@
 @layer theme, base, clerk, components, utilities;
 @import "tailwindcss";
 
+@font-face {font-family:Poppins;src:url("/fonts/poppins-400.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+@font-face {font-family:Poppins;src:url("/fonts/poppins-500.woff2") format("woff2");font-style:normal;font-weight:500;font-display:swap}
+@font-face {font-family:Poppins;src:url("/fonts/poppins-600.woff2") format("woff2");font-style:normal;font-weight:600;font-display:swap}
+@font-face {font-family:Poppins;src:url("/fonts/poppins-700.woff2") format("woff2");font-style:normal;font-weight:700;font-display:swap}
+@font-face {font-family:Poppins;src:url("/fonts/poppins-800.woff2") format("woff2");font-style:normal;font-weight:800;font-display:swap}
+@font-face {font-family:Poppins;src:url("/fonts/poppins-900.woff2") format("woff2");font-style:normal;font-weight:900;font-display:swap}
+@theme {--font-sans:"Poppins",system-ui,sans-serif}
+body {font-family:Poppins,system-ui,sans-serif}
+
 html {
   scroll-behavior: smooth;
+}
+
+:focus-visible {outline:3px solid #f5b13d;outline-offset:3px}
+section[id] {scroll-margin-top:76px}
+@media(prefers-reduced-motion:reduce) {
+  html {scroll-behavior:auto}
+  .orb,.shimmer-badge,.review-card,.whatsapp-float {animation:none}
 }
 
 /* ─── WhatsApp float ─── */

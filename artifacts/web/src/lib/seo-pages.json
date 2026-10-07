@@ -1,0 +1,34 @@
+{
+  "/": {
+    "title": "PromoApp.it | Siti web, web app e menu digitali",
+    "description": "Siti web professionali da 399 €, web app e gestionali su misura, menu digitali da 99 €. Progetti personalizzati e preventivo diretto su WhatsApp.",
+    "h1": "La tua attività merita di più. Portala online con PromoApp."
+  },
+  "/preventivo": {
+    "title": "Richiedi un preventivo | PromoApp.it",
+    "description": "Raccontaci la tua attività: siti web, web app, gestionali e menu digitali. Contatto diretto e preventivo personalizzato con PromoApp.it.",
+    "canonical": "/",
+    "h1": "La tua attività merita di più. Portala online con PromoApp."
+  },
+  "/siti-web": {
+    "title": "Siti web professionali da 399 € | PromoApp.it",
+    "description": "Un sito web professionale per negozi, artigiani, professionisti e aziende. Esempi reali, prezzi chiari e preventivo su WhatsApp. Da 399 € + IVA.",
+    "h1": "Il tuo sito web professionale a partire da 399 €"
+  },
+  "/web-app": {
+    "title": "Web app e gestionali personalizzati | PromoApp.it",
+    "description": "Web app su misura per prenotazioni, gestione clienti, fidelity, cataloghi e processi aziendali. Racconta la tua idea e richiedi un preventivo.",
+    "h1": "La tua idea diventa un’applicazione su misura."
+  },
+  "/menu-digitali": {
+    "title": "Menu digitali con QR da 99 € | PromoApp.it",
+    "description": "Il menu del tuo ristorante su smartphone con QR code e grafica professionale. Da 99 € + IVA una tantum, extra e costi periodici separati. Guarda la demo.",
+    "h1": "Il menu digitale del tuo ristorante a partire da 99 €."
+  },
+  "/menu-demo": {
+    "title": "Menu digitale dimostrativo | PromoApp.it",
+    "description": "Prova un esempio illustrativo di menu digitale PromoApp con categorie e piatti. Nessun ordine, nessun locale cliente.",
+    "h1": "Trattoria Esempio",
+    "noindex": true
+  }
+}

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /lavori/
+Disallow: /api/
+Disallow: /admin
+Disallow: /checkout
+Disallow: /registrazione
+Disallow: /pagamenti
+Disallow: /acconto
+Disallow: /menu-demo
+Sitemap: https://www.promoapp.it/sitemap.xml

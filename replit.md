@@ -1,12 +1,29 @@
 # PromoApp.it Workspace
 
-pnpm workspace monorepo per il sito **PromoApp.it** — landing page italiana di **Sophia 2005 S.r.l.** (P.IVA 08223951008) per la vendita di App e gestionali personalizzati a qualunque attività italiana.
+pnpm workspace monorepo per il sito **PromoApp.it** — sito italiano di **Sophia 2005 S.r.l.** (P.IVA 08223951008) per siti web, web app, gestionali personalizzati e menu digitali per piccole e medie imprese.
+
+## Router pubblico attuale (fonte: `src/main.tsx`)
+
+- `/` e `/preventivo`: homepage esistente `Preventivo.tsx`, aggiornata; conserva modulo contatto e invio recensioni con moderazione.
+- `/siti-web`, `/web-app`, `/menu-digitali`: landing commerciali con preventivo e WhatsApp distinti.
+- `/menu-demo`: menu esclusivamente dimostrativo, non un cliente; escluso dall'indicizzazione.
+- `/lavori/:id`: anteprime dei progetti, conservate senza modifiche.
+- I vecchi moduli e le pagine in `App.tsx` sono conservati, ma non vanno confusi con il router attivo sopra.
+- Le sezioni storiche seguenti documentano anche componenti non instradati dal router pubblico attuale.
+
+### Configurazione commerciale e SEO
+
+- Prezzi di partenza: siti web 399 € + IVA; menu digitali 99 € + IVA una tantum; web app e gestionali su preventivo. Extra, dominio, hosting e manutenzione vanno indicati separatamente.
+- `public/marketing-config.json`: inserire `ga4Id`, `googleAdsId`, `googleAdsLeadLabel` reali. Campi vuoti = strumenti non attivi. Il Pixel Meta preesistente è preservato.
+- Tracking soltanto dopo consenso; conversione principale solo con risposta email accettata dall'API. Clic WhatsApp = evento separato.
+- `src/lib/seo-pages.json`: unica fonte di title/description/canonical. La build pre-renderizza le pagine, con riscritture specifiche nelle impostazioni dell'artifact.
+- Poppins è servito localmente; le immagini pubbliche dei lavori devono essere reali e non devono esporre aree admin o credenziali.
 
 ## Stack
 
 - **Monorepo tool**: pnpm workspaces
 - **Node.js**: 24 · **TypeScript**: 5.9 · **Package manager**: pnpm
-- **Frontend**: React + Vite, Tailwind via CDN, FontAwesome 6.5.2, wouter (routing)
+- **Frontend**: React + Vite, Tailwind compilato, FontAwesome 6.5.2, wouter (routing)
 - **API**: Express 5 su porta 8080 (path `/api`)
 - **Database**: PostgreSQL + Drizzle ORM
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
@@ -17,7 +34,7 @@ pnpm workspace monorepo per il sito **PromoApp.it** — landing page italiana di
 
 ## Artifacts
 
-- `artifacts/web` — Landing page pubblica (`/`, `/checkout`, `/admin`, `/registrazione`, `/gestionale360`, `/sito-web`)
+- `artifacts/web` — Sito pubblico e landing commerciali (vedi router attuale sopra)
 - `artifacts/api-server` — Express API (Stripe, sconti, contatti, admin, richieste-gestionale)
 - `artifacts/mockup-sandbox` — Sandbox componenti (canvas)
 
@@ -91,7 +108,7 @@ Permette ai clienti di vedere il loro progetto Replit ospitato altrove sotto il 
 - **Immagini sezioni**: tutte usano contenitore fisso `max-w-[260px] md:max-w-xs h-[380px] md:h-[420px]` con `object-contain` per uniformità.
 - **WhatsApp button**: numero `+393793602035`, z-index `z-[10001]` (sopra cookie banner).
 - **Demo live**: link a `https://promo-app.replit.app/prova-gratis`.
-- **Admin**: `/admin` (password `Mamma080245.`) per gestire contatti, sconti, pagamenti.
+- **Admin**: moduli conservati per gestire contatti, sconti e pagamenti; non riportare credenziali nella documentazione.
 - **Pagine legali**: `public/privacy.html` e `public/cookie.html` con dati Sophia 2005 S.r.l.
 - **Social**: Facebook `profile.php?id=61568000249468`, Instagram `promoapp.it`.
 
@@ -99,10 +116,11 @@ Permette ai clienti di vedere il loro progetto Replit ospitato altrove sotto il 
 
 - Sostituire IBAN placeholder in `artifacts/api-server/src/routes/checkout.ts` (riga ~144)
 - Rimuovere il banner giallo "pagina di test" in `App.tsx`
-- Configurare dominio definitivo `promoapp.it`
+- Dominio pubblico già configurato: `https://www.promoapp.it`. Non cambiarlo.
 
 ## Comandi utili
 
+- La build del frontend e dell'API funziona. Il typecheck completo del backend segnala errori preesistenti in `stripeClient.ts` e nei callback di pagamenti/admin/checkout; evitare di confonderli con i nuovi moduli contatto.
 - `pnpm run typecheck` — typecheck completo
 - `pnpm --filter @workspace/api-spec run codegen` — rigenera hook React Query e schemi Zod
 - `pnpm --filter @workspace/db run push` — push schema DB (solo dev)
