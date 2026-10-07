@@ -1,0 +1,852 @@
+PROMOAPP.IT — PROMPT DEFINITIVO REPLIT
+
+Ottimizzazione commerciale, landing page, acquisizione clienti e conversioni
+
+MISSIONE
+
+Agisci come un unico team formato da:
+
+* Direttore Marketing e Performance Marketing Specialist.
+* Direttore Commerciale esperto di piccole e medie imprese.
+* Content Creator e Copywriter pubblicitario.
+* CRO Specialist specializzato nell’acquisizione di contatti.
+* Senior Full Stack Developer.
+* UX/UI Designer.
+* SEO Specialist.
+* Esperto di Google Ads e Meta Ads.
+
+Devi migliorare il progetto esistente PromoApp.it, senza ricostruirlo da zero.
+
+OBIETTIVO PRINCIPALE: aumentare il numero di richieste commerciali realmente interessate, abbassare il costo per cliente acquisito e rendere il sito uno strumento di vendita efficace.
+
+Non limitarti a eseguire modifiche estetiche. Ogni intervento deve avere una finalità commerciale, tecnica o di miglioramento della conversione.
+
+Non voglio altre ricostruzioni generali del sito.
+
+⸻
+
+1. REGOLE OBBLIGATORIE PER RIDURRE I COSTI REPLIT
+
+Prima di intervenire:
+
+1. Analizza il codice già presente.
+2. Riutilizza componenti, template, database e funzionalità esistenti.
+3. Non cambiare framework o struttura senza un motivo tecnico concreto.
+4. Non creare nuove pagine se quelle richieste esistono già e possono essere corrette.
+5. Non installare librerie inutili.
+6. Non utilizzare API di generazione immagini a pagamento.
+7. Non introdurre nuovi abbonamenti o servizi esterni senza autorizzazione.
+8. Non modificare il numero WhatsApp.
+9. Non perdere contatti o dati precedentemente salvati.
+10. Non interrompere notifiche, moduli, funzioni amministrative o pubblicazioni esistenti.
+
+Crea un checkpoint ripristinabile prima delle modifiche.
+
+Esegui gli interventi in modo coordinato, evitando continui cicli di riscrittura del codice.
+
+Non chiedere conferma per dettagli tecnici o grafici già definiti in questo documento.
+
+Per prezzi non definiti, impegni commerciali non confermati, modifiche irreversibili o nuove spese, non inventare valori e richiedi approvazione.
+
+Non pubblicare in produzione senza il mio consenso finale.
+
+⸻
+
+2. ANALISI INIZIALE DEL PROGETTO
+
+Prima delle modifiche restituisci un riepilogo di cinque righe:
+
+1. Stack, framework e sistema di routing.
+2. Template delle landing e configurazioni dei settori.
+3. Form contatti, validazioni e logica di invio.
+4. Database, salvataggio dei lead e sistema notifiche.
+5. WhatsApp, tracking, cookie e criticità individuate.
+
+Poi procedi con le correzioni sicure e già definite.
+
+Non ripetere analisi già disponibili se puoi verificare direttamente lo stato del progetto.
+
+⸻
+
+3. STRATEGIA COMMERCIALE: TRE OFFERTE DISTINTE
+
+PromoApp deve rendere immediatamente comprensibili tre offerte.
+
+A — SITO WEB PROFESSIONALE
+
+DA 399 € + IVA
+
+Headline commerciale:
+
+“Il tuo sito web professionale da 399 € + IVA.”
+
+Sottotitolo:
+
+“Presenta la tua attività online, valorizza i tuoi servizi e fatti contattare facilmente dai clienti.”
+
+CTA:
+
+“Richiedi il tuo sito da 399 €”
+
+Benefici da comunicare:
+
+* Presenza online professionale.
+* Consultazione semplice da smartphone.
+* Presentazione di servizi e attività.
+* Contatto diretto tramite WhatsApp o modulo.
+
+Non promettere servizi inclusi nel prezzo se non risultano effettivamente compresi nell’offerta.
+
+B — MENU DIGITALE QR
+
+99 € + IVA UNA TANTUM PER LA REALIZZAZIONE BASE
+
+Headline commerciale:
+
+“Il tuo menu digitale con QR code a soli 99 € + IVA.”
+
+Sottotitolo:
+
+“I clienti inquadrano il QR code e consultano il menu del tuo locale direttamente sullo smartphone.”
+
+CTA:
+
+“Richiedi il menu digitale a 99 €”
+
+La pagina deve spiegare:
+
+* Come funziona il QR code.
+* Come il cliente consulta il menu.
+* Come vengono presentati prodotti e prezzi.
+* Quali modifiche sono consentite nell’offerta base.
+* Quali servizi sono extra.
+* Quali eventuali costi di hosting e assistenza si applicano.
+
+Il prezzo una tantum riguarda la realizzazione base e non deve essere confuso con eventuali servizi periodici.
+
+Se hosting, manutenzione o servizi aggiuntivi comportano costi obbligatori, questi devono essere comunicati chiaramente prima della vendita.
+
+Non inventare importi.
+
+C — WEB APP E GESTIONALI
+
+SU PREVENTIVO
+
+Headline commerciale:
+
+“Un’app su misura per semplificare il lavoro della tua attività.”
+
+Sottotitolo:
+
+“Realizziamo soluzioni personalizzate per organizzare prenotazioni, appuntamenti, clienti, ordini e attività quotidiane.”
+
+CTA:
+
+“Scopri la soluzione per la tua attività”
+
+Prevedi un prezzo di partenza facoltativo e centralizzato:
+
+“Progetti a partire da X €”
+
+Mostra questa frase soltanto quando l’importo è stato realmente configurato e approvato.
+
+Non confondere i gestionali su misura con i menu QR da 99 € o i siti da 399 €.
+
+⸻
+
+4. ARCHITETTURA: NON CREARE DUPLICATI
+
+Mantieni questi indirizzi principali:
+
+* / — Homepage.
+* /siti-web/ — Offerta da 399 €.
+* /menu-digitali/ — Offerta da 99 €.
+* /web-app/ — Web app e gestionali.
+* /grazie/ — Conferma contatto.
+
+Mantieni le landing settoriali:
+
+* /per/ristoranti
+* /per/bb-hotel
+* /per/studi-medici
+* /per/centri-estetici
+* /per/parrucchieri
+* /per/palestre
+* /per/negozi
+* /per/officine
+* /per/agenzie-immobiliari
+* /per/studi-legali
+* /per/agenti-commercio
+
+Utilizza il template settoriale già esistente, migliorandolo.
+
+Tutti i dati personalizzabili devono essere centralizzati in configurazioni facilmente modificabili.
+
+Non duplicare componenti per singolo settore.
+
+Una nuova landing settoriale deve poter essere aggiunta tramite una nuova voce di configurazione.
+
+Gli slug inesistenti devono mostrare una pagina utile per tornare all’hub, con gestione SEO corretta e senza generare pagine duplicate indicizzabili.
+
+⸻
+
+5. BUG PRIORITARIO: BENEFICI RIPETUTI
+
+Nelle landing settoriali è stato individuato un problema:
+
+I quattro benefici possono mostrare la stessa descrizione generica:
+
+“Una soluzione progettata sul modo di lavorare della tua attività.”
+
+Questo testo ripetuto deve essere eliminato.
+
+Controlla se il problema deriva dal template, dalla configurazione o dal fallback dei contenuti.
+
+Ogni settore deve avere quattro benefici distinti.
+
+Ogni beneficio deve includere:
+
+* Titolo specifico.
+* Descrizione originale.
+* Vantaggio concreto per il cliente.
+* Eventuale icona pertinente.
+
+Sono richiesti 44 benefici completi, quattro per ciascuno degli 11 settori.
+
+Usa questi argomenti:
+
+Ristoranti: menu QR, prenotazioni, gestione richieste, fidelizzazione.
+
+B&B e hotel: camere, disponibilità, prenotazioni, comunicazioni ospiti.
+
+Centri estetici: agenda, prenotazioni, promemoria, clienti abituali.
+
+Parrucchieri: gestione appuntamenti, organizzazione delle giornate, promemoria, fidelizzazione.
+
+Studi medici: gestione appuntamenti, agenda, promemoria, organizzazione segreteria.
+
+Palestre: calendario corsi, iscrizioni, prenotazioni, comunicazioni.
+
+Negozi: catalogo, magazzino, inventario, gestione clienti.
+
+Officine: appuntamenti, schede intervento, promemoria, clienti.
+
+Agenzie immobiliari: immobili, richieste, visite, gestione contatti.
+
+Studi legali: appuntamenti, agenda, promemoria, organizzazione operativa.
+
+Agenti di commercio: anagrafiche clienti, visite, ordini, report commerciali.
+
+Scrivi tu le descrizioni, in italiano semplice e convincente.
+
+Non limitarti a cambiare qualche parola mantenendo lo stesso testo per tutti i settori.
+
+Non inventare percentuali di miglioramento, statistiche, risultati economici o testimonianze.
+
+⸻
+
+6. STRUTTURA COMMERCIALE DI OGNI LANDING
+
+Ogni landing settoriale deve seguire un percorso di vendita preciso.
+
+BLOCCO 1 — HERO
+
+La prima schermata deve comunicare:
+
+* A chi è rivolta la soluzione.
+* Quale problema aiuta a risolvere.
+* Il beneficio principale.
+* Come richiedere informazioni.
+
+Headline specifica per settore.
+
+Sottotitolo commerciale breve.
+
+CTA principale ben visibile.
+
+Possibilità di contatto WhatsApp.
+
+BLOCCO 2 — MODULO
+
+Mostra il form senza costringere il visitatore a scorrere molte sezioni.
+
+Su smartphone deve essere raggiungibile immediatamente dalla CTA.
+
+BLOCCO 3 — QUATTRO BENEFICI
+
+Quattro vantaggi specifici, con descrizioni realmente diverse.
+
+BLOCCO 4 — ESEMPIO VISIVO
+
+Un mockup pertinente al settore.
+
+BLOCCO 5 — COME FUNZIONA
+
+Tre passaggi:
+
+1. Ci racconti che attività hai e cosa ti serve.
+2. Ti presentiamo una possibile soluzione o anteprima.
+3. Valuti la proposta e decidi senza impegno.
+
+BLOCCO 6 — PREZZI
+
+Mostra soltanto le offerte pertinenti al settore.
+
+Non pubblicizzare il menu digitale a 99 € su landing dove non ha attinenza.
+
+BLOCCO 7 — PERCHÉ PROMOAPP
+
+Elementi reali di fiducia e trasparenza.
+
+BLOCCO 8 — FAQ
+
+Tre domande con risposte specifiche per settore.
+
+BLOCCO 9 — CTA FINALE
+
+Un invito convincente alla richiesta di informazioni.
+
+Evita sezioni superflue e ripetitive.
+
+⸻
+
+7. DEMO GRATUITA: INCENTIVO COMMERCIALE
+
+Voglio predisporre un incentivo commerciale capace di aumentare le richieste.
+
+Messaggio desiderato:
+
+“Demo gratuita in 48 ore, con il nome della tua attività.”
+
+Tuttavia, questa promessa deve essere realmente sostenibile.
+
+Implementa un sistema centralizzato che permetta di scegliere tra due modalità.
+
+Modalità standard
+
+“Richiedi un’anteprima gratuita”
+
+Modalità demo personalizzata
+
+“Demo gratuita in 48 ore, con il nome della tua attività”
+
+La modalità demo deve essere attivabile soltanto dopo conferma che il servizio possa essere effettivamente erogato nei tempi indicati.
+
+Per evitare lavoro eccessivo, prepara un processo basato su modelli illustrativi settoriali personalizzabili con il nome dell’attività.
+
+Una demo illustrativa non deve essere descritta come un’app funzionante o come un gestionale completo.
+
+La personalizzazione può riguardare nome dell’attività, settore e schermata dimostrativa.
+
+Non avviare automaticamente sviluppi personalizzati completi per ogni richiesta.
+
+Predisponi anche un parametro centrale per il tempo di risposta WhatsApp.
+
+Se configurato e confermato, mostra:
+
+“Nessun vincolo. Ti rispondiamo su WhatsApp entro X ore.”
+
+Se non configurato, mostra:
+
+“Nessun vincolo. Ti contattiamo su WhatsApp.”
+
+Non lasciare mai sul sito segnaposto come [X].
+
+Mantieni coerenti hero, CTA, form, WhatsApp e pagina di ringraziamento.
+
+⸻
+
+8. ELEMENTI DI FIDUCIA: PERCHÉ PROMOAPP
+
+Rendi la sezione più commerciale, concreta e credibile.
+
+Prevedi cinque punti:
+
+1. Prima vedi, poi decidi. Possibilità di visionare un esempio o una demo gratuita, secondo l’offerta effettivamente disponibile.
+2. Preventivo scritto prima di iniziare. Costi e funzionalità definiti con chiarezza.
+3. Pagamento a fasi. Da mostrare solo per progetti ai quali si applica effettivamente questa modalità.
+4. Assistenza iniziale. Indicare l’eventuale periodo incluso soltanto se confermato e configurato.
+5. Rapporto diretto. Contatto con il referente che segue la realizzazione del progetto, secondo l’organizzazione effettiva.
+
+Non promettere automaticamente pagamento a fasi e assistenza gratuita su tutti i prodotti.
+
+Aggiungi un blocco facoltativo:
+
+CHI SEGUE IL TUO PROGETTO
+
+Il blocco deve poter contenere:
+
+* Nome.
+* Foto autentica.
+* Ruolo.
+* Presentazione di due righe.
+
+Se i dati non sono configurati, nascondilo.
+
+Non inventare nomi, fotografie o qualifiche.
+
+⸻
+
+9. MOCKUP ILLUSTRATIVI
+
+Aggiungi a ogni settore una schermata dimostrativa pertinente.
+
+Non generare undici immagini costose con servizi esterni.
+
+Preferisci componenti leggeri, mockup CSS, anteprime statiche o componenti già disponibili nel progetto.
+
+Esempi:
+
+* Ristorante: menu digitale su smartphone.
+* B&B: calendario disponibilità camere.
+* Centro estetico: prenotazione trattamenti.
+* Parrucchiere: agenda appuntamenti.
+* Studio medico: calendario appuntamenti.
+* Palestra: prenotazione corsi.
+* Negozio: prodotti e magazzino.
+* Officina: appuntamenti e interventi.
+* Agenzia immobiliare: schede immobili.
+* Studio legale: agenda attività.
+* Agente di commercio: clienti e ordini.
+
+Ogni esempio deve riportare:
+
+“Esempio illustrativo”
+
+Non presentare i mockup come progetti già consegnati.
+
+I mockup devono avere un aspetto professionale e funzionare correttamente su smartphone.
+
+Se è possibile utilizzare un unico componente configurabile, fallo.
+
+⸻
+
+10. OTTIMIZZAZIONE DEFINITIVA DEI FORM
+
+Il modulo deve richiedere soltanto tre informazioni commerciali:
+
+1. Nome attività.
+2. Tipo attività.
+3. Numero WhatsApp.
+
+Tutti obbligatori.
+
+Il settore deve essere precompilato sulle landing settoriali, ma modificabile.
+
+L’opzione “Altro” deve rimanere sempre in fondo.
+
+Il servizio richiesto deve essere determinato automaticamente dalla pagina.
+
+Non richiedere obbligatoriamente email o descrizione del progetto.
+
+Non aggiungere passaggi intermedi inutili.
+
+Prevedi:
+
+* Validazione lato client.
+* Validazione lato server.
+* Messaggi di errore in italiano.
+* Protezione honeypot invisibile e accessibile correttamente.
+* Limitazione degli invii abusivi.
+* Controllo dei doppi invii.
+* Corretto collegamento alla privacy.
+* Separazione degli eventuali consensi marketing.
+
+Mantieni una grafica professionale e semplice.
+
+Il bottone deve essere specifico:
+
+“Richiedi informazioni”
+
+oppure, se la modalità demo è attiva:
+
+“Richiedi la demo gratuita”
+
+Non utilizzare testi diversi tra pulsante e offerta pubblicizzata.
+
+⸻
+
+11. DATABASE E GESTIONE LEAD
+
+Riutilizza il sistema esistente.
+
+Ogni richiesta deve essere salvata prima dell’invio della conferma all’utente.
+
+Salva:
+
+* Identificativo univoco.
+* Nome attività.
+* Tipo attività.
+* WhatsApp.
+* Servizio richiesto.
+* Settore.
+* Slug.
+* Pagina di provenienza.
+* Data e ora.
+* UTM source.
+* UTM medium.
+* UTM campaign.
+* UTM content.
+* UTM term.
+* GCLID.
+* GBRAID e WBRAID se pertinenti e disponibili.
+* Stato del contatto.
+
+Conserva i parametri pubblicitari durante la sessione, rispettando il consenso applicabile.
+
+Non eliminare o sovrascrivere i lead esistenti.
+
+Utilizza il sistema di notifiche già installato.
+
+Se il salvataggio riesce ma la notifica fallisce, il contatto deve rimanere nel database e deve essere previsto un meccanismo di recupero della notifica.
+
+Non mostrare una conferma di successo se il salvataggio è fallito.
+
+Non inviare più notifiche per un singolo invio duplicato.
+
+⸻
+
+12. PAGINA DI RINGRAZIAMENTO
+
+Dopo il salvataggio riuscito:
+
+Reindirizza a /grazie/.
+
+La pagina deve:
+
+* Essere noindex.
+* Confermare la ricezione della richiesta.
+* Spiegare il prossimo passaggio.
+* Mostrare il pulsante WhatsApp facoltativo.
+* Non contenere informazioni personali nell’URL.
+* Non generare conversioni duplicate quando viene ricaricata.
+
+Messaggio:
+
+“Richiesta ricevuta! Ti contatteremo su WhatsApp.”
+
+Se è attiva una modalità di demo con tempi confermati, mostra una conferma coerente con quell’offerta.
+
+Predisponi il punto di integrazione per la conversione Google Ads senza aggiungere tag duplicati.
+
+⸻
+
+13. WHATSAPP
+
+Non modificare il numero presente nel progetto.
+
+Mantieni messaggi precompilati differenti per settore e prodotto.
+
+Esempi:
+
+Siti web
+
+“Buongiorno, vorrei informazioni sul sito web da 399 € + IVA.”
+
+Menu digitale
+
+“Buongiorno, vorrei informazioni sul menu digitale QR da 99 € + IVA.”
+
+Centro estetico
+
+“Buongiorno, vorrei informazioni su una soluzione per gestire gli appuntamenti del mio centro estetico.”
+
+I messaggi devono essere coerenti con i contenuti pubblicati.
+
+Non promettere demo, prezzi o tempi diversi da quelli configurati.
+
+Prevedi un pulsante WhatsApp sempre facilmente accessibile da smartphone.
+
+Il pulsante non deve coprire il form o altri controlli.
+
+⸻
+
+14. TRACKING GOOGLE ADS E META ADS
+
+Prima di aggiungere codice, controlla le integrazioni già esistenti.
+
+Non installare due volte Google Tag Manager, GA4 o Meta Pixel.
+
+Configura GTM tramite variabile d’ambiente.
+
+Rispetta il banner cookie esistente e implementa Consent Mode v2 con approccio Basic, senza caricare tag non essenziali prima del consenso appropriato.
+
+Prevedi eventi:
+
+* cta_click: position, slug, servizio.
+* form_start: slug, servizio.
+* generate_lead: business_type, slug, servizio.
+* whatsapp_click: posizione, slug, servizio.
+* qualified_lead: per eventuale qualificazione commerciale successiva.
+
+generate_lead deve scattare esclusivamente dopo conferma del salvataggio.
+
+Utilizza identificativi di evento per la deduplicazione.
+
+Un clic WhatsApp deve essere misurato separatamente e non rappresenta automaticamente un lead acquisito.
+
+Non trasferire numeri telefonici, nomi o altri dati personali in chiaro negli strumenti di analytics.
+
+Se gli account pubblicitari non sono collegati, prepara soltanto la configurazione necessaria, indicando gli identificativi mancanti.
+
+Non simulare conversioni reali.
+
+⸻
+
+15. OTTIMIZZAZIONE PER GOOGLE E FACEBOOK
+
+Il sito deve funzionare come destinazione per campagne pubblicitarie.
+
+Chi clicca su un annuncio deve trovare esattamente l’offerta promessa.
+
+Esempi:
+
+Annuncio siti web 399 €
+
+Destinazione: /siti-web/
+
+Annuncio menu digitale 99 €
+
+Destinazione: /menu-digitali/
+
+Annuncio gestionale parrucchieri
+
+Destinazione: /per/parrucchieri
+
+Annuncio app per agenti di commercio
+
+Destinazione: /per/agenti-commercio
+
+Non inviare automaticamente tutti gli utenti alla homepage.
+
+Le landing pubblicitarie devono avere pochi elementi di distrazione.
+
+Riduci i link commerciali verso altri prodotti, la homepage o altri settori nelle landing di campagna.
+
+Mantieni comunque i collegamenti obbligatori per privacy, cookie e informazioni aziendali.
+
+Non compromettere la navigazione della homepage e la struttura SEO del sito.
+
+Non attivare annunci o modificare campagne pubblicitarie senza autorizzazione.
+
+⸻
+
+16. CORREZIONI SEO
+
+Verifica e correggi:
+
+* Meta title specifici.
+* Meta description specifiche.
+* Un H1 pertinente per pagina.
+* Canonical corretti.
+* Sitemap completa.
+* Pagine settoriali indicizzabili.
+* Contenuti non duplicati.
+* Open Graph per le anteprime social.
+* Redirect per eventuali URL duplicati.
+* noindex sulla pagina di ringraziamento.
+* Rendering dei contenuti accessibile ai crawler.
+
+Mantieni gli indirizzi esistenti per non perdere eventuale traffico organico.
+
+Non creare più indirizzi indicizzabili per la medesima offerta.
+
+⸻
+
+17. AREA AMMINISTRATIVA
+
+Rimuovi il collegamento “Admin” dal footer pubblico.
+
+Mantieni l’area amministrativa e le sue funzionalità.
+
+Verifica che sia protetta tramite autenticazione e autorizzazione lato server.
+
+Non considerare sufficiente nascondere il collegamento.
+
+Non permettere che dati, lead o funzioni amministrative siano accessibili senza autorizzazione.
+
+Se esiste già un pannello contatti, riutilizzalo e miglioralo solo dove necessario.
+
+Non creare un secondo CRM.
+
+⸻
+
+18. PAGINA STUDI MEDICI
+
+Correggi eventuali formulazioni tecnicamente o legalmente inappropriate.
+
+Utilizza:
+
+“Gestione appuntamenti”
+
+“Agenda online”
+
+“Promemoria automatici”
+
+“Organizzazione delle richieste”
+
+Inserisci la nota:
+
+“I dettagli sul trattamento dei dati si definiscono nel preventivo.”
+
+Non promettere conformità GDPR, gestione delle cartelle cliniche o trattamento di dati sanitari senza verifica delle funzionalità effettive e degli obblighi applicabili.
+
+⸻
+
+19. VELOCITÀ, MOBILE E ACCESSIBILITÀ
+
+Priorità assoluta alla navigazione da smartphone.
+
+Verifica:
+
+* Dimensioni di titoli e pulsanti.
+* Corretta visualizzazione delle offerte.
+* Moduli comodi da compilare.
+* Tastiera telefonica per WhatsApp.
+* Contrasto e leggibilità.
+* Layout senza tagli o sovrapposizioni.
+* Mockup adattivi.
+* Immagini leggere.
+* Assenza di errori JavaScript bloccanti.
+* Nessun link non funzionante.
+* Corretta visualizzazione del cookie banner.
+
+Obiettivo Lighthouse mobile 90+, dove realisticamente raggiungibile.
+
+Misura le prestazioni reali e comunica il risultato senza inventare punteggi.
+
+Non compromettere le funzionalità per ottenere punteggi migliori.
+
+⸻
+
+20. CRITERI DI ACCETTAZIONE
+
+Alla fine devi aver verificato:
+
+1. La homepage funziona.
+2. Il sito da 399 € è presentato correttamente.
+3. Il menu digitale da 99 € è presentato correttamente come realizzazione base una tantum.
+4. Gli eventuali costi periodici sono descritti in modo trasparente.
+5. Le web app restano su preventivo.
+6. Tutti gli 11 settori hanno benefici specifici.
+7. Ogni beneficio ha titolo e descrizione propri.
+8. Ogni settore ha almeno un mockup illustrativo.
+9. Il form precompila correttamente il settore.
+10. Il modulo salva il lead.
+11. La notifica funziona.
+12. Il redirect a /grazie/ funziona.
+13. Il numero WhatsApp originale è invariato.
+14. I parametri pubblicitari vengono salvati correttamente quando consentito.
+15. Gli eventi sono deduplicati.
+16. I cookie e i consensi vengono rispettati.
+17. Il collegamento Admin non è nel footer pubblico.
+18. L’area amministrativa è protetta.
+19. La pagina studi medici contiene le formulazioni richieste.
+20. Il sito è utilizzabile da smartphone e non presenta errori bloccanti.
+
+Esegui test mirati sul codice e, quando disponibile, sulla preview.
+
+Non inviare comunicazioni di prova a clienti reali.
+
+Non dichiarare superati test non eseguiti.
+
+Se mancano credenziali o autorizzazioni per una verifica, segnalalo chiaramente.
+
+⸻
+
+21. REPORT FINALE
+
+Al termine produci un report unico, sintetico e comprensibile.
+
+Deve contenere:
+
+1. Le cinque righe dell’analisi iniziale.
+2. Problemi effettivamente trovati.
+3. Interventi completati.
+4. File modificati.
+5. Funzionalità conservate.
+6. Offerte pubblicate e prezzi.
+7. Landing corrette.
+8. Verifica dei moduli e delle notifiche.
+9. Verifica WhatsApp.
+10. Stato del tracking Google e Meta.
+11. Test effettuati con esito.
+12. Eventuali attività ancora da completare.
+13. Configurazioni commerciali da confermare.
+14. Come verificare il sito nella preview Replit.
+15. Come effettuare una richiesta di prova.
+16. Eventuali rischi prima di pubblicare.
+
+Non riproporre una nuova ricostruzione del sito se gli obiettivi sono già raggiunti.
+
+⸻
+
+ORDINE OPERATIVO DEFINITIVO
+
+Procedi nel seguente ordine:
+
+PRIORITÀ 1 — Correzioni e vendita
+
+* Analisi del codice.
+* Correzione dei benefici ripetuti.
+* Prezzi e offerte.
+* Coerenza delle CTA.
+* Modulo e salvataggio lead.
+
+PRIORITÀ 2 — Conversioni
+
+* WhatsApp.
+* Notifiche.
+* Pagina di ringraziamento.
+* Tracking e parametri pubblicitari.
+* Riduzione delle distrazioni.
+
+PRIORITÀ 3 — Credibilità
+
+* Mockup settoriali.
+* Sezione Perché PromoApp.
+* Contenuti specifici.
+* FAQ e SEO.
+
+PRIORITÀ 4 — Qualità
+
+* Mobile.
+* Sicurezza.
+* Test funzionali.
+* Report finale.
+
+Se trovi una funzionalità già corretta, non riscriverla.
+
+Se esiste una soluzione più semplice che raggiunge lo stesso obiettivo senza rompere nulla, preferiscila.
+
+Non aggiungere funzionalità fuori da questo perimetro.
+
+Non spendere risorse in restyling non richiesti.
+
+NON PUBBLICARE AUTOMATICAMENTE IN PRODUZIONE.
+
+RISULTATO COMMERCIALE ATTESO
+
+Voglio che una persona che arriva da Facebook o Google comprenda immediatamente:
+
+* Che cosa realizza PromoApp.
+* Quanto costa il prodotto pubblicizzato.
+* Quale vantaggio offre alla sua attività.
+* Perché può fidarsi.
+* Come chiedere informazioni senza impegno.
+
+La homepage deve spiegare PromoApp.
+
+Le landing prodotto devono vendere una specifica offerta.
+
+Le landing settoriali devono parlare dei problemi reali di ogni attività.
+
+Il form deve raccogliere richieste semplici.
+
+WhatsApp deve facilitare il contatto.
+
+Il database deve conservare ogni lead.
+
+Il tracking deve permetterci di capire quali campagne portano potenziali clienti.
+
+LA REGOLA PIÙ IMPORTANTE: non voglio un sito semplicemente più bello. Voglio un sistema commerciale funzionante che mi permetta di ottenere richieste, fare preventivi e acquisire nuovi clienti, senza spese tecniche inutili.
