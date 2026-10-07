@@ -282,26 +282,6 @@ export default function Preventivo() {
               Dimentica il telefono che squilla mentre lavori. Ricevi prenotazioni h24, azzera i no-show e fidelizza i clienti con un'unica piattaforma facile da usare. Creata su misura per te.
             </p>
 
-            {/* Prezzo in evidenza */}
-            <div
-              className="relative overflow-hidden inline-flex items-center gap-3 rounded-2xl border border-amber-300/35 bg-gradient-to-r from-amber-300/20 via-orange-300/15 to-amber-300/5 px-4 py-3.5 mb-3 shadow-lg shadow-amber-950/15"
-              aria-label="Prezzo a partire da 399 euro più IVA"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-300 text-indigo-950 shadow-md shadow-amber-950/20">
-                <i className="fas fa-tag text-base"></i>
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">
-                  Siti web professionali
-                </p>
-                <p className="mt-0.5 text-2xl font-black leading-none text-white">
-                  A partire da <span className="text-amber-300">399€</span>
-                  <span className="ml-1 text-sm font-bold text-amber-100">+ IVA</span>
-                </p>
-              </div>
-              <span className="absolute -right-3 -top-5 h-14 w-14 rounded-full bg-amber-300/10" />
-            </div>
-
             <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer"
               onClick={() => trackWhatsApp("generale", "hero")}
               className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
@@ -346,8 +326,8 @@ export default function Preventivo() {
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-bold text-white text-2xl mb-2">Oltre il sito, strumenti per lavorare meglio</h2>
-          <p className="text-indigo-200 text-sm mb-5">Funzionalità sviluppabili su richiesta. Non sono tutte comprese nel sito da 399 €.</p>
+          <h2 className="font-bold text-white text-2xl mb-2">Tutto ciò che serve per automatizzare il tuo lavoro</h2>
+          <p className="text-indigo-200 text-sm mb-5">Soluzioni su misura da integrare nella tua Web App per farti risparmiare tempo ogni giorno.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
             <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
           </div>)}</div>
