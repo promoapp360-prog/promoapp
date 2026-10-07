@@ -1,0 +1,29 @@
+Agisci come un esperto di Conversion Rate Optimization (CRO) e Sviluppatore Frontend. 
+
+Ho bisogno di ottimizzare i testi e la struttura della mia landing page attuale (PromoApp.it) per massimizzare le conversioni provenienti da campagne Google Ads. Il design mobile-first attuale (sfondo scuro, bottoni verdi e viola, stile moderno) e il modulo di contatto vanno benissimo. L'obiettivo è rendere il copy molto più orientato ai benefici diretti per l'imprenditore e ridurre le distrazioni.
+
+Applica le seguenti modifiche al codice, mantenendo intatte le classi CSS/Tailwind attuali per non rompere il layout grafico:
+
+1. Navigazione (Header):
+Rimuovi o nascondi i link del menu classico (Chi siamo, Servizi, Contatti, ecc.) se presenti. La barra di navigazione deve essere essenziale: Logo a sinistra e un bottone CTA a destra ("Richiedi Demo"). Dobbiamo eliminare le vie di fuga.
+
+2. Modifica la Hero Section (Testata principale, Above the fold):
+- Sostituisci l'attuale H1 ("La tua attività merita di più. Portala online con PromoApp.") con: "Più Clienti, Meno Stress: L'App su misura per gestire la tua attività."
+- Sostituisci il paragrafo descrittivo sotto l'H1 con: "Dimentica il telefono che squilla mentre lavori. Ricevi prenotazioni h24, azzera i no-show e fidelizza i clienti con un'unica piattaforma facile da usare. Creata su misura per te."
+- Il pulsante CTA principale (verde) sotto questa sezione deve avere come testo: "Richiedi una Demo Gratuita su WhatsApp".
+
+3. Riscrivi la sezione "Oltre il sito, strumenti per lavorare meglio":
+Attualmente questa sezione elenca le funzionalità in modo troppo tecnico. Mantieni il tuo bellissimo design a lista/card, ma sostituisci i testi per evidenziare i benefici:
+- Da "Gestionale completo per la tua attività" a -> "Gestione Completa: Tutto il tuo business sotto controllo, dal palmo della mano."
+- Da "Booking e prenotazioni online 24/7" a -> "Zero Interruzioni: I clienti prenotano online h24 in totale autonomia."
+- Da "Vendite, pagamenti e cassa" a -> "Stop ai No-Show: Fai pagare in anticipo o richiedi acconti automatici al momento della prenotazione."
+- Da "Clienti, fidelity e comunicazioni" a -> "Fidelity Digitale: Fai tornare i clienti più spesso con la raccolta punti su smartphone, senza tessere cartacee."
+
+4. Ottimizzazione Modulo di Contatto ("Richiedi il tuo preventivo"):
+- Cambia il titolo del modulo da "Richiedi il tuo preventivo" a: "Fai il primo passo: raccontaci la tua attività"
+- Sostituisci il testo del bottone viola finale da "Invia la richiesta" a: "Richiedi Consulenza Gratuita"
+
+5. Sezione Recensioni (Social Proof):
+Il layout delle "Recensioni verificate" è perfetto così com'è. Assicurati solo, a livello di struttura HTML, che questa blocco sia posizionato immediatamente *prima* del modulo di contatto finale, in modo da rassicurare l'utente un attimo prima di compilare i campi.
+
+Restituisci il codice aggiornato per queste sezioni. Non stravolgere la struttura, i margini o i colori, ma implementa queste modifiche testuali e strategiche per aumentare i contatti.

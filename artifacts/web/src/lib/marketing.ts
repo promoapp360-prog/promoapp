@@ -7,7 +7,7 @@ export const serviceNames: Record<Service, string> = {
   generale: "il tuo progetto", "siti-web": "il tuo sito web", "web-app": "la tua web app", "menu-digitali": "il tuo menu digitale",
 };
 const messages: Record<Service, string> = {
-  generale: "Ciao PromoApp! Vorrei un preventivo per la mia attività.",
+  generale: "Ciao PromoApp! Vorrei una demo gratuita dell'app su misura per la mia attività.",
   "siti-web": "Ciao PromoApp! Vorrei informazioni per un sito web professionale a partire da 399 €. La mia attività è...",
   "web-app": "Ciao PromoApp! Vorrei un preventivo per una web app o un gestionale personalizzato. La mia idea è...",
   "menu-digitali": "Ciao PromoApp! Vorrei un menu digitale con QR code a partire da 99 €. Il mio locale è...",

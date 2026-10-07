@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { appPath, getAttribution, whatsappUrl } from "../lib/marketing";
 import { trackConversion, trackWhatsApp } from "../lib/analytics";
+import HomeContactForm from "../components/marketing/HomeContactForm";
 import "../styles/commercial.css";
 
 const SERVICES = [
@@ -26,13 +27,13 @@ const SETTORI = [
 ];
 
 const FEATURES = [
-  { icon: "fa-chart-line",     text: "Gestionale completo per la tua attività" },
-  { icon: "fa-calendar-check", text: "Booking e prenotazioni online 24/7" },
+  { icon: "fa-chart-line",     text: "Gestione Completa: Tutto il tuo business sotto controllo, dal palmo della mano." },
+  { icon: "fa-calendar-check", text: "Zero Interruzioni: I clienti prenotano online h24 in totale autonomia." },
   { icon: "fa-hotel",          text: "Hotel, B&B e strutture ricettive" },
   { icon: "fa-scissors",       text: "Agenda per parrucchieri e centri beauty" },
   { icon: "fa-boxes-stacked",  text: "Magazzino, prodotti e inventario" },
-  { icon: "fa-cash-register",  text: "Vendite, pagamenti e cassa" },
-  { icon: "fa-users",          text: "Clienti, fidelity e comunicazioni" },
+  { icon: "fa-cash-register",  text: "Stop ai No-Show: Fai pagare in anticipo o richiedi acconti automatici al momento della prenotazione." },
+  { icon: "fa-users",          text: "Fidelity Digitale: Fai tornare i clienti più spesso con la raccolta punti su smartphone, senza tessere cartacee." },
   { icon: "fa-chart-pie",      text: "Report e notifiche automatiche" },
 ];
 
@@ -241,7 +242,7 @@ export default function Preventivo() {
           data-testid="link-nav-whatsapp"
         >
           <i className="fab fa-whatsapp text-base"></i>
-          WhatsApp
+          Richiedi Demo
         </a>
       </nav>
 
@@ -275,10 +276,10 @@ export default function Preventivo() {
 
             {/* Headline */}
             <h1 className="text-[2.3rem] md:text-[2.8rem] font-black leading-[1.12] mb-4 tracking-tight">
-              La tua attività merita di più. <span className="gradient-text">Portala online con PromoApp.</span>
+              <span className="gradient-text">Più Clienti, Meno Stress:</span> L'App su misura per gestire la tua attività.
             </h1>
             <p className="text-indigo-200/80 text-base leading-relaxed mb-4 max-w-md">
-              Realizziamo siti web professionali, applicazioni e soluzioni digitali su misura per far crescere la tua attività. Prezzi accessibili, progetti personalizzati e contatto diretto.
+              Dimentica il telefono che squilla mentre lavori. Ricevi prenotazioni h24, azzera i no-show e fidelizza i clienti con un'unica piattaforma facile da usare. Creata su misura per te.
             </p>
 
             {/* Prezzo in evidenza */}
@@ -304,7 +305,7 @@ export default function Preventivo() {
             <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer"
               onClick={() => trackWhatsApp("generale", "hero")}
               className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
-              <i className="fab fa-whatsapp text-lg" aria-hidden="true" /> Richiedi un preventivo su WhatsApp
+              <i className="fab fa-whatsapp text-lg" aria-hidden="true" /> Richiedi una Demo Gratuita su WhatsApp
             </a>
             <div className="grid gap-2 mb-4" id="servizi" aria-label="I servizi PromoApp">
               {SERVICES.map((service) => <Link key={service.path} href={service.path}
@@ -337,144 +338,8 @@ export default function Preventivo() {
 
           {/* RIGHT form */}
           <div className="relative z-10 scroll-mt-5" id="preventivo">
-            {sent ? (
-              <div
-                className="bg-white rounded-3xl p-8 text-center shadow-2xl"
-                data-testid="message-sent"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-200">
-                  <i className="fas fa-check text-white text-2xl"></i>
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-2">Richiesta inviata!</h3>
-                <p className="text-gray-500 mb-6 leading-relaxed text-sm">
-                  Grazie. Ti ricontatteremo ai recapiti indicati per parlare del tuo progetto.
-                </p>
-                <a
-                  href={whatsappUrl()}
-                  onClick={() => trackWhatsApp("generale", "thanks")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition shadow-md"
-                  data-testid="link-whatsapp-thanks"
-                >
-                  <i className="fab fa-whatsapp text-lg"></i>
-                  Scrivici su WhatsApp
-                </a>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSubmit}
-                className="bg-white rounded-3xl p-6 shadow-[0_32px_80px_rgba(0,0,0,0.35)] space-y-3.5"
-                data-testid="form-preventivo"
-              >
-                {/* Form header */}
-                <div className="pb-1 border-b border-gray-100">
-                  <h2 className="text-lg font-black text-gray-900">Richiedi il tuo preventivo</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">Parla direttamente con chi realizza il progetto.</p>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="nome_attivita">
-                    Nome / attività <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="nome_attivita" name="nome_attivita" type="text" required minLength={2} maxLength={160} autoComplete="name"
-                    value={form.nome_attivita} onChange={handleChange}
-                    placeholder="Es. Parrucchiere Mario Rossi"
-                    className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm placeholder:text-gray-300"
-                    data-testid="input-nome-attivita"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="settore">
-                    Tipo di attività <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="settore" name="settore" required
-                    value={form.settore} onChange={handleChange}
-                    className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm"
-                    data-testid="select-settore"
-                  >
-                    <option value="">Seleziona...</option>
-                    {SETTORI.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="email">
-                      Email (facoltativa)
-                    </label>
-                    <input
-                      id="email" name="email" type="email" maxLength={254} autoComplete="email"
-                      value={form.email} onChange={handleChange}
-                      placeholder="nome@email.it"
-                      className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm placeholder:text-gray-300"
-                      data-testid="input-email"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="whatsapp">
-                      WhatsApp <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="whatsapp" name="whatsapp" type="tel" required minLength={6} maxLength={30} autoComplete="tel"
-                      value={form.whatsapp} onChange={handleChange}
-                      placeholder="+39 340..."
-                      className="w-full border-2 border-gray-100 focus:border-emerald-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm placeholder:text-gray-300"
-                      data-testid="input-whatsapp"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="messaggio">
-                    Cosa ti serve? <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="messaggio" name="messaggio" required rows={3} minLength={10} maxLength={5000}
-                    value={form.messaggio} onChange={handleChange}
-                    placeholder="Raccontaci cosa ti serve: sito web, web app, gestionale o menu digitale..."
-                    className="w-full border-2 border-gray-100 focus:border-indigo-500 bg-gray-50 focus:bg-white rounded-xl px-3.5 py-2.5 text-gray-900 outline-none transition text-sm resize-none placeholder:text-gray-300"
-                    data-testid="textarea-messaggio"
-                  />
-                </div>
-
-                <label className="flex items-start gap-2 text-[10px] text-gray-500">
-                  <input type="checkbox" required checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} className="mt-1 accent-indigo-600" />
-                  <span>Ho letto l'<a href={appPath("/privacy.html")} target="_blank" rel="noopener noreferrer" className="underline text-indigo-700">informativa privacy</a> e acconsento al trattamento per ricevere risposta alla richiesta. Nessuna iscrizione pubblicitaria.</span>
-                </label>
-                {error && (
-                  <p className="text-red-500 text-xs font-semibold flex items-center gap-1.5 bg-red-50 rounded-lg px-3 py-2" data-testid="text-error">
-                    <i className="fas fa-exclamation-circle"></i> {error}
-                  </p>
-                )}
-
-                <button
-                  type="submit" disabled={loading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-60 text-white py-3.5 rounded-xl font-black text-sm tracking-wide transition shadow-lg shadow-indigo-900/40 hover:shadow-indigo-500/30 active:scale-[0.98]"
-                  data-testid="button-submit"
-                >
-                  {loading
-                    ? <><i className="fas fa-spinner fa-spin mr-2"></i>Invio in corso...</>
-                    : <><i className="fas fa-paper-plane mr-2"></i>Invia la richiesta</>}
-                </button>
-
-                <div className="text-center pt-0.5">
-                  <a
-                    href={whatsappUrl()}
-                    onClick={() => trackWhatsApp("generale", "form")}
-                    target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 text-sm font-bold transition"
-                    data-testid="link-whatsapp-alt"
-                  >
-                    <i className="fab fa-whatsapp text-base"></i>
-                    Oppure scrivici su WhatsApp
-                  </a>
-                </div>
-              </form>
-            )}
+            <HomeContactForm form={form} onChange={handleChange} onSubmit={handleSubmit}
+              sent={sent} loading={loading} error={error} privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
           </div>
         </div>
       </section>
@@ -675,6 +540,14 @@ export default function Preventivo() {
               </div>
             </details>
           </div>
+        </div>
+      </section>
+
+      {/* Il modulo finale segue immediatamente le recensioni, senza sezioni intermedie. */}
+      <section className="relative z-10 px-4 pt-2 pb-10" id="preventivo-finale" aria-label="Richiedi una consulenza gratuita">
+        <div className="max-w-xl mx-auto">
+          <HomeContactForm placement="final" form={form} onChange={handleChange} onSubmit={handleSubmit}
+            sent={sent} loading={loading} error={error} privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
         </div>
       </section>
 

@@ -26,3 +26,9 @@ Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati
 **Why:** l'utente ha approvato questa soluzione per rendere la pagina più compatta senza eliminare l'identità della società dalle informazioni legali.
 
 **How to apply:** mantenere le recensioni pubbliche visibili e non interpretare il footer compatto come una richiesta di rimuovere la società dalle informative privacy.
+
+L'utente ha richiesto una homepage orientata ai benefici delle app su misura e alle campagne Google Ads, con inviti a richiedere una demo gratuita su WhatsApp e una consulenza gratuita.
+
+**Why:** nuova indicazione commerciale esplicita, mantenendo colori, classi e stile mobile-first esistenti.
+
+**How to apply:** non sostituire queste CTA con generici preventivi senza una nuova richiesta; conservare la distinzione tra funzioni personalizzate e prezzo dei siti web.
