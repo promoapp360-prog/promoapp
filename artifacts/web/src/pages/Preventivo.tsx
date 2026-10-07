@@ -523,14 +523,6 @@ export default function Preventivo() {
         </div>
       </section>
 
-      {/* Il modulo finale segue immediatamente le recensioni, senza sezioni intermedie. */}
-      <section className="relative z-10 px-4 pt-2 pb-10" id="preventivo-finale" aria-label="Richiedi una consulenza gratuita">
-        <div className="max-w-xl mx-auto">
-          <HomeContactForm placement="final" form={form} onChange={handleChange} onSubmit={handleSubmit}
-            sent={sent} loading={loading} error={error} privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
-        </div>
-      </section>
-
       {/* ── FOOTER ── */}
       <footer className="relative z-10 border-t border-white/10 py-7 px-4 mt-2">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
