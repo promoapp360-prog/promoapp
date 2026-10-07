@@ -1,0 +1,200 @@
+{
+  "ristoranti": {
+    "cta": "Richiedi una proposta per il tuo ristorante",
+    "whatsappMessage": "Buongiorno, vorrei una proposta per il mio ristorante: menu QR a 99 € + IVA una tantum oppure prenotazioni e gestione su preventivo.",
+    "metaTitle": "Menu QR e soluzioni per ristoranti | PromoApp.it",
+    "metaDescription": "Menu QR a 99 € + IVA una tantum, siti da 399 € + IVA e strumenti su preventivo per organizzare richieste e prenotazioni del ristorante.",
+    "offers": ["website", "menu", "webapp"],
+    "name": "Ristoranti", "activity": "Ristorante / Bar / Pizzeria", "menu": true,
+    "headline": "Più organizzazione per il tuo ristorante, meno tempo perso al telefono.",
+    "intro": "Riduci le chiamate durante il servizio e rendi menu, informazioni e richieste di prenotazione accessibili dal telefono dei tuoi clienti.",
+    "benefits": ["Meno interruzioni durante il servizio", "Menu sempre consultabile da smartphone", "Richieste di prenotazione ordinate", "Informazioni chiare su orari e contatti"],
+    "features": ["Menu QR aggiornabile", "Richieste di prenotazione tavoli", "Gestione clienti e preferenze", "Informazioni su allergeni inserite dal locale", "Promozioni e fidelity su richiesta"],
+    "example": "Un cliente consulta il menu dal QR sul tavolo; un altro chiede disponibilità prima di arrivare. Tu gestisci le richieste in un unico spazio.",
+    "faq": [
+      ["Posso partire soltanto dal menu QR?", "Sì. La realizzazione del menu base costa 99 € + IVA una tantum. Hosting, aggiornamenti e assistenza si concordano a parte; prenotazioni, ordini e fidelity richiedono un preventivo dedicato."],
+      ["Si collega al mio gestionale di cassa?", "Valutiamo il gestionale che utilizzi e le possibilità di integrazione prima di formulare la proposta."],
+      ["Chi aggiorna piatti, prezzi e allergeni?", "Concordiamo il metodo di aggiornamento. I contenuti e le informazioni sugli allergeni devono essere verificati dal locale."]
+    ]
+  },
+  "bb-hotel": {
+    "cta": "Richiedi una proposta per la tua struttura",
+    "whatsappMessage": "Buongiorno, gestisco un B&B o hotel e vorrei organizzare disponibilità, camere e richieste degli ospiti. Possiamo valutare una soluzione?",
+    "metaTitle": "Siti e strumenti per B&B e hotel | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e strumenti su misura per disponibilità, camere e richieste di prenotazione del tuo B&B o hotel. Proposta iniziale gratuita.",
+    "offers": ["website", "webapp"],
+    "name": "B&B e hotel", "activity": "B&B / Hotel", "menu": false,
+    "headline": "Gestisci disponibilità, camere e prenotazioni in modo più semplice.",
+    "intro": "Presenta la tua struttura e organizza le richieste degli ospiti senza rincorrere messaggi e appunti. Definiamo insieme il flusso adatto alla tua accoglienza.",
+    "benefits": ["Richieste degli ospiti più ordinate", "Informazioni della struttura sempre accessibili", "Meno passaggi manuali", "Contatto diretto prima del soggiorno"],
+    "features": ["Presentazione camere e servizi", "Calendario disponibilità su misura", "Richieste di prenotazione", "Archivio contatti degli ospiti", "Indicazioni di arrivo e check-in"],
+    "example": "L'ospite legge le informazioni sulla camera e invia una richiesta con le date desiderate. Tu valuti disponibilità e condizioni prima della conferma.",
+    "faq": [
+      ["Sostituisce Booking o il mio channel manager?", "Non automaticamente. Collegamenti a portali e channel manager richiedono una verifica tecnica e un preventivo specifico."],
+      ["Le prenotazioni sono subito confermate?", "Il flusso può prevedere una richiesta da approvare o una conferma automatica, in base alle regole concordate."],
+      ["Posso iniziare con il sito della struttura?", "Sì, il sito professionale parte da 399 € + IVA; disponibilità e gestione prenotazioni sono extra da quotare."]
+    ]
+  },
+  "centri-estetici": {
+    "cta": "Richiedi una proposta per il tuo centro estetico",
+    "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, operatori e clienti del mio centro estetico. Mi interessa una proposta gratuita.",
+    "metaTitle": "Agenda e soluzioni per centri estetici | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e gestionali su preventivo per centri estetici: organizza trattamenti, appuntamenti, operatori e relazioni con le clienti.",
+    "offers": ["website", "webapp"],
+    "name": "Centri estetici", "activity": "Centro Estetico / SPA", "menu": false,
+    "headline": "Organizza gli appuntamenti del tuo centro estetico e dedica più tempo alle clienti.",
+    "intro": "Dedica più attenzione ai trattamenti. Una soluzione su misura aiuta i clienti a trovare i servizi e a richiedere appuntamenti senza interromperti al telefono.",
+    "benefits": ["Meno telefonate durante i trattamenti", "Agenda più leggibile", "Servizi e durate più chiari", "Relazioni con i clienti più semplici"],
+    "features": ["Catalogo trattamenti", "Agenda per operatore e cabina", "Prenotazioni con regole personalizzate", "Promemoria su richiesta", "Pacchetti e fidelity su misura"],
+    "example": "La cliente sceglie il trattamento e richiede un orario. Il centro organizza cabine e operatori seguendo le proprie regole di disponibilità.",
+    "faq": [
+      ["Posso gestire più cabine?", "Sì, possiamo progettare l'agenda tenendo conto di cabine, operatori e durata dei trattamenti."],
+      ["È possibile richiedere un acconto?", "È un'integrazione da valutare nel preventivo, con condizioni di pagamento e cancellazione definite dal centro."],
+      ["Sono inclusi messaggi automatici?", "Invii, canali e relativi costi periodici vengono concordati prima dell'attivazione."]
+    ]
+  },
+  "parrucchieri": {
+    "cta": "Richiedi una proposta per il tuo salone",
+    "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, collaboratori e clienti del mio salone o barber shop. Possiamo valutare una soluzione su misura?",
+    "metaTitle": "Prenotazioni e siti per parrucchieri | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e agende su preventivo per parrucchieri e barber: appuntamenti, collaboratori e clienti. Proposta gratuita e senza impegno.",
+    "offers": ["website", "webapp"],
+    "name": "Parrucchieri e barber", "activity": "Parrucchiere / Barber", "menu": false,
+    "headline": "Meno chiamate per prenotare, più tempo per il tuo salone.",
+    "intro": "Rendi servizi e disponibilità più facili da consultare. Organizza appuntamenti e collaboratori con uno strumento costruito sulle esigenze del tuo salone.",
+    "benefits": ["Meno interruzioni durante il lavoro", "Appuntamenti ordinati per collaboratore", "Servizi comprensibili prima della prenotazione", "Più continuità nel rapporto con i clienti"],
+    "features": ["Agenda del salone", "Servizi con durate differenti", "Scelta del collaboratore", "Richieste di appuntamento", "Promemoria e raccolta punti su richiesta"],
+    "example": "Il cliente sceglie taglio e collaboratore dal telefono. Le disponibilità rispettano le durate che hai definito per ciascun servizio.",
+    "faq": [
+      ["Posso distinguere i tempi di taglio e colore?", "Sì. Studiamo durate, tempi di posa e vincoli del salone per configurare l'agenda."],
+      ["Devo cambiare il mio modo di lavorare?", "Partiamo dalle tue abitudini e scegliamo le funzioni utili, senza aggiungere passaggi inutili."],
+      ["Posso iniziare senza prenotazione online?", "Sì. Un sito presenta servizi e contatti; l'agenda può essere aggiunta con un preventivo dedicato."]
+    ]
+  },
+  "studi-medici": {
+    "cta": "Richiedi una proposta per il tuo studio medico",
+    "whatsappMessage": "Buongiorno, vorrei valutare sito, agenda e richieste di appuntamento per il mio studio medico, senza raccogliere dati clinici nel modulo pubblico.",
+    "metaTitle": "Siti e agenda per studi medici | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per appuntamenti dello studio medico. Dati sanitari e integrazioni richiedono analisi specifiche.",
+    "offers": ["website", "webapp"],
+    "name": "Studi medici", "activity": "Studio Medico / Dentista", "menu": false,
+    "headline": "Una gestione più semplice degli appuntamenti del tuo studio.",
+    "intro": "Aiuta i pazienti a trovare recapiti, prestazioni e orari. Progettiamo flussi di prenotazione che riducono il lavoro organizzativo della segreteria. I dettagli sul trattamento dei dati vengono definiti nel preventivo.",
+    "benefits": ["Recapiti e informazioni facilmente reperibili", "Richieste più ordinate per la segreteria", "Agende distinte per professionista", "Meno passaggi per fissare un appuntamento"],
+    "features": ["Presentazione dello studio e delle prestazioni", "Richieste di appuntamento", "Agenda per professionista", "Gestione disponibilità", "Promemoria concordati con lo studio"],
+    "example": "Il paziente consulta le informazioni e richiede un appuntamento. La segreteria gestisce disponibilità e conferma senza chiedere dati clinici nel modulo pubblico.",
+    "faq": [
+      ["Gestite anche cartelle cliniche?", "Questa proposta riguarda il flusso organizzativo. Trattamento di dati sanitari e cartelle cliniche richiedono un'analisi separata di requisiti e responsabilità."],
+      ["Si collega al software dello studio?", "Verifichiamo API, licenze e requisiti prima di promettere un collegamento."],
+      ["Il paziente deve descrivere il problema di salute?", "No. Il modulo pubblico può limitarsi ai recapiti e alla richiesta di appuntamento, evitando dettagli clinici."]
+    ]
+  },
+  "palestre": {
+    "cta": "Richiedi una proposta per la tua palestra",
+    "whatsappMessage": "Buongiorno, vorrei organizzare corsi, iscritti e prenotazioni della mia palestra. Mi interessa una proposta su misura.",
+    "metaTitle": "Corsi e prenotazioni per palestre | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e gestionali su misura per palestre: calendario corsi, iscritti e prenotazioni con regole concordate. Richiedi una proposta.",
+    "offers": ["website", "webapp"],
+    "name": "Palestre e fitness", "activity": "Palestra / Fitness", "menu": false,
+    "headline": "Gestisci iscrizioni, lezioni e prenotazioni in un unico strumento.",
+    "intro": "Fai trovare orari e attività ai tuoi iscritti e organizza le richieste per i corsi. Scegliamo insieme le funzioni utili al tuo centro fitness.",
+    "benefits": ["Orari dei corsi sempre consultabili", "Richieste di partecipazione ordinate", "Disponibilità più chiare", "Comunicazioni agli iscritti più semplici"],
+    "features": ["Calendario corsi", "Prenotazioni con limite posti", "Gestione iscritti", "Pacchetti lezioni su misura", "Avvisi e scadenze su richiesta"],
+    "example": "L'iscritto consulta il calendario e prenota un corso. Il centro controlla i posti disponibili e le regole del pacchetto acquistato.",
+    "faq": [
+      ["Posso limitare i posti per corso?", "Sì, la gestione capienza e le eventuali liste d'attesa vengono definite sulle tue esigenze."],
+      ["Sono inclusi pagamenti e abbonamenti?", "Sono moduli da progettare e quotare separatamente, con regole e costi chiari."],
+      ["Funziona anche per un personal trainer?", "Sì, possiamo partire da una soluzione più semplice per appuntamenti e pacchetti individuali."]
+    ]
+  },
+  "negozi": {
+    "cta": "Richiedi una proposta per il tuo negozio",
+    "whatsappMessage": "Buongiorno, vorrei presentare il mio negozio e organizzare prodotti, clienti e magazzino. Possiamo parlarne?",
+    "metaTitle": "Siti e gestionali per negozi | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e gestionali su preventivo per negozi: prodotti, clienti e magazzino. E-commerce e integrazioni vengono quotati separatamente.",
+    "offers": ["website", "webapp"],
+    "name": "Negozi e retail", "activity": "Negozio / Retail", "menu": false,
+    "headline": "Prodotti, clienti e magazzino: organizza meglio il tuo negozio.",
+    "intro": "Fai trovare il tuo negozio online e rendi più ordinati catalogo, richieste e contatti. Le integrazioni seguono i processi che usi davvero.",
+    "benefits": ["Prodotti e recapiti facili da trovare", "Richieste dei clienti raccolte con ordine", "Catalogo consultabile da smartphone", "Relazioni commerciali più continue"],
+    "features": ["Sito del negozio", "Catalogo prodotti", "Richieste disponibilità", "Gestione clienti", "Magazzino e fidelity su preventivo"],
+    "example": "Un cliente vede un prodotto dal telefono e chiede disponibilità. Tu rispondi con le informazioni utili e organizzi il ritiro.",
+    "faq": [
+      ["Il catalogo è già un ecommerce?", "No. Un catalogo presenta i prodotti; carrello, pagamenti, spedizioni e integrazioni ecommerce richiedono un progetto specifico."],
+      ["Si collega al mio magazzino?", "Valutiamo il software che utilizzi e le possibilità tecniche prima di definire l'integrazione."],
+      ["Posso offrire una raccolta punti?", "Sì, possiamo progettare regole e premi della fidelity, con un preventivo dedicato."]
+    ]
+  },
+  "officine": {
+    "cta": "Richiedi una proposta per la tua officina",
+    "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, clienti e interventi della mia officina. Vorrei valutare uno strumento personalizzato.",
+    "metaTitle": "Agenda e gestionali per officine | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per officine: agenda, clienti, interventi e promemoria. Proposta iniziale gratuita e senza impegno.",
+    "offers": ["website", "webapp"],
+    "name": "Officine e autorimesse", "activity": "Autorimessa / Meccanico", "menu": false,
+    "headline": "Appuntamenti, clienti e interventi: organizza il lavoro della tua officina.",
+    "intro": "Raccogli le richieste dei clienti e prepara il lavoro senza inseguire messaggi sparsi. Una soluzione su misura mette ordine nella parte organizzativa.",
+    "benefits": ["Richieste di intervento più ordinate", "Agenda facilmente consultabile", "Contatti dei clienti a portata di mano", "Informazioni sui servizi più chiare"],
+    "features": ["Presentazione servizi", "Richieste di appuntamento", "Agenda dell'officina", "Schede clienti e veicoli su richiesta", "Promemoria interventi concordati"],
+    "example": "Il cliente richiede un appuntamento per un controllo. L'officina verifica il carico di lavoro e concorda giorno e modalità di consegna.",
+    "faq": [
+      ["Il preventivo si genera automaticamente?", "Non senza regole definite. Possiamo raccogliere la richiesta e progettare un flusso di preventivazione dedicato."],
+      ["Gestisce anche ricambi e magazzino?", "Queste funzioni sono extra da analizzare, considerando il software e i fornitori che già utilizzi."],
+      ["Posso inviare promemoria manutenzione?", "È una funzione possibile, con canali, consenso e costi di invio concordati."]
+    ]
+  },
+  "agenzie-immobiliari": {
+    "cta": "Richiedi una proposta per la tua agenzia",
+    "whatsappMessage": "Buongiorno, vorrei organizzare immobili, richieste e appuntamenti della mia agenzia immobiliare. Possiamo valutare una soluzione su misura?",
+    "metaTitle": "Siti e strumenti per agenzie immobiliari | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per immobili, contatti e appuntamenti. Collegamenti ai portali solo dopo verifica tecnica.",
+    "offers": ["website", "webapp"],
+    "name": "Agenzie immobiliari", "activity": "Agenzia Immobiliare", "menu": false,
+    "headline": "Organizza immobili, richieste e appuntamenti in un unico posto.",
+    "intro": "Presenta gli immobili e raccogli richieste di visita in modo chiaro. Uno strumento personalizzato aiuta il tuo team a seguire i contatti.",
+    "benefits": ["Immobili consultabili da smartphone", "Richieste di visita più ordinate", "Contatti organizzati per interesse", "Calendario condiviso più leggibile"],
+    "features": ["Vetrina immobili", "Filtri di ricerca pertinenti", "Richieste di visita", "Agenda del team", "Archivio contatti su misura"],
+    "example": "Un visitatore legge la scheda di un immobile e richiede una visita. Il team associa la richiesta all'immobile e organizza il ricontatto.",
+    "faq": [
+      ["Gli annunci si sincronizzano con i portali?", "La sincronizzazione dipende dai portali, dalle API e dai contratti disponibili: va verificata prima."],
+      ["Posso importare il catalogo esistente?", "Valutiamo formato e qualità dei dati per definire modalità e costi dell'importazione."],
+      ["Più agenti possono usare lo strumento?", "Possiamo progettare ruoli e accessi distinti in base all'organizzazione dell'agenzia."]
+    ]
+  },
+  "studi-legali": {
+    "cta": "Richiedi una proposta per il tuo studio legale",
+    "whatsappMessage": "Buongiorno, vorrei valutare un sito e strumenti organizzativi per appuntamenti e attività del mio studio legale, senza inviare documenti riservati qui.",
+    "metaTitle": "Siti e organizzazione per studi legali | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per appuntamenti e organizzazione dello studio legale. Fascicoli riservati richiedono verifiche dedicate.",
+    "offers": ["website", "webapp"],
+    "name": "Studi legali e notarili", "activity": "Studio Legale / Notarile", "menu": false,
+    "headline": "Organizza appuntamenti e attività del tuo studio con strumenti su misura.",
+    "intro": "Presenta ambiti di attività e recapiti con chiarezza. Organizza le richieste di appuntamento senza chiedere documenti riservati in un modulo pubblico.",
+    "benefits": ["Presentazione dello studio chiara", "Richieste di appuntamento ordinate", "Recapiti facilmente accessibili", "Meno passaggi per il primo contatto"],
+    "features": ["Sito dello studio", "Presentazione ambiti professionali", "Richieste di appuntamento", "Agenda organizzativa", "Area riservata soltanto su progetto dedicato"],
+    "example": "Una persona trova l'ambito professionale dello studio e richiede un contatto. Il professionista concorda poi un canale adatto per i dettagli riservati.",
+    "faq": [
+      ["Posso raccogliere documenti dal sito?", "Solo dopo un'analisi specifica di sicurezza, accessi, conservazione e responsabilità; non è incluso nel modulo pubblico."],
+      ["Il sito può presentare i professionisti?", "Sì, con informazioni fornite e approvate dallo studio nel rispetto delle regole professionali applicabili."],
+      ["È incluso un gestionale pratiche?", "No. La gestione delle pratiche è un progetto separato da definire nel preventivo."]
+    ]
+  },
+  "agenti-commercio": {
+    "cta": "Richiedi una proposta per la tua attività commerciale",
+    "whatsappMessage": "Buongiorno, sono un agente di commercio e vorrei consultare clienti, pianificare visite e raccogliere ordini dallo smartphone. Vorrei una proposta su misura.",
+    "metaTitle": "Clienti e ordini per agenti di commercio | PromoApp.it",
+    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per agenti di commercio: clienti, visite, cataloghi e raccolta ordini da smartphone.",
+    "offers": ["website", "webapp"],
+    "name": "Agenti di commercio", "activity": "Agente di Commercio", "menu": false,
+    "headline": "Clienti, visite e ordini sempre a portata di mano.",
+    "intro": "Porta sul telefono gli strumenti utili al tuo lavoro commerciale. Progettiamo una soluzione per seguire clienti e attività anche mentre sei in visita.",
+    "benefits": ["Clienti facilmente consultabili", "Visite pianificate con ordine", "Richieste e ordini meno dispersivi", "Attività commerciali più leggibili"],
+    "features": ["Rubrica clienti", "Agenda visite", "Cataloghi e listini riservati", "Raccolta ordini su misura", "Report attività e integrazioni da valutare"],
+    "example": "Prima di una visita consulti il cliente e il catalogo. Durante l'incontro raccogli una richiesta d'ordine secondo le regole concordate con la mandante.",
+    "faq": [
+      ["Gestisce più mandanti e listini?", "Possiamo prevedere regole distinte, dopo aver analizzato listini, autorizzazioni e flusso degli ordini."],
+      ["Funziona senza connessione?", "L'uso offline non è automatico: va progettato, indicando quali dati sono disponibili e come vengono sincronizzati."],
+      ["Gli ordini arrivano al gestionale della mandante?", "Verifichiamo i canali disponibili e le autorizzazioni della mandante prima di promettere l'integrazione."]
+    ]
+  }
+}

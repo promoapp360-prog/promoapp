@@ -1,2 +1,3 @@
 - [Aggiunta progetti lavori](aggiunta-progetti-lavori.md) — sviluppo e produzione hanno dati distinti; mai sovrascrivere il DB pubblico per trasferire un progetto.
 - [Vincoli commerciali](commercial-scope.md) — PromoApp serve le PMI con diversi servizi digitali; preservare il progetto e usare solo prove commerciali autentiche.
+- [Anteprima e routing](anteprima-routing.md) — i riavvii locali non devono modificare Stripe live; le riscritture statiche non emettono redirect HTTP.

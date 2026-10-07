@@ -1,4 +1,6 @@
-import { captureAttribution, getAttribution, readConsent, type Service, type Consent } from "./marketing";
+import type { TrackingConfig } from "@workspace/api-client-react";
+import { appPath, captureAttribution, persistAttribution, readConsent, type Service, type Consent } from "./marketing";
+import { commercialVariant } from "./commercial";
 
 declare global {
   interface Window {
@@ -8,110 +10,117 @@ declare global {
     _fbq?: Window["fbq"];
   }
 }
-
-// Empty Google fields are intentional. Configure real IDs in marketing-config.json.
-type TrackingConfig = { ga4Id?: string; googleAdsId?: string; googleAdsLeadLabel?: string; metaPixelId?: string };
 let config: TrackingConfig = {};
-let ready = false;
-let googleStarted = false;
-let metaStarted = false;
-let lastPath = "";
-let activePath = "/";
-
+let ready = false, googleStarted = false, metaStarted = false, gtmStarted = false;
+let activePath = "/", lastPage = "";
+let gaConfigured = false, adsConfigured = false;
+const sentLeads = new Set<string>();
+const privatePage = () => /^\/(?:admin|gestione-contatti|lavori)(?:\/|$)/.test(activePath);
 function gtag(..._args: unknown[]) {
-  window.dataLayer = window.dataLayer ?? [];
-  // Google expects Arguments objects rather than arrays in dataLayer.
+  window.dataLayer ??= [];
   window.dataLayer.push(arguments);
 }
-function sendPageView(path: string) {
-  if (lastPath === path) return;
-  if (googleStarted && readConsent().analytics && config.ga4Id) {
-    window.gtag?.("event", "page_view", {
-      send_to: config.ga4Id, page_location: `${window.location.origin}${path}`,
-      page_title: document.title,
-    });
-  }
-  if (metaStarted && readConsent().marketing) window.fbq?.("track", "PageView");
-  lastPath = path;
-}
-function loadScript(id: string, src: string, onError?: () => void) {
+function script(id: string, src: string) {
   if (document.getElementById(id)) return;
-  const script = document.createElement("script");
-  script.id = id; script.async = true; script.src = src;
-  if (onError) script.onerror = onError;
-  document.head.appendChild(script);
+  const node = document.createElement("script");
+  node.id = id; node.async = true; node.src = src; document.head.appendChild(node);
 }
-function configureTracking(consent: Consent) {
+function consentValues(consent: Consent) {
+  return {
+    analytics_storage: consent.analytics ? "granted" : "denied",
+    ad_storage: consent.marketing ? "granted" : "denied",
+    ad_user_data: consent.marketing ? "granted" : "denied",
+    ad_personalization: consent.marketing ? "granted" : "denied",
+  };
+}
+function configure(consent: Consent) {
+  if (privatePage()) return;
+  persistAttribution();
   if (!ready) return;
-  const ga4Id = /^G-[A-Z0-9]+$/.test(config.ga4Id ?? "") ? config.ga4Id : undefined;
-  const adsId = /^AW-\d+$/.test(config.googleAdsId ?? "") ? config.googleAdsId : undefined;
-  const googleId = (consent.analytics && ga4Id) || (consent.marketing && adsId);
-  if (googleId && !googleStarted) {
+  if (!window.gtag) {
     window.gtag = gtag;
-    gtag("consent", "default", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
-    gtag("js", new Date());
-    googleStarted = true;
-    loadScript("promoapp-google-tag", `https://www.googletagmanager.com/gtag/js?id=${googleId}`);
+    gtag("consent", "default", consentValues({ analytics: false, marketing: false }));
   }
-  if (googleStarted) {
-    gtag("consent", "update", {
-      analytics_storage: consent.analytics ? "granted" : "denied",
-      ad_storage: consent.marketing ? "granted" : "denied",
-      ad_user_data: consent.marketing ? "granted" : "denied",
-      ad_personalization: consent.marketing ? "granted" : "denied",
-    });
-    if (consent.analytics && ga4Id) gtag("config", ga4Id, { send_page_view: false });
-    if (consent.marketing && adsId) gtag("config", adsId, { send_page_view: false });
+  gtag("consent", "update", consentValues(consent));
+  const gtm = /^GTM-[A-Z0-9]+$/.test(config.gtmId ?? "") ? config.gtmId : "";
+  // A configured GTM container owns Google tags: never also load direct gtag.
+  // Strict/basic consent mode: the container is not loaded without marketing consent.
+  if (gtm && consent.marketing && !gtmStarted) {
+    window.dataLayer ??= [];
+    window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+    script("promoapp-gtm", `https://www.googletagmanager.com/gtm.js?id=${gtm}`);
+    gtmStarted = true;
+  }
+  const ga = /^G-[A-Z0-9]+$/.test(config.ga4Id ?? "") ? config.ga4Id : "";
+  const ads = /^AW-\d+$/.test(config.googleAdsId ?? "") ? config.googleAdsId : "";
+  const googleId = consent.analytics && ga || consent.marketing && ads;
+  if (!gtm && googleId && !googleStarted) {
+    gtag("js", new Date());
+    script("promoapp-google-tag", `https://www.googletagmanager.com/gtag/js?id=${googleId}`);
+    googleStarted = true;
+  }
+  if (!gtm && googleStarted) {
+    if (ga && consent.analytics && !gaConfigured) { gtag("config", ga, { send_page_view: false }); gaConfigured = true; }
+    if (ads && consent.marketing && !adsConfigured) { gtag("config", ads, { send_page_view: false }); adsConfigured = true; }
   }
   if (consent.marketing && /^\d+$/.test(config.metaPixelId ?? "") && !metaStarted) {
     const pixel: NonNullable<Window["fbq"]> = (...args: unknown[]) => {
-      if (pixel.callMethod) pixel.callMethod(...args);
-      else pixel.queue!.push(args);
+      if (pixel.callMethod) pixel.callMethod(...args); else pixel.queue!.push(args);
     };
-    pixel.queue = []; pixel.loaded = true; pixel.version = "2.0";
-    pixel.push = pixel;
+    pixel.queue = []; pixel.loaded = true; pixel.version = "2.0"; pixel.push = pixel;
     window.fbq = pixel; window._fbq = pixel;
-    pixel("init", config.metaPixelId);
-    metaStarted = true;
-    loadScript("promoapp-meta-pixel", "https://connect.facebook.net/en_US/fbevents.js");
+    pixel("init", config.metaPixelId); metaStarted = true;
+    script("promoapp-meta-pixel", "https://connect.facebook.net/en_US/fbevents.js");
   }
   if (metaStarted) window.fbq?.("consent", consent.marketing ? "grant" : "revoke");
-  lastPath = "";
-  sendPageView(activePath);
+  if (lastPage !== activePath) {
+    trackEvent("page_view", "generale", activePath);
+    if (metaStarted && consent.marketing) window.fbq?.("track", "PageView");
+    if (consent.analytics || consent.marketing) lastPage = activePath;
+  }
 }
 export async function initTracking() {
   captureAttribution();
   try {
-    const response = await fetch(`${import.meta.env.BASE_URL}marketing-config.json`);
-    if (!response.ok) throw new Error("Tracking configuration unavailable");
-    config = await response.json() as TrackingConfig;
-    ready = true;
-    configureTracking(readConsent());
-  } catch {
-    // Analytics must never block enquiries or navigation.
-    ready = true;
-  }
+    const [staticResponse, runtimeResponse] = await Promise.all([
+      fetch(appPath("/marketing-config.json")), fetch(appPath("/api/marketing-config")),
+    ]);
+    if (staticResponse.ok) config = await staticResponse.json();
+    if (runtimeResponse.ok) {
+      const runtime = await runtimeResponse.json() as TrackingConfig;
+      for (const [key, value] of Object.entries(runtime)) if (value) (config as Record<string, string>)[key] = value;
+    }
+  } catch { /* Tracking must never block enquiries. */ }
+  ready = true; configure(readConsent());
 }
-export function updateTrackingConsent(consent: Consent) {
-  configureTracking(consent);
-}
-export function trackPage(path: string) {
-  activePath = path;
-  captureAttribution();
-  if (ready) sendPageView(path);
-}
-export function trackConversion(service: Service, placement = "form") {
+export function updateTrackingConsent(consent: Consent) { configure(consent); }
+export function trackPage(path: string) { activePath = path; captureAttribution(); configure(readConsent()); }
+export function trackEvent(event: string, service: Service = "generale", placement = "form", slug = "generale", eventId?: string) {
+  if (privatePage()) return;
   const consent = readConsent();
-  const context = { service, placement, ...getAttribution() };
-  if (consent.analytics && googleStarted && config.ga4Id) window.gtag?.("event", "generate_lead", { ...context, send_to: config.ga4Id });
-  if (consent.marketing && googleStarted && config.googleAdsId && config.googleAdsLeadLabel) {
-    window.gtag?.("event", "conversion", { send_to: `${config.googleAdsId}/${config.googleAdsLeadLabel}`, service });
+  if (!consent.analytics && !consent.marketing) return;
+  // No names, phone numbers, email, free text, URL query or raw advertising parameters.
+  const context = { service, placement, page_path: activePath, sector: slug, variant: commercialVariant().key, ...(eventId ? { event_id: eventId } : {}) };
+  if (gtmStarted) {
+    window.dataLayer ??= [];
+    window.dataLayer.push({ event, ...context });
+  } else if (consent.analytics && googleStarted && config.ga4Id) {
+    window.gtag?.("event", event, { ...context, send_to: config.ga4Id });
   }
-  if (consent.marketing && metaStarted) window.fbq?.("track", "Lead", { service });
 }
-export function trackWhatsApp(service: Service, placement: string) {
-  if (readConsent().analytics && googleStarted && config.ga4Id) {
-    window.gtag?.("event", "whatsapp_click", { service, placement, send_to: config.ga4Id });
-  }
-  if (readConsent().marketing && metaStarted) window.fbq?.("trackCustom", "WhatsAppClick", { service, placement });
+export function trackConversion(service: Service, placement = "form", leadId?: string, slug = "generale") {
+  if (!leadId || sentLeads.has(leadId)) return;
+  try { if (sessionStorage.getItem(`promoapp-counted-${leadId}`)) return; } catch { /* In-memory dedup still works. */ }
+  const consent = readConsent();
+  if (!consent.analytics && !consent.marketing) return;
+  sentLeads.add(leadId);
+  try { sessionStorage.setItem(`promoapp-counted-${leadId}`, "1"); } catch { /* Optional. */ }
+  trackEvent("generate_lead", service, placement, slug, leadId);
+  if (!gtmStarted && consent.marketing && googleStarted && config.googleAdsId && config.googleAdsLeadLabel)
+    window.gtag?.("event", "conversion", { send_to: `${config.googleAdsId}/${config.googleAdsLeadLabel}`, transaction_id: leadId });
+  if (consent.marketing && metaStarted) window.fbq?.("track", "Lead", { service }, { eventID: leadId });
+}
+export function trackWhatsApp(service: Service, placement: string, slug = "generale") {
+  trackEvent("whatsapp_click", service, placement, slug);
+  if (readConsent().marketing && metaStarted) window.fbq?.("trackCustom", "WhatsAppClick", { service, placement, sector: slug });
 }

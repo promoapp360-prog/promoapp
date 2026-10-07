@@ -1,18 +1,18 @@
 {
   "/": {
-    "title": "Più clienti, meno stress: app su misura | PromoApp.it",
-    "description": "Prenotazioni h24, gestione e fidelity in un'app creata per la tua attività. Richiedi una demo gratuita su WhatsApp o una consulenza con PromoApp.",
-    "h1": "Più Clienti, Meno Stress: L'App su misura per gestire la tua attività."
+    "title": "Siti web, app e gestionali su misura | PromoApp.it",
+    "description": "Semplifica il lavoro della tua attività con siti web, app e gestionali personalizzati. Richiedi una proposta iniziale gratuita e senza impegno.",
+    "h1": "La tua attività merita strumenti che ti semplificano il lavoro."
   },
   "/preventivo": {
     "title": "Richiedi una consulenza gratuita | PromoApp.it",
-    "description": "Raccontaci la tua attività e scopri un'app su misura per prenotazioni, gestione e fidelity. Richiedi una demo gratuita o una consulenza con PromoApp.",
+    "description": "Raccontaci la tua attività e scopri siti web, app e gestionali su misura. Richiedi una proposta gratuita e senza impegno.",
     "canonical": "/",
-    "h1": "Più Clienti, Meno Stress: L'App su misura per gestire la tua attività."
+    "h1": "La tua attività merita strumenti che ti semplificano il lavoro."
   },
   "/siti-web": {
     "title": "Siti web professionali da 399 € | PromoApp.it",
-    "description": "Un sito web professionale per negozi, artigiani, professionisti e aziende. Esempi reali, prezzi chiari e preventivo su WhatsApp. Da 399 € + IVA.",
+    "description": "Un sito web professionale per negozi, artigiani, professionisti e aziende. Servizi, prezzi chiari e contatto su WhatsApp. Da 399 € + IVA.",
     "h1": "Il tuo sito web professionale a partire da 399 €"
   },
   "/web-app": {

@@ -1,0 +1,29 @@
+{
+  "prices": {
+    "website": { "amount": 399, "label": "Da 399 € + IVA" },
+    "menu": { "amount": 99, "label": "99 € + IVA una tantum" },
+    "webapp": { "label": "Su preventivo" },
+    "management": { "label": "Su preventivo" },
+    "note": "Funzionalità extra, hosting e dominio vengono definiti nel preventivo."
+  },
+  "experiments": {
+    "enabled": false,
+    "activeVariant": "control",
+    "variants": {
+      "control": {
+        "headline": "Il digitale su misura per far crescere la tua attività.",
+        "cta": "Richiedi una proposta gratuita",
+        "whatsappLabel": "Scrivici su WhatsApp",
+        "formPosition": "hero",
+        "pricePresentation": "cards"
+      },
+      "benefits": {
+        "headline": "Più ordine nella tua attività, meno tempo perso.",
+        "cta": "Parliamo della tua attività",
+        "whatsappLabel": "Parliamone su WhatsApp",
+        "formPosition": "after-services",
+        "pricePresentation": "compact"
+      }
+    }
+  }
+}

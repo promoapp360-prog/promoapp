@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "wouter";
 
 const API_BASE = "";
 
@@ -313,6 +314,7 @@ export default function Admin() {
             <p className="text-gray-500 text-sm">PromoApp.it</p>
           </div>
           <div className="flex gap-3">
+            <Link href="/gestione-contatti" className="text-sm text-indigo-600 hover:underline">Contatti commerciali</Link>
             <a href="/" className="text-sm text-indigo-600 hover:underline">← Sito</a>
             <button onClick={() => { setAutenticato(false); setPassword(""); }} className="text-sm text-gray-400 hover:text-gray-600">Esci</button>
           </div>

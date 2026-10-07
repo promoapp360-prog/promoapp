@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link } from "wouter";
-import { appPath, getAttribution, whatsappUrl } from "../lib/marketing";
-import { trackConversion, trackWhatsApp } from "../lib/analytics";
+import { Link, useLocation } from "wouter";
+import { appPath, getAttribution, readConsent, whatsappUrl } from "../lib/marketing";
+import { trackConversion, trackWhatsApp, trackEvent } from "../lib/analytics";
+import { rememberLead } from "../lib/lead-receipt";
+import { commercialVariant, sectors, prices } from "../lib/commercial";
+import type { ContactResponse } from "@workspace/api-client-react";
+import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import HomeContactForm from "../components/marketing/HomeContactForm";
 import "../styles/commercial.css";
 
 const SERVICES = [
-  { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: "Da 399 €", desc: "Presenta la tua attività e fatti contattare.", cta: "Scopri i siti web" },
-  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: "Su preventivo", desc: "Strumenti su misura per il tuo lavoro.", cta: "Scopri le web app" },
-  { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali per ristoranti", price: "Da 99 €", desc: "Il tuo menu su smartphone, con QR code.", cta: "Scopri i menu digitali" },
+  { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: prices.website.label, desc: "Presenta la tua attività e fatti contattare.", cta: "Scopri i siti web" },
+  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Strumenti su misura per il tuo lavoro.", cta: "Scopri le web app" },
+  { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali per ristoranti", price: prices.menu.label, desc: "Il tuo menu su smartphone, con QR code.", cta: "Scopri i menu digitali" },
 ];
 
 const SETTORI = [
@@ -24,16 +28,17 @@ const SETTORI = [
   "Centro Servizi / Agenzia",
   "Agente di Commercio",
   "Altro",
+  "B&B / Hotel",
 ];
 
 const FEATURES = [
   { icon: "fa-chart-line",     text: "Gestione Completa: Tutto il tuo business sotto controllo, dal palmo della mano." },
-  { icon: "fa-calendar-check", text: "Zero Interruzioni: I clienti prenotano online h24 in totale autonomia." },
+  { icon: "fa-calendar-check", text: "Richieste online: organizza appuntamenti e disponibilità con le funzioni concordate." },
   { icon: "fa-hotel",          text: "Hotel, B&B e strutture ricettive" },
   { icon: "fa-scissors",       text: "Agenda per parrucchieri e centri beauty" },
   { icon: "fa-boxes-stacked",  text: "Magazzino, prodotti e inventario" },
-  { icon: "fa-cash-register",  text: "Stop ai No-Show: Fai pagare in anticipo o richiedi acconti automatici al momento della prenotazione." },
-  { icon: "fa-users",          text: "Fidelity Digitale: Fai tornare i clienti più spesso con la raccolta punti su smartphone, senza tessere cartacee." },
+  { icon: "fa-cash-register",  text: "Pagamenti e acconti: strumenti e integrazioni da definire nel preventivo." },
+  { icon: "fa-users",          text: "Fidelity digitale: programmi e promozioni adatti ai tuoi clienti, anche da smartphone." },
   { icon: "fa-chart-pie",      text: "Report e notifiche automatiche" },
 ];
 
@@ -80,12 +85,16 @@ function StarPicker({
 }
 
 export default function Preventivo() {
+  useMobileFormVisibility();
+  const [, navigate] = useLocation();
+  const variant = commercialVariant();
   const [form, setForm] = useState({
     nome_attivita: "",
     email: "",
     whatsapp: "",
     settore: "",
     messaggio: "",
+    website: "",
   });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -127,8 +136,7 @@ export default function Preventivo() {
     if (
       !form.nome_attivita.trim() ||
       !form.whatsapp.trim() ||
-      !form.settore ||
-      !form.messaggio.trim()
+      !form.settore
     ) {
       setError("Compila tutti i campi per continuare.");
       return;
@@ -143,12 +151,16 @@ export default function Preventivo() {
       const res = await fetch(appPath("/api/invia-contatto"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, servizio: "generale", pagina: window.location.pathname, attribution: getAttribution() }),
+        body: JSON.stringify({ ...form, privacy, servizio: "general", slug: "generale",
+          variant: variant.key, pagina: window.location.pathname, attribution: getAttribution(),
+          marketingConsent: readConsent().marketing, analyticsConsent: readConsent().analytics }),
       });
-      const data = await res.json() as { success?: boolean; message?: string };
+      const data = await res.json() as ContactResponse;
       if (!res.ok || !data.success) throw new Error(data.message ?? "Errore server");
       setSent(true);
-      trackConversion("generale", "homepage");
+      rememberLead(data, "generale");
+      if (!data.duplicate) trackConversion("generale", "homepage", data.leadId);
+      navigate("/grazie");
     } catch {
       setError("Errore nell'invio. Puoi scriverci direttamente su WhatsApp.");
     } finally {
@@ -234,15 +246,13 @@ export default function Preventivo() {
           <span className="text-indigo-300">.it</span>
         </span>
         <a
-          href={whatsappUrl()}
-          onClick={() => trackWhatsApp("generale", "nav")}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="#preventivo"
+          onClick={() => trackEvent("cta_click", "generale", "nav")}
           className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-full font-bold text-sm transition shadow-lg shadow-emerald-900/30 hover:shadow-emerald-500/30"
-          data-testid="link-nav-whatsapp"
+          data-testid="link-nav-proposta"
         >
-          <i className="fab fa-whatsapp text-base"></i>
-          Richiedi Demo
+          <i className="fas fa-paper-plane text-base" aria-hidden="true"></i>
+          Richiedi proposta
         </a>
       </nav>
 
@@ -276,35 +286,27 @@ export default function Preventivo() {
 
             {/* Headline */}
             <h1 className="text-[2.3rem] md:text-[2.8rem] font-black leading-[1.12] mb-4 tracking-tight">
-              <span className="gradient-text">Più Clienti, Meno Stress:</span> L'App su misura per gestire la tua attività.
+              <span className="gradient-text">{variant.headline}</span>
             </h1>
             <p className="text-indigo-200/80 text-base leading-relaxed mb-4 max-w-md">
-              Dimentica il telefono che squilla mentre lavori. Ricevi prenotazioni h24, azzera i no-show e fidelizza i clienti con un'unica piattaforma facile da usare. Creata su misura per te.
+              Realizziamo siti web, menu digitali, app e gestionali per aiutarti a presentare la tua attività, organizzare il lavoro e gestire meglio i clienti.
             </p>
-
-            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer"
-              onClick={() => trackWhatsApp("generale", "hero")}
-              className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
-              <i className="fab fa-whatsapp text-lg" aria-hidden="true" /> Richiedi una Demo Gratuita su WhatsApp
-            </a>
-            <div className="grid gap-2 mb-4" id="servizi" aria-label="I servizi PromoApp">
-              {SERVICES.map((service) => <Link key={service.path} href={service.path}
-                className="glass-card rounded-2xl p-4 flex gap-3 items-start hover:bg-white/15 transition"
-                data-testid={`service-${service.path.slice(1)}`}>
-                <i className={`fas ${service.icon} text-emerald-300 mt-1 text-lg w-6`} aria-hidden="true" />
-                <div className="flex-1">
-                  <div className="flex flex-wrap justify-between items-start gap-2">
-                    <h2 className="font-bold text-sm max-w-[240px]">{service.title}</h2>
-                    <span className="text-amber-300 font-bold text-sm whitespace-nowrap">{service.price}</span>
-                  </div>
-                  <p className="text-xs text-indigo-200 mt-1">{service.desc}</p>
-                  <span className="block text-emerald-300 font-semibold text-xs mt-2">{service.cta} →</span>
-                </div>
-              </Link>)}
-              <p className="text-[10px] text-indigo-200/70">Prezzi di partenza + IVA. Extra, hosting e dominio definiti nel preventivo.</p>
+            <div className="grid grid-cols-3 gap-2 mb-4" aria-label="Prezzi dei servizi">
+              <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">Da 399 €</strong><span className="block text-[10px]">+ IVA</span></Link>
+              <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 €</strong><span className="block text-[10px]">+ IVA · una tantum</span></Link>
+              <Link href="/web-app" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">Su preventivo</strong></Link>
             </div>
 
-            <a
+            <a href="#preventivo"
+              onClick={() => trackEvent("cta_click", "generale", "hero")}
+              className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
+              {variant.cta}
+            </a>
+            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
+              className="inline-flex items-center gap-2 text-emerald-300 font-bold text-sm mb-4">
+              <i className="fab fa-whatsapp" aria-hidden="true" /> {variant.whatsappLabel}
+            </a>
+            {reviews.length > 0 && <a
               href="#recensioni"
               className="ml-1 mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-black text-white transition hover:border-emerald-300/50 hover:bg-white/15"
               data-testid="link-see-reviews"
@@ -312,26 +314,68 @@ export default function Preventivo() {
               <i className="fas fa-star text-amber-300"></i>
               Leggi le recensioni
               <i className="fas fa-arrow-down text-[10px] text-emerald-300"></i>
-            </a>
+            </a>}
 
           </div>
 
           {/* RIGHT form */}
-          <div className="relative z-10 scroll-mt-5" id="preventivo">
+          {variant.formPosition === "hero" && <div className="relative z-10 scroll-mt-5" id="preventivo">
             <HomeContactForm form={form} onChange={handleChange} onSubmit={handleSubmit}
               sent={sent} loading={loading} error={error} privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
+          </div>}
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-8" id="servizi">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-bold text-white text-2xl mb-5">Scegli da dove iniziare</h2>
+          <div className={`grid sm:grid-cols-3 gap-3${variant.pricePresentation === "compact" ? " price-compact" : ""}`}>
+            {SERVICES.map((service) => <Link key={service.path} href={service.path}
+              className="glass-card rounded-2xl p-4 flex gap-3 items-start hover:bg-white/15 transition" data-testid={`service-${service.path.slice(1)}`}>
+              <i className={`fas ${service.icon} text-emerald-300 mt-1 text-lg w-6`} aria-hidden="true" />
+              <div><h3 className="text-white font-bold text-sm">{service.title}</h3><p className="text-amber-300 font-bold text-sm mt-2">{service.price}</p>
+                <p className="text-xs text-indigo-200 mt-2">{service.desc}</p><span className="block text-emerald-300 font-semibold text-xs mt-3">{service.cta} →</span></div>
+            </Link>)}
           </div>
+          <p className="text-[10px] text-indigo-200/70 mt-4">{prices.note}</p>
+          {variant.formPosition === "after-services" && <div className="max-w-xl mx-auto mt-8 scroll-mt-5" id="preventivo">
+            <HomeContactForm form={form} onChange={handleChange} onSubmit={handleSubmit} sent={sent} loading={loading} error={error}
+              privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
+          </div>}
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-8" aria-label="Soluzioni per attività">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-bold text-white text-2xl mb-2">Una soluzione adatta alla tua attività</h2>
+          <p className="text-indigo-200 text-sm mb-5">Scopri esempi e possibilità per il tuo settore, senza dover conoscere la tecnologia.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {Object.entries(sectors).map(([slug, sector]) => <Link key={slug} href={`/per/${slug}`}
+              className="glass-card rounded-xl p-4 text-white font-bold text-sm hover:bg-white/15">{sector.name} <span aria-hidden="true">→</span></Link>)}
+          </div>
+        </div>
+      </section>
+      <section className="relative z-10 px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-bold text-white text-2xl mb-2">Strumenti pratici per organizzare il tuo lavoro</h2>
+          <p className="text-indigo-200 text-sm mb-5">Scegliamo insieme le funzioni utili alla tua attività, senza includere automaticamente ciò che non serve.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
+            <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
+          </div>)}</div>
+          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Scopri le web app e i gestionali →</Link>
         </div>
       </section>
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-bold text-white text-2xl mb-2">Tutto ciò che serve per automatizzare il tuo lavoro</h2>
-          <p className="text-indigo-200 text-sm mb-5">Soluzioni su misura da integrare nella tua Web App per farti risparmiare tempo ogni giorno.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
-            <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
-          </div>)}</div>
-          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Scopri le web app e i gestionali →</Link>
+          <h2 className="font-bold text-white text-2xl mb-5">Come funziona PromoApp</h2>
+          <ol className="grid sm:grid-cols-3 gap-3">
+            {[["Ci racconti la tua attività", "Partiamo dalle tue esigenze e dagli strumenti che usi già."],
+              ["Ricevi una proposta chiara", "Proposta iniziale gratuita e senza impegno; funzioni, costi e tempi concordati."],
+              ["Realizziamo il tuo progetto", "Parli direttamente con chi realizza la soluzione e definisci avvio e assistenza."]].map(([title, text], index) =>
+              <li key={title} className="glass-card rounded-2xl p-5"><p className="text-emerald-300 font-black mb-2">{index + 1}. {title}</p><p className="text-indigo-200 text-sm">{text}</p></li>)}
+          </ol>
+          <p className="text-indigo-200 text-sm mt-4">{prices.note}</p>
         </div>
       </section>
 
@@ -343,27 +387,27 @@ export default function Preventivo() {
       {/* ══════════════════════════════════════════
           RECENSIONI
       ══════════════════════════════════════════ */}
-      <section className="relative z-10 px-4 py-9" id="recensioni">
+      {reviews.length > 0 && <section className="relative z-10 px-4 py-9" id="recensioni">
         <div className="max-w-5xl mx-auto">
 
           {/* Section header */}
-          <div className="text-center mb-6">
+          <div className={reviews.length ? "text-center mb-6" : "hidden"}>
             <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-3">
               <i className="fas fa-shield-halved"></i>
-              Esperienze reali
+              Opinioni dei clienti
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white leading-tight mb-3">
-              Recensioni <span className="gradient-text">verificate</span>
+              Recensioni <span className="gradient-text">approvate</span>
             </h2>
             <p className="text-indigo-200/70 text-sm max-w-sm mx-auto">
               Leggi le esperienze dei clienti e racconta anche la tua.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-5 items-start">
+          <div className={reviews.length ? "grid md:grid-cols-[1.15fr_0.85fr] gap-5 items-start" : "grid gap-5 items-start"}>
 
             {/* Reviews list */}
-            <div className="space-y-3">
+            <div className={reviews.length ? "space-y-3" : "hidden"}>
               {reviews.length > 0 ? (
                  (showAllReviews ? reviews : reviews.slice(0, 3)).map((review, idx) => (
                   <article
@@ -390,7 +434,7 @@ export default function Preventivo() {
                       </div>
                       <span className="inline-flex items-center gap-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-black whitespace-nowrap px-2.5 py-1 rounded-full border border-emerald-400/25">
                         <i className="fas fa-circle-check text-[9px]"></i>
-                        Verificata
+                        Approvata
                       </span>
                     </div>
                     <div className="text-yellow-400 text-base mb-2.5 tracking-wide" aria-label={`${review.stelle} stelle su 5`}>
@@ -405,7 +449,7 @@ export default function Preventivo() {
                   <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-3">
                     <i className="fas fa-comments text-2xl text-emerald-300"></i>
                   </div>
-                  <p className="text-white font-bold text-sm mb-1">{reviewsError ? "Recensioni momentaneamente non disponibili." : "Caricamento recensioni verificate…"}</p>
+                  <p className="text-white font-bold text-sm mb-1">{reviewsError ? "Recensioni momentaneamente non disponibili." : "Caricamento recensioni…"}</p>
                   <p className="text-indigo-300 text-xs">Lascia la tua esperienza: la pubblicheremo dopo la verifica.</p>
                 </div>
               )}
@@ -436,7 +480,7 @@ export default function Preventivo() {
                 <form onSubmit={handleReviewSubmit} className="space-y-3" data-testid="form-recensione">
                   <div className="pb-2 border-b border-gray-100">
                     <h3 className="text-base font-black text-gray-900">Lascia una recensione</h3>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Ogni recensione viene verificata prima della pubblicazione.</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Le recensioni sono sottoposte ad approvazione prima della pubblicazione.</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -521,18 +565,36 @@ export default function Preventivo() {
             </details>
           </div>
         </div>
+      </section>}
+
+      <section className="relative z-10 px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-bold text-white text-2xl mb-5">Prima di iniziare</h2>
+          <div className="space-y-3">
+            {[["Non so quale soluzione scegliere: posso contattarvi?", "Sì. Partiamo dalle tue attività quotidiane e ti aiutiamo a capire cosa serve, senza richiederti competenze tecniche."],
+              ["Il sito da 399 € comprende un gestionale?", "No. Il sito professionale parte da 399 € + IVA. Prenotazioni, gestionali, pagamenti e altre integrazioni sono su preventivo."],
+              ["Devo impegnarmi per ricevere la proposta?", "No. La proposta iniziale è gratuita e senza impegno. Costi, funzioni e tempi vengono concordati prima di iniziare."]].map(([question, answer]) =>
+              <details key={question} className="glass-card rounded-xl p-4"><summary className="text-white text-sm font-bold cursor-pointer">{question}</summary><p className="text-indigo-200 text-sm mt-3">{answer}</p></details>)}
+          </div>
+          <div className="mt-8 text-center">
+            <h2 className="text-white text-2xl font-bold mb-3">Scopri cosa possiamo realizzare per la tua attività</h2>
+            <a href="#preventivo" className="inline-flex bg-emerald-500 text-white px-6 py-3 rounded-full font-bold" onClick={() => trackEvent("cta_click", "generale", "final")}>{variant.cta}</a>
+          </div>
+        </div>
       </section>
+      <a className="sector-sticky" href="#preventivo" onClick={() => trackEvent("cta_click", "generale", "mobile-sticky")}>{variant.cta}</a>
 
       {/* ── FOOTER ── */}
       <footer className="relative z-10 border-t border-white/10 py-7 px-4 mt-2">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <span className="text-xs text-indigo-300/60">
-            © 2024 Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
+            © {new Date().getFullYear()} Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
           </span>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-indigo-300/60">
             <a href={appPath("/dati-societari.html")} className="hover:text-white transition">Dati societari</a>
             <a href={appPath("/privacy.html")} className="hover:text-white transition">Privacy</a>
             <a href={appPath("/cookie.html")} className="hover:text-white transition">Cookie</a>
+            <Link href="/admin" className="hover:text-white transition">Admin</Link>
             <span>·</span>
             <button type="button" className="hover:text-white transition" onClick={() => window.dispatchEvent(new Event("promoapp-cookie-settings"))}>Preferenze cookie</button>
           </div>

@@ -17,9 +17,14 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  CommercialLead,
   ContactRequest,
   ContactResponse,
+  ExportCommercialLeadsParams,
   HealthStatus,
+  LeadUpdate,
+  ListCommercialLeadsParams,
+  TrackingConfig,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -116,6 +121,419 @@ export const useSubmitContact = <
 > => {
   return useMutation(getSubmitContactMutationOptions(options));
 };
+
+export const getListCommercialLeadsUrl = (
+  params?: ListCommercialLeadsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/leads?${stringifiedParams}`
+    : `/api/admin/leads`;
+};
+
+export const listCommercialLeads = async (
+  params?: ListCommercialLeadsParams,
+  options?: RequestInit,
+): Promise<CommercialLead[]> => {
+  return customFetch<CommercialLead[]>(getListCommercialLeadsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListCommercialLeadsQueryKey = (
+  params?: ListCommercialLeadsParams,
+) => {
+  return [`/api/admin/leads`, ...(params ? [params] : [])] as const;
+};
+
+export const getListCommercialLeadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listCommercialLeads>>,
+  TError = ErrorType<void>,
+>(
+  params?: ListCommercialLeadsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listCommercialLeads>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListCommercialLeadsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listCommercialLeads>>
+  > = ({ signal }) =>
+    listCommercialLeads(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listCommercialLeads>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListCommercialLeadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listCommercialLeads>>
+>;
+export type ListCommercialLeadsQueryError = ErrorType<void>;
+
+export function useListCommercialLeads<
+  TData = Awaited<ReturnType<typeof listCommercialLeads>>,
+  TError = ErrorType<void>,
+>(
+  params?: ListCommercialLeadsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listCommercialLeads>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListCommercialLeadsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getUpdateCommercialLeadUrl = (id: string) => {
+  return `/api/admin/leads/${id}`;
+};
+
+export const updateCommercialLead = async (
+  id: string,
+  leadUpdate: LeadUpdate,
+  options?: RequestInit,
+): Promise<CommercialLead> => {
+  return customFetch<CommercialLead>(getUpdateCommercialLeadUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(leadUpdate),
+  });
+};
+
+export const getUpdateCommercialLeadMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateCommercialLead>>,
+    TError,
+    { id: string; data: BodyType<LeadUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateCommercialLead>>,
+  TError,
+  { id: string; data: BodyType<LeadUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateCommercialLead"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateCommercialLead>>,
+    { id: string; data: BodyType<LeadUpdate> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateCommercialLead(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateCommercialLeadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateCommercialLead>>
+>;
+export type UpdateCommercialLeadMutationBody = BodyType<LeadUpdate>;
+export type UpdateCommercialLeadMutationError = ErrorType<void>;
+
+export const useUpdateCommercialLead = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateCommercialLead>>,
+    TError,
+    { id: string; data: BodyType<LeadUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateCommercialLead>>,
+  TError,
+  { id: string; data: BodyType<LeadUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateCommercialLeadMutationOptions(options));
+};
+
+export const getNotifyCommercialLeadUrl = (id: string) => {
+  return `/api/admin/leads/${id}/notify`;
+};
+
+export const notifyCommercialLead = async (
+  id: string,
+  options?: RequestInit,
+): Promise<ContactResponse> => {
+  return customFetch<ContactResponse>(getNotifyCommercialLeadUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getNotifyCommercialLeadMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof notifyCommercialLead>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof notifyCommercialLead>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["notifyCommercialLead"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof notifyCommercialLead>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return notifyCommercialLead(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type NotifyCommercialLeadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof notifyCommercialLead>>
+>;
+
+export type NotifyCommercialLeadMutationError = ErrorType<void>;
+
+export const useNotifyCommercialLead = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof notifyCommercialLead>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof notifyCommercialLead>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getNotifyCommercialLeadMutationOptions(options));
+};
+
+export const getExportCommercialLeadsUrl = (
+  params?: ExportCommercialLeadsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/leads/export?${stringifiedParams}`
+    : `/api/admin/leads/export`;
+};
+
+export const exportCommercialLeads = async (
+  params?: ExportCommercialLeadsParams,
+  options?: RequestInit,
+): Promise<string> => {
+  return customFetch<string>(getExportCommercialLeadsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getExportCommercialLeadsQueryKey = (
+  params?: ExportCommercialLeadsParams,
+) => {
+  return [`/api/admin/leads/export`, ...(params ? [params] : [])] as const;
+};
+
+export const getExportCommercialLeadsQueryOptions = <
+  TData = Awaited<ReturnType<typeof exportCommercialLeads>>,
+  TError = ErrorType<void>,
+>(
+  params?: ExportCommercialLeadsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof exportCommercialLeads>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getExportCommercialLeadsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof exportCommercialLeads>>
+  > = ({ signal }) =>
+    exportCommercialLeads(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof exportCommercialLeads>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ExportCommercialLeadsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof exportCommercialLeads>>
+>;
+export type ExportCommercialLeadsQueryError = ErrorType<void>;
+
+export function useExportCommercialLeads<
+  TData = Awaited<ReturnType<typeof exportCommercialLeads>>,
+  TError = ErrorType<void>,
+>(
+  params?: ExportCommercialLeadsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof exportCommercialLeads>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getExportCommercialLeadsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getGetTrackingConfigUrl = () => {
+  return `/api/marketing-config`;
+};
+
+export const getTrackingConfig = async (
+  options?: RequestInit,
+): Promise<TrackingConfig> => {
+  return customFetch<TrackingConfig>(getGetTrackingConfigUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetTrackingConfigQueryKey = () => {
+  return [`/api/marketing-config`] as const;
+};
+
+export const getGetTrackingConfigQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTrackingConfig>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getTrackingConfig>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetTrackingConfigQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getTrackingConfig>>
+  > = ({ signal }) => getTrackingConfig({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTrackingConfig>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetTrackingConfigQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTrackingConfig>>
+>;
+export type GetTrackingConfigQueryError = ErrorType<unknown>;
+
+export function useGetTrackingConfig<
+  TData = Awaited<ReturnType<typeof getTrackingConfig>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getTrackingConfig>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTrackingConfigQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * Returns server health status

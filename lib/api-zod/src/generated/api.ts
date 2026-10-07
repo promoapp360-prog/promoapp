@@ -19,8 +19,11 @@ export const submitContactBodySettoreMax = 120;
 export const submitContactBodyWhatsappMin = 6;
 export const submitContactBodyWhatsappMax = 30;
 
-export const submitContactBodyMessaggioMin = 10;
 export const submitContactBodyMessaggioMax = 5000;
+
+export const submitContactBodySlugMax = 120;
+
+export const submitContactBodyVariantMax = 80;
 
 export const submitContactBodyEmailMax = 254;
 
@@ -57,13 +60,25 @@ export const SubmitContactBody = zod.object({
     .string()
     .min(submitContactBodyWhatsappMin)
     .max(submitContactBodyWhatsappMax),
-  messaggio: zod
-    .string()
-    .min(submitContactBodyMessaggioMin)
-    .max(submitContactBodyMessaggioMax),
+  messaggio: zod.string().max(submitContactBodyMessaggioMax).optional(),
+  privacy: zod.literal(true),
+  marketingConsent: zod.boolean().optional(),
+  analyticsConsent: zod.boolean().optional(),
+  slug: zod.string().max(submitContactBodySlugMax).optional(),
+  variant: zod.string().max(submitContactBodyVariantMax).optional(),
   email: zod.string().email().max(submitContactBodyEmailMax).optional(),
   servizio: zod
-    .enum(["generale", "siti-web", "web-app", "menu-digitali"])
+    .enum([
+      "generale",
+      "siti-web",
+      "web-app",
+      "menu-digitali",
+      "general",
+      "website_399",
+      "menu_qr_99",
+      "webapp_custom",
+      "sector_custom",
+    ])
     .optional(),
   pagina: zod.string().max(submitContactBodyPaginaMax).optional(),
   attribution: zod
@@ -105,6 +120,110 @@ export const SubmitContactBody = zod.object({
 export const SubmitContactResponse = zod.object({
   success: zod.boolean(),
   message: zod.string().optional(),
+  leadId: zod.string().optional(),
+  duplicate: zod.boolean().optional(),
+  notification: zod.enum(["sent", "pending"]).optional(),
+});
+
+export const ListCommercialLeadsQueryParams = zod.object({
+  settore: zod.coerce.string().optional(),
+  stato: zod.coerce.string().optional(),
+  from: zod.date().optional(),
+  to: zod.date().optional(),
+});
+
+export const ListCommercialLeadsResponseItem = zod.object({
+  id: zod.string(),
+  nomeAttivita: zod.string(),
+  settore: zod.string(),
+  whatsapp: zod.string(),
+  slug: zod.string(),
+  servizio: zod.string().optional(),
+  pagina: zod.string(),
+  variant: zod.string().optional(),
+  stato: zod.string(),
+  notification: zod.string(),
+  createdAt: zod.coerce.date(),
+  qualifiedAt: zod.coerce.date().nullish(),
+  marketingConsent: zod.boolean(),
+  analyticsConsent: zod.boolean(),
+  attribution: zod.record(zod.string(), zod.string()),
+  events: zod.array(
+    zod.object({
+      event: zod.string(),
+      at: zod.string(),
+    }),
+  ),
+});
+export const ListCommercialLeadsResponse = zod.array(
+  ListCommercialLeadsResponseItem,
+);
+
+export const UpdateCommercialLeadParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateCommercialLeadBody = zod.object({
+  qualified: zod.boolean().optional(),
+  stato: zod.enum([
+    "Nuovo",
+    "Contattato",
+    "Interessato",
+    "Preventivo inviato",
+    "Cliente acquisito",
+    "Non interessato",
+  ]),
+});
+
+export const UpdateCommercialLeadResponse = zod.object({
+  id: zod.string(),
+  nomeAttivita: zod.string(),
+  settore: zod.string(),
+  whatsapp: zod.string(),
+  slug: zod.string(),
+  servizio: zod.string().optional(),
+  pagina: zod.string(),
+  variant: zod.string().optional(),
+  stato: zod.string(),
+  notification: zod.string(),
+  createdAt: zod.coerce.date(),
+  qualifiedAt: zod.coerce.date().nullish(),
+  marketingConsent: zod.boolean(),
+  analyticsConsent: zod.boolean(),
+  attribution: zod.record(zod.string(), zod.string()),
+  events: zod.array(
+    zod.object({
+      event: zod.string(),
+      at: zod.string(),
+    }),
+  ),
+});
+
+export const NotifyCommercialLeadParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const NotifyCommercialLeadResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+  leadId: zod.string().optional(),
+  duplicate: zod.boolean().optional(),
+  notification: zod.enum(["sent", "pending"]).optional(),
+});
+
+export const ExportCommercialLeadsQueryParams = zod.object({
+  settore: zod.coerce.string().optional(),
+  stato: zod.coerce.string().optional(),
+  from: zod.date().optional(),
+  to: zod.date().optional(),
+});
+
+export const GetTrackingConfigResponse = zod.object({
+  gtmId: zod.string().optional(),
+  ga4Id: zod.string().optional(),
+  googleAdsId: zod.string().optional(),
+  googleAdsLeadLabel: zod.string().optional(),
+  metaPixelId: zod.string().optional(),
 });
 
 /**

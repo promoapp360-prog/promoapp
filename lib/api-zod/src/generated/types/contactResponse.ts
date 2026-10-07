@@ -5,8 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ContactResponseNotification } from "./contactResponseNotification";
 
 export interface ContactResponse {
   success: boolean;
   message?: string;
+  leadId?: string;
+  duplicate?: boolean;
+  notification?: ContactResponseNotification;
 }

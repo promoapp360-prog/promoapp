@@ -14,4 +14,9 @@ export const ContactRequestServizio = {
   "siti-web": "siti-web",
   "web-app": "web-app",
   "menu-digitali": "menu-digitali",
+  general: "general",
+  website_399: "website_399",
+  menu_qr_99: "menu_qr_99",
+  webapp_custom: "webapp_custom",
+  sector_custom: "sector_custom",
 } as const;

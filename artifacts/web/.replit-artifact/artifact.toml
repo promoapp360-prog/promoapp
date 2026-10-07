@@ -43,6 +43,42 @@ from = "/preventivo"
 to = "/preventivo/index.html"
 
 [[services.production.rewrites]]
+from = "/siti-web/"
+to = "/siti-web/index.html"
+
+[[services.production.rewrites]]
+from = "/web-app/"
+to = "/web-app/index.html"
+
+[[services.production.rewrites]]
+from = "/menu-digitali/"
+to = "/menu-digitali/index.html"
+
+[[services.production.rewrites]]
+from = "/menu-demo/"
+to = "/menu-demo/index.html"
+
+[[services.production.rewrites]]
+from = "/preventivo/"
+to = "/preventivo/index.html"
+
+[[services.production.rewrites]]
+from = "/grazie/"
+to = "/grazie/index.html"
+
+[[services.production.rewrites]]
+from = "/gestione-contatti/"
+to = "/gestione-contatti/index.html"
+
+[[services.production.rewrites]]
+from = "/grazie"
+to = "/grazie/index.html"
+
+[[services.production.rewrites]]
+from = "/gestione-contatti"
+to = "/gestione-contatti/index.html"
+
+[[services.production.rewrites]]
 from = "/*"
 to = "/index.html"
 

@@ -24,11 +24,15 @@ export interface ContactRequest {
    * @maxLength 30
    */
   whatsapp: string;
-  /**
-   * @minLength 10
-   * @maxLength 5000
-   */
-  messaggio: string;
+  /** @maxLength 5000 */
+  messaggio?: string;
+  privacy: boolean;
+  marketingConsent?: boolean;
+  analyticsConsent?: boolean;
+  /** @maxLength 120 */
+  slug?: string;
+  /** @maxLength 80 */
+  variant?: string;
   /** @maxLength 254 */
   email?: string;
   servizio?: ContactRequestServizio;

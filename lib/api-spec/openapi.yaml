@@ -24,7 +24,7 @@ paths:
               $ref: "#/components/schemas/ContactRequest"
       responses:
         "200":
-          description: Email accettata dal servizio di invio
+          description: Richiesta salvata nel database
           content:
             application/json:
               schema:
@@ -41,6 +41,77 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContactResponse"
+  /admin/leads:
+    get:
+      operationId: listCommercialLeads
+      tags: [contacts]
+      parameters:
+        - { name: settore, in: query, schema: { type: string } }
+        - { name: stato, in: query, schema: { type: string } }
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: Contatti autorizzati
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/CommercialLead" } }
+        "401": { description: Accesso negato }
+        "503": { description: Credenziale amministrativa non configurata }
+  /admin/leads/{id}:
+    patch:
+      operationId: updateCommercialLead
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LeadUpdate" }
+      responses:
+        "200":
+          description: Contatto aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CommercialLead" }
+        "401": { description: Accesso negato }
+        "404": { description: Contatto non trovato }
+  /admin/leads/{id}/notify:
+    post:
+      operationId: notifyCommercialLead
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Notifica ritentata
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContactResponse" }
+        "401": { description: Accesso negato }
+  /admin/leads/export:
+    get:
+      operationId: exportCommercialLeads
+      parameters:
+        - { name: settore, in: query, schema: { type: string } }
+        - { name: stato, in: query, schema: { type: string } }
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: CSV contatti con informativa accettata
+          content:
+            text/csv:
+              schema: { type: string }
+        "401": { description: Accesso negato }
+  /marketing-config:
+    get:
+      operationId: getTrackingConfig
+      responses:
+        "200":
+          description: Identificativi pubblici dei tag
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrackingConfig" }
   /healthz:
     get:
       operationId: healthCheck
@@ -56,9 +127,53 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    TrackingConfig:
+      type: object
+      properties:
+        gtmId: { type: string }
+        ga4Id: { type: string }
+        googleAdsId: { type: string }
+        googleAdsLeadLabel: { type: string }
+        metaPixelId: { type: string }
+    LeadUpdate:
+      type: object
+      required: [stato]
+      properties:
+        qualified: { type: boolean }
+        stato:
+          type: string
+          enum: [Nuovo, Contattato, Interessato, Preventivo inviato, Cliente acquisito, Non interessato]
+    CommercialLead:
+      type: object
+      required: [id, nomeAttivita, settore, whatsapp, slug, stato, pagina, attribution, createdAt, notification, marketingConsent, analyticsConsent, events]
+      properties:
+        id: { type: string }
+        nomeAttivita: { type: string }
+        settore: { type: string }
+        whatsapp: { type: string }
+        slug: { type: string }
+        servizio: { type: string }
+        pagina: { type: string }
+        variant: { type: string }
+        stato: { type: string }
+        notification: { type: string }
+        createdAt: { type: string, format: date-time }
+        qualifiedAt: { type: ["string", "null"], format: date-time }
+        marketingConsent: { type: boolean }
+        analyticsConsent: { type: boolean }
+        attribution: { type: object, additionalProperties: { type: string } }
+        events:
+          type: array
+          items: { $ref: "#/components/schemas/LeadEvent" }
+    LeadEvent:
+      type: object
+      required: [event, at]
+      properties:
+        event: { type: string }
+        at: { type: string }
     ContactRequest:
       type: object
-      required: [nome_attivita, settore, whatsapp, messaggio]
+      required: [nome_attivita, settore, whatsapp, privacy]
       properties:
         nome_attivita:
           type: string
@@ -74,15 +189,27 @@ components:
           maxLength: 30
         messaggio:
           type: string
-          minLength: 10
           maxLength: 5000
+        privacy:
+          type: boolean
+          enum: [true]
+        marketingConsent:
+          type: boolean
+        analyticsConsent:
+          type: boolean
+        slug:
+          type: string
+          maxLength: 120
+        variant:
+          type: string
+          maxLength: 80
         email:
           type: string
           format: email
           maxLength: 254
         servizio:
           type: string
-          enum: [generale, siti-web, web-app, menu-digitali]
+          enum: [generale, siti-web, web-app, menu-digitali, general, website_399, menu_qr_99, webapp_custom, sector_custom]
         pagina:
           type: string
           maxLength: 200
@@ -109,6 +236,13 @@ components:
           type: boolean
         message:
           type: string
+        leadId:
+          type: string
+        duplicate:
+          type: boolean
+        notification:
+          type: string
+          enum: [sent, pending]
     HealthStatus:
       type: object
       properties:

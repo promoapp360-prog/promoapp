@@ -27,8 +27,20 @@ Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati
 
 **How to apply:** mantenere le recensioni pubbliche visibili e non interpretare il footer compatto come una richiesta di rimuovere la società dalle informative privacy.
 
-L'utente ha richiesto una homepage orientata ai benefici delle app su misura e alle campagne Google Ads, con inviti a richiedere una demo gratuita su WhatsApp e una consulenza gratuita.
+L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie, con proposta iniziale gratuita e senza impegno. Non promettere una demo personalizzata entro 48 ore.
 
-**Why:** nuova indicazione commerciale esplicita, mantenendo colori, classi e stile mobile-first esistenti.
+**Why:** il documento commerciale più recente sostituisce le precedenti CTA demo/consulenza, preservando identità grafica e approccio mobile-first.
 
-**How to apply:** non sostituire queste CTA con generici preventivi senza una nuova richiesta; conservare la distinzione tra funzioni personalizzate e prezzo dei siti web.
+**How to apply:** conservare la distinzione fra siti web e funzioni personalizzate; non cambiare prezzi, promesse o dati aziendali senza approvazione.
+
+Confrontare le nuove specifiche con quanto già realizzato e riutilizzare ciò che è corretto: «non spendiamo soldi inutilmente».
+
+**Why:** l'utente ha ribadito la necessità di evitare spese e lavoro superflui su PromoApp.
+
+**How to apply:** distinguere correzioni indispensabili da aggiunte rinviabili; evitare rifacimenti, nuovi servizi a consumo e ripetizioni di test pesanti non necessari.
+
+Il menu digitale base è un'offerta una tantum: non convertirla automaticamente in abbonamento. Hosting, dominio, aggiornamenti illimitati e assistenza continuativa non sono automaticamente inclusi.
+
+**Why:** regole commerciali del documento fornito dall'utente e approvato per le correzioni essenziali.
+
+**How to apply:** mantenere separati realizzazione base, extra e costi ricorrenti anche nelle future modifiche a preventivi e pagamenti.

@@ -8,8 +8,11 @@ import { CLERK_PROXY_PATH, clerkProxyMiddleware, getClerkProxyHost } from "./mid
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { stripeWebhookHandler } from "./lib/stripeWebhook";
+import { registerPublicRouting } from "./lib/public-routing";
 
 const app: Express = express();
+// The app is reached through Replit's reverse proxy.
+app.set("trust proxy", 1);
 
 app.use(
   pinoHttp({
@@ -41,6 +44,7 @@ app.post(
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ credentials: true, origin: true }));
+registerPublicRouting(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

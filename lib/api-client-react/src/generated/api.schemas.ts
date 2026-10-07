@@ -5,6 +5,58 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface TrackingConfig {
+  gtmId?: string;
+  ga4Id?: string;
+  googleAdsId?: string;
+  googleAdsLeadLabel?: string;
+  metaPixelId?: string;
+}
+
+export type LeadUpdateStato =
+  (typeof LeadUpdateStato)[keyof typeof LeadUpdateStato];
+
+export const LeadUpdateStato = {
+  Nuovo: "Nuovo",
+  Contattato: "Contattato",
+  Interessato: "Interessato",
+  Preventivo_inviato: "Preventivo inviato",
+  Cliente_acquisito: "Cliente acquisito",
+  Non_interessato: "Non interessato",
+} as const;
+
+export interface LeadUpdate {
+  qualified?: boolean;
+  stato: LeadUpdateStato;
+}
+
+export type CommercialLeadAttribution = { [key: string]: string };
+
+export interface LeadEvent {
+  event: string;
+  at: string;
+}
+
+export interface CommercialLead {
+  id: string;
+  nomeAttivita: string;
+  settore: string;
+  whatsapp: string;
+  slug: string;
+  servizio?: string;
+  pagina: string;
+  variant?: string;
+  stato: string;
+  notification: string;
+  createdAt: string;
+  /** @nullable */
+  qualifiedAt?: string | null;
+  marketingConsent: boolean;
+  analyticsConsent: boolean;
+  attribution: CommercialLeadAttribution;
+  events: LeadEvent[];
+}
+
 export type ContactRequestServizio =
   (typeof ContactRequestServizio)[keyof typeof ContactRequestServizio];
 
@@ -13,6 +65,11 @@ export const ContactRequestServizio = {
   "siti-web": "siti-web",
   "web-app": "web-app",
   "menu-digitali": "menu-digitali",
+  general: "general",
+  website_399: "website_399",
+  menu_qr_99: "menu_qr_99",
+  webapp_custom: "webapp_custom",
+  sector_custom: "sector_custom",
 } as const;
 
 export type ContactRequestAttribution = {
@@ -50,11 +107,15 @@ export interface ContactRequest {
    * @maxLength 30
    */
   whatsapp: string;
-  /**
-   * @minLength 10
-   * @maxLength 5000
-   */
-  messaggio: string;
+  /** @maxLength 5000 */
+  messaggio?: string;
+  privacy: boolean;
+  marketingConsent?: boolean;
+  analyticsConsent?: boolean;
+  /** @maxLength 120 */
+  slug?: string;
+  /** @maxLength 80 */
+  variant?: string;
   /** @maxLength 254 */
   email?: string;
   servizio?: ContactRequestServizio;
@@ -65,11 +126,36 @@ export interface ContactRequest {
   website?: string;
 }
 
+export type ContactResponseNotification =
+  (typeof ContactResponseNotification)[keyof typeof ContactResponseNotification];
+
+export const ContactResponseNotification = {
+  sent: "sent",
+  pending: "pending",
+} as const;
+
 export interface ContactResponse {
   success: boolean;
   message?: string;
+  leadId?: string;
+  duplicate?: boolean;
+  notification?: ContactResponseNotification;
 }
 
 export interface HealthStatus {
   status: string;
 }
+
+export type ListCommercialLeadsParams = {
+  settore?: string;
+  stato?: string;
+  from?: string;
+  to?: string;
+};
+
+export type ExportCommercialLeadsParams = {
+  settore?: string;
+  stato?: string;
+  from?: string;
+  to?: string;
+};

@@ -133,3 +133,17 @@ mtime_ms = 1790191214131
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/acd3edd8-dccd-4dfe-afdd-e69315c01b49/41bffd04-e5dd-423a-bb42-d88f063c8709"
 storage_version_token = "1790191214952592"
 content_type = "text/plain"
+
+[[outputs]]
+id = "K47v8neSrR6Y12WNrPgpQ"
+uri = "file://reports/promoapp-acquisizione.html"
+type = "html"
+title = "PromoApp — Report completo e piano campagne"
+description = "Interventi, file coinvolti, verifiche reali, configurazioni mancanti, collegamento Google Ads e quattro campagne proposte."
+logical_id = "aafb082a-16c2-4ec8-9112-2a359671c95b"
+content_hash = "sha256:659f4fd718b80908626f27d34631a441f562036fcf87fbb8a7682f4647f65d8c"
+size = 16156
+mtime_ms = 1791408246042
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/aafb082a-16c2-4ec8-9112-2a359671c95b/264278b8-c958-412d-9449-9fc9c5f0091e"
+storage_version_token = "1791408330236263"
+content_type = "text/html"

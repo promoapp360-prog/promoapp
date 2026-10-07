@@ -4,7 +4,9 @@ import MarketingLayout from "../components/marketing/MarketingLayout";
 import LeadForm from "../components/marketing/LeadForm";
 import VerifiedReviews from "../components/marketing/VerifiedReviews";
 import WhatsAppLink from "../components/marketing/WhatsAppLink";
-import { appPath } from "../lib/marketing";
+import { appPath, serviceCta } from "../lib/marketing";
+import { trackEvent } from "../lib/analytics";
+import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 
 type Service = "siti-web" | "web-app" | "menu-digitali";
 type Item = { t: string; d: string };
@@ -104,7 +106,7 @@ function Scope({ inc, ext, title }: { inc: string[]; ext: string[]; title: strin
 
 function Contact({ service, title, lead }: { service: Service; title: string; lead: string }) {
   return (
-    <section className="sl-section" id="preventivo">
+    <section className="sl-section">
       <div className="marketing-container sl-contact">
         <div className="sl-alt">
           <p className="sl-eyebrow">Contatto diretto</p>
@@ -112,15 +114,15 @@ function Contact({ service, title, lead }: { service: Service; title: string; le
           <p className="sl-lead">{lead}</p>
           <div><WhatsAppLink service={service} placement="form" className="whatsapp-link">Scrivici su WhatsApp</WhatsAppLink></div>
         </div>
-        <LeadForm service={service} />
+        <a className="whatsapp-link" href="#preventivo" onClick={() => trackEvent("cta_click", service, "product-final")}>{serviceCta[service]}</a>
       </div>
     </section>
   );
 }
 
-function Hero({ service, kicker, h1, sub, price, priceNote, cta, note, side }: {
+function Hero({ service, kicker, h1, sub, price, priceNote, note, side }: {
   service: Service; kicker: string; h1: React.ReactNode; sub: string; price?: [string, string];
-  priceNote?: string; cta: string; note: string; side?: React.ReactNode;
+  priceNote?: string; note: string; side?: React.ReactNode;
 }) {
   return (
     <section className="sl-hero">
@@ -133,12 +135,15 @@ function Hero({ service, kicker, h1, sub, price, priceNote, cta, note, side }: {
             <div className="sl-price"><strong>{price[0]}</strong><span>{price[1]}{priceNote ? ` · ${priceNote}` : ""}</span></div>
           )}
           <div className="sl-cta">
-            <WhatsAppLink service={service} placement="hero" className="whatsapp-link">{cta}</WhatsAppLink>
-            <a href="#preventivo" className="sl-ghost" data-testid="link-to-form">Compila il modulo</a>
+            <a href="#preventivo" className="whatsapp-link" data-testid="link-to-form" onClick={() => trackEvent("cta_click", service, "product-hero")}>{serviceCta[service]}</a>
+            <WhatsAppLink service={service} placement="hero" className="sl-ghost">Scrivici su WhatsApp</WhatsAppLink>
           </div>
           <p className="sl-note">{note}</p>
         </div>
-        {side}
+        <div>
+          {side}
+          <div id="preventivo" className="scroll-mt-20"><LeadForm service={service} /></div>
+        </div>
       </div>
     </section>
   );
@@ -149,10 +154,10 @@ function SitiWeb() {
     <>
       <Hero
         service="siti-web" kicker="Siti web per attività italiane"
-        h1={<>Il tuo sito web professionale a partire da <b>399 €</b></>}
-        sub="Fai conoscere la tua attività online con un sito moderno, veloce e perfetto anche da smartphone. Raccontaci il tuo progetto e richiedi un preventivo."
+        h1={<>Il tuo sito web professionale da <b>399 € + IVA.</b></>}
+        sub="Fai trovare la tua attività online, presenta i tuoi servizi e ricevi richieste dai clienti."
         price={["399 €", "+ IVA"]} priceNote="hosting e dominio a parte"
-        cta="Chiedi un preventivo su WhatsApp" note="Parli direttamente con chi realizza il sito."
+        note="Parli direttamente con chi realizza il sito."
       />
       <section className="sl-section alt">
         <div className="marketing-container">
@@ -180,11 +185,11 @@ function SitiWeb() {
       </section>
       <section className="sl-section alt">
         <div className="marketing-container">
-          <p className="sl-eyebrow">Cosa comprende il prezzo</p>
+          <p className="sl-eyebrow">Ambito del progetto</p>
           <h2 className="sl-h2">399 € + IVA, scritto chiaro</h2>
-          <p className="sl-lead">Prezzo di partenza per un sito istituzionale. Il preventivo conferma i dettagli.</p>
-          <Scope title="Compreso" inc={[
-            "Fino a 5 pagine istituzionali",
+          <p className="sl-lead">Da 399 € + IVA per un sito istituzionale. Pagine, contenuti e funzionalità comprese vengono confermati nel preventivo: l'elenco indica gli aspetti da concordare, non un pacchetto automatico.</p>
+          <Scope title="Da concordare nel preventivo" inc={[
+            "Numero delle pagine istituzionali",
             "Design responsive per smartphone, tablet e computer",
             "Modulo di contatto funzionante",
             "SEO di base",
@@ -201,8 +206,6 @@ function SitiWeb() {
       </section>
       <section className="sl-section">
         <div className="marketing-container">
-          <p className="sl-eyebrow">Recensioni</p>
-          <h2 className="sl-h2">Cosa dicono i clienti</h2>
           <VerifiedReviews />
         </div>
       </section>
@@ -213,12 +216,12 @@ function SitiWeb() {
             { t: "Cosa mi serve per iniziare?", d: "Logo se lo hai, testi delle pagine, alcune foto e i dati di contatto dell'attività." },
             { t: "Chi si occupa di hosting e dominio?", d: "Li preventiviamo a parte: sono costi ricorrenti che definiamo insieme prima di partire." },
             { t: "Posso vendere online dal sito?", d: "Il sito base presenta la tua attività. E-commerce e login si valutano e quotano separatamente." },
-            { t: "Posso avere più di 5 pagine?", d: "Sì, le pagine aggiuntive si quotano a parte in base alle necessità." },
+            { t: "Posso aggiungere pagine e funzionalità?", d: "Sì. Numero di pagine e funzioni vengono concordati nel preventivo; le estensioni si valutano separatamente." },
             { t: "Il prezzo include l'IVA?", d: "No, 399 € è più IVA." },
           ]} />
         </div>
       </section>
-      <Contact service="siti-web" title="Richiedi il tuo preventivo" lead="Quattro campi e ti rispondiamo direttamente. Oppure scrivici subito su WhatsApp." />
+      <Contact service="siti-web" title="Richiedi il tuo preventivo" lead="Tre dati per una proposta gratuita e senza impegno. Oppure scrivici subito su WhatsApp." />
     </>
   );
 }
@@ -228,10 +231,10 @@ function WebApp() {
     <>
       <Hero
         service="web-app" kicker="Web app e strumenti su misura"
-        h1={<>La tua idea diventa un&apos;applicazione <b>su misura.</b></>}
-        sub="Prenotazioni, clienti, fidelity e gestione: costruiamo lo strumento digitale che serve davvero alla tua attività, usabile da qualsiasi smartphone o computer."
+        h1={<>Un&apos;app su misura per <b>organizzare la tua attività.</b></>}
+        sub="Progettiamo strumenti personalizzati per gestire appuntamenti, prenotazioni, clienti, ordini e attività quotidiane."
         price={["Su preventivo", "ambito, tempi e manutenzione definiti sul progetto"]}
-        cta="Racconta la tua idea su WhatsApp" note="Nessun pacchetto standard: parti dal tuo caso concreto."
+        note="Nessun pacchetto standard: parti dal tuo caso concreto."
       />
       <section className="sl-section">
         <div className="marketing-container">
@@ -284,8 +287,6 @@ function WebApp() {
       </section>
       <section className="sl-section">
         <div className="marketing-container">
-          <p className="sl-eyebrow">Recensioni</p>
-          <h2 className="sl-h2">Cosa dicono i clienti</h2>
           <VerifiedReviews />
         </div>
       </section>
@@ -300,7 +301,7 @@ function WebApp() {
           ]} />
         </div>
       </section>
-      <Contact service="web-app" title="Parliamo del tuo progetto" lead="Descrivi l'idea in poche righe: ti rispondiamo con le domande giuste." />
+      <Contact service="web-app" title="Parliamo del tuo progetto" lead="Lascia tre dati: ti ricontattiamo per capire insieme cosa ti serve." />
     </>
   );
 }
@@ -310,10 +311,11 @@ function MenuDigitali() {
     <>
       <Hero
         service="menu-digitali" kicker="Menu digitali per ristoranti"
-        h1={<>Il menu digitale del tuo ristorante a partire da <b>99 €.</b></>}
-        sub="Il tuo menu sullo smartphone dei clienti: si apre con un QR code, è leggibile subito e ha una grafica curata."
+        h1={<>Il tuo menu digitale QR a soli <b>99 € + IVA.</b></>}
+        sub="I tuoi clienti inquadrano il QR code e consultano il menu direttamente sullo smartphone."
         price={["99 €", "+ IVA una tantum"]}
-        cta="Richiedi il tuo menu digitale" note="Prezzo base una tantum. Extra e costi periodici sono indicati sotto."
+        note="Prezzo base una tantum. Extra e costi periodici sono indicati sotto."
+        side={<MenuDemo />}
       />
       <section className="sl-section">
         <div className="marketing-container">
@@ -340,7 +342,6 @@ function MenuDigitali() {
             </div>
             <a className="whatsapp-link" href={appPath("/menu-demo")} data-testid="link-menu-demo">Apri la demo completa</a>
           </div>
-          <MenuDemo />
         </div>
       </section>
       <section className="sl-section">
@@ -373,8 +374,6 @@ function MenuDigitali() {
       </section>
       <section className="sl-section">
         <div className="marketing-container">
-          <p className="sl-eyebrow">Recensioni</p>
-          <h2 className="sl-h2">Cosa dicono i clienti</h2>
           <VerifiedReviews />
         </div>
       </section>
@@ -382,10 +381,9 @@ function MenuDigitali() {
         <div className="marketing-container">
           <h2 className="sl-h2">Domande frequenti</h2>
           <Faq items={[
-            { t: "Il prezzo è mensile?", d: "No, 99 € + IVA è il prezzo base una tantum. Hosting, dominio e manutenzione sono costi ricorrenti da concordare a parte." },
-            { t: "Posso cambiare i piatti?", d: "Le modifiche si gestiscono su richiesta. L'area di modifica autonoma è un extra da quotare." },
-            { t: "Si possono ordinare i piatti?", d: "Ordinazioni e pagamenti non sono nel prezzo base e si preventivano separatamente." },
-            { t: "Serve un'app per i clienti?", d: "No, il menu si apre dal browser inquadrando il QR." },
+            { t: "Come funziona il menu con QR code?", d: "Il cliente inquadra il QR e consulta piatti e bevande dal browser dello smartphone, senza installare un'app." },
+            { t: "Posso modificare piatti e prezzi?", d: "Modalità e costi degli aggiornamenti vengono chiariti nel preventivo. Non sono promesse modifiche illimitate; l'area di modifica autonoma si quota separatamente." },
+            { t: "Ci sono costi aggiuntivi rispetto ai 99 €?", d: "99 € + IVA è il prezzo una tantum della realizzazione base. Hosting, dominio e assistenza si concordano a parte; ordini, pagamenti e altre funzioni sono extra su preventivo." },
           ]} />
         </div>
       </section>
@@ -395,6 +393,7 @@ function MenuDigitali() {
 }
 
 export default function ServiceLanding({ service }: { service: Service }) {
+  useMobileFormVisibility(service);
   return (
     <MarketingLayout service={service}>
       {service === "siti-web" && <SitiWeb />}

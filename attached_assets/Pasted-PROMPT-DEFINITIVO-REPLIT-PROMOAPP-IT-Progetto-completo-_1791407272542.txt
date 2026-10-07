@@ -1,0 +1,1066 @@
+PROMPT DEFINITIVO REPLIT — PROMOAPP.IT
+
+Progetto completo di acquisizione clienti, marketing, vendite e ottimizzazione tecnica
+
+MISSIONE
+
+Agisci come un team professionale composto da un Direttore Marketing, un Direttore Commerciale, un Conversion Rate Optimization Specialist, un Content Creator, un Copywriter pubblicitario, un SEO Specialist, un UX/UI Designer e un Senior Full Stack Developer.
+
+Devi trasformare PromoApp.it in una piattaforma commerciale capace di generare contatti qualificati attraverso Google Ads, Facebook, Instagram e Google Search.
+
+Non devi limitarti a rendere il sito più bello.
+
+Devi progettare un percorso che trasformi il visitatore in un potenziale cliente, con un’offerta chiara, prezzi comprensibili, vantaggi concreti, pochi ostacoli al contatto e una misurazione affidabile dei risultati.
+
+Obiettivo: aumentare le richieste commerciali effettive e migliorare il costo per contatto qualificato. Non limitarti ad aumentare visite, clic o visualizzazioni.
+
+⸻
+
+PARTE 1 — REGOLE PER NON SPRECARE CREDITI REPLIT
+
+Questo progetto esiste già e contiene funzionalità operative.
+
+Devi lavorare nel modo più efficiente possibile.
+
+1. Non ricreare il progetto da zero.
+2. Non cambiare framework, database, hosting, sistema email o architettura senza una necessità tecnica documentata.
+3. Non installare librerie superflue.
+4. Riutilizza componenti, configurazioni e servizi già funzionanti.
+5. Evita di riscrivere lo stesso componente più volte.
+6. Non generare decine di varianti grafiche inutili.
+7. Non utilizzare servizi AI a pagamento, API commerciali o strumenti esterni a consumo senza approvazione.
+8. Organizza le modifiche in un unico piano coerente e applicale in blocchi logici, evitando continue revisioni.
+9. Non eseguire ripetutamente test pesanti quando non sono necessari.
+10. Non chiedere conferma per ogni dettaglio grafico: utilizza le istruzioni di questo documento come specifiche approvate.
+
+Lavora con tre priorità:
+
+P0 — Fondamentale: offerte commerciali, landing dei prodotti, moduli, salvataggio lead, WhatsApp, tracking e funzionamento.
+
+P1 — Importante: landing settoriali, SEO, contenuti personalizzati, mobile e credibilità.
+
+P2 — Miglioramento: pannello contatti, reportistica commerciale e predisposizione dei test A/B.
+
+Completa prima P0, poi P1 e infine P2, rispettando l’efficienza.
+
+Se una funzione P2 richiede un’importante ricostruzione tecnica, non comprometterci P0 e P1: segnala l’attività residua nel report.
+
+⸻
+
+PARTE 2 — ANALISI DEL SITO ATTUALE
+
+Prima di modificare il codice, analizza direttamente il progetto presente in Replit.
+
+Controlla:
+
+* Stack tecnologico e struttura.
+* Routing e rendering delle pagine.
+* Database e gestione dei contatti.
+* Moduli e relativa validazione.
+* Notifiche email e integrazione Resend eventualmente presente.
+* Numero WhatsApp attuale.
+* Cookie banner e privacy.
+* Tracciamento Google e Meta.
+* Recensioni e relativo stato di approvazione.
+* Prezzi, prodotti e contenuti pubblicati.
+* SEO, sitemap e canonical.
+* Accesso amministrativo, se presente.
+
+Problemi già riscontrati sul sito pubblico, da verificare nel codice:
+
+Gli indirizzi /siti-web/, /web-app/ e /menu-digitali/ sembrano restituire contenuti praticamente identici alla homepage nella versione visibile ai crawler.
+
+Verifica se si tratta di un problema di routing, rendering o fallback e correggilo.
+
+La homepage attuale presenta inoltre:
+
+* Modulo con più campi del necessario.
+* Testo “Caricamento recensioni verificate…”.
+* Anno del footer non aggiornato automaticamente.
+* Promessa “azzera i no-show”, troppo assoluta.
+* Invito a una demo gratuita da verificare rispetto al servizio effettivamente offerto.
+
+Restituisci un riepilogo diagnostico di massimo 10 righe e poi procedi autonomamente con gli interventi sicuri.
+
+Prima delle modifiche crea un checkpoint ripristinabile. Non alterare i dati esistenti.
+
+Se emergono incongruenze che richiedono una decisione commerciale, utilizza i prezzi e le regole definite qui sotto e segnala ciò che necessita realmente di conferma.
+
+⸻
+
+PARTE 3 — POSIZIONAMENTO COMMERCIALE DI PROMOAPP
+
+PromoApp si rivolge a piccole imprese, negozi, ristoranti, attività commerciali, professionisti e aziende che vogliono migliorare la propria presenza online e semplificare il lavoro.
+
+I servizi principali sono tre.
+
+PRODOTTO A — SITI WEB PROFESSIONALI
+
+Prezzo di partenza: 399 € + IVA.
+
+L’offerta deve essere evidente e comprensibile.
+
+Messaggio commerciale:
+
+“Il tuo sito web professionale, da 399 € + IVA.”
+
+Sottotitolo:
+
+“Presenta la tua attività online, mostra i tuoi servizi e permetti ai clienti di contattarti facilmente.”
+
+Benefici:
+
+* Presenza online professionale.
+* Sito consultabile da smartphone.
+* Presentazione dei servizi.
+* Contatto rapido tramite WhatsApp o modulo.
+
+CTA:
+
+“Richiedi il tuo sito web”
+
+Non promettere funzionalità o servizi inclusi nel prezzo che non siano stati verificati.
+
+PRODOTTO B — MENU DIGITALE QR
+
+Prezzo: 99 € + IVA UNA TANTUM per la realizzazione del menu digitale base.
+
+Questa è un’offerta commerciale prioritaria e deve avere una landing dedicata.
+
+Messaggio principale:
+
+“Il menu del tuo locale sullo smartphone. Solo 99 € + IVA.”
+
+Sottotitolo:
+
+“Un menu digitale con QR code per permettere ai clienti di consultare piatti e bevande direttamente dal telefono.”
+
+Benefici da evidenziare:
+
+* Accesso al menu tramite QR code.
+* Consultazione da smartphone.
+* Presentazione ordinata di prodotti e prezzi.
+* Possibilità di aggiornamento dei contenuti secondo le funzionalità effettivamente comprese nell’offerta.
+
+CTA:
+
+“Richiedi il menu digitale a 99 €”
+
+Importante:
+
+Il prezzo di 99 € è una tantum per la realizzazione base. Non dichiarare che hosting, dominio, modifiche illimitate, assistenza continuativa o altri servizi siano inclusi se non verificati.
+
+Eventuali servizi aggiuntivi o ricorrenti devono essere chiaramente distinti.
+
+Non trasformare automaticamente l’offerta in un abbonamento.
+
+PRODOTTO C — WEB APP E GESTIONALI PERSONALIZZATI
+
+Prezzo su preventivo.
+
+Messaggio commerciale:
+
+“Un’app su misura per organizzare la tua attività.”
+
+Sottotitolo:
+
+“Progettiamo strumenti personalizzati per gestire appuntamenti, prenotazioni, clienti, ordini e attività quotidiane.”
+
+Funzionalità possibili, da proporre in base alle necessità:
+
+* Prenotazioni online.
+* Agenda appuntamenti.
+* Acconti e pagamenti online.
+* Fidelity digitale.
+* Gestione clienti.
+* Gestione ordini.
+* Magazzino.
+* Report e notifiche automatiche.
+
+Non presentare tutte queste funzioni come automaticamente incluse in un unico prezzo.
+
+Non promettere di eliminare completamente i no-show. Utilizza formulazioni realistiche come “riduci il rischio di mancate presentazioni tramite promemoria e acconti”.
+
+CTA:
+
+“Raccontaci il tuo progetto”
+
+⸻
+
+PARTE 4 — ARCHITETTURA DEFINITIVA
+
+Mantieni il dominio e gli URL attuali, senza creare duplicati inutili.
+
+Pagine principali
+
+* / — Homepage istituzionale e commerciale.
+* /siti-web/ — Landing prodotto siti web da 399 €.
+* /menu-digitali/ — Landing prodotto menu digitale a 99 €.
+* /web-app/ — Landing web app e gestionali su preventivo.
+* /grazie/ — Conferma invio richiesta.
+
+Non creare anche /menu-digitale/ come seconda pagina indicizzabile. Se questo indirizzo viene richiesto, usa un redirect permanente alla pagina canonica /menu-digitali/.
+
+Landing settoriali
+
+Realizza le seguenti rotte:
+
+* /per/ristoranti
+* /per/bb-hotel
+* /per/studi-medici
+* /per/centri-estetici
+* /per/parrucchieri
+* /per/palestre
+* /per/negozi
+* /per/officine
+* /per/agenzie-immobiliari
+* /per/studi-legali
+* /per/agenti-commercio
+
+Per le pagine settoriali usa un template unico e una configurazione centralizzata.
+
+Ogni voce della configurazione deve contenere:
+
+* Slug.
+* Nome settore.
+* Headline.
+* Sottotitolo.
+* Quattro benefici.
+* Funzionalità applicabili.
+* Tre FAQ complete di risposte.
+* CTA.
+* Messaggio WhatsApp.
+* Meta title.
+* Meta description.
+* Offerta commerciale pertinente.
+
+Aggiungere un nuovo settore deve richiedere soltanto una nuova voce nella configurazione.
+
+Le pagine devono avere contenuti realmente differenziati, renderizzabili dai motori di ricerca, e non semplicemente titoli diversi con identico testo.
+
+Per slug sconosciuti, reindirizza all’hub o alla homepage senza mostrare una pagina generica duplicata e indicizzabile.
+
+⸻
+
+PARTE 5 — HOMEPAGE COMMERCIALE
+
+La homepage deve presentare chiaramente i tre servizi principali.
+
+HERO
+
+Titolo:
+
+“Il digitale su misura per far crescere la tua attività.”
+
+Sottotitolo:
+
+“Realizziamo siti web, menu digitali, app e gestionali per aiutarti a presentare la tua attività, organizzare il lavoro e gestire meglio i clienti.”
+
+CTA:
+
+“Richiedi una proposta gratuita”
+
+Seconda possibilità:
+
+“Scrivici su WhatsApp”
+
+Sotto la hero mostra tre card ben distinte.
+
+CARD 1
+
+SITI WEB
+
+Da 399 € + IVA
+
+“Porta online la tua attività con un sito professionale.”
+
+Pulsante: “Scopri l’offerta”
+
+CARD 2
+
+MENU DIGITALI QR
+
+99 € + IVA una tantum
+
+“Il tuo menu sempre a portata di smartphone.”
+
+Pulsante: “Scopri il menu digitale”
+
+CARD 3
+
+WEB APP E GESTIONALI
+
+Su preventivo
+
+“Una soluzione personalizzata per organizzare il tuo lavoro.”
+
+Pulsante: “Scopri le soluzioni”
+
+I prezzi devono essere visibili senza dover aprire altre pagine, anche da smartphone.
+
+Sezioni successive:
+
+1. Quali problemi risolviamo.
+2. Soluzioni per settore.
+3. Come lavoriamo.
+4. Esempi realmente realizzati.
+5. Perché scegliere PromoApp.
+6. Recensioni autentiche e approvate.
+7. Domande frequenti.
+8. Modulo di contatto e CTA finale.
+
+Non sovraccaricare la homepage di animazioni o testi inutili.
+
+⸻
+
+PARTE 6 — LANDING SITI WEB DA 399 €
+
+Questa pagina sarà utilizzata per Google Ads e Facebook/Instagram.
+
+Deve vendere UNA SOLA OFFERTA principale.
+
+Headline:
+
+“Il tuo sito web professionale da 399 € + IVA.”
+
+Sottotitolo:
+
+“Fai trovare la tua attività online, presenta i tuoi servizi e ricevi richieste dai clienti.”
+
+CTA:
+
+“Richiedi informazioni sul sito da 399 €”
+
+Struttura:
+
+1. Hero con prezzo molto evidente.
+2. Modulo contatto breve.
+3. Quattro benefici pratici.
+4. Come funziona in tre passaggi.
+5. Esempio realistico di sito web, se disponibile.
+6. Chiarimento di cosa comprende l’offerta base, solo dopo verifica.
+7. Nota sugli eventuali costi aggiuntivi.
+8. FAQ.
+9. CTA finale.
+
+FAQ da trattare:
+
+* Cosa comprende il sito da 399 €?
+* Il sito si vede bene anche dal telefono?
+* Posso aggiungere funzionalità in futuro?
+
+Non inventare tempi di consegna o servizi inclusi.
+
+La pagina deve essere leggibile, veloce e convincente anche per persone poco esperte di tecnologia.
+
+⸻
+
+PARTE 7 — LANDING MENU DIGITALE DA 99 €
+
+Questa è una delle pagine commercialmente più importanti.
+
+Deve essere progettata specificamente per ristoranti, bar, pizzerie, pub, bistrot e attività simili.
+
+Headline:
+
+“Il tuo menu digitale QR a soli 99 € + IVA.”
+
+Sottotitolo:
+
+“I tuoi clienti inquadrano il QR code e consultano il menu direttamente sullo smartphone.”
+
+CTA:
+
+“Richiedi il tuo menu digitale”
+
+Inserisci una rappresentazione realistica di uno smartphone che mostra un menu con categorie e prodotti, senza fingere che sia il lavoro di un cliente reale.
+
+Organizza la landing in questo ordine:
+
+1. Hero con offerta 99 €.
+2. Visualizzazione immediata di un menu su smartphone.
+3. Form contatti.
+4. Spiegazione di come funziona il QR code.
+5. Vantaggi per il ristoratore.
+6. Cosa comprende il prodotto base, dopo verifica.
+7. Prezzo e possibili servizi extra.
+8. Tre FAQ.
+9. CTA finale.
+
+Le tre FAQ devono rispondere a:
+
+* Come funziona il menu con QR code?
+* Posso modificare piatti e prezzi?
+* Ci sono costi aggiuntivi rispetto ai 99 €?
+
+Non promettere modifiche illimitate, ordini online, pagamenti o gestionali inclusi nel prodotto da 99 €.
+
+Queste possono essere funzionalità aggiuntive da proporre separatamente.
+
+Questa landing deve rimanere focalizzata sul menu digitale. Non trasformarla in una pagina generica sulle web app.
+
+⸻
+
+PARTE 8 — LANDING SETTORIALI: CONTENUTI COMMERCIALI
+
+Usa questi messaggi come base approvata.
+
+Per ogni settore sviluppa quattro benefici specifici e tre FAQ con risposte semplici e concrete.
+
+RISTORANTI E BAR
+
+Headline:
+
+“Più organizzazione per il tuo ristorante, meno tempo perso al telefono.”
+
+Parla di prenotazioni, menu digitale QR, gestione richieste e fidelizzazione.
+
+Distingui chiaramente il menu base da 99 € dai gestionali personalizzati su preventivo.
+
+B&B E HOTEL
+
+Headline:
+
+“Gestisci disponibilità, camere e prenotazioni in modo più semplice.”
+
+Parla di gestione disponibilità, richieste, prenotazioni e comunicazioni con gli ospiti.
+
+Non promettere integrazioni con piattaforme esterne se non disponibili.
+
+CENTRI ESTETICI
+
+Headline:
+
+“Organizza gli appuntamenti del tuo centro estetico e dedica più tempo alle clienti.”
+
+Parla di agenda, promemoria, prenotazioni e fidelity digitale.
+
+PARRUCCHIERI
+
+Headline:
+
+“Meno chiamate per prenotare, più tempo per il tuo salone.”
+
+Parla di appuntamenti, promemoria, prenotazioni online e gestione clienti.
+
+STUDI MEDICI
+
+Headline:
+
+“Una gestione più semplice degli appuntamenti del tuo studio.”
+
+Parla di prenotazioni, agenda e promemoria.
+
+Non promettere gestione di cartelle cliniche, dati sanitari o conformità GDPR senza verifiche specifiche.
+
+Inserisci la nota:
+
+“I dettagli sul trattamento dei dati vengono definiti nel preventivo.”
+
+PALESTRE
+
+Headline:
+
+“Gestisci iscrizioni, lezioni e prenotazioni in un unico strumento.”
+
+Parla di calendario corsi, disponibilità, iscritti e notifiche.
+
+NEGOZI
+
+Headline:
+
+“Prodotti, clienti e magazzino: organizza meglio il tuo negozio.”
+
+Parla di inventario, prodotti, giacenze e gestione operativa.
+
+OFFICINE
+
+Headline:
+
+“Appuntamenti, clienti e interventi: organizza il lavoro della tua officina.”
+
+Parla di agenda, schede intervento, clienti e promemoria.
+
+AGENZIE IMMOBILIARI
+
+Headline:
+
+“Organizza immobili, richieste e appuntamenti in un unico posto.”
+
+Parla di immobili, contatti, appuntamenti e gestione richieste.
+
+STUDI LEGALI
+
+Headline:
+
+“Organizza appuntamenti e attività del tuo studio con strumenti su misura.”
+
+Parla di agenda, promemoria, gestione operativa e organizzazione, evitando promesse sulla sicurezza o gestione di fascicoli riservati senza verifica tecnica.
+
+AGENTI DI COMMERCIO
+
+Headline:
+
+“Clienti, visite e ordini sempre a portata di mano.”
+
+Parla di anagrafica clienti, visite, raccolta ordini e consultazione da smartphone.
+
+Per ogni settore:
+
+* Scrivi un sottotitolo originale.
+* Crea quattro benefici realmente pertinenti.
+* Prepara tre FAQ con risposte complete.
+* Personalizza il messaggio WhatsApp.
+* Usa un title SEO e una description specifici.
+* Mostra soltanto le offerte pertinenti.
+
+Non presentare servizi che richiedono sviluppo personalizzato come funzionalità automaticamente disponibili nel prezzo base.
+
+⸻
+
+PARTE 9 — STRATEGIA DI CONVERSIONE
+
+Il visitatore deve poter scegliere tra due percorsi.
+
+Percorso A — Modulo contatto
+
+È il percorso principale e misurabile.
+
+Percorso B — WhatsApp diretto
+
+È l’alternativa per chi preferisce scrivere immediatamente.
+
+Entrambi devono essere semplici.
+
+Non utilizzare popup aggressivi, false urgenze, countdown inventati o messaggi come “ultimi posti disponibili”.
+
+La comunicazione commerciale deve trasmettere serietà, semplicità, convenienza e personalizzazione.
+
+Le CTA devono cambiare in base alla pagina.
+
+Esempi:
+
+* “Richiedi il tuo sito da 399 €”
+* “Richiedi il menu digitale a 99 €”
+* “Scopri la soluzione per il tuo ristorante”
+* “Richiedi una proposta gratuita”
+
+Non utilizzare ovunque una CTA generica come “Scopri di più”.
+
+Su smartphone prevedi una barra fissa inferiore discreta con accesso al modulo e a WhatsApp.
+
+La CTA mobile non deve coprire campi, pulsanti o banner cookie.
+
+⸻
+
+PARTE 10 — FORM CONTATTI
+
+Riduci il modulo commerciale a tre campi obbligatori:
+
+1. Nome attività.
+2. Tipo attività.
+3. Numero WhatsApp.
+
+Non richiedere email o descrizione del progetto per il primo contatto.
+
+Il tipo di attività deve essere precompilato sulla landing settoriale e modificabile.
+
+Il servizio richiesto deve essere assegnato automaticamente dalla pagina di provenienza:
+
+* website_399
+* menu_qr_99
+* webapp_custom
+* sector_custom
+* general
+
+Il cliente non deve selezionarlo nuovamente se è già evidente dalla landing.
+
+Configura validazione client/server, gestione degli errori in italiano, protezione antispam, normalizzazione WhatsApp e prevenzione dei doppi invii.
+
+Utilizza il sistema di salvataggio esistente. Se oggi le richieste vengono soltanto inviate via email, aggiungi una persistenza affidabile senza compromettere l’invio esistente.
+
+Ogni richiesta deve registrare:
+
+* ID univoco.
+* Data e ora.
+* Nome attività.
+* Tipo attività.
+* WhatsApp.
+* Servizio richiesto.
+* Settore.
+* Pagina.
+* URL di provenienza ove disponibile e appropriato.
+* UTM source, medium, campaign, content e term.
+* GCLID, GBRAID, WBRAID se presenti e trattabili correttamente.
+* Stato del lead.
+
+Preserva i parametri pubblicitari in sessione fino all’invio, rispettando il consenso applicabile.
+
+Non utilizzare il numero telefonico del cliente come identificatore pubblico o come parametro degli URL.
+
+Invia la notifica con il sistema già presente nel progetto.
+
+In caso di errore nella notifica, il lead già salvato deve rimanere disponibile e deve essere possibile riprovare l’invio della notifica.
+
+Dopo un salvataggio riuscito, mostra la pagina /grazie/, noindex.
+
+Messaggio:
+
+“Richiesta ricevuta! Ti contatteremo su WhatsApp.”
+
+Non promettere automaticamente un tempo preciso di risposta senza conferma operativa.
+
+Inserisci un pulsante facoltativo per aprire WhatsApp.
+
+Il pulsante deve mantenere il numero esistente.
+
+⸻
+
+PARTE 11 — PRIVACY E CONSENSO
+
+Preserva le informative e il banner cookie già esistenti.
+
+Verifica che siano coerenti con l’effettivo trattamento dei dati e con le nuove funzionalità.
+
+Il modulo deve fornire un’informativa chiara e il collegamento alla privacy policy.
+
+Non introdurre un consenso marketing obbligatorio per ricevere risposta a una semplice richiesta commerciale.
+
+Mantieni separato qualsiasi consenso facoltativo per future comunicazioni promozionali.
+
+Non trasmettere nomi, numeri WhatsApp o altri dati personali in chiaro a Google Analytics, Google Ads, Meta Pixel o nel dataLayer.
+
+Per il tracciamento utilizza Consent Mode v2 con approccio Basic, bloccando i tag non necessari fino al relativo consenso. Integra le scelte già espresse attraverso il banner esistente.
+
+Verifica che le informative riflettano gli strumenti realmente attivati. Non dichiarare automaticamente conformità legale senza una verifica delle effettive procedure.
+
+⸻
+
+PARTE 12 — TRACKING GOOGLE ADS E META ADS
+
+Il sito deve permettere di capire quali campagne producono contatti reali.
+
+Controlla prima se sono già presenti Google Tag Manager, Google Analytics 4 e Meta Pixel.
+
+Non aggiungere installazioni duplicate.
+
+Se mancano gli ID degli account, prepara le variabili d’ambiente necessarie senza inventare valori.
+
+Eventi richiesti:
+
+* cta_click: clic sulle CTA, con posizione e pagina.
+* form_start: primo avvio effettivo del modulo.
+* generate_lead: soltanto dopo salvataggio riuscito.
+* whatsapp_click: clic sul contatto WhatsApp.
+* thank_you_view: visualizzazione della conferma.
+* qualified_lead: evento futuro per contatti qualificati.
+
+Distingui:
+
+1. Clic WhatsApp.
+2. Moduli effettivamente inviati.
+3. Contatti qualificati.
+4. Preventivi inviati.
+5. Clienti acquisiti.
+
+Non contare un semplice clic WhatsApp come richiesta confermata.
+
+Non considerare l’apertura della pagina /grazie/ prova sufficiente di un nuovo lead, perché può essere ricaricata.
+
+Utilizza un identificativo evento per evitare duplicazioni.
+
+Predisponi il codice necessario alle conversioni Google Ads e Meta, ma non dichiarare che gli account pubblicitari siano collegati finché non vengono configurati e verificati.
+
+Non utilizzare conversioni simulate come se fossero conversioni reali.
+
+⸻
+
+PARTE 13 — PANNELLO COMMERCIALE CONTATTI
+
+Verifica se esiste già una sezione amministrativa per le richieste.
+
+Se esiste, migliorala senza duplicarla.
+
+Se non esiste, crea un pannello essenziale utilizzando autenticazione e database già disponibili, senza introdurre sistemi esterni costosi.
+
+Devo poter vedere:
+
+* Nome attività.
+* Data.
+* WhatsApp.
+* Servizio richiesto.
+* Settore.
+* Provenienza pubblicitaria.
+* Campagna.
+* Stato commerciale.
+
+Stati:
+
+* Nuovo.
+* Da contattare.
+* Contattato.
+* Interessato.
+* Preventivo inviato.
+* Cliente acquisito.
+* Non interessato.
+
+Prevedi modifica dello stato, note interne, ricerca e filtro.
+
+Se realizzabile con l’architettura attuale senza complessità sproporzionata, prevedi esportazione CSV dei contatti autorizzati.
+
+Tutti gli accessi devono essere protetti tramite autenticazione e autorizzazione server-side.
+
+Non pubblicare dati personali nei risultati di ricerca o in API accessibili senza autorizzazione.
+
+⸻
+
+PARTE 14 — REPORT COMMERCIALE
+
+Predisponi le informazioni necessarie a misurare:
+
+* Lead ricevuti.
+* Lead per prodotto.
+* Lead per settore.
+* Lead per campagna.
+* Percentuale di lead qualificati.
+* Preventivi inviati.
+* Clienti acquisiti.
+
+Definisci chiaramente le metriche:
+
+Costo per lead (CPL) = spesa pubblicitaria / moduli confermati, con eventuali lead WhatsApp realmente verificati conteggiati separatamente.
+
+Costo per lead qualificato (CPQL) = spesa pubblicitaria / contatti qualificati.
+
+Costo acquisizione cliente (CAC) = spesa attribuibile / clienti effettivamente acquisiti.
+
+Se la spesa pubblicitaria non è disponibile tramite integrazione autorizzata, prevedi un inserimento manuale o un’esportazione utilizzabile per calcolarla.
+
+Non inventare importi, clic o risultati.
+
+Dobbiamo capire non soltanto quale pubblicità porta più contatti, ma soprattutto quale produce opportunità commerciali e vendite.
+
+⸻
+
+PARTE 15 — STRATEGIA PUBBLICITARIA
+
+Non creare campagne direttamente sugli account pubblicitari senza autorizzazione.
+
+Prepara invece un piano pronto da utilizzare.
+
+GOOGLE ADS
+
+Predisponi tre gruppi commerciali:
+
+A. Siti web da 399 €
+
+Landing: /siti-web/
+
+Intenti di ricerca:
+
+* Realizzazione siti web.
+* Sito web per attività commerciale.
+* Sito web professionale.
+* Creazione sito per ristorante.
+* Sito web per parrucchieri.
+
+Valuta pertinenza e concorrenza prima di selezionare le keyword definitive.
+
+B. Menu digitali da 99 €
+
+Landing: /menu-digitali/
+
+Intenti di ricerca:
+
+* Menu digitale QR.
+* Menu QR code ristorante.
+* Creare menu digitale.
+* Menu digitale per bar.
+* Menu digitale pizzeria.
+
+C. Web app e gestionali
+
+Landing: /web-app/ o landing settoriale coerente con la ricerca.
+
+Intenti:
+
+* Gestionale per centro estetico.
+* Software prenotazioni parrucchieri.
+* App per agenti di commercio.
+* Gestionale appuntamenti.
+* Web app personalizzata.
+
+Prepara per ogni gruppo proposte di headline e descrizioni Google Ads, nel rispetto dei limiti caratteri.
+
+FACEBOOK E INSTAGRAM
+
+Non eliminare le immagini pubblicitarie.
+
+La strategia deve utilizzare immagini e video come creatività dell’annuncio e landing dedicate come destinazione.
+
+Prepara indicazioni commerciali per:
+
+Campagna 1 — Sito web da 399 €
+
+Pubblico: titolari di piccole attività e professionisti.
+
+Messaggio creativo:
+
+“La tua attività è online come merita? Sito web professionale da 399 € + IVA.”
+
+Destinazione: /siti-web/
+
+Campagna 2 — Menu digitale a 99 €
+
+Pubblico: ristoratori, titolari di bar, pizzerie e locali.
+
+Messaggio creativo:
+
+“Il tuo menu con QR code a 99 € + IVA.”
+
+Destinazione: /menu-digitali/
+
+Campagna 3 — Gestionali e web app
+
+Pubblico: attività che gestiscono appuntamenti, clienti o prenotazioni.
+
+Messaggio creativo:
+
+“Ancora appuntamenti e clienti gestiti a mano? Scopri una soluzione su misura.”
+
+Destinazione: landing settoriale pertinente.
+
+Non frammentare un budget ridotto fra troppi pubblici e inserzioni.
+
+Per un budget indicativo di 10 € al giorno proponi di testare inizialmente un solo prodotto prioritario oppure un numero molto limitato di varianti.
+
+Per confrontare landing e WhatsApp diretto, suggerisci test controllati con criteri omogenei, tenendo conto che piccoli volumi possono produrre risultati poco affidabili.
+
+Prepara il piano ma non avviare autonomamente campagne.
+
+⸻
+
+PARTE 16 — CONTENT CREATOR E DESIGN
+
+Voglio un sito moderno, curato e credibile.
+
+Non voglio l’aspetto di un sito costruito da un generatore automatico con blocchi tutti uguali.
+
+Usa una gerarchia visiva professionale.
+
+I prezzi di 399 € e 99 € devono essere immediatamente riconoscibili.
+
+Utilizza:
+
+* Titoli commerciali forti.
+* Descrizioni semplici.
+* Spaziature equilibrate.
+* Colori coerenti con il brand.
+* CTA ben visibili.
+* Card chiare.
+* Anteprime di siti, app e menu pertinenti.
+* Icone coerenti.
+* Mobile first.
+
+Per le anteprime dimostrative utilizza componenti leggeri e contenuti illustrativi, senza inventare progetti realmente consegnati.
+
+Non creare immagini costose con API esterne.
+
+Usa prima risorse e asset già disponibili.
+
+Evita sezioni decorative che non aiutano a comprendere l’offerta o a richiedere informazioni.
+
+⸻
+
+PARTE 17 — FIDUCIA E RECENSIONI
+
+Controlla il sistema recensioni esistente.
+
+Pubblica soltanto recensioni autentiche e approvate.
+
+Non utilizzare stelle, nomi, attività o testimonianze inventate.
+
+Non definire una recensione verificata soltanto sulla base di un campo nel database.
+
+Se non esistono recensioni approvate, nascondi la sezione pubblica e non mostrare messaggi permanenti come “Caricamento recensioni verificate…”.
+
+Predisponi una sezione “Perché PromoApp” basata su elementi verificabili:
+
+* Progetti personalizzati.
+* Contatto diretto.
+* Conoscenza delle esigenze delle attività commerciali.
+* Soluzioni sviluppate in base al lavoro reale del cliente.
+
+Non inventare anni di esperienza o numero di clienti.
+
+Preserva correttamente i dati societari esistenti.
+
+⸻
+
+PARTE 18 — SEO E INDICIZZAZIONE
+
+Ogni pagina deve avere:
+
+* Titolo SEO distinto.
+* Meta description pertinente.
+* H1 unico.
+* Canonical corretto.
+* Contenuti specifici.
+* Meta Open Graph e anteprima social.
+* Corretta indicizzazione.
+* Inclusione in sitemap se appropriata.
+* Collegamenti interni utili.
+* Nessuna pagina duplicata.
+* Rendering del contenuto principale accessibile ai crawler.
+
+Correggi prioritariamente il problema delle pagine prodotto che sembrano mostrare la homepage.
+
+Preserva gli URL pubblici esistenti.
+
+Non cambiare indirizzi senza necessità. Se necessario, configura redirect permanenti.
+
+La pagina /grazie/ deve essere noindex.
+
+L’anno nel footer deve aggiornarsi automaticamente.
+
+⸻
+
+PARTE 19 — PRESTAZIONI E QUALITÀ TECNICA
+
+Il sito deve funzionare correttamente su:
+
+* iPhone.
+* Smartphone Android.
+* Tablet.
+* Computer desktop.
+
+Obiettivi:
+
+* Lighthouse mobile 90+ dove realisticamente raggiungibile.
+* Nessun errore JavaScript bloccante.
+* Nessun collegamento interrotto.
+* Form perfettamente funzionanti.
+* Nessuna perdita di lead.
+* Protezione da duplicati e spam.
+* Immagini ottimizzate.
+* Riduzione del JavaScript non indispensabile.
+* Layout responsive.
+* Buona accessibilità da tastiera e screen reader.
+
+Non sacrificare funzioni essenziali per inseguire un punteggio Lighthouse.
+
+Esegui build, controlli automatici disponibili e test mirati.
+
+⸻
+
+PARTE 20 — TEST OBBLIGATORI PRIMA DI CONCLUDERE
+
+Controlla realmente queste situazioni:
+
+Test 1: apertura homepage.
+
+Test 2: apertura /siti-web/ e corretta visualizzazione del prezzo 399 € + IVA.
+
+Test 3: apertura /menu-digitali/ e corretta visualizzazione del prezzo 99 € + IVA una tantum.
+
+Test 4: apertura /web-app/ con richiesta preventivo.
+
+Test 5: apertura delle 11 landing settoriali, tutte con contenuti pertinenti e distinti.
+
+Test 6: precompilazione corretta dei moduli.
+
+Test 7: invio di una richiesta di prova, salvataggio nel database e notifica, senza inviare comunicazioni reali non necessarie a terzi.
+
+Test 8: comportamento corretto in caso di errore di salvataggio.
+
+Test 9: mantenimento del numero WhatsApp originale.
+
+Test 10: conservazione della provenienza UTM.
+
+Test 11: conversione conteggiata una sola volta.
+
+Test 12: cookie marketing non caricati senza il consenso applicabile.
+
+Test 13: corretta visualizzazione mobile.
+
+Test 14: privacy, cookie, sitemap e canonical corretti.
+
+Test 15: assenza di regressioni rispetto alle funzioni esistenti.
+
+Non dichiarare superato un test che non è stato materialmente eseguito.
+
+⸻
+
+PARTE 21 — REPORT FINALE OBBLIGATORIO
+
+Al termine produci un solo report ordinato e sintetico contenente:
+
+1. Situazione iniziale del progetto.
+2. Interventi tecnici effettuati.
+3. Miglioramenti commerciali introdotti.
+4. Landing create o corrette.
+5. Prezzi visualizzati sulle varie pagine.
+6. Funzionamento moduli e WhatsApp.
+7. Gestione e provenienza dei lead.
+8. Tracking disponibile e configurazioni mancanti.
+9. Test effettuati e relativi risultati.
+10. File modificati.
+11. Eventuali attività non completate.
+12. Come testare in locale e nella preview Replit.
+13. Checklist per la pubblicazione.
+14. Piano iniziale Google Ads e Meta Ads con offerte e destinazioni corrette.
+
+Non scrivere genericamente “tutto funziona”. Specifica cosa hai verificato e cosa non hai potuto verificare.
+
+⸻
+
+ORDINE FINALE DI ESECUZIONE
+
+Procedi in questo ordine:
+
+1. Analizza il progetto.
+2. Proteggi dati e funzioni esistenti.
+3. Correggi le tre pagine prodotto.
+4. Rendi evidenti le offerte 399 € e 99 €.
+5. Semplifica e verifica il modulo.
+6. Preserva WhatsApp e notifiche.
+7. Crea le landing settoriali con configurazione unica.
+8. Migliora homepage e design mobile.
+9. Integra correttamente il tracking disponibile.
+10. Migliora SEO e prestazioni.
+11. Esegui i test.
+12. Presenta il report finale.
+
+Non ricostruire ciò che è già corretto.
+
+Non fermarti per decisioni minori già disciplinate da questo prompt.
+
+Per operazioni irreversibili, modifiche a credenziali, acquisti di servizi o variazioni dei prezzi approvati, chiedi espressamente autorizzazione.
+
+Non pubblicare automaticamente in produzione senza il mio via libera finale.
+
+PRINCIPIO COMMERCIALE DEFINITIVO
+
+Il sito deve rispondere a quattro domande nella prima schermata:
+
+Cosa vende PromoApp?
+
+Siti web, menu digitali, app e gestionali.
+
+Quanto costa?
+
+Siti da 399 €, menu QR a 99 €, progetti personalizzati su preventivo.
+
+Perché dovrei contattarla?
+
+Per avere una soluzione utile alla mia attività, con un confronto diretto e una proposta senza impegno.
+
+Come posso contattarla?
+
+Modulo semplicissimo o WhatsApp.
+
+Non voglio una vetrina tecnologica generica.
+
+Voglio un sito che presenti offerte chiare, raccolga richieste reali, permetta di capire quali campagne funzionano e aiuti a trasformare i contatti in clienti paganti.
+
+Realizza il progetto rispettando queste specifiche, minimizzando modifiche superflue, consumo di risorse e rischio di regressioni.

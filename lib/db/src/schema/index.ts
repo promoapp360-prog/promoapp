@@ -22,3 +22,4 @@ export * from "./acconti";
 export * from "./progetti";
 export * from "./gestionali";
 export * from "./recensioni";
+export * from "./leads";

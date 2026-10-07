@@ -6,8 +6,17 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./commercialLead";
+export * from "./commercialLeadAttribution";
 export * from "./contactRequest";
 export * from "./contactRequestAttribution";
 export * from "./contactRequestServizio";
 export * from "./contactResponse";
+export * from "./contactResponseNotification";
+export * from "./exportCommercialLeadsParams";
 export * from "./healthStatus";
+export * from "./leadEvent";
+export * from "./leadUpdate";
+export * from "./leadUpdateStato";
+export * from "./listCommercialLeadsParams";
+export * from "./trackingConfig";

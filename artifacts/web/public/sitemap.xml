@@ -1,7 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.promoapp.it/</loc></url>
-  <url><loc>https://www.promoapp.it/siti-web</loc></url>
-  <url><loc>https://www.promoapp.it/web-app</loc></url>
-  <url><loc>https://www.promoapp.it/menu-digitali</loc></url>
+<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>https://www.promoapp.it/</loc></url>
+<url><loc>https://www.promoapp.it/siti-web</loc></url>
+<url><loc>https://www.promoapp.it/web-app</loc></url>
+<url><loc>https://www.promoapp.it/menu-digitali</loc></url>
+<url><loc>https://www.promoapp.it/per/ristoranti</loc></url>
+<url><loc>https://www.promoapp.it/per/bb-hotel</loc></url>
+<url><loc>https://www.promoapp.it/per/centri-estetici</loc></url>
+<url><loc>https://www.promoapp.it/per/parrucchieri</loc></url>
+<url><loc>https://www.promoapp.it/per/studi-medici</loc></url>
+<url><loc>https://www.promoapp.it/per/palestre</loc></url>
+<url><loc>https://www.promoapp.it/per/negozi</loc></url>
+<url><loc>https://www.promoapp.it/per/officine</loc></url>
+<url><loc>https://www.promoapp.it/per/agenzie-immobiliari</loc></url>
+<url><loc>https://www.promoapp.it/per/studi-legali</loc></url>
+<url><loc>https://www.promoapp.it/per/agenti-commercio</loc></url>
 </urlset>

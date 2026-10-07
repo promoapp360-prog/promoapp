@@ -1,4 +1,4 @@
-import pages from "../src/lib/seo-pages.json" with { type: "json" };
+import pages from "../src/lib/seo-catalog.mjs";
 const escape = (value) => value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export function seoHtml(html, pathname) {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;

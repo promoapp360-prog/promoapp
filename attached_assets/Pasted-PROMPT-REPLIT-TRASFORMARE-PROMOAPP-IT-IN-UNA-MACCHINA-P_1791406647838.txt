@@ -1,0 +1,452 @@
+PROMPT REPLIT — TRASFORMARE PROMOAPP.IT IN UNA MACCHINA PER ACQUISIRE CLIENTI
+
+OBIETTIVO
+
+Agisci come un team composto da:
+
+* Senior Full Stack Developer
+* Esperto Google Ads
+* CRO Specialist (ottimizzazione conversioni)
+* UX/UI Designer
+* Copywriter commerciale
+* SEO Specialist
+
+Devi migliorare il progetto esistente PromoApp.it per trasformarlo in una piattaforma professionale di acquisizione contatti attraverso Google Ads, Meta Ads e Google Search.
+
+L’obiettivo principale è ottenere il maggior numero possibile di contatti commerciali qualificati, riducendo gli ostacoli alla conversione.
+
+Non voglio un semplice restyling. Voglio un sito capace di convincere imprenditori e professionisti a richiedere informazioni sui nostri servizi.
+
+1. ANALISI PRELIMINARE OBBLIGATORIA
+
+Prima di modificare il progetto:
+
+1. Analizza tutto il codice esistente, framework, database, struttura e funzionalità.
+2. Controlla il funzionamento dei moduli contatto.
+3. Identifica dove vengono salvati i contatti.
+4. Verifica il sistema di notifiche.
+5. Controlla l’attuale numero WhatsApp.
+6. Analizza SEO, cookie banner, privacy e tracciamenti.
+7. Individua eventuali problemi di prestazioni o conversione.
+
+Presentami un riepilogo iniziale di massimo 10 righe.
+
+Non cancellare database, dati, contatti o funzionalità esistenti. Non modificare il numero WhatsApp. Crea un punto di ripristino prima degli interventi.
+
+Procedi poi con le modifiche che non richiedono nuove decisioni commerciali, segnalando separatamente quelle da approvare.
+
+2. STRATEGIA COMMERCIALE
+
+PromoApp realizza:
+
+* Siti web professionali.
+* Web app personalizzate.
+* Gestionali aziendali.
+* Sistemi di prenotazione.
+* Menu digitali QR.
+* Sistemi di fidelizzazione clienti.
+* Gestione appuntamenti, clienti e ordini.
+
+Il cliente non deve conoscere la tecnologia per comprendere cosa vendiamo.
+
+Parla dei benefici concreti, non del codice.
+
+Esempio:
+
+NON scrivere:
+“Software gestionale responsive con dashboard integrata.”
+
+Scrivi:
+“Gestisci clienti, appuntamenti e prenotazioni direttamente dal tuo telefono.”
+
+I testi devono essere commercialmente persuasivi, semplici, credibili e orientati alla conversione.
+
+Non inventare statistiche, risultati economici, testimonianze, urgenze o offerte.
+
+3. ARCHITETTURA DELLE LANDING PAGE
+
+Mantieni la homepage PromoApp e crea pagine specifiche:
+
+* /per/ristoranti
+* /per/bb-hotel
+* /per/centri-estetici
+* /per/parrucchieri
+* /per/studi-medici
+* /per/palestre
+* /per/negozi
+* /per/officine
+* /per/agenzie-immobiliari
+* /per/studi-legali
+* /per/agenti-commercio
+
+Usa un solo template dinamico, alimentato da un file di configurazione centralizzato.
+
+Ogni settore deve avere headline, testi, vantaggi, funzioni, FAQ, SEO e messaggio WhatsApp personalizzati.
+
+Aggiungere un settore deve richiedere soltanto una nuova voce nella configurazione.
+
+Le pagine devono essere sufficientemente diverse e utili per il rispettivo pubblico, senza limitarsi a cambiare una parola.
+
+4. HOMEPAGE
+
+Progetta una homepage efficace, mantenendo l’identità grafica di PromoApp ma migliorandone la capacità di conversione.
+
+Headline proposta:
+
+“La tua attività merita strumenti che ti semplificano il lavoro.”
+
+Sottotitolo:
+
+“Realizziamo siti web, app e gestionali personalizzati per aiutarti a organizzare clienti, appuntamenti, prenotazioni e attività quotidiane. Tutto semplice, anche da smartphone.”
+
+CTA principale:
+
+“Richiedi una proposta gratuita”
+
+CTA secondaria:
+
+“Scrivici su WhatsApp”
+
+Organizza queste sezioni:
+
+1. Hero commerciale con CTA.
+2. Modulo richiesta informazioni.
+3. Presentazione dei tre servizi principali.
+4. Soluzioni divise per attività.
+5. Benefici pratici.
+6. Come funziona PromoApp.
+7. Prezzi di partenza.
+8. Progetti realmente realizzati, se documentati.
+9. Recensioni autentiche approvate.
+10. FAQ.
+11. CTA finale.
+
+5. LANDING SETTORIALI
+
+Ogni landing deve parlare dei problemi della specifica attività.
+
+Esempi:
+
+Ristoranti
+“Prenotazioni, menu digitale e clienti: tutto più semplice per il tuo ristorante.”
+
+Centri estetici
+“Organizza appuntamenti, clienti e promozioni del tuo centro estetico.”
+
+Parrucchieri
+“Meno tempo al telefono, più tempo per i tuoi clienti.”
+
+B&B
+“Gestisci camere, disponibilità e prenotazioni da un unico strumento.”
+
+Agenti di commercio
+“Organizza clienti, visite e ordini ovunque ti trovi.”
+
+Scrivi contenuti specifici per tutti gli altri settori.
+
+Ogni pagina deve contenere:
+
+1. Headline chiara e convincente.
+2. Beneficio principale.
+3. Modulo contatti immediato.
+4. Quattro vantaggi commerciali.
+5. Funzionalità specifiche.
+6. Come funziona in tre passaggi.
+7. Prezzi pertinenti.
+8. Elementi di fiducia verificabili.
+9. Tre FAQ.
+10. Invito finale a richiedere informazioni.
+
+Non inserire collegamenti commerciali inutili che distraggano l’utente.
+
+Mantieni i link obbligatori per privacy e cookie.
+
+6. PREZZI E OFFERTE
+
+Predisponi una configurazione prezzi centralizzata.
+
+Riferimenti:
+
+Sito web professionale
+Da 399 € + IVA.
+
+Menu digitale QR
+Da 99 € + IVA, esclusivamente per i settori pertinenti.
+
+Web app personalizzata
+Su preventivo.
+
+Gestionale su misura
+Su preventivo.
+
+Nota:
+
+“Funzionalità extra, hosting e dominio vengono definiti nel preventivo.”
+
+ATTENZIONE: il sito attuale potrebbe avere offerte diverse, comprese web app da 399 €. Non sovrascrivere prezzi esistenti senza verificare la coerenza del listino. Segnalami eventuali differenze prima di pubblicare.
+
+7. FORM CONTATTI OTTIMIZZATO
+
+Voglio un modulo estremamente semplice, soprattutto da smartphone.
+
+Tre campi obbligatori:
+
+1. Nome attività.
+2. Tipo attività (precompilato in base alla landing).
+3. Numero WhatsApp.
+
+Non richiedere email obbligatoria o descrizioni lunghe.
+
+Inserisci corretta informativa privacy e gli eventuali consensi necessari.
+
+Prevedi validazione client/server, protezione antispam e controllo dei duplicati.
+
+Registra nel database:
+
+* Nome attività.
+* Tipo attività.
+* Numero WhatsApp.
+* Settore.
+* Pagina di provenienza.
+* Data e ora.
+* UTM source.
+* UTM medium.
+* UTM campaign.
+* UTM content.
+* UTM term.
+* GCLID, GBRAID e WBRAID quando presenti.
+* Stato di gestione del contatto.
+
+Conserva i parametri di provenienza fino all’invio, nel rispetto delle preferenze privacy.
+
+Usa il sistema di notifiche attuale.
+
+Dopo il salvataggio riuscito, reindirizza a /grazie, pagina noindex con conferma e pulsante WhatsApp.
+
+Non registrare un lead come acquisito se il salvataggio è fallito.
+
+8. WHATSAPP
+
+Mantieni il numero WhatsApp già configurato.
+
+Predisponi pulsanti che aprano la chat con messaggio differente per settore.
+
+Esempio:
+
+“Buongiorno, ho visto PromoApp e vorrei informazioni su una soluzione per il mio centro estetico.”
+
+Su mobile crea una CTA fissa in basso, discreta e facilmente utilizzabile.
+
+Non ostacolare la visualizzazione del modulo.
+
+Distingui chiaramente:
+
+* Clic sul pulsante WhatsApp.
+* Modulo inviato correttamente.
+* Contatto realmente qualificato.
+
+Un semplice clic WhatsApp NON deve diventare automaticamente una conversione lead confermata.
+
+9. ELEMENTI COMMERCIALI CHE AUMENTANO LE CONVERSIONI
+
+Inserisci, quando pertinenti:
+
+* Benefici concreti e comprensibili.
+* Esempi di utilizzo delle app.
+* Anteprime reali o dimostrative correttamente etichettate.
+* Prezzi di partenza.
+* Spiegazione dei passaggi per iniziare.
+* Possibilità di richiesta senza impegno.
+* Recensioni autentiche.
+* Esperienza professionale verificabile.
+* Risposte alle principali obiezioni del cliente.
+
+Il visitatore deve comprendere che può contattarci anche se non sa quale soluzione scegliere.
+
+CTA consigliata:
+
+“Scopri cosa possiamo realizzare per la tua attività”
+
+Studia anche varianti più brevi e incisive.
+
+Non promettere automaticamente una demo personalizzata entro 48 ore.
+
+La proposta iniziale deve essere gratuita e senza impegno; eventuali tempi di risposta devono essere configurabili e rispettabili.
+
+10. GOOGLE ADS E MONITORAGGIO
+
+Prepara il progetto per campagne Google Ads professionali.
+
+Integra, senza duplicazioni:
+
+* Google Tag Manager con ID da variabile d’ambiente.
+* Consent Mode v2, rispettando il banner cookie esistente.
+* Eventi di conversione.
+* Tracciamento UTM.
+* Tracciamento GCLID.
+* Monitoraggio dei clic WhatsApp.
+
+Eventi richiesti:
+
+* cta_click
+* form_start
+* generate_lead
+* whatsapp_click
+* thank_you_view
+* qualified_lead quando viene effettivamente qualificato.
+
+Gli eventi devono essere inviati correttamente, senza conteggi duplicati e senza dati personali in chiaro.
+
+Prevedi un unico evento principale per la richiesta confermata.
+
+Gli altri eventi possono essere misurati come microconversioni.
+
+Predisponi anche la possibilità di integrare successivamente conversioni offline e conversioni avanzate, previa corretta gestione dei dati e del consenso.
+
+Non caricare tag marketing prima dell’eventuale consenso richiesto.
+
+11. PANNELLO DI GESTIONE CONTATTI
+
+Se non esiste già una funzione equivalente, crea una semplice sezione amministrativa protetta per gestire i nuovi contatti.
+
+Voglio poter vedere:
+
+* Data richiesta.
+* Nome attività.
+* Settore.
+* Numero WhatsApp.
+* Campagna di provenienza.
+* Stato del contatto.
+
+Stati suggeriti:
+
+* Nuovo
+* Contattato
+* Interessato
+* Preventivo inviato
+* Cliente acquisito
+* Non interessato
+
+Devo poter filtrare per settore, stato e periodo, esportare i contatti autorizzati in CSV e aprire WhatsApp direttamente dalla scheda del cliente.
+
+Non ricostruire funzionalità già esistenti. Integra e migliora quelle attuali.
+
+Il pannello deve richiedere autenticazione e autorizzazione server-side.
+
+12. RECENSIONI E CREDIBILITÀ
+
+Controlla le recensioni esistenti.
+
+Non inventare recensioni o testimonianze.
+
+Mostra soltanto quelle autentiche, approvate e documentabili.
+
+Se non ci sono recensioni approvate, nascondi l’intera sezione.
+
+Inserisci una sezione che comunichi la personalizzazione del servizio e il rapporto diretto con il cliente.
+
+Non pubblicare anni di esperienza, clienti o progetti non verificati.
+
+13. SEO
+
+Ogni landing deve avere:
+
+* Meta title specifico.
+* Meta description specifica.
+* H1 coerente.
+* URL canonico corretto.
+* Contenuti pertinenti e distinti.
+* Dati strutturati appropriati solo quando realmente applicabili.
+* Inclusione nella sitemap XML.
+* Corretta indicizzazione.
+* Link interni pertinenti dalla homepage.
+
+La pagina /grazie deve essere noindex.
+
+Non compromettere eventuali URL già indicizzati e funzionanti. Prevedi redirect solo quando necessari.
+
+14. PRESTAZIONI E MOBILE
+
+Il sito deve essere progettato prioritariamente per smartphone.
+
+Obiettivi:
+
+* Lighthouse mobile almeno 90, dove tecnicamente raggiungibile.
+* Caricamento rapido.
+* Immagini ottimizzate.
+* JavaScript non necessario ridotto.
+* Layout senza spostamenti fastidiosi.
+* Pulsanti facilmente cliccabili.
+* Form immediatamente accessibile.
+* Navigazione intuitiva.
+* Nessun errore in console.
+
+Non sacrificare il funzionamento del sito per ottenere un punteggio Lighthouse teorico.
+
+15. OTTIMIZZAZIONE CONTINUA DELLE CONVERSIONI
+
+Predisponi la possibilità di confrontare varianti di:
+
+* Headline.
+* CTA.
+* Posizione del modulo.
+* Testo del pulsante WhatsApp.
+* Presentazione dei prezzi.
+
+Gli esperimenti devono poter essere configurati centralmente, con attribuzione coerente e senza alterare automaticamente il sito pubblicato.
+
+Non dichiarare vincente una variante senza dati sufficienti.
+
+16. CRITERI FINALI DI ACCETTAZIONE
+
+Al termine verifica concretamente:
+
+1. La homepage esistente funziona.
+2. Tutte le landing settoriali funzionano.
+3. I contenuti cambiano correttamente per settore.
+4. Il modulo viene precompilato.
+5. Il lead viene salvato nel database.
+6. Lo slug e i parametri pubblicitari vengono registrati.
+7. La notifica viene inviata.
+8. WhatsApp mantiene il numero originale.
+9. La pagina di ringraziamento funziona.
+10. Il tracking evita conversioni duplicate.
+11. Il consenso cookie viene rispettato.
+12. I dati amministrativi sono protetti.
+13. Il sito è utilizzabile da smartphone.
+14. Non risultano errori bloccanti in console.
+15. Le funzionalità precedenti continuano a funzionare.
+
+Esegui controlli reali e non dichiarare superati test che non hai potuto effettuare.
+
+Se mancano chiavi, account o autorizzazioni esterne, indica con precisione che cosa devo configurare.
+
+17. REPORT FINALE
+
+Al termine presentami:
+
+* Modifiche realmente eseguite.
+* File creati o modificati.
+* Funzionalità conservate.
+* Miglioramenti commerciali introdotti.
+* Eventuali problemi ancora presenti.
+* Risultati dei test.
+* Istruzioni per testare il progetto.
+* Configurazioni necessarie prima di pubblicare.
+* Indicazioni su come collegare Google Ads.
+* Proposta delle prime quattro campagne pubblicitarie da avviare, con parole chiave, messaggio commerciale e landing corrispondente.
+
+REGOLA FONDAMENTALE
+
+PROMOAPP.IT NON DEVE ESSERE SOLTANTO UN BEL SITO WEB. DEVE DIVENTARE UNO STRUMENTO CHE TRASFORMA I VISITATORI IN CONTATTI COMMERCIALI MISURABILI.
+
+Metti sempre al primo posto:
+
+1. Chiarezza dell’offerta.
+2. Fiducia.
+3. Semplicità del contatto.
+4. Velocità del sito.
+5. Misurazione dei risultati.
+6. Qualità dei potenziali clienti.
+
+Non modificare arbitrariamente prezzi, promesse commerciali o dati aziendali. Proteggi il progetto esistente e realizza un sistema professionale, scalabile e pronto per le campagne pubblicitarie.

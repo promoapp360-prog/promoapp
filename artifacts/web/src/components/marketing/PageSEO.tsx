@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import seoPages from "../../lib/seo-pages.json";
+import seoPages from "../../lib/seo-catalog.mjs";
 import { PUBLIC_ORIGIN } from "../../lib/marketing";
 import { trackPage } from "../../lib/analytics";
 

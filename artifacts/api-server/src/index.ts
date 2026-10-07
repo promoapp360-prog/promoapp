@@ -69,7 +69,10 @@ async function initStripe() {
   }
 }
 
-await initStripe();
+// Preview restarts must not reconfigure LIVE Stripe webhooks or run backfills.
+// Payment endpoints stay available; production keeps its existing initialization.
+if (process.env.NODE_ENV === "production") await initStripe();
+else logger.info("Anteprima: inizializzazione automatica Stripe non eseguita");
 
 app.listen(port, (err) => {
   if (err) {

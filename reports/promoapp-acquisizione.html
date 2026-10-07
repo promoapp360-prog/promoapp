@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PromoApp — Report acquisizione contatti</title><style>
+*{box-sizing:border-box}body{font-family:Poppins,Arial,sans-serif;color:#211d44;background:#f6f4ee;margin:0;line-height:1.65}main{max-width:1080px;margin:auto;padding:32px 20px 70px}header{background:#211d55;color:white;padding:30px;border-radius:20px}h1,h2,h3{line-height:1.2}h1{font-size:30px}h2{margin-top:36px}section{background:white;border:1px solid #e2ddd0;border-radius:16px;padding:22px;margin:18px 0}code{font-size:13px;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #e2ddd0;padding:12px;text-align:left;vertical-align:top}th{background:#f6f4ee}.scroll{overflow:auto}.ok{color:#047857}.warn{background:#fff7dd;padding:14px;border-left:4px solid #dd9a00}li{margin:5px 0}.small{font-size:13px;color:#68647c}a{color:#2b2370}header .small{color:#d1cceb}@media print{body{background:white}section{break-inside:avoid}header{background:#eee;color:#211d44}header .small{color:#555}}
+</style></head><body><main>
+<header><p>PromoApp.it · 7 ottobre 2026</p><h1>Sistema commerciale e acquisizione contatti</h1><p>Interventi sull'applicazione esistente, non una ricostruzione.</p><p class="small">Modifiche nell'ambiente di sviluppo. Nessuna pubblicazione né attivazione di campagne effettuata durante questo intervento.</p></header>
+<section><h2>1. Modifiche realmente eseguite</h2>
+<ul><li>Homepage con headline e sottotitolo richiesti, proposta gratuita senza impegno, WhatsApp secondario, tre servizi, settori, benefici, passaggi, prezzi, FAQ e CTA finale.</li>
+<li>Un solo modulo contatti nella homepage, nella Hero con la configurazione predefinita. Non è stato reintrodotto il modulo finale né un portfolio pubblico.</li>
+<li>Undici landing da un unico template e una configurazione: ristoranti, B&amp;B/hotel, centri estetici, parrucchieri, studi medici, palestre, negozi, officine, agenzie immobiliari, studi legali e agenti di commercio.</li>
+<li>Contenuti, quattro benefici, funzioni, scenario illustrativo, tre FAQ, metadati, attività precompilata e messaggio WhatsApp distinti per settore. Menu QR proposto soltanto nei settori configurati come pertinenti.</li>
+<li>Modulo con nome attività, tipo attività e WhatsApp, più informativa privacy obbligatoria. Nessuna email o descrizione obbligatoria.</li>
+<li>Nuova tabella commerciale PostgreSQL, creata con SQL additivo. Salvataggio prima dell'email; validazione, honeypot, limite richieste e deduplicazione atomica telefono/settore/servizio/giorno.</li>
+<li>Notifiche Resend conservate; errore email non perde il contatto. Stato “in attesa” e tentativo manuale dal pannello, con chiave di idempotenza.</li>
+<li>Pagina <code>/grazie</code> noindex: conferma soltanto dopo un salvataggio riuscito; una visita diretta non dichiara acquisita una richiesta.</li>
+<li><code>/gestione-contatti</code>: accesso server-side, elenco, sei stati, filtri settore/stato/periodo, CSV, WhatsApp e qualificazione esplicita. Anche gli endpoint amministrativi storici sono bloccati senza credenziale configurata.</li>
+<li>Tracking consent-aware, Consent Mode v2, configurazione Google runtime, separazione fra clic WhatsApp e lead confermato, esclusione degli eventi amministrativi, deduplicazione per identificativo della richiesta.</li>
+<li>Sitemap aggiornata e 19 pagine prerenderizzate con metadati distinti. Moduli e pannelli amministrativi separati nel caricamento JavaScript; Poppins e identità cromatica conservati.</li>
+<li>Varianti centralizzate per headline, CTA, WhatsApp, posizione del modulo e prezzi. Esperimenti disabilitati: nessuna variante è stata dichiarata vincente.</li></ul></section>
+<section><h2>2. File principali creati o modificati</h2>
+<p><strong>Frontend e configurazioni</strong></p><ul>
+<li><code>artifacts/web/src/pages/Preventivo.tsx</code>, <code>SectorLanding.tsx</code>, <code>ThankYou.tsx</code>, <code>LeadsAdmin.tsx</code>, <code>Admin.tsx</code>, <code>ServiceLanding.tsx</code> e <code>src/main.tsx</code>.</li>
+<li><code>src/lib/sector-config.json</code>, <code>commercial-config.json</code>, <code>commercial.ts</code>, <code>marketing.ts</code>, <code>analytics.ts</code>, <code>lead-receipt.ts</code>, <code>useMobileFormVisibility.ts</code>, <code>seo-catalog.mjs</code>, <code>seo-catalog.d.mts</code> e <code>seo-pages.json</code>.</li>
+<li><code>src/components/marketing/HomeContactForm.tsx</code>, <code>LeadForm.tsx</code>, <code>MarketingLayout.tsx</code>, <code>PageSEO.tsx</code>, <code>VerifiedReviews.tsx</code> e <code>WhatsAppLink.tsx</code>.</li>
+<li><code>src/styles/commercial.css</code>, <code>public/privacy.html</code>, <code>public/sitemap.xml</code>, <code>scripts/seo-build.mjs</code> e <code>scripts/seo-html.mjs</code>.</li></ul>
+<p><strong>Backend, database e contratto API</strong></p><ul>
+<li><code>artifacts/api-server/src/routes/contatto.ts</code>, <code>leadsAdmin.ts</code>, <code>index.ts</code>, <code>src/lib/leads.ts</code>, <code>src/middlewares/adminAuthorization.ts</code> e <code>src/app.ts</code>.</li>
+<li><code>lib/db/src/schema/leads.ts</code> e <code>lib/db/src/schema/index.ts</code>.</li>
+<li><code>lib/api-spec/openapi.yaml</code> e client, tipi e validatori rigenerati in <code>lib/api-client-react/src/generated/</code> e <code>lib/api-zod/src/generated/</code>.</li>
+<li><code>artifacts/api-server/scripts/verify-acquisition.ts</code> e <code>verify-pending-lead.ts</code>: verifiche ripetibili, limitate ai propri record di prova.</li></ul>
+<p class="small">Copia preventiva dei sorgenti: <code>.local/backups/promoapp-prima-acquisizione-2026-10-07.tar.gz</code>. Non è un dump del database. Le tabelle esistenti non sono state cancellate o sostituite.</p></section>
+<section><h2>3. Funzionalità conservate</h2>
+<p>Numero WhatsApp originale, dati aziendali, homepage e alias <code>/preventivo</code>, pagine servizi, menu dimostrativo, link alle anteprime dei lavori, invio e moderazione recensioni, Resend e dati delle tabelle preesistenti. Non è stata effettuata una migrazione dell'autenticazione Clerk. Non è stata riscritta la logica dei pagamenti Stripe/PayPal.</p>
+<p>Prezzi delle landing correnti: sito da 399 € + IVA, menu QR da 99 € + IVA, web app e gestionali su preventivo. Eventuali offerte storiche diverse nei progetti, nei preventivi o nelle pagine legacy non sono state sovrascritte: il titolare deve confermare il listino prima della pubblicazione.</p></section>
+<section><h2>4. Risultati e limiti delle verifiche</h2>
+<div class="scroll"><table><thead><tr><th>Controllo</th><th>Risultato effettivo</th></tr></thead><tbody>
+<tr><td>Generazione API e TypeScript condiviso</td><td class="ok">Completati.</td></tr>
+<tr><td>TypeScript frontend e build produzione</td><td class="ok">Completati; prerender di 19 pagine.</td></tr>
+<tr><td>Salvataggio, slug e attribuzione</td><td class="ok">Provati contro il database di sviluppo con inserimenti reali.</td></tr>
+<tr><td>Validazione, honeypot e duplicati</td><td class="ok">Richieste invalide respinte; ripetizione restituisce lo stesso lead senza nuova notifica.</td></tr>
+<tr><td>Filtri, stati, CSV e qualificazione</td><td class="ok">Verificati via HTTP in un server di prova isolato con il middleware reale. Stato “Interessato” non qualifica automaticamente; qualificazione ripetuta registra un solo evento.</td></tr>
+<tr><td>Consenso</td><td class="ok">Attribuzione svuotata quando analytics e marketing sono negati. Identificativi pubblicitari conservati soltanto con consenso marketing.</td></tr>
+<tr><td>Notifiche</td><td>Due email reali di prova accettate da Resend. La chiave esistente consente l'invio ma non la lettura dello stato email: consegna nella casella non verificabile con questa autorizzazione.</td></tr>
+<tr><td>Guasto servizio email</td><td class="ok">Guasto simulato: richiesta salvata, risposta riuscita, notifica “in attesa”. Nessuna email reale inviata da questa prova.</td></tr>
+<tr><td>Protezione amministrativa</td><td class="ok">Endpoint nell'app effettiva bloccato con 503 perché ADMIN_PASSWORD non è configurata; accesso senza credenziale respinto con 401 nel test isolato configurato.</td></tr>
+<tr><td>Anteprima e console</td><td>Controlli visivi desktop e mobile; nessun errore bloccante nelle console delle pagine fotografate.</td></tr>
+<tr><td>Controllo completo backend</td><td>Ancora 17 errori TypeScript preesistenti in <code>stripeClient.ts</code>, <code>acconto.ts</code>, <code>admin.ts</code> e <code>checkout.ts</code>. Nessun errore segnalato nei nuovi endpoint commerciali. Il servizio avvia correttamente e health risponde 200.</td></tr>
+<tr><td>Pagamenti, Lighthouse e Google Ads</td><td>Non eseguiti pagamenti reali, misurazione Lighthouse o prova completa dei tag negli account Google. Non viene dichiarato raggiunto un punteggio 90.</td></tr>
+</tbody></table></div><p class="small">I record creati dalle prove sono stati eliminati tramite i rispettivi identificativi, senza cancellare contatti preesistenti. Le verifiche HTTP non equivalgono a una prova automatizzata completa del browser.</p></section>
+<section><h2>5. Configurazioni prima della pubblicazione</h2><ol>
+<li><strong>Accesso amministrativo:</strong> impostare <code>ADMIN_PASSWORD</code> nel sistema Secrets, per gli ambienti necessari. Senza questa impostazione il pannello è volutamente inutilizzabile; anche le vecchie API admin non accettano password predefinite.</li>
+<li><strong>Google:</strong> configurare <code>GTM_ID</code>. Se si sceglie l'integrazione diretta alternativa, usare <code>GA4_ID</code>, <code>GOOGLE_ADS_ID</code> e <code>GOOGLE_ADS_LEAD_LABEL</code>. Non aggiungere una seconda installazione parallela.</li>
+<li><strong>Email:</strong> Resend è funzionante per l'invio; verificare ricezione delle email tecniche. Per un mittente professionale verificato, configurare facoltativamente <code>CONTACT_FROM_EMAIL</code>. Il destinatario già configurato è stato conservato.</li>
+<li><strong>Produzione:</strong> applicare il nuovo codice solo dopo approvazione. La creazione della tabella commerciale è additiva e avviene nel database dell'ambiente in cui gira l'app; non trasferire né sovrascrivere il database pubblico con quello di sviluppo.</li>
+<li><strong>Revisione commerciale:</strong> approvare listino, inclusioni, IVA, extra e gestione dell'assistenza. Nessun budget o tempo di risposta è stato inventato.</li>
+<li><strong>Recensioni:</strong> visualizzazione basata sull'approvazione già registrata nel database; l'autenticità documentale non può essere attestata dal solo codice. Il titolare deve validare le prove esistenti prima della pubblicazione.</li>
+<li><strong>Controlli residui:</strong> revisione dell'informativa, prova del percorso completo nel browser, controllo pagamenti e webhook Stripe storici, Lighthouse e verifica tag negli account reali. I log del sistema Stripe esistente mostrano riconciliazione di webhook durante l'avvio: non sono una prova di pagamento riuscito.</li>
+</ol><p class="warn">Non sono state attivate campagne, conversioni offline, conversioni avanzate o nuovi servizi esterni a pagamento.</p></section>
+<section><h2>6. Collegamento Google Ads</h2><ol>
+<li>Creare la conversione “Richiesta confermata” e scegliere un solo percorso: tag Google Ads nel container GTM, oppure importazione dell'evento GA4. Non impostare entrambi come conversioni principali per la stessa richiesta.</li>
+<li>Nel container usare il trigger personalizzato <code>generate_lead</code>, emesso solo dopo il salvataggio, e mappare <code>event_id</code> al campo transaction ID del tag Ads. <code>cta_click</code>, <code>form_start</code>, <code>whatsapp_click</code> e <code>thank_you_view</code> sono microconversioni, non nuove richieste.</li>
+<li>Abilitare controlli di consenso per tutti i tag: GA4 richiede consenso analytics; Ads e Meta consenso marketing. Il container viene caricato soltanto con consenso marketing nella modalità stretta predisposta. Non configurare tag che aggirino questi controlli.</li>
+<li>Non inserire dati dei campi, nomi, numeri WhatsApp o email nelle variabili analytics; evitare raccolta automatica dei dati personali nei tag. Disattivare qualsiasi ulteriore tag Meta nel container se si mantiene il pixel già gestito dall'app.</li>
+<li>Usare auto-tagging Google e UTM coerenti, ad esempio <code>utm_source=google&amp;utm_medium=cpc&amp;utm_campaign=ristoranti_search</code>. L'app conserva i parametri secondo le preferenze cookie.</li>
+<li>Verificare con Tag Assistant e DebugView: rifiuto cookie → nessun tag marketing; consenso → tag previsto; invio riuscito → un solo generate_lead; aggiornamento di /grazie → nessuna nuova conversione; clic WhatsApp → solo microevento.</li>
+<li><code>qualified_lead</code> è registrato internamente dopo conferma esplicita dell'operatore. L'invio a Google richiede una successiva integrazione offline e una verifica dei consensi; non usare il consenso dell'amministratore al posto di quello del cliente.</li>
+</ol></section>
+<section><h2>7. Prime quattro campagne proposte</h2><p>Proposte da approvare, non campagne attivate. Iniziare con Search, gruppi tematici e corrispondenza a frase/esatta; località, budget e obiettivi di costo devono essere scelti dal titolare.</p>
+<div class="scroll"><table><thead><tr><th>Campagna / landing</th><th>Parole chiave iniziali</th><th>Messaggio commerciale</th></tr></thead><tbody>
+<tr><td>Ristoranti<br><code>/per/ristoranti</code></td><td>“menu digitale ristorante”; [menu qr ristorante]; “gestionale prenotazioni ristorante”</td><td>Menu QR e richieste di prenotazione più ordinate. Menu da 99 € + IVA; gestionale su preventivo. Proposta gratuita senza impegno.</td></tr>
+<tr><td>Centri estetici<br><code>/per/centri-estetici</code></td><td>“gestionale centro estetico”; [agenda centro estetico]; “gestione appuntamenti estetista”</td><td>Organizza appuntamenti, clienti e promozioni del centro. Una soluzione personalizzata, con funzioni e costi concordati.</td></tr>
+<tr><td>Parrucchieri<br><code>/per/parrucchieri</code></td><td>“gestionale parrucchieri”; [agenda parrucchiere]; “prenotazioni salone online”</td><td>Meno tempo al telefono, più ordine negli appuntamenti. Raccontaci il tuo salone e richiedi una proposta gratuita.</td></tr>
+<tr><td>B&amp;B e hotel<br><code>/per/bb-hotel</code></td><td>“gestionale bed and breakfast”; [gestione prenotazioni b&amp;b]; “gestionale piccolo hotel”</td><td>Camere, disponibilità e richieste organizzate da un unico strumento. Integrazioni con portali soltanto se concordate e tecnicamente verificate.</td></tr>
+</tbody></table></div><p>Negative iniziali da valutare: lavoro, stipendio, corso, tutorial, download, gratis, open source. Controllare i termini di ricerca; non escludere automaticamente “preventivo gratuito”. Confrontare costo per richiesta e quota di contatti qualificati, non soltanto i clic WhatsApp.</p></section>
+<section><h2>8. Come provare il progetto</h2><ol>
+<li>Aprire l'anteprima, controllare homepage e selezionare uno degli undici settori. Verificare attività precompilata, FAQ e numero WhatsApp originale.</li>
+<li>Provare consenso negato e consenso accettato; inviare una richiesta tecnica con i tre campi e informativa. Attendere /grazie, controllare il contatto e la notifica.</li>
+<li>Dopo la configurazione di ADMIN_PASSWORD, aprire <code>/gestione-contatti</code>, verificare stato, campagna, filtri, CSV e WhatsApp. Usare la qualificazione solo dopo un riscontro reale.</li>
+<li>Per ripetere la verifica backend, eseguire lo script <code>artifacts/api-server/scripts/verify-acquisition.ts</code> con il loader tsx presente nel workspace. Invia due notifiche reali e rimuove i propri record. <code>verify-pending-lead.ts</code> simula invece il guasto email senza inviare notifiche.</li>
+</ol><p>Le modifiche sono disponibili nell'anteprima del progetto. Questo report non autorizza né esegue la pubblicazione.</p></section>
+</main></body></html>

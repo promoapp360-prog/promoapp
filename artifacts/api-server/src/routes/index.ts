@@ -8,11 +8,15 @@ import accontoRouter from "./acconto";
 import gestionaliRouter from "./gestionali";
 import recensioniRouter from "./recensioni";
 import proxyRouter from "./proxy";
+import leadsAdminRouter from "./leadsAdmin";
+import { adminAuthorization } from "../middlewares/adminAuthorization";
 
 const router: IRouter = Router();
+router.use(adminAuthorization);
 
 router.use(healthRouter);
 router.use(contattoRouter);
+router.use(leadsAdminRouter);
 router.use(checkoutRouter);
 router.use(adminRouter);
 router.use(lavoriRouter);
