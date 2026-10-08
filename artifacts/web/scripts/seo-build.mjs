@@ -3,7 +3,7 @@ import { resolve, dirname } from "node:path";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { Router } from "wouter";
-import { createServer } from "vite";
+import { createServer, build } from "vite";
 import react from "@vitejs/plugin-react";
 import pages from "../src/lib/seo-catalog.mjs";
 import { seoHtml } from "./seo-html.mjs";
@@ -53,4 +53,22 @@ try {
   console.log(`SEO: ${Object.keys(pages).length} pages pre-rendered with unique metadata; sitemap updated.`);
 } finally {
   await server.close();
+}
+
+// Bundle only the tracking entry for the separate informational HTML pages.
+// Their visible content and metadata are left exactly as copied from public/.
+const trackingBase = process.env.BASE_PATH ?? "/";
+await build({
+  configFile: false, root, publicDir: false, base: trackingBase,
+  build: {
+    outDir: out, emptyOutDir: false,
+    lib: { entry: resolve(root, "src/lib/static-tracking.ts"), formats: ["es"],
+      fileName: () => "assets/legal-google-tag.js" },
+  },
+});
+for (const file of ["privacy.html", "cookie.html", "dati-societari.html"]) {
+  const path = resolve(out, file);
+  const html = await readFile(path, "utf8");
+  await writeFile(path, html.replace("/src/lib/static-tracking.ts",
+    `${trackingBase.replace(/\/$/, "")}/assets/legal-google-tag.js`));
 }

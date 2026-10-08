@@ -11,8 +11,11 @@ declare global {
   }
 }
 let config: TrackingConfig = {};
+let googleOnly = false;
 let ready = false, googleStarted = false, metaStarted = false, gtmStarted = false;
+let consentDefaultSet = false;
 let activePath = "/", lastPage = "";
+let lastAdsPage = "";
 let gaConfigured = false, adsConfigured = false;
 const sentLeads = new Set<string>();
 const privatePage = () => /^\/(?:admin|gestione-contatti|lavori)(?:\/|$)/.test(activePath) ||
@@ -41,7 +44,10 @@ function configure(consent: Consent) {
   if (!ready) return;
   if (!window.gtag) {
     window.gtag = gtag;
+  }
+  if (!consentDefaultSet) {
     gtag("consent", "default", consentValues({ analytics: false, marketing: false }));
+    consentDefaultSet = true;
   }
   gtag("consent", "update", consentValues(consent));
   const gtm = /^GTM-[A-Z0-9]+$/.test(config.gtmId ?? "") ? config.gtmId : "";
@@ -65,7 +71,19 @@ function configure(consent: Consent) {
     if (ga && consent.analytics && !gaConfigured) { gtag("config", ga, { send_page_view: false }); gaConfigured = true; }
     if (ads && consent.marketing && !adsConfigured) { gtag("config", ads, { send_page_view: false }); adsConfigured = true; }
   }
-  if (consent.marketing && /^\d+$/.test(config.metaPixelId ?? "") && !metaStarted) {
+  // Google Ads URL-based goals need the current virtual page, not just GA4 events.
+  // Keep a separate marker so granting marketing after analytics also measures
+  // the current page. No conversion event or label is added to the landing.
+  if (!gtm && adsConfigured && consent.marketing && lastAdsPage !== activePath) {
+    window.gtag?.("event", "page_view", {
+      send_to: ads,
+      page_location: `${window.location.origin}${appPath(activePath)}`,
+      page_path: activePath,
+      page_title: document.title,
+    });
+    lastAdsPage = activePath;
+  }
+  if (!googleOnly && consent.marketing && /^\d+$/.test(config.metaPixelId ?? "") && !metaStarted) {
     const pixel: NonNullable<Window["fbq"]> = (...args: unknown[]) => {
       if (pixel.callMethod) pixel.callMethod(...args); else pixel.queue!.push(args);
     };
@@ -81,15 +99,21 @@ function configure(consent: Consent) {
     if (consent.analytics || consent.marketing) lastPage = activePath;
   }
 }
-export async function initTracking() {
+export async function initTracking(options: { googleOnly?: boolean } = {}) {
+  googleOnly = options.googleOnly === true;
   captureAttribution();
   try {
-    const [staticResponse, runtimeResponse] = await Promise.all([
-      fetch(appPath("/marketing-config.json")), fetch(appPath("/api/marketing-config")),
-    ]);
-    if (staticResponse.ok) config = await staticResponse.json();
-    if (runtimeResponse.ok) {
-      const runtime = await runtimeResponse.json() as TrackingConfig;
+    const [staticConfig, runtimeConfig] = await Promise.all([
+      "/marketing-config.json", "/api/marketing-config",
+    ].map(async (path) => {
+      try {
+        const response = await fetch(appPath(path));
+        return response.ok ? await response.json() as TrackingConfig : {};
+      } catch { return {}; }
+    }));
+    config = staticConfig;
+    if (runtimeConfig) {
+      const runtime = runtimeConfig;
       for (const [key, value] of Object.entries(runtime)) if (value) (config as Record<string, string>)[key] = value;
     }
   } catch { /* Tracking must never block enquiries. */ }
