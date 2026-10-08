@@ -20,7 +20,7 @@ export const leadsTable = pgTable("commercial_leads", {
   stato: text("stato").notNull().default("Nuovo"),
   notification: text("notification").notNull().default("pending"),
   qualifiedAt: timestamp("qualified_at", { withTimezone: true }),
-  events: jsonb("events").$type<{ event: string; at: string }[]>().notNull().default([]),
+  events: jsonb("events").$type<{ event: string; at: string; quoteAmountCents?: number | null; saleAmountCents?: number | null }[]>().notNull().default([]),
   dedupKey: text("dedup_key").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [uniqueIndex("commercial_leads_dedup_idx").on(table.dedupKey)]);

@@ -6,7 +6,7 @@ let memory: Receipt | null = null;
 export function rememberLead(result: ContactResponse, service: Service, slug = "generale") {
   if (!result.success || !result.leadId) throw new Error("Richiesta non confermata");
   memory = { leadId: result.leadId, service, slug, at: Date.now(), notification: result.notification ?? "pending",
-    offerConfirmation: commercialIncentive().confirmation };
+    offerConfirmation: service === "menu-digitali" ? commercialIncentive().confirmation : "Richiesta ricevuta! Ti contatteremo su WhatsApp per definire la tua proposta personalizzata." };
   try { sessionStorage.setItem("promoapp-receipt", JSON.stringify(memory)); } catch { /* Necessary receipt remains in memory. */ }
 }
 export function getReceipt(): Receipt | null {

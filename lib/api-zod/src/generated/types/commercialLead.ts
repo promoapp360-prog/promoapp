@@ -22,6 +22,18 @@ export interface CommercialLead {
   createdAt: Date;
   /** @nullable */
   qualifiedAt?: Date | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  quoteAmountCents?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  saleAmountCents?: number | null;
   marketingConsent: boolean;
   analyticsConsent: boolean;
   attribution: CommercialLeadAttribution;

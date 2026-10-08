@@ -1,0 +1,236 @@
+PROMOAPP.IT — RIPOSIZIONAMENTO COMMERCIALE E OTTIMIZZAZIONE DEI CONTATTI
+
+Agisci come Direttore Marketing, Direttore Vendite, CRO Specialist e Senior Full Stack Developer.
+
+Devi verificare e, solo dove necessario, migliorare il sito PromoApp.it sulla base di una decisione commerciale fondamentale:
+
+Il core business di PromoApp è la realizzazione di siti web professionali, web app, software gestionali e progetti digitali personalizzati.
+
+Il menu digitale QR da 99 € è un prodotto complementare, non il principale servizio su cui vogliamo costruire il posizionamento aziendale.
+
+Non ricostruire il sito e non aggiungere nuovi sistemi complessi.
+
+1. ANALISI INIZIALE
+
+Esamina il progetto già sviluppato.
+
+Verifica quali interventi sono già presenti e quali mancano.
+
+Fornisci un riepilogo di massimo cinque righe prima di procedere.
+
+Non modificare parti funzionanti, database, WhatsApp, tracking o integrazioni esistenti senza necessità.
+
+Crea un checkpoint prima delle modifiche.
+
+2. NUOVA GERARCHIA COMMERCIALE
+
+La comunicazione di PromoApp deve avere questo ordine di importanza:
+
+PRIMO — Progetti digitali personalizzati
+
+Web app, gestionali, prenotazioni, organizzazione clienti, sistemi su misura per le aziende.
+
+SECONDO — Siti web professionali
+
+Da 399 € + IVA, come prodotto di ingresso che può evolvere verso soluzioni più articolate.
+
+TERZO — Menu digitali QR
+
+99 € + IVA una tantum per la realizzazione base, con eventuali costi accessori comunicati chiaramente.
+
+Tutti i servizi rimangono disponibili e raggiungibili.
+
+Non nascondere l’offerta da 99 € e non modificarne il prezzo.
+
+3. HOMEPAGE: VENDERE COMPETENZA, NON SOLTANTO PREZZI
+
+La homepage deve presentare PromoApp come partner per la digitalizzazione delle attività commerciali.
+
+Headline suggerita:
+
+“Siti web, app e gestionali su misura per la tua attività.”
+
+Sottotitolo:
+
+“Trasformiamo le esigenze della tua impresa in strumenti digitali concreti. Dalla presenza online alla gestione di clienti, prenotazioni e attività quotidiane.”
+
+CTA principale:
+
+“Raccontaci il tuo progetto”
+
+CTA secondaria:
+
+“Scopri i nostri servizi”
+
+Mantieni visibili le offerte economiche, ma non lasciare che il menu da 99 € diventi il messaggio dominante.
+
+Ordina le sezioni in modo da dare prima risalto alle soluzioni personalizzate, poi ai siti web e infine ai prodotti complementari.
+
+4. DISTINGUERE I DUE TIPI DI CLIENTE
+
+PromoApp deve saper acquisire due tipi di richieste.
+
+Cliente con esigenza semplice
+
+Vuole un sito web o un menu digitale già chiaramente definito.
+
+Deve vedere un’offerta concreta, un prezzo e un modo semplice per contattarci.
+
+Cliente con progetto personalizzato
+
+Vuole un sistema di prenotazione, una web app, un gestionale o uno strumento specifico per la propria attività.
+
+Deve percepire competenza, flessibilità e capacità di realizzare il suo progetto.
+
+CTA consigliata:
+
+“Parlaci della tua idea”
+
+Non obbligare questi clienti a scegliere un prodotto economico o una soluzione standard.
+
+5. MAGGIORE CREDIBILITÀ PER I PROGETTI IMPORTANTI
+
+Verifica se esiste una sezione dedicata ai progetti realizzati.
+
+Se disponibile, valorizza lavori reali e autorizzati mostrando:
+
+* Esigenza iniziale del cliente.
+* Soluzione realizzata.
+* Principali funzionalità.
+* Anteprima del progetto.
+* Tipologia di attività.
+
+Non inventare clienti, fatturati, risultati, testimonianze o lavori consegnati.
+
+Se mancano progetti approvati, prepara la struttura per inserirli successivamente, senza pubblicare segnaposto vuoti.
+
+Mantieni distinti esempi illustrativi e lavori effettivamente realizzati.
+
+6. FORM E QUALIFICAZIONE COMMERCIALE
+
+Non aumentare i campi obbligatori dei moduli pubblici.
+
+Mantieni:
+
+* Nome attività.
+* Tipo attività.
+* WhatsApp.
+
+Il sistema deve già conoscere la landing e il servizio da cui proviene la richiesta.
+
+Registra correttamente questa informazione nel lead.
+
+Non richiedere il budget al primo contatto: la qualificazione può avvenire successivamente durante la conversazione commerciale.
+
+Verifica salvataggio, notifiche, parametri pubblicitari e pagina di conferma.
+
+7. ORGANIZZAZIONE DELLE OPPORTUNITÀ
+
+Controlla il pannello amministrativo esistente.
+
+Se già presente, utilizza il sistema attuale per distinguere:
+
+* Richiesta ricevuta.
+* Contatto qualificato.
+* Preventivo inviato.
+* Trattativa in corso.
+* Cliente acquisito.
+* Trattativa non conclusa.
+
+Prevedi, se non già disponibili, campi amministrativi per importo del preventivo e valore della vendita conclusa.
+
+Non rendere pubblici questi dati.
+
+Non creare un nuovo CRM e non integrare strumenti esterni a pagamento.
+
+Se l’aggiunta richiede uno sviluppo sproporzionato, segnala la possibilità senza implementarla.
+
+L’obiettivo è poter misurare non soltanto il numero di lead, ma anche le vendite e il fatturato generato da ciascun servizio.
+
+8. STRATEGIA DELLE LANDING
+
+Mantieni le landing attuali.
+
+Le pagine per siti web, web app, menu digitali e settori devono rimanere distinte.
+
+Non creare nuove landing pubblicitarie duplicate.
+
+Ottimizza le pagine dove necessario per:
+
+* Chiarezza dell’offerta.
+* Coerenza tra annuncio e pagina.
+* Benefici specifici e non ripetitivi.
+* CTA pertinenti.
+* Accessibilità dei moduli.
+* Navigazione mobile.
+* Corretta misurazione delle conversioni.
+
+I siti web da 399 € devono mantenere il prezzo evidente.
+
+Le web app personalizzate devono essere presentate come soluzioni su preventivo.
+
+I menu da 99 € devono mantenere una landing autonoma, focalizzata sul prodotto.
+
+9. DEMO E CONTATTO COMMERCIALE
+
+Non promettere automaticamente demo personalizzate entro 48 ore su tutti i progetti.
+
+Per i siti e le web app utilizza preferibilmente:
+
+“Richiedi una proposta personalizzata”
+
+Per il menu digitale:
+
+“Richiedi il tuo menu digitale a 99 €”
+
+Mantieni la possibilità di offrire un’anteprima gratuita quando effettivamente disponibile.
+
+Non aggiungere un checkout o uno shop in questa fase.
+
+La conclusione della vendita avviene attraverso il contatto commerciale, il preventivo e il successivo pagamento concordato.
+
+10. MONITORAGGIO DELLE VENDITE
+
+Verifica che sia possibile distinguere almeno:
+
+* Lead per prodotto.
+* Lead per settore.
+* Lead per campagna.
+* Lead qualificati.
+* Preventivi inviati.
+* Clienti acquisiti.
+* Valore delle vendite concluse.
+
+Non inventare dati mancanti.
+
+Non considerare un clic WhatsApp una vendita o un lead confermato.
+
+Non alterare i sistemi Google Ads, Meta Ads e consenso cookie se già corretti.
+
+11. CRITERI FINALI
+
+Prima di concludere verifica che:
+
+* PromoApp sia presentata principalmente come realizzatore di soluzioni digitali.
+* Le offerte da 399 € e 99 € rimangano visibili e corrette.
+* I servizi personalizzati abbiano una comunicazione commerciale adeguata.
+* Tutte le landing continuino a funzionare.
+* WhatsApp non sia stato modificato.
+* I moduli continuino a salvare i contatti.
+* I lead mantengano la provenienza.
+* L’area amministrativa rimanga protetta.
+* Non vi siano errori bloccanti o regressioni.
+
+Fornisci infine un report con i file modificati, i test effettuati, gli eventuali problemi e le istruzioni per verificare le modifiche.
+
+Non pubblicare autonomamente in produzione.
+
+REGOLA FINALE
+
+Non voglio un sito che attiri soltanto chi cerca il prezzo più basso.
+
+Voglio un sito capace di attrarre anche imprenditori e aziende che hanno bisogno di progetti personalizzati e sono disposti a investire in una soluzione professionale.
+
+Non aumentare le funzioni del sito senza una motivazione commerciale concreta.
+
+L’obiettivo non è ricevere più messaggi a qualsiasi costo, ma acquisire clienti che generino fatturato e margini sostenibili per PromoApp.

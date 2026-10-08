@@ -46,6 +46,9 @@ paths:
       operationId: listCommercialLeads
       tags: [contacts]
       parameters:
+        - { name: servizio, in: query, schema: { type: string } }
+        - { name: campagna, in: query, schema: { type: string } }
+        - { name: tipoAttivita, in: query, schema: { type: string } }
         - { name: settore, in: query, schema: { type: string } }
         - { name: stato, in: query, schema: { type: string } }
         - { name: from, in: query, schema: { type: string, format: date } }
@@ -92,6 +95,9 @@ paths:
     get:
       operationId: exportCommercialLeads
       parameters:
+        - { name: servizio, in: query, schema: { type: string } }
+        - { name: campagna, in: query, schema: { type: string } }
+        - { name: tipoAttivita, in: query, schema: { type: string } }
         - { name: settore, in: query, schema: { type: string } }
         - { name: stato, in: query, schema: { type: string } }
         - { name: from, in: query, schema: { type: string, format: date } }
@@ -140,6 +146,8 @@ components:
       required: [stato]
       properties:
         qualified: { type: boolean }
+        quoteAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        saleAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         stato:
           type: string
           enum: [Nuovo, Contattato, Interessato, Preventivo inviato, Cliente acquisito, Non interessato]
@@ -159,6 +167,8 @@ components:
         notification: { type: string }
         createdAt: { type: string, format: date-time }
         qualifiedAt: { type: ["string", "null"], format: date-time }
+        quoteAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        saleAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         marketingConsent: { type: boolean }
         analyticsConsent: { type: boolean }
         attribution: { type: object, additionalProperties: { type: string } }
@@ -171,6 +181,8 @@ components:
       properties:
         event: { type: string }
         at: { type: string }
+        quoteAmountCents: { type: ["integer", "null"], multipleOf: 1 }
+        saleAmountCents: { type: ["integer", "null"], multipleOf: 1 }
     ContactRequest:
       type: object
       required: [nome_attivita, settore, whatsapp, privacy]

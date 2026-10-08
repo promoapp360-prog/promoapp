@@ -61,6 +61,20 @@ function MenuDemo() {
   );
 }
 
+function WebsiteExample() {
+  return <figure className="website-example" data-testid="website-demo-preview">
+    <div className="website-example-bar"><strong>La tua attività</strong><span>Servizi · Contatti</span></div>
+    <div className="website-example-content">
+      <small>ESEMPIO ILLUSTRATIVO</small>
+      <h3>Il tuo lavoro, presentato con chiarezza.</h3>
+      <p>Una presentazione dell'attività, i tuoi servizi e un modo semplice per contattarti.</p>
+      <span className="website-example-contact">Richiedi informazioni</span>
+      <div className="website-example-services"><span>La tua attività</span><span>I tuoi servizi</span><span>I tuoi contatti</span></div>
+    </div>
+    <figcaption>Schermata dimostrativa, non un sito di un cliente. Pagine, contenuti e funzioni si concordano nel preventivo.</figcaption>
+  </figure>;
+}
+
 function Cards({ items, cols = "c3" }: { items: Item[]; cols?: string }) {
   return (
     <div className={`sl-grid ${cols}`}>
@@ -130,7 +144,7 @@ function Hero({ service, kicker, h1, sub, price, priceNote, note, side }: {
   priceNote?: string; note: string; side?: React.ReactNode;
 }) {
   return (
-    <section className="sl-hero">
+    <section className="sl-hero product-hero">
       <div className="marketing-container">
         <div className="sl-reveal">
           <span className="sl-kicker">{kicker}</span>
@@ -141,15 +155,17 @@ function Hero({ service, kicker, h1, sub, price, priceNote, note, side }: {
           )}
           <div className="sl-cta">
             <a href="#preventivo" className="whatsapp-link" data-testid="link-to-form" onClick={() => trackEvent("cta_click", service, "product-hero")}>{serviceCta[service]}</a>
+            {service === "menu-digitali" && <a href="#menu-esempio" className="sl-ghost" data-testid="link-menu-example"
+              onClick={() => trackEvent("cta_click", service, "product-example")}>Guarda subito il menu</a>}
             <WhatsAppLink service={service} placement="hero" className="sl-ghost">Scrivici su WhatsApp</WhatsAppLink>
           </div>
           <p className="sl-note">{note}</p>
-          <p className="sl-note">{commercialIncentive().promise}</p>
+           <p className="sl-note">{service === "menu-digitali" ? commercialIncentive().promise : "Richiedi una proposta personalizzata: definiamo insieme funzioni, tempi e costi, senza impegno."}</p>
           <p className="sl-note">{commercialIncentive().responseNote}</p>
         </div>
         <div>
-          {side}
           <div id="preventivo" className="scroll-mt-20"><LeadForm service={service} /></div>
+          {side && <div id="menu-esempio" className="scroll-mt-20 mt-6">{side}</div>}
         </div>
       </div>
     </section>
@@ -162,10 +178,16 @@ function SitiWeb() {
       <Hero
         service="siti-web" kicker="Siti web per attività italiane"
         h1={<>Il tuo sito web professionale da <b>399 € + IVA.</b></>}
-        sub="Presenta la tua attività online, valorizza i tuoi servizi e fatti contattare facilmente dai clienti."
+        sub="Presenta la tua attività online, valorizza i tuoi servizi e permetti ai clienti di contattarti facilmente."
         price={["399 €", "+ IVA"]} priceNote="hosting e dominio a parte"
         note="Parli direttamente con chi realizza il sito."
       />
+      <section className="sl-section alt"><div className="marketing-container sl-demo-wrap">
+        <div><p className="sl-eyebrow">Prima di decidere</p><h2 className="sl-h2">Come potrebbe presentarsi la tua attività</h2>
+          <p className="sl-lead">Un esempio illustrativo per immaginare il tuo sito. Non descrive un pacchetto automaticamente incluso: definiamo insieme pagine, contenuti ed eventuali extra.</p>
+           <a href="#preventivo" className="whatsapp-link" onClick={() => trackEvent("cta_click", "siti-web", "product-example")}>Richiedi una proposta personalizzata</a>
+        </div><WebsiteExample />
+      </div></section>
       <section className="sl-section alt">
         <div className="marketing-container">
           <p className="sl-eyebrow">Per chi è</p>
@@ -238,7 +260,7 @@ function WebApp() {
     <>
       <Hero
         service="web-app" kicker="Web app e strumenti su misura"
-        h1={<>Un&apos;app su misura per <b>semplificare il lavoro della tua attività.</b></>}
+        h1={<>Un&apos;app su misura per <b>organizzare meglio la tua attività.</b></>}
         sub="Realizziamo soluzioni personalizzate per organizzare prenotazioni, appuntamenti, clienti, ordini e attività quotidiane."
         price={["Su preventivo", "ambito, tempi e manutenzione definiti sul progetto"]}
         note={webappStartingPrice() ?? "Nessun pacchetto standard: parti dal tuo caso concreto."}
@@ -319,7 +341,7 @@ function MenuDigitali() {
       <Hero
         service="menu-digitali" kicker="Menu digitali per ristoranti"
         h1={<>Il tuo menu digitale QR a soli <b>99 € + IVA.</b></>}
-        sub="I tuoi clienti inquadrano il QR code e consultano il menu direttamente sullo smartphone."
+        sub="I clienti inquadrano il QR code e consultano il menu direttamente dallo smartphone."
         price={["99 €", "+ IVA una tantum"]}
         note="Prezzo base una tantum. Extra e costi periodici sono indicati sotto."
         side={<MenuDemo />}

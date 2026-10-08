@@ -27,6 +27,18 @@ export const LeadUpdateStato = {
 
 export interface LeadUpdate {
   qualified?: boolean;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  quoteAmountCents?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  saleAmountCents?: number | null;
   stato: LeadUpdateStato;
 }
 
@@ -35,6 +47,10 @@ export type CommercialLeadAttribution = { [key: string]: string };
 export interface LeadEvent {
   event: string;
   at: string;
+  /** @nullable */
+  quoteAmountCents?: number | null;
+  /** @nullable */
+  saleAmountCents?: number | null;
 }
 
 export interface CommercialLead {
@@ -51,6 +67,18 @@ export interface CommercialLead {
   createdAt: string;
   /** @nullable */
   qualifiedAt?: string | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  quoteAmountCents?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  saleAmountCents?: number | null;
   marketingConsent: boolean;
   analyticsConsent: boolean;
   attribution: CommercialLeadAttribution;
@@ -147,6 +175,9 @@ export interface HealthStatus {
 }
 
 export type ListCommercialLeadsParams = {
+  servizio?: string;
+  campagna?: string;
+  tipoAttivita?: string;
   settore?: string;
   stato?: string;
   from?: string;
@@ -154,6 +185,9 @@ export type ListCommercialLeadsParams = {
 };
 
 export type ExportCommercialLeadsParams = {
+  servizio?: string;
+  campagna?: string;
+  tipoAttivita?: string;
   settore?: string;
   stato?: string;
   from?: string;

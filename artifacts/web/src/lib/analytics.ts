@@ -113,7 +113,7 @@ export function trackEvent(event: string, service: Service = "generale", placeme
   }
 }
 export function trackConversion(service: Service, placement = "form", leadId?: string, slug = "generale", businessType?: string) {
-  if (!leadId || sentLeads.has(leadId)) return;
+  if (privatePage() || !leadId || sentLeads.has(leadId)) return;
   try { if (sessionStorage.getItem(`promoapp-counted-${leadId}`)) return; } catch { /* In-memory dedup still works. */ }
   const consent = readConsent();
   if (!consent.analytics && !consent.marketing) return;
@@ -126,6 +126,7 @@ export function trackConversion(service: Service, placement = "form", leadId?: s
   if (consent.marketing && metaStarted) window.fbq?.("track", "Lead", { service }, { eventID: leadId });
 }
 export function trackWhatsApp(service: Service, placement: string, slug = "generale") {
+  if (privatePage()) return;
   trackEvent("whatsapp_click", service, placement, slug);
   if (readConsent().marketing && metaStarted) window.fbq?.("trackCustom", "WhatsAppClick", { service, placement, sector: slug });
 }

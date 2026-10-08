@@ -3,9 +3,9 @@ name: Vincoli commerciali PromoApp
 description: Posizionamento, affidabilità delle prove e limiti richiesti per PromoApp.it
 ---
 
-PromoApp realizza siti web, web app, gestionali personalizzati e soluzioni digitali per piccole e medie imprese.
+PromoApp realizza siti web, web app, gestionali personalizzati e soluzioni digitali per piccole e medie imprese. La gerarchia commerciale richiesta è: prima progetti digitali personalizzati, poi siti da 399 € + IVA, infine menu QR da 99 € + IVA una tantum come prodotto complementare.
 
-**Why:** l'utente ha definito questo posizionamento commerciale e ha chiesto di non presentare PromoApp come un servizio soltanto di applicazioni.
+**Why:** l'utente vuole attrarre anche imprenditori e aziende disposti a investire in soluzioni professionali, non soltanto chi cerca il prezzo più basso.
 
 **How to apply:** mantenere coerenti homepage, landing, annunci e preventivi con i diversi servizi.
 
@@ -15,11 +15,11 @@ Non ricreare il progetto da zero, non perdere recensioni o dati, non cambiare do
 
 **How to apply:** verificare i siti dei progetti prima di usarli come prove commerciali; distinguere chiaramente demo illustrative, extra e costi periodici.
 
-Non mostrare la parte dedicata a un progetto già realizzato nella homepage o nelle landing.
+Mostrare lavori reali solo se completi e autorizzati, separandoli dagli esempi illustrativi. Senza progetti approvati, predisporre la struttura senza pubblicare segnaposto vuoti.
 
-**Why:** l'utente ha chiesto di togliere questa parte.
+**Why:** il nuovo documento di riposizionamento consente un portfolio autorizzato e supera il precedente divieto di mostrarlo; non autorizza automaticamente i vecchi lavori.
 
-**How to apply:** non reinserire il portfolio dei progetti realizzati senza una nuova richiesta; non eliminare i dati dei progetti cliente.
+**How to apply:** ottenere l'approvazione dei singoli lavori prima di usarli come prova commerciale; non eliminare i dati dei progetti cliente.
 
 Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati societari; mantenere la denominazione completa nelle informazioni legali. Non mostrare Admin nel footer pubblico. Il modulo per scrivere una recensione deve aprirsi al clic.
 
@@ -27,7 +27,7 @@ Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati
 
 **How to apply:** mantenere le recensioni pubbliche visibili e non interpretare il footer compatto come una richiesta di rimuovere la società dalle informative privacy.
 
-L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie, con anteprima illustrativa gratuita e senza impegno. Demo personalizzata entro 48 ore e tempi di risposta WhatsApp richiedono conferma della reale disponibilità operativa.
+L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie. Per siti e web app preferire una proposta personalizzata gratuita e senza impegno. Anteprime gratuite solo se effettivamente disponibili; demo entro 48 ore e tempi di risposta WhatsApp richiedono conferma operativa.
 
 **Why:** il documento definitivo consente di predisporre la modalità demo ma vieta di attivare promesse temporali non confermate; preserva identità grafica e approccio mobile-first.
 

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PromoApp — Preparazione Google e Meta Ads</title>
+<style>body{margin:0;background:#f6f4ee;color:#211d44;font-family:Poppins,Arial,sans-serif;line-height:1.65}main{max-width:1000px;margin:auto;padding:28px 20px}header,section{padding:24px;border-radius:16px;margin-bottom:18px;background:white;border:1px solid #e2ddd0}header{background:#211d55;color:white}h1,h2{line-height:1.2}h2{font-size:21px}li{margin:5px 0}code{overflow-wrap:anywhere;font-size:13px}.warn{border-left:5px solid #dd9a00;background:#fff7dd}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;vertical-align:top;border:1px solid #e2ddd0;padding:12px}.scroll{overflow:auto}@media print{body{background:white}section{break-inside:avoid}}</style></head><body><main>
+<header><h1>PromoApp: preparazione delle landing per Google e Meta Ads</h1><p>8 ottobre 2026 · Report dell'ottimizzazione finale.</p><strong>Nessuna nuova landing, nessuna pubblicazione, nessuna campagna attivata. Due richieste TEST create solo nello sviluppo.</strong></header>
+<section><h2>1. Diagnosi iniziale</h2><ol>
+<li>Le pagine e i prezzi esistenti sono corretti: non occorrono nuove landing.</li>
+<li>Alla landing siti web manca un esempio visivo e la CTA va allineata alla richiesta di informazioni.</li>
+<li>Il menu dispone già della demo: serve un accesso immediato dalla prima schermata.</li>
+<li>Moduli, salvataggio, notifiche e antispam sono presenti: occorre verificarne il percorso reale nello sviluppo.</li>
+<li>Attribuzione e consenso sono predisposti; Google non è configurato. Il controllo successivo della configurazione statica ha confermato Meta Pixel già presente, pur con risposta runtime vuota.</li>
+</ol><p>Quest'ultima distinzione corregge la precedente valutazione basata soltanto sull'API di configurazione.</p></section>
+<section><h2>2. Modifiche necessarie applicate</h2><ul>
+<li>CTA sito: “Richiedi informazioni sul sito da 399 €”; sottotitolo allineato alla specifica.</li>
+<li>Esempio visivo del sito, chiaramente illustrativo e senza clienti, risultati o inclusioni inventati. Nessuna nuova immagine da scaricare.</li>
+<li>Menu: pulsante “Guarda subito il menu” nella Hero. La demo interattiva esistente si apre senza compilare il modulo; il modulo è ora prima della demo nell'ordine della pagina.</li>
+<li>Prima schermata prodotto più compatta su smartphone, con prezzi e pulsanti leggibili.</li>
+<li>Headline web app: “Un'app su misura per organizzare meglio la tua attività”; metadati coerenti.</li>
+<li>Esclusi anche gli invii diretti degli eventi di conversione/WhatsApp dalle pagine private o settoriali inesistenti.</li>
+<li>Validazione mobile: conservati i vincoli nativi, ma sostituito il tooltip che poteva coprire il modulo con un messaggio inline e focus sul campo.</li>
+</ul><p>Conservati numero WhatsApp, prezzi, tre campi commerciali, privacy, cookie, recensioni approvate, 44 benefici distinti, 11 settori e funzionalità esistenti. Nessuna modifica allo schema o ai flussi backend già funzionanti.</p></section>
+<section><h2>3. Test reali del percorso cliente</h2><p>Browser di sviluppo con chiamate Google/Meta bloccate e configurazione pubblicitaria sostituita soltanto nel contesto di prova. Nessuna conversione fittizia inviata agli account pubblicitari.</p>
+<div class="scroll"><table><thead><tr><th>Verifica</th><th>Menu digitale 99 €</th><th>Sito web da 399 €</th></tr></thead><tbody>
+<tr><td>Viewport mobile</td><td>390 × 844, formato iPhone</td><td>412 × 915, formato Android</td></tr>
+<tr><td>Prima schermata</td><td>Logo, prezzo, CTA e link demo visibili</td><td>Logo, prezzo e CTA visibili</td></tr>
+<tr><td>Invio reale di sviluppo</td><td>HTTP 200; primo invio non duplicato</td><td>HTTP 200; primo invio non duplicato</td></tr>
+<tr><td>Database, lettura indipendente</td><td>Una riga TEST con servizio menu_qr_99, settore e pagina corretti</td><td>Una riga TEST con servizio website_399, settore e pagina corretti</td></tr>
+<tr><td>Provenienza nel database</td><td>Tutti gli otto valori di prova conservati</td><td>Tutti gli otto valori di prova conservati</td></tr>
+<tr><td>Notifica</td><td>Una accettazione registrata dal servizio email; stato sent</td><td>Una accettazione registrata dal servizio email; stato sent</td></tr>
+<tr><td>Ringraziamento</td><td>Pagina /grazie mostrata</td><td>Pagina /grazie mostrata</td></tr>
+<tr><td>Evento principale</td><td>Un solo generate_lead, con identificativo del contatto</td><td>Un solo generate_lead, con identificativo del contatto</td></tr>
+<tr><td>Refresh / reinvio</td><td>Nessuna nuova conversione; stesso contatto, senza seconda notifica</td><td>Nessuna nuova conversione; stesso contatto, senza seconda notifica</td></tr>
+<tr><td>Numero non valido</td><td>Nessun POST dal browser</td><td>Nessun POST dal browser</td></tr>
+</tbody></table></div>
+<p>Parametri verificati: utm_source, utm_medium, utm_campaign, utm_term, utm_content, gclid, gbraid, wbraid. Due righe TEST sono state lasciate nel database di sviluppo; nessun dato cliente è stato eliminato.</p>
+<p>La risposta duplicata con notification=sent conserva lo stato della prima notifica: non significa che l'email sia stata inviata di nuovo. Il controllo dei log conferma una sola accettazione per ciascuna richiesta.</p></section>
+<section><h2>4. Altri controlli</h2><ul>
+<li>Demo menu: categorie funzionanti e consultazione possibile senza modulo.</li>
+<li>WhatsApp menu: collegamento intercettato, numero originale invariato, testo specifico per 99 € + IVA una tantum; whatsapp_click separato da generate_lead. Nessun messaggio inviato.</li>
+<li>Eventi cta_click e form_start osservati; nessun nome o telefono negli eventi esaminati.</li>
+<li>Nessuno script pubblicitario caricato prima del consenso; dopo il consenso caricamento verificato con script di prova intercettati.</li>
+<li>API reale: numero non valido, privacy negata e honeypot compilato respinti con HTTP 400, senza salvataggio.</li>
+<li>Typecheck frontend e build superati; 19 pagine prerenderizzate. HTML prodotto: H1 singolo, modulo unico, prezzo ed esempi corretti.</li>
+<li>Otto gruppi di controlli automatici superati: contenuti, condizioni commerciali, rendering, nuovo errore inline, consenso/dedup/privacy, modulo con guasti simulati, routing e ricevuta.</li>
+<li>Nessun errore bloccante nelle console delle schermate verificate.</li>
+</ul><p>Il percorso browser completo è stato eseguito prima della sola correzione del tooltip nativo; quest'ultima è stata confermata con un controllo isolato del gestore di validazione e con typecheck/build, senza ripetere invii reali.</p></section>
+<section class="warn"><h2>5. Stato del tracking e verifiche non effettuate</h2><ul>
+<li><strong>Google Ads:</strong> eventi, consenso e provenienza sono verificati; invio reale non attivo perché mancano configurazione Google/GTM e conversione approvata. Serve un contenitore GTM configurato oppure ID Google Ads e relativa etichetta; GA4 se si desidera anche Analytics.</li>
+<li><strong>Meta:</strong> Pixel già presente nella configurazione statica. Non è stato rimosso o duplicato. Ricezione effettiva nel relativo account e attribuzione campagne non verificate: i test hanno bloccato i provider.</li>
+<li><strong>Email:</strong> verificata l'accettazione di due notifiche dal servizio esistente al destinatario interno; non verificata la consegna nella casella o nella cartella spam.</li>
+<li><strong>Prestazioni:</strong> bundle JavaScript principale circa 94,67 kB gzip; esempio sito senza ulteriori immagini o librerie. Lighthouse non disponibile come strumento installato e non eseguito; Core Web Vitals sul traffico reale non misurati. Nessun punteggio inventato.</li>
+<li><strong>Dispositivi:</strong> verificati viewport mobili nel browser automatizzato e screenshot; non dispositivi fisici iPhone/Android o Safari nativo.</li>
+<li><strong>Condizioni:</strong> demo personalizzata entro 48 ore ancora disattivata. Prezzo minimo web app, assistenza inclusa e promesse temporali restano subordinati alla conferma commerciale.</li>
+<li><strong>Fuori perimetro:</strong> rimangono i diagnostici backend preesistenti e la precedente segnalazione sul webhook Stripe, non modificati né ricontrollati qui.</li>
+</ul></section>
+<section><h2>6. Giudizio tecnico</h2><p><strong>Le landing sono utilizzabili per acquisire richieste commerciali:</strong> i due percorsi principali hanno realmente salvato le richieste, conservato la provenienza e generato le notifiche nello sviluppo.</p><p><strong>Non dichiarerei ancora completa la preparazione alla misurazione delle campagne:</strong> prima di investire occorre configurare Google e verificare gli eventi negli account Google/Meta. Gli eventi osservati nel browser non dimostrano da soli la ricezione nei provider.</p><p>Prima di pubblicare: controllare le configurazioni dell'ambiente di produzione, i destinatari delle notifiche e le condizioni commerciali. Nessuna pubblicazione eseguita durante questo intervento.</p></section>
+<section><h2>7. File modificati</h2><p>Percorsi relativi a <code>artifacts/web/</code>:</p><ul>
+<li><code>src/pages/ServiceLanding.tsx</code></li>
+<li><code>src/components/marketing/LeadForm.tsx</code></li>
+<li><code>src/lib/marketing.ts</code>, <code>analytics.ts</code>, <code>seo-catalog.mjs</code></li>
+<li><code>src/styles/commercial.css</code></li>
+<li><code>scripts/verify-commercial.mjs</code></li>
+</ul><p>HTML e risorse di build rigenerati; aggiornate le note persistenti sui limiti delle verifiche pubblicitarie. Nessun nuovo servizio, nessuna chiave o credenziale inserita nel codice.</p></section>
+</main></body></html>

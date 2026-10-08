@@ -33,5 +33,5 @@ export function commercialVariant() {
   const variants = config.experiments.variants;
   const requested = config.experiments.enabled ? config.experiments.activeVariant : "control";
   const key = requested in variants ? requested as keyof typeof variants : "control";
-  return { key, ...variants[key], ...(commercialIncentive().demoActive ? { cta: commercialIncentive().cta } : {}) };
+  return { key, ...variants[key] };
 }

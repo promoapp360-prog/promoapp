@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PromoApp — Report riposizionamento commerciale</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f4f5fa;color:#25243c;font:15px/1.65 Poppins,system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:36px 20px 60px}header,section{background:#fff;border:1px solid #e4e4ef;border-radius:16px;padding:24px;margin-bottom:18px}header{border-top:5px solid #5141bc}h1{font-size:28px;line-height:1.25;margin:10px 0}h2{font-size:21px;margin:0 0 12px}h3{font-size:16px;margin:20px 0 8px}p{margin:10px 0}li{margin:6px 0}code{font-size:12px;background:#f1f0f8;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}.tag{display:inline-block;font-size:12px;border-radius:30px;padding:4px 11px;background:#efecff;color:#473991}.note{background:#f5f4fc;border-left:4px solid #6552cc;padding:12px 16px;margin:14px 0}.warning{background:#fff7e8;border-color:#d99722}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;vertical-align:top;padding:12px 10px;border-bottom:1px solid #e8e8f1}th{background:#f6f5fb}small{color:#656479}footer{font-size:12px;color:#656479;padding:5px 8px}@media(max-width:600px){main{padding:16px 10px}section,header{padding:18px}h1{font-size:24px}}
+</style>
+</head>
+<body><main>
+<header>
+<span class="tag">8 ottobre 2026 · Modifiche in sviluppo</span>
+<h1>PromoApp.it: progetti personalizzati al centro</h1>
+<p>Report dell'intervento richiesto nel documento «Riposizionamento commerciale e ottimizzazione dei contatti».</p>
+<p><strong>Nessuna pubblicazione in produzione.</strong> Il progetto esistente è stato mantenuto, senza nuovi CRM, shop, checkout, servizi a pagamento o migrazioni del database.</p>
+</header>
+
+<section><h2>1. Nuova gerarchia commerciale</h2>
+<ol>
+<li><strong>Progetti digitali personalizzati:</strong> web app, gestionali, prenotazioni, clienti e processi aziendali, su preventivo.</li>
+<li><strong>Siti web professionali:</strong> da 399 € + IVA, con funzioni aggiuntive concordate.</li>
+<li><strong>Menu digitali QR:</strong> 99 € + IVA una tantum per la realizzazione base, come prodotto complementare.</li>
+</ol>
+<p>Homepage aggiornata con headline «Siti web, app e gestionali su misura per la tua attività.» e il sottotitolo richiesto. CTA principale «Raccontaci il tuo progetto», secondaria «Scopri i nostri servizi».</p>
+<p>La prima sezione di approfondimento presenta i progetti personalizzati. Schede e prezzi seguono l'ordine web app → siti → menu. Le offerte economiche restano visibili e tutte le landing rimangono raggiungibili.</p>
+<p>Per siti e web app prevale la proposta personalizzata, senza promessa automatica di demo entro 48 ore. Per il menu resta la CTA dedicata al prodotto da 99 €. Le anteprime illustrative esistenti non sono presentate come lavori consegnati.</p>
+</section>
+
+<section><h2>2. Contatti e prove commerciali</h2>
+<ul>
+<li>Conservati i tre campi commerciali obbligatori: nome attività, tipo attività e WhatsApp. La privacy rimane il consenso necessario già previsto.</li>
+<li>Nessuna richiesta pubblica di budget. In homepage, «Vuoi raccontarci la tua idea?» apre un messaggio facoltativo: viene salvato nel campo già esistente e incluso nella notifica email attuale.</li>
+<li>Conservati salvataggio, attribuzione della landing e del servizio, parametri UTM e identificativi pubblicitari secondo i consensi, deduplicazione e pagina di conferma.</li>
+<li>Le richieste generiche della homepage restano «Progetto da definire»: non vengono attribuite artificialmente a un prodotto specifico.</li>
+<li>Nessun nuovo intervento al numero WhatsApp, a Google/Meta, al consenso cookie, a Resend o a Stripe in questa attività.</li>
+</ul>
+<div class="note"><strong>Portfolio:</strong> predisposta una struttura per esigenza iniziale, soluzione, funzioni, anteprima e tipologia di attività. L'elenco approvato è vuoto: nessun cliente, risultato o progetto reale è stato inventato o ripubblicato, e non compaiono segnaposto vuoti.</div>
+</section>
+
+<section><h2>3. Opportunità e vendite nel pannello esistente</h2>
+<p>La pagina riservata <code>/gestione-contatti</code> usa la protezione amministrativa già presente. I valori storici degli stati sono conservati; cambiano soltanto alcune etichette leggibili.</p>
+<div class="scroll"><table><thead><tr><th>Valore storico</th><th>Etichetta nel pannello</th></tr></thead><tbody>
+<tr><td>Nuovo</td><td>Richiesta ricevuta</td></tr>
+<tr><td>Contattato</td><td>Contattato</td></tr>
+<tr><td>Interessato</td><td>Trattativa in corso</td></tr>
+<tr><td>Preventivo inviato</td><td>Preventivo inviato</td></tr>
+<tr><td>Cliente acquisito</td><td>Cliente acquisito</td></tr>
+<tr><td>Non interessato</td><td>Trattativa non conclusa</td></tr>
+</tbody></table></div>
+<p><strong>Contatto qualificato</strong> resta una conferma separata dallo stato, con data ed evento interno registrato una sola volta. Non diventa automaticamente una conversione offline Google Ads.</p>
+<ul>
+<li>Nuovi campi privati: importo preventivo e valore vendita conclusa, in euro, IVA esclusa.</li>
+<li>Memorizzazione in centesimi nello storico JSON esistente: nessuna nuova tabella o colonna SQL.</li>
+<li>Vuoto significa valore non registrato o rimosso; zero è un importo esplicitamente registrato. Gli aggiornamenti parziali dell'API preservano gli importi omessi.</li>
+<li>Validazione client e server: niente importi negativi, stringhe numeriche, frazioni di centesimo o valori oltre il limite.</li>
+<li>Filtri per servizio, campagna UTM, tipo attività, landing di settore, stato e periodo UTC. Le denominazioni storiche dei servizi sono incluse nei filtri corrispondenti.</li>
+<li>Riepilogo per servizio: lead, qualificati, preventivi inviati attualmente, trattative, acquisiti, non concluse e totale dei valori di vendita registrati.</li>
+<li>CSV filtrato ampliato con servizio e importi; valori assenti lasciati vuoti e protezione dalle formule del foglio di calcolo conservata.</li>
+</ul>
+<div class="note"><strong>Come leggere le vendite:</strong> si sommano soltanto gli importi dei contatti nello stato «Cliente acquisito». Un preventivo, una trattativa o un clic WhatsApp non sono vendite. Gli acquisiti senza importo sono segnalati, non stimati. Il riepilogo descrive gli stati attuali dei contatti caricati, non un funnel storico completo.</div>
+<p>Si tratta di valori commerciali inseriti dall'amministratore: non certificano incasso, fatturazione o margine. Non vengono avviati pagamenti e non vengono inviati importi ai sistemi pubblicitari.</p>
+</section>
+
+<section><h2>4. File modificati e aggiunti</h2>
+<p><small>Elenco riferito a questa attività. Le modifiche pubblicitarie della richiesta precedente sono documentate nel relativo report separato.</small></p>
+<div class="scroll"><table><thead><tr><th>File / gruppo</th><th>Intervento</th></tr></thead><tbody>
+<tr><td><code>artifacts/web/src/pages/Preventivo.tsx</code></td><td>Headline, sottotitolo, CTA, ordine dei servizi, priorità ai progetti personalizzati e portfolio condizionale.</td></tr>
+<tr><td><code>artifacts/web/src/lib/commercial-config.json</code><br><code>artifacts/web/src/lib/commercial.ts</code></td><td>Configurazione della comunicazione e CTA non sovrascritte automaticamente dalla modalità demo.</td></tr>
+<tr><td><code>artifacts/web/src/components/marketing/HomeContactForm.tsx</code></td><td>Invito a raccontare il progetto e messaggio facoltativo richiudibile.</td></tr>
+<tr><td><code>artifacts/web/src/components/marketing/LeadForm.tsx</code><br><code>artifacts/web/src/pages/ServiceLanding.tsx</code></td><td>CTA coerenti con sito, progetto personalizzato e menu digitale.</td></tr>
+<tr><td><code>artifacts/web/src/components/marketing/PortfolioExamples.tsx</code><br><code>artifacts/web/src/lib/approved-projects.json</code></td><td>Struttura dei soli progetti completi e approvati; nessun output quando l'elenco è vuoto.</td></tr>
+<tr><td><code>artifacts/web/src/lib/seo-catalog.mjs</code><br><code>artifacts/web/public/sitemap.xml</code></td><td>Metadati coerenti per homepage e percorso preventivo già esistente; sitemap rigenerata dalla build, senza nuove landing.</td></tr>
+<tr><td><code>artifacts/web/src/lib/lead-receipt.ts</code></td><td>Conferma coerente con proposta personalizzata per servizi diversi dal menu.</td></tr>
+<tr><td><code>artifacts/web/src/pages/LeadsAdmin.tsx</code></td><td>Etichette degli stati, nuovi filtri, servizio visibile, riepilogo e campi riservati.</td></tr>
+<tr><td><code>artifacts/web/src/components/marketing/LeadSalesFields.tsx</code><br><code>artifacts/web/src/lib/lead-sales.ts</code></td><td>Nuovi componenti dedicati agli importi, parsing preciso, etichette e calcolo dei riepiloghi.</td></tr>
+<tr><td><code>artifacts/api-server/src/routes/leadsAdmin.ts</code><br><code>artifacts/api-server/src/lib/commercial-values.ts</code></td><td>Lettura e salvataggio atomico dello storico, filtri parametrizzati e CSV.</td></tr>
+<tr><td><code>lib/api-spec/openapi.yaml</code><br><code>lib/db/src/schema/leads.ts</code></td><td>Contratto API ampliato e tipizzazione dello storico JSON; nessuna migrazione SQL.</td></tr>
+<tr><td><code>lib/api-client-react/src/generated/api.schemas.ts</code><br><code>lib/api-zod/src/generated/api.ts</code><br><code>lib/api-zod/src/generated/types/{commercialLead,leadEvent,leadUpdate,listCommercialLeadsParams,exportCommercialLeadsParams}.ts</code></td><td>Tipi e validatori rigenerati dal contratto OpenAPI.</td></tr>
+<tr><td><code>artifacts/web/scripts/verify-sales.mjs</code></td><td>Nuovi controlli ripetibili, con HTTP, autenticazione e database isolati di prova.</td></tr>
+<tr><td><code>.agents/memory/commercial-scope.md</code><br><code>.agents/memory/nullable-integer-validation.md</code><br><code>.agents/memory/MEMORY.md</code></td><td>Regole commerciali aggiornate e limite documentato del generatore per interi nullable.</td></tr>
+</tbody></table></div>
+<p>Report e schermate pubbliche: <code>reports/promoapp-riposizionamento-commerciale.html</code>, <code>reports/promoapp-home-desktop.jpg</code>, <code>reports/promoapp-home-mobile.jpg</code>.</p>
+</section>
+
+<section><h2>5. Verifiche effettuate</h2>
+<div class="scroll"><table><thead><tr><th>Controllo</th><th>Esito e limite</th></tr></thead><tbody>
+<tr><td>Contratto API e librerie</td><td>Generazione e controllo tipi delle librerie completati.</td></tr>
+<tr><td>Frontend</td><td>Controllo tipi e build superati; 19 pagine prerenderizzate.</td></tr>
+<tr><td>Backend</td><td>Build superata e server avviato. Controllo tipi globale non superato per 17 errori preesistenti, elencati sotto.</td></tr>
+<tr><td>Homepage reale di sviluppo</td><td>Schermate desktop 1280 × 1000 e mobile 390 × 844: messaggio, prezzi e CTA corretti; nessun errore console applicativo nelle acquisizioni.</td></tr>
+<tr><td>Landing e protezione effettiva</td><td>HTTP 200 per siti, web app, menu, pagine settoriali campionate e pagina di accesso. Elenco e CSV amministrativi senza credenziali restituiscono HTTP 401.</td></tr>
+<tr><td>Regressioni commerciali</td><td>Otto gruppi di controlli già esistenti superati: settori, benefici, mockup, promesse, moduli, tracking, ricevuta e routing. Dipendenze DB/email/browser simulate dove indicato dallo script.</td></tr>
+<tr><td>Nuovi importi</td><td>Parsing in centesimi, rimozione, zero/assenza distinti, riepiloghi e portfolio vuoto verificati con dati isolati.</td></tr>
+<tr><td>HTTP amministrativo isolato</td><td>Handler reali e validatori generati con DB di prova: autenticazione, input invalidi, salvataggio/rilettura, aggiornamenti parziali, qualificazione idempotente, CSV, filtri parametrizzati e contatto assente.</td></tr>
+<tr><td>Pannello nel browser</td><td>API intercettate e contatto sintetico: salvataggio 1200,50 / 950,00 → 120050 / 95000 centesimi; invalidità 1,234 senza richiesta; preventivo cancellato senza perdere vendita; stato acquisito, qualificazione, totale 950 €, errore simulato e retry. Ricaricamento verificato soltanto sullo stato simulato.</td></tr>
+<tr><td>Pannello mobile</td><td>A 390 px nessuna fuoriuscita orizzontale della pagina; il riepilogo scorre soltanto nel proprio contenitore.</td></tr>
+<tr><td>Contatti reali già testati</td><td>Riletti in sviluppo i due contatti di prova della precedente attività: servizio corretto, notifica «sent» e un evento ciascuno. Nessun nuovo invio reale o email richiesto per questa modifica.</td></tr>
+</tbody></table></div>
+<p><strong>Limite importante:</strong> le prove dei nuovi importi non attestano una scrittura sul database reale. L'HTTP è stato verificato con un database isolato e la UI con risposte intercettate; nessun importo dei contatti reali è stato modificato.</p>
+<p>Il primo tentativo di prova UI aveva un'intercettazione troppo ristretta: una PATCH sintetica ha raggiunto l'endpoint reale, che l'ha bloccata con HTTP 401. La prova è stata fermata, l'intercettazione corretta e poi verificata prima di riprendere. Tutte le richieste successive del percorso sono rimaste simulate; nessun contatto reale è stato aggiornato.</p>
+</section>
+
+<section><h2>6. Problemi e limiti residui</h2>
+<div class="note warning"><strong>Controllo tipi backend:</strong> rimangono 17 diagnostici preesistenti in <code>stripeClient.ts</code>, <code>acconto.ts</code>, <code>admin.ts</code> e <code>checkout.ts</code>: accesso a dato di tipo sconosciuto e percorsi privi di valore restituito. Non sono nei nuovi file commerciali. Non sono stati corretti per evitare interventi fuori perimetro su pagamenti e amministrazione esistente.</div>
+<ul>
+<li>Individuato e corretto il limite del generatore che non imponeva automaticamente il vincolo intero ai numeri nullable: il contratto ora specifica anche <code>multipleOf: 1</code>, verificato da una richiesta HTTP frazionaria rifiutata.</li>
+<li>Gli script isolati producono un avviso del router sui Promise-like del contesto VM di prova; non ha impedito i controlli e non è apparso come errore bloccante del server avviato.</li>
+<li>Questo intervento non certifica la ricezione di conversioni dentro Google Ads o Meta. Configurazione e verifiche degli account restano quelle del precedente report; gli importi privati non sono inviati ai provider.</li>
+<li>Il portfolio resta vuoto finché non vengono autorizzati singoli lavori reali con contenuti e immagini utilizzabili.</li>
+<li>I checkpoint sono gestiti automaticamente dalla piattaforma. Non è stato creato né dichiarato un checkpoint manuale, e non sono state effettuate copie o sostituzioni del database di produzione.</li>
+</ul>
+</section>
+
+<section><h2>7. Istruzioni per verificare e utilizzare</h2>
+<ol>
+<li>Aprire l'anteprima della homepage su computer e telefono: verificare headline, CTA e ordine dei tre servizi.</li>
+<li>Aprire <code>/web-app</code>, <code>/siti-web</code>, <code>/menu-digitali</code> e le landing settoriali esistenti. Siti da 399 € + IVA; menu 99 € + IVA una tantum; progetti personalizzati su preventivo.</li>
+<li>Nel modulo pubblico controllare che non venga richiesto un budget e che il messaggio aggiuntivo sia facoltativo. Un eventuale invio autentico crea un contatto e può inviare la notifica email esistente: non usarlo ripetutamente per prove inutili.</li>
+<li>Aprire <code>/gestione-contatti</code> e usare la credenziale amministrativa già configurata. Non condividerla in chat.</li>
+<li>Qualificare soltanto contatti di cui è stato verificato l'interesse reale. Aggiornare lo stato al procedere della trattativa.</li>
+<li>Inserire gli importi netti in euro, ad esempio <code>1200,50</code>, senza separatori delle migliaia. «Salva importi» registra i valori; lasciare un campo vuoto lo rimuove. Zero va inserito esplicitamente solo se è il valore reale.</li>
+<li>Usare «Cliente acquisito» soltanto per vendite concluse e compilare il valore effettivo concordato. Gli importi mancanti restano segnalati; non usare il totale come certificazione d'incasso.</li>
+<li>Applicare i filtri e utilizzare «Applica filtri / aggiorna» dopo modifiche o per ricaricare i dati. Il nome campagna e il tipo attività devono coincidere con i valori salvati; il periodo è espresso in UTC.</li>
+<li>Esportare il CSV filtrato per l'analisi commerciale. Non condividere pubblicamente contatti, preventivi o vendite.</li>
+<li>Per un futuro lavoro approvato, preparare contenuti e immagine reale nella cartella pubblica <code>portfolio</code>, poi inserire nell'elenco approvato titolo, attività, esigenza, soluzione, funzioni e percorso dell'immagine. L'approvazione del singolo lavoro deve precedere la pubblicazione.</li>
+</ol>
+<h3>Controlli ripetibili senza contatti o email reali</h3>
+<p><code>node artifacts/web/scripts/verify-sales.mjs</code></p>
+<p><code>pnpm --filter @workspace/web run typecheck</code></p>
+<p><code>PORT=22333 BASE_PATH=/ pnpm --filter @workspace/web run build</code>, seguito da <code>node artifacts/web/scripts/verify-commercial.mjs</code> per i controlli che leggono le pagine già prerenderizzate.</p>
+<p><code>pnpm --filter @workspace/api-server run build</code></p>
+</section>
+<footer>Intervento proporzionato sul progetto esistente. Nessuna pubblicazione autonoma; nessun dato economico o risultato commerciale inventato.</footer>
+</main></body></html>

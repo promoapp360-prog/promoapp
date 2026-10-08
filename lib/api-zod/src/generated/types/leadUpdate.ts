@@ -9,5 +9,17 @@ import type { LeadUpdateStato } from "./leadUpdateStato";
 
 export interface LeadUpdate {
   qualified?: boolean;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  quoteAmountCents?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  saleAmountCents?: number | null;
   stato: LeadUpdateStato;
 }

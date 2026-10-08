@@ -8,12 +8,13 @@ import TrustPoints from "../components/marketing/TrustPoints";
 import type { ContactResponse } from "@workspace/api-client-react";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import HomeContactForm from "../components/marketing/HomeContactForm";
+import PortfolioExamples from "../components/marketing/PortfolioExamples";
 import "../styles/commercial.css";
 
 const SERVICES = [
-  { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: prices.website.label, desc: "Presenta la tua attività e fatti contattare.", cta: "Scopri i siti web" },
-  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Strumenti su misura per il tuo lavoro.", cta: "Scopri le web app" },
-  { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali per ristoranti", price: prices.menu.label, desc: "Il tuo menu su smartphone, con QR code.", cta: "Scopri i menu digitali" },
+  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Prenotazioni, clienti e processi aziendali: partiamo dalle tue esigenze, non da un pacchetto standard.", cta: "Parlaci della tua idea" },
+  { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: prices.website.label, desc: "Una presenza online professionale, che può evolvere con nuove funzioni concordate.", cta: "Scopri i siti web" },
+  { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali QR", price: prices.menu.label, desc: "Un prodotto complementare per presentare il menu del tuo locale su smartphone.", cta: "Scopri i menu digitali" },
 ];
 
 const SETTORI = [
@@ -283,7 +284,7 @@ export default function Preventivo() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-3">
               <i className="fas fa-mobile-screen-button text-emerald-400"></i>
-               Siti web · Web app · Menu digitali
+               Soluzioni digitali per imprese e attività
             </div>
 
             {/* Headline */}
@@ -291,12 +292,12 @@ export default function Preventivo() {
               <span className="gradient-text">{variant.headline}</span>
             </h1>
             <p className="text-indigo-200/80 text-base leading-relaxed mb-4 max-w-md">
-              Realizziamo siti web, menu digitali, app e gestionali per aiutarti a presentare la tua attività, organizzare il lavoro e gestire meglio i clienti.
+              Trasformiamo le esigenze della tua impresa in strumenti digitali concreti. Dalla presenza online alla gestione di clienti, prenotazioni e attività quotidiane.
             </p>
             <div className="grid grid-cols-3 gap-2 mb-4" aria-label="Prezzi dei servizi">
+              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="block text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">Su preventivo</strong></Link>
               <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">Da 399 €</strong><span className="block text-[10px]">+ IVA</span></Link>
               <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 €</strong><span className="block text-[10px]">+ IVA · una tantum</span></Link>
-              <Link href="/web-app" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">Su preventivo</strong></Link>
             </div>
 
             <a href="#preventivo"
@@ -304,7 +305,9 @@ export default function Preventivo() {
               className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
               {variant.cta}
             </a>
-            <p className="text-indigo-100 text-sm mb-3">{incentive.promise}</p>
+            <a href="#servizi" className="inline-block text-white font-bold text-sm underline underline-offset-4 mb-3"
+              onClick={() => trackEvent("cta_click", "generale", "hero-services")}>Scopri i nostri servizi</a>
+            <p className="text-indigo-100 text-sm mb-3">Una proposta personalizzata, gratuita e senza impegno. Nessun prodotto standard da scegliere per forza.</p>
             <p className="text-indigo-200 text-xs mb-4">{incentive.responseNote}</p>
             <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
               className="inline-flex items-center gap-2 text-emerald-300 font-bold text-sm mb-4">
@@ -330,9 +333,19 @@ export default function Preventivo() {
         </div>
       </section>
 
+      <section className="relative z-10 px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-bold text-white text-2xl mb-2">Progetti digitali personalizzati</h2>
+          <p className="text-indigo-200 text-sm mb-5">Web app e gestionali per organizzare clienti, prenotazioni e processi aziendali. Partiamo dalle tue esigenze e concordiamo solo le funzioni utili al tuo lavoro.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
+            <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
+          </div>)}</div>
+          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Parlaci della tua idea →</Link>
+        </div>
+      </section>
       <section className="relative z-10 px-4 py-8" id="servizi">
         <div className="max-w-5xl mx-auto">
-          <h2 className="font-bold text-white text-2xl mb-5">Scegli da dove iniziare</h2>
+          <h2 className="font-bold text-white text-2xl mb-5">Dal tuo progetto alla soluzione giusta</h2>
           <div className={`grid sm:grid-cols-3 gap-3${variant.pricePresentation === "compact" ? " price-compact" : ""}`}>
             {SERVICES.map((service) => <Link key={service.path} href={service.path}
               className="glass-card rounded-2xl p-4 flex gap-3 items-start hover:bg-white/15 transition" data-testid={`service-${service.path.slice(1)}`}>
@@ -359,16 +372,7 @@ export default function Preventivo() {
           </div>
         </div>
       </section>
-      <section className="relative z-10 px-4 py-8">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="font-bold text-white text-2xl mb-2">Strumenti pratici per organizzare il tuo lavoro</h2>
-          <p className="text-indigo-200 text-sm mb-5">Scegliamo insieme le funzioni utili alla tua attività, senza includere automaticamente ciò che non serve.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
-            <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
-          </div>)}</div>
-          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Scopri le web app e i gestionali →</Link>
-        </div>
-      </section>
+      <PortfolioExamples />
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">

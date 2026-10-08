@@ -77,6 +77,27 @@ assert.ok(!trustMarkup.includes("Pagamento a fasi"));
 assert.ok(!trustMarkup.includes("giorni di assistenza"));
 assert.ok(!trustMarkup.includes("Chi segue il tuo progetto"));
 ok("render dei mockup personalizzati con escaping e fiducia senza promesse o referenti non configurati");
+const inlineErrors = [];
+let preventedInvalid = 0, focusedInvalid = 0, unexpectedSubmissions = 0;
+const formRequire = (id) => {
+  if (id === "react") return { ...React, useId: () => "test-form", useRef: () => ({ current: false }),
+    useState: (value) => [value, (next) => inlineErrors.push(next)] };
+  if (id === "wouter") return { useLocation: () => ["/siti-web", () => {}] };
+  if (id === "@workspace/api-client-react") return { submitContact: () => { unexpectedSubmissions++; } };
+  return webRequire(id);
+};
+const Form = evaluate(await bundle(resolve(root, "src/components/marketing/LeadForm.tsx"), {
+  ...componentOptions, external: [...componentOptions.external, "wouter", "@workspace/api-client-react"],
+}), { require: formRequire }).default;
+const formElement = Form({ service: "siti-web" });
+assert.equal(formElement.props.noValidate, undefined);
+for (const name of ["whatsapp", "nome_attivita"]) formElement.props.onInvalid({
+  preventDefault() { preventedInvalid++; }, target: { name, focus() { focusedInvalid++; } },
+});
+assert.equal(preventedInvalid, 2); assert.equal(focusedInvalid, 2);
+assert.equal(unexpectedSubmissions, 0);
+assert.ok(inlineErrors[0].includes("WhatsApp") && inlineErrors[1].includes("privacy"));
+ok("errore mobile inline: vincoli nativi conservati, tooltip soppresso, campo focalizzato e nessun invio");
 
 class Storage {
   data = new Map();
@@ -118,11 +139,17 @@ tracking.trackConversion("generale", "form", "lead-tipo-non-ammesso", "centri-es
 assert.equal(browser.dataLayer.filter((e) => e.event === "generate_lead").at(-1).business_type, "Altro");
 assert.ok(!JSON.stringify(browser.dataLayer).includes("dato-personale-da-non-trasmettere"));
 const eventsBeforePrivate = browser.dataLayer.filter((e) => e.event).length;
+const pixelEventsBeforePrivate = browser.fbq.queue.length;
 tracking.trackPage("/admin");
 tracking.trackEvent("cta_click");
+tracking.trackConversion("generale", "form", "lead-privato");
+tracking.trackWhatsApp("generale", "admin");
 tracking.trackPage("/per/inesistente");
 tracking.trackEvent("cta_click");
+tracking.trackConversion("generale", "form", "lead-sconosciuto");
+tracking.trackWhatsApp("generale", "pagina-sconosciuta");
 assert.equal(browser.dataLayer.filter((e) => e.event).length, eventsBeforePrivate);
+assert.equal(browser.fbq.queue.length, pixelEventsBeforePrivate);
 localStorage.setItem("promoapp-consent-v1", JSON.stringify({ analytics: false, marketing: false }));
 tracking.updateTrackingConsent({ analytics: false, marketing: false });
 tracking.trackPage("/siti-web");

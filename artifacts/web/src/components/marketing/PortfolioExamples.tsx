@@ -1,19 +1,29 @@
+import projects from "../../lib/approved-projects.json";
+import { appPath } from "../../lib/marketing";
+
+type Project = { approved: boolean; title: string; businessType: string; need: string; solution: string; features: string[]; image: string };
+export function approvedProjects(items: unknown[]): Project[] {
+  return items.filter((item): item is Project => {
+    if (!item || typeof item !== "object") return false;
+    const p = item as Partial<Project>;
+    return p.approved === true && [p.title, p.businessType, p.need, p.solution].every((v) => typeof v === "string" && v.trim()) &&
+      typeof p.image === "string" && /^\/portfolio\/[\w.-]+\.(?:webp|png|jpg)$/.test(p.image) &&
+      Array.isArray(p.features) && p.features.length > 0 && p.features.every((v) => typeof v === "string" && v.trim());
+  });
+}
 export default function PortfolioExamples() {
-  return <div className="portfolio-grid" data-testid="portfolio">
-    <article className="portfolio-item">
-      <a href="https://nyx-milano-club.replit.app" target="_blank" rel="noopener noreferrer" className="portfolio-image" aria-label="Apri il sito KEOS Milano">
-        <img src={`${import.meta.env.BASE_URL}portfolio/keos-milano.webp`} alt="Schermata reale del sito KEOS Milano con tessera digitale"
-          width={430} height={720} loading="lazy" className="w-full h-full object-cover object-top" />
-      </a>
-      <p className="text-xs font-bold text-emerald-700 mt-5 mb-2 uppercase tracking-wider">Sito web e tessera digitale</p>
-      <h3 className="font-bold text-xl">KEOS Milano</h3>
-      <p className="text-sm text-gray-500 mt-3 mb-4">Il progetto Milano, precedentemente NYX, presenta il locale e l'accesso alla tessera digitale. Questa è una schermata del sito pubblico, non un mockup.</p>
-      <a className="font-bold text-indigo-700" href="https://nyx-milano-club.replit.app" target="_blank" rel="noopener noreferrer">Visita il sito funzionante →</a>
-    </article>
-    <aside className="portfolio-item p-6 justify-center">
-      <h3 className="font-bold text-xl mb-4">Vuoi vedere un esempio adatto alla tua attività?</h3>
-      <p className="text-gray-500 text-sm">Raccontaci il tuo settore. Ti mostreremo i lavori e le funzionalità pertinenti durante il confronto, senza pubblicare le aree riservate dei clienti.</p>
-      <a href="#preventivo" className="mt-5 font-bold text-indigo-700">Parliamo del tuo progetto →</a>
-    </aside>
-  </div>;
+  const approved = approvedProjects(projects);
+  if (!approved.length) return null;
+  return <section className="relative z-10 px-4 py-8" aria-label="Progetti realizzati e autorizzati">
+    <div className="max-w-5xl mx-auto text-white">
+      <h2 className="font-bold text-2xl mb-5">Esigenze reali, soluzioni realizzate</h2>
+      <div className="grid sm:grid-cols-2 gap-4">{approved.map((p) => <article key={p.title} className="glass-card rounded-2xl p-5">
+        <img src={appPath(p.image)} alt={`Anteprima del progetto ${p.title}`} loading="lazy" width={640} height={400} className="w-full rounded-xl mb-4" />
+        <p className="text-emerald-300 text-sm">{p.businessType}</p><h3 className="font-bold text-xl mt-1">{p.title}</h3>
+        <p className="text-indigo-100 text-sm mt-3"><strong>Esigenza iniziale: </strong>{p.need}</p>
+        <p className="text-indigo-100 text-sm mt-2"><strong>Soluzione realizzata: </strong>{p.solution}</p>
+        <ul className="text-indigo-100 text-sm list-disc pl-5 mt-3">{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
+      </article>)}</div>
+    </div>
+  </section>;
 }

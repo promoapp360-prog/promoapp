@@ -126,11 +126,26 @@ export const SubmitContactResponse = zod.object({
 });
 
 export const ListCommercialLeadsQueryParams = zod.object({
+  servizio: zod.coerce.string().optional(),
+  campagna: zod.coerce.string().optional(),
+  tipoAttivita: zod.coerce.string().optional(),
   settore: zod.coerce.string().optional(),
   stato: zod.coerce.string().optional(),
   from: zod.date().optional(),
   to: zod.date().optional(),
 });
+
+export const listCommercialLeadsResponseQuoteAmountCentsMin = 0;
+export const listCommercialLeadsResponseQuoteAmountCentsMax = 2147483647;
+export const listCommercialLeadsResponseQuoteAmountCentsMultipleOf = 1;
+
+export const listCommercialLeadsResponseSaleAmountCentsMin = 0;
+export const listCommercialLeadsResponseSaleAmountCentsMax = 2147483647;
+export const listCommercialLeadsResponseSaleAmountCentsMultipleOf = 1;
+
+export const listCommercialLeadsResponseEventsItemQuoteAmountCentsMultipleOf = 1;
+
+export const listCommercialLeadsResponseEventsItemSaleAmountCentsMultipleOf = 1;
 
 export const ListCommercialLeadsResponseItem = zod.object({
   id: zod.string(),
@@ -145,6 +160,18 @@ export const ListCommercialLeadsResponseItem = zod.object({
   notification: zod.string(),
   createdAt: zod.coerce.date(),
   qualifiedAt: zod.coerce.date().nullish(),
+  quoteAmountCents: zod
+    .number()
+    .min(listCommercialLeadsResponseQuoteAmountCentsMin)
+    .max(listCommercialLeadsResponseQuoteAmountCentsMax)
+    .multipleOf(listCommercialLeadsResponseQuoteAmountCentsMultipleOf)
+    .nullish(),
+  saleAmountCents: zod
+    .number()
+    .min(listCommercialLeadsResponseSaleAmountCentsMin)
+    .max(listCommercialLeadsResponseSaleAmountCentsMax)
+    .multipleOf(listCommercialLeadsResponseSaleAmountCentsMultipleOf)
+    .nullish(),
   marketingConsent: zod.boolean(),
   analyticsConsent: zod.boolean(),
   attribution: zod.record(zod.string(), zod.string()),
@@ -152,6 +179,18 @@ export const ListCommercialLeadsResponseItem = zod.object({
     zod.object({
       event: zod.string(),
       at: zod.string(),
+      quoteAmountCents: zod
+        .number()
+        .multipleOf(
+          listCommercialLeadsResponseEventsItemQuoteAmountCentsMultipleOf,
+        )
+        .nullish(),
+      saleAmountCents: zod
+        .number()
+        .multipleOf(
+          listCommercialLeadsResponseEventsItemSaleAmountCentsMultipleOf,
+        )
+        .nullish(),
     }),
   ),
 });
@@ -163,8 +202,28 @@ export const UpdateCommercialLeadParams = zod.object({
   id: zod.coerce.string(),
 });
 
+export const updateCommercialLeadBodyQuoteAmountCentsMin = 0;
+export const updateCommercialLeadBodyQuoteAmountCentsMax = 2147483647;
+export const updateCommercialLeadBodyQuoteAmountCentsMultipleOf = 1;
+
+export const updateCommercialLeadBodySaleAmountCentsMin = 0;
+export const updateCommercialLeadBodySaleAmountCentsMax = 2147483647;
+export const updateCommercialLeadBodySaleAmountCentsMultipleOf = 1;
+
 export const UpdateCommercialLeadBody = zod.object({
   qualified: zod.boolean().optional(),
+  quoteAmountCents: zod
+    .number()
+    .min(updateCommercialLeadBodyQuoteAmountCentsMin)
+    .max(updateCommercialLeadBodyQuoteAmountCentsMax)
+    .multipleOf(updateCommercialLeadBodyQuoteAmountCentsMultipleOf)
+    .nullish(),
+  saleAmountCents: zod
+    .number()
+    .min(updateCommercialLeadBodySaleAmountCentsMin)
+    .max(updateCommercialLeadBodySaleAmountCentsMax)
+    .multipleOf(updateCommercialLeadBodySaleAmountCentsMultipleOf)
+    .nullish(),
   stato: zod.enum([
     "Nuovo",
     "Contattato",
@@ -174,6 +233,18 @@ export const UpdateCommercialLeadBody = zod.object({
     "Non interessato",
   ]),
 });
+
+export const updateCommercialLeadResponseQuoteAmountCentsMin = 0;
+export const updateCommercialLeadResponseQuoteAmountCentsMax = 2147483647;
+export const updateCommercialLeadResponseQuoteAmountCentsMultipleOf = 1;
+
+export const updateCommercialLeadResponseSaleAmountCentsMin = 0;
+export const updateCommercialLeadResponseSaleAmountCentsMax = 2147483647;
+export const updateCommercialLeadResponseSaleAmountCentsMultipleOf = 1;
+
+export const updateCommercialLeadResponseEventsItemQuoteAmountCentsMultipleOf = 1;
+
+export const updateCommercialLeadResponseEventsItemSaleAmountCentsMultipleOf = 1;
 
 export const UpdateCommercialLeadResponse = zod.object({
   id: zod.string(),
@@ -188,6 +259,18 @@ export const UpdateCommercialLeadResponse = zod.object({
   notification: zod.string(),
   createdAt: zod.coerce.date(),
   qualifiedAt: zod.coerce.date().nullish(),
+  quoteAmountCents: zod
+    .number()
+    .min(updateCommercialLeadResponseQuoteAmountCentsMin)
+    .max(updateCommercialLeadResponseQuoteAmountCentsMax)
+    .multipleOf(updateCommercialLeadResponseQuoteAmountCentsMultipleOf)
+    .nullish(),
+  saleAmountCents: zod
+    .number()
+    .min(updateCommercialLeadResponseSaleAmountCentsMin)
+    .max(updateCommercialLeadResponseSaleAmountCentsMax)
+    .multipleOf(updateCommercialLeadResponseSaleAmountCentsMultipleOf)
+    .nullish(),
   marketingConsent: zod.boolean(),
   analyticsConsent: zod.boolean(),
   attribution: zod.record(zod.string(), zod.string()),
@@ -195,6 +278,18 @@ export const UpdateCommercialLeadResponse = zod.object({
     zod.object({
       event: zod.string(),
       at: zod.string(),
+      quoteAmountCents: zod
+        .number()
+        .multipleOf(
+          updateCommercialLeadResponseEventsItemQuoteAmountCentsMultipleOf,
+        )
+        .nullish(),
+      saleAmountCents: zod
+        .number()
+        .multipleOf(
+          updateCommercialLeadResponseEventsItemSaleAmountCentsMultipleOf,
+        )
+        .nullish(),
     }),
   ),
 });
@@ -212,6 +307,9 @@ export const NotifyCommercialLeadResponse = zod.object({
 });
 
 export const ExportCommercialLeadsQueryParams = zod.object({
+  servizio: zod.coerce.string().optional(),
+  campagna: zod.coerce.string().optional(),
+  tipoAttivita: zod.coerce.string().optional(),
   settore: zod.coerce.string().optional(),
   stato: zod.coerce.string().optional(),
   from: zod.date().optional(),

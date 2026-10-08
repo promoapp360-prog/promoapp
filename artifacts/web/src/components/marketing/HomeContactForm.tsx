@@ -20,8 +20,8 @@ export default function HomeContactForm({ form, onChange, onSubmit, sent, loadin
     onFocusCapture={() => { if (!started.current) { trackEvent("form_start", "generale", "homepage"); started.current = true; } }}
     className="bg-white rounded-3xl p-6 shadow-[0_32px_80px_rgba(0,0,0,0.35)] space-y-3.5" data-testid="form-preventivo">
     <div className="pb-1 border-b border-gray-100">
-      <h2 className="text-lg font-black text-gray-900">Fai il primo passo: raccontaci la tua attività</h2>
-      <p className="text-xs text-gray-500 mt-0.5">Tre dati, nessun impegno. {incentive.promise}</p>
+      <h2 className="text-lg font-black text-gray-900">Parlaci della tua idea</h2>
+      <p className="text-xs text-gray-500 mt-0.5">Tre dati per iniziare. Una proposta personalizzata, gratuita e senza impegno.</p>
     </div>
     <div>
       <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5" htmlFor="nome_attivita">Nome attività <span className="text-red-500">*</span></label>
@@ -41,6 +41,12 @@ export default function HomeContactForm({ form, onChange, onSubmit, sent, loadin
     </div>
     <div className="lead-honeypot" aria-hidden="true"><label htmlFor="home-website">Lascia vuoto</label>
       <input id="home-website" name="website" autoComplete="off" tabIndex={-1} value={form.website} onChange={onChange} /></div>
+    <details className="text-sm text-gray-600">
+      <summary className="cursor-pointer py-2 font-semibold">Vuoi raccontarci la tua idea? (facoltativo)</summary>
+      <label className="block mt-2" htmlFor="home-idea">Esigenze del tuo progetto</label>
+      <textarea id="home-idea" name="messaggio" value={form.messaggio} onChange={onChange} maxLength={2000}
+        rows={3} placeholder="Ad esempio: vorrei organizzare prenotazioni e clienti…" className={`${inputClass} mt-1`} />
+    </details>
     <label className="flex items-start gap-2 text-[10px] text-gray-500">
       <input type="checkbox" required checked={privacy} onChange={(e) => onPrivacyChange(e.target.checked)} className="mt-1 accent-indigo-600" />
       <span>Ho letto l'<a href={appPath("/privacy.html")} target="_blank" rel="noopener noreferrer" className="underline text-indigo-700">informativa privacy</a> e acconsento al trattamento per ricevere risposta alla richiesta. Nessuna iscrizione pubblicitaria.</span>
@@ -48,7 +54,7 @@ export default function HomeContactForm({ form, onChange, onSubmit, sent, loadin
     {error && <p className="text-red-500 text-xs font-semibold flex items-center gap-1.5 bg-red-50 rounded-lg px-3 py-2" role="alert" data-testid="text-error">{error}</p>}
     <button type="submit" disabled={loading}
       className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-60 text-white py-3.5 rounded-xl font-black text-sm tracking-wide transition shadow-lg shadow-indigo-900/40 hover:shadow-indigo-500/30 active:scale-[0.98]" data-testid="button-submit">
-      {loading ? "Invio in corso..." : incentive.formCta}
+      {loading ? "Invio in corso..." : "Raccontaci il tuo progetto"}
     </button>
     <p className="text-xs text-gray-500">{incentive.responseNote}</p>
     <div className="text-center pt-0.5">

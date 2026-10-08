@@ -9,4 +9,8 @@
 export interface LeadEvent {
   event: string;
   at: string;
+  /** @nullable */
+  quoteAmountCents?: number | null;
+  /** @nullable */
+  saleAmountCents?: number | null;
 }

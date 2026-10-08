@@ -4,11 +4,11 @@ import { sectors, commercialIncentive } from "./commercial";
 export type Service = "generale" | "siti-web" | "web-app" | "menu-digitali";
 export const serviceCodes = { generale: "general", "siti-web": "website_399", "web-app": "webapp_custom", "menu-digitali": "menu_qr_99" } as const;
 const standardServiceCta: Record<Service, string> = {
-  generale: commercialIncentive().cta, "siti-web": "Richiedi il tuo sito da 399 €",
-  "menu-digitali": "Richiedi il menu digitale a 99 €", "web-app": "Scopri la soluzione per la tua attività",
+   generale: "Richiedi una proposta personalizzata", "siti-web": "Richiedi una proposta personalizzata",
+   "menu-digitali": "Richiedi il tuo menu digitale a 99 €", "web-app": "Richiedi una proposta personalizzata",
 };
 export const serviceCta = Object.fromEntries(Object.entries(standardServiceCta).map(([service, label]) =>
-  [service, commercialIncentive().demoActive ? commercialIncentive().cta : label])) as Record<Service, string>;
+  [service, label])) as Record<Service, string>;
 export const PUBLIC_ORIGIN = "https://www.promoapp.it";
 export const appPath = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}${path}`;
 export const serviceNames: Record<Service, string> = {

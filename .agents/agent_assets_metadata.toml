@@ -161,3 +161,31 @@ mtime_ms = 1791412303533
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/018a8545-9665-40ad-abdd-b2009c97d708/0f52ab22-cf11-4aad-8986-0e1cab94bc87"
 storage_version_token = "1791412329436827"
 content_type = "text/html"
+
+[[outputs]]
+id = "UkH0wN0cUxHfwI5b9fwwz"
+uri = "file://reports/promoapp-google-meta-ads.html"
+type = "html"
+title = "PromoApp — Report Google e Meta Ads"
+description = "Correzioni mirate, due percorsi reali con salvataggio e notifiche, stato del tracking e verifiche ancora mancanti."
+logical_id = "4a1af902-e4dc-4fa6-82a9-40f7b2ec7a1f"
+content_hash = "sha256:967e972d880d116f9d27357d72936af0f6090d51c59e18098f964de2115c5c63"
+size = 9785
+mtime_ms = 1791445104555
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/4a1af902-e4dc-4fa6-82a9-40f7b2ec7a1f/4de59597-2093-4544-bdda-e7bc50c19933"
+storage_version_token = "1791445152299381"
+content_type = "text/html"
+
+[[outputs]]
+id = "_iOgkiTNLyx-t21UwAHTO"
+uri = "file://reports/promoapp-riposizionamento-commerciale.html"
+type = "html"
+title = "PromoApp — Report riposizionamento commerciale"
+description = "Modifiche, file interessati, verifiche, limiti residui e istruzioni per homepage e gestione privata di preventivi e vendite."
+logical_id = "5511fa65-6f2a-4449-85ed-76244cc8f690"
+content_hash = "sha256:469c6e634d886cdcdeb81f3cfa9d06d1ed79f01c58f20946676766360cad0323"
+size = 17422
+mtime_ms = 1791446583419
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/5511fa65-6f2a-4449-85ed-76244cc8f690/28433c2c-922c-482c-b768-60e3f0596ec7"
+storage_version_token = "1791446776982223"
+content_type = "text/html"

@@ -21,6 +21,14 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
     if (e.target.name === "nome_attivita") onBusinessNameChange?.(e.target.value);
     setForm((previous) => ({ ...previous, [e.target.name]: e.target.value })); setError("");
   }
+  function invalid(event: React.FormEvent<HTMLFormElement>) {
+    // Preserve native constraints without popovers covering the mobile form.
+    event.preventDefault();
+    const field = event.target as HTMLInputElement | HTMLSelectElement;
+    setError(field.name === "whatsapp" ? "Inserisci un numero WhatsApp valido (almeno 6 caratteri)." :
+      "Controlla nome attività, tipo attività e informativa privacy prima di inviare.");
+    field.focus();
+  }
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (loading) return;
@@ -40,10 +48,10 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
     } catch { setError("La richiesta non è stata confermata. Riprova oppure scrivici su WhatsApp."); }
     finally { setLoading(false); }
   }
-  return <form className="lead-form" onSubmit={submit} data-testid={`form-${slug}`}
+  return <form className="lead-form" onSubmit={submit} onInvalid={invalid} data-testid={`form-${slug}`}
     onFocusCapture={() => { if (!started.current) { trackEvent("form_start", service, "form", slug); started.current = true; } }}>
     <h3>{cta ?? serviceCta[service]}</h3>
-    <p className="text-sm text-gray-500">Tre dati, nessun impegno. {incentive.promise}</p>
+    <p className="text-sm text-gray-500">Tre dati, nessun impegno. {service === "menu-digitali" ? incentive.promise : "Richiedi una proposta personalizzata in base alle esigenze della tua attività."}</p>
     <div><label htmlFor={`${id}-name`}>Nome attività *</label><input id={`${id}-name`} name="nome_attivita" autoComplete="organization"
       value={form.nome_attivita} onChange={change} required minLength={2} maxLength={160} placeholder="Il nome della tua attività" /></div>
     <div><label htmlFor={`${id}-business`}>Tipo attività *</label><select id={`${id}-business`} name="settore" value={form.settore} onChange={change} required>
@@ -58,7 +66,7 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
     <label className="lead-privacy"><input type="checkbox" required checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} />
       <span>Ho letto l'<a href={appPath("/privacy.html")} target="_blank" rel="noopener noreferrer">informativa privacy</a> e acconsento al trattamento per rispondere alla richiesta. Nessuna iscrizione pubblicitaria.</span></label>
     {error && <p className="lead-form-status" role="alert" data-testid="lead-error">{error}</p>}
-    <button type="submit" disabled={loading}>{loading ? "Invio in corso…" : incentive.formCta}</button>
+    <button type="submit" disabled={loading}>{loading ? "Invio in corso…" : service === "menu-digitali" ? serviceCta[service] : "Richiedi una proposta personalizzata"}</button>
     <p className="text-sm text-gray-500">{incentive.responseNote}</p>
     <small>I campi con * sono obbligatori.</small>
   </form>;

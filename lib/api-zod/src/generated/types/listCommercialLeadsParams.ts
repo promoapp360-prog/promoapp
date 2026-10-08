@@ -7,6 +7,9 @@
  */
 
 export type ListCommercialLeadsParams = {
+  servizio?: string;
+  campagna?: string;
+  tipoAttivita?: string;
   settore?: string;
   stato?: string;
   from?: Date;
