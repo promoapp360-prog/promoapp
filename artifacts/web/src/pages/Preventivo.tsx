@@ -309,19 +309,21 @@ export default function Preventivo() {
               onClick={() => trackEvent("cta_click", "generale", "hero-services")}>Scopri i nostri servizi</a>
             <p className="text-indigo-100 text-sm mb-3">Una proposta personalizzata, gratuita e senza impegno. Nessun prodotto standard da scegliere per forza.</p>
             <p className="text-indigo-200 text-xs mb-4">{incentive.responseNote}</p>
-            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
-              className="inline-flex items-center gap-2 text-emerald-300 font-bold text-sm mb-4">
-              <i className="fab fa-whatsapp" aria-hidden="true" /> {variant.whatsappLabel}
-            </a>
-            {reviews.length > 0 && <a
-              href="#recensioni"
-              className="ml-1 mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-black text-white transition hover:border-emerald-300/50 hover:bg-white/15"
-              data-testid="link-see-reviews"
-            >
-              <i className="fas fa-star text-amber-300"></i>
-              Leggi le recensioni
-              <i className="fas fa-arrow-down text-[10px] text-emerald-300"></i>
-            </a>}
+            <div className="flex flex-col items-center gap-4 mb-4">
+              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
+                className="inline-flex items-center justify-center gap-2 text-emerald-300 font-bold text-sm min-h-11">
+                <i className="fab fa-whatsapp" aria-hidden="true" /> {variant.whatsappLabel}
+              </a>
+              {reviews.length > 0 && <a
+                href="#recensioni"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-black text-white transition hover:border-emerald-300/50 hover:bg-white/15"
+                data-testid="link-see-reviews"
+              >
+                <i className="fas fa-star text-amber-300"></i>
+                Leggi le recensioni
+                <i className="fas fa-arrow-down text-[10px] text-emerald-300"></i>
+              </a>}
+            </div>
 
           </div>
 
