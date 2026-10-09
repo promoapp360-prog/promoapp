@@ -163,15 +163,30 @@ export default function Admin() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (!password.trim()) { setAuthError("Inserisci la password"); return; }
+    const submittedPassword = password.trim();
+    if (!submittedPassword) { setAuthError("Inserisci la password"); return; }
     setAuthError("Verifica in corso...");
-    const res = await fetch(`${API_BASE}/api/admin/verify`, {
-      headers: { "x-admin-password": password }
-    });
-    if (res.ok) {
-      setAutenticato(true); setAuthError("");
-    } else {
-      setAuthError("Password errata");
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/verify`, {
+        headers: { "x-admin-password": submittedPassword },
+        cache: "no-store",
+      });
+      if (res.ok) {
+        setPassword(submittedPassword);
+        setAutenticato(true); setAuthError("");
+      } else if (res.status === 401) {
+        setAuthError("Password errata: deve coincidere con ADMIN_PASSWORD del sito che stai usando.");
+      } else if (res.status === 429) {
+        const retryAfter = Number(res.headers.get("Retry-After"));
+        const minutes = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.ceil(retryAfter / 60) : 10;
+        setAuthError(`Troppi tentativi di accesso. Attendi ${minutes} minuti prima di riprovare.`);
+      } else if (res.status === 503) {
+        setAuthError("Password admin non configurata sul server. Imposta ADMIN_PASSWORD nei secret di questo ambiente.");
+      } else {
+        setAuthError("Errore del server durante l'accesso. Riprova tra poco.");
+      }
+    } catch {
+      setAuthError("Impossibile contattare il server. Controlla la connessione e riprova.");
     }
   }
 

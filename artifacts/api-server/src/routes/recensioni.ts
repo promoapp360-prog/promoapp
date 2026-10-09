@@ -2,12 +2,9 @@ import { Router } from "express";
 import { db, recensioniTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import { matchesAdminPassword } from "../middlewares/adminAuthorization";
 
 const router = Router();
-
-// Keep review moderation aligned with the other admin routes. In this project
-// the admin API also supports the built-in fallback when no env var is set.
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Mamma080245.";
 
 // ── POST /api/recensioni — invio pubblica (va in moderazione) ──
 router.post("/recensioni", async (req, res) => {
@@ -71,8 +68,7 @@ router.get("/recensioni", async (req, res) => {
 
 // ── PATCH /api/recensioni/:id/verifica — verifica (admin) ──
 router.patch("/recensioni/:id/verifica", async (req, res) => {
-  const pw = req.headers["x-admin-password"];
-  if (!ADMIN_PASSWORD || pw !== ADMIN_PASSWORD) {
+  if (!matchesAdminPassword(req.get("x-admin-password"))) {
     res.status(401).json({ success: false, message: "Non autorizzato." });
     return;
   }
@@ -94,8 +90,7 @@ router.patch("/recensioni/:id/verifica", async (req, res) => {
 
 // ── GET /api/recensioni/pending — lista in attesa (admin) ──
 router.get("/recensioni/pending", async (req, res) => {
-  const pw = req.headers["x-admin-password"];
-  if (!ADMIN_PASSWORD || pw !== ADMIN_PASSWORD) {
+  if (!matchesAdminPassword(req.get("x-admin-password"))) {
     res.status(401).json({ success: false, message: "Non autorizzato." });
     return;
   }

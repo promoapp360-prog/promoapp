@@ -5,6 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { getUncachableStripeClient } from "../lib/stripeClient";
 import { emailRicevuta } from "../lib/emailTemplates";
+import { matchesAdminPassword } from "../middlewares/adminAuthorization";
 
 const router = Router();
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -368,8 +369,7 @@ router.get("/acconto/cerca-progetto", async (req, res) => {
 
 // ===== ADMIN =====
 router.get("/admin/acconti", async (req, res) => {
-  const pwd = req.headers["x-admin-password"];
-  if (pwd !== process.env.ADMIN_PASSWORD && pwd !== "Mamma080245.") {
+  if (!matchesAdminPassword(req.get("x-admin-password"))) {
     return res.status(401).json({ error: "Non autorizzato" });
   }
   const rows = await db.select().from(accontiTable).orderBy(accontiTable.createdAt);
