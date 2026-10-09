@@ -3,12 +3,12 @@ import { db } from "@workspace/db";
 import { discountCodesTable, accontiTable, clientiTable, progettiLavoriTable, vociProgettoTable } from "@workspace/db";
 import { eq, asc, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { matchesAdminPassword } from "../middlewares/adminAuthorization";
+import { authorizeAdminRequest } from "../middlewares/adminAuthorization";
 
 const router = Router();
 
 function checkAuth(req: any, res: any): boolean {
-  if (!matchesAdminPassword(req.get("x-admin-password"))) {
+  if (!authorizeAdminRequest(req)) {
     res.status(401).json({ error: "Non autorizzato" });
     return false;
   }
@@ -16,7 +16,10 @@ function checkAuth(req: any, res: any): boolean {
 }
 
 // ============ VERIFY ============
-router.get("/admin/verify", (req, res) => {
+router.route("/admin/verify").get((req, res) => {
+  if (!checkAuth(req, res)) return;
+  res.json({ ok: true });
+}).post((req, res) => {
   if (!checkAuth(req, res)) return;
   res.json({ ok: true });
 });

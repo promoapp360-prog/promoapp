@@ -5,6 +5,7 @@ import { appPath } from "../lib/marketing";
 import { sectors } from "../lib/commercial";
 import { euro, salesSummary, serviceLabels, statusLabels } from "../lib/lead-sales";
 import LeadSalesFields from "../components/marketing/LeadSalesFields";
+import { adminHeaders } from "../lib/admin-auth";
 
 const statuses = ["Nuovo", "Contattato", "Interessato", "Preventivo inviato", "Cliente acquisito", "Non interessato"];
 const field = "border border-gray-300 rounded-xl px-3 py-3 text-sm bg-white min-w-0";
@@ -16,7 +17,7 @@ export default function LeadsAdmin() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const query = () => new URLSearchParams(Object.entries(filters).filter(([, value]) => value)).toString();
-  const headers = () => ({ "x-admin-password": password, "Content-Type": "application/json" });
+  const headers = () => ({ ...adminHeaders(password), "Content-Type": "application/json" });
   async function load(e?: React.FormEvent) {
     e?.preventDefault(); setBusy(true); setMessage("");
     try {

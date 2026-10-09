@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
+import { adminHeaders } from "../lib/admin-auth";
 
 const API_BASE = "";
 
@@ -62,6 +63,8 @@ export default function Admin() {
   const [password, setPassword] = useState("");
   const [autenticato, setAutenticato] = useState(false);
   const [authError, setAuthError] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [tab, setTab] = useState<Tab>("progetti");
 
   // Acconti
@@ -110,35 +113,35 @@ export default function Admin() {
 
   const caricaAcconti = useCallback(async () => {
     setLoadingAcconti(true);
-    const res = await fetch(`${API_BASE}/api/admin/acconti`, { headers: { "x-admin-password": password } });
+    const res = await fetch(`${API_BASE}/api/admin/acconti`, { headers: adminHeaders(password) });
     if (res.ok) setAcconti(await res.json());
     setLoadingAcconti(false);
   }, [password]);
 
   const caricaCodici = useCallback(async () => {
     setLoadingCodici(true);
-    const res = await fetch(`${API_BASE}/api/admin/codes`, { headers: { "x-admin-password": password } });
+    const res = await fetch(`${API_BASE}/api/admin/codes`, { headers: adminHeaders(password) });
     if (res.ok) setCodici(await res.json());
     setLoadingCodici(false);
   }, [password]);
 
   const caricaClienti = useCallback(async () => {
     setLoadingClienti(true);
-    const res = await fetch(`${API_BASE}/api/admin/clienti`, { headers: { "x-admin-password": password } });
+    const res = await fetch(`${API_BASE}/api/admin/clienti`, { headers: adminHeaders(password) });
     if (res.ok) setClienti(await res.json());
     setLoadingClienti(false);
   }, [password]);
 
   const caricaProgetti = useCallback(async () => {
     setLoadingProgetti(true);
-    const res = await fetch(`${API_BASE}/api/admin/progetti`, { headers: { "x-admin-password": password } });
+    const res = await fetch(`${API_BASE}/api/admin/progetti`, { headers: adminHeaders(password) });
     if (res.ok) setProgetti(await res.json());
     setLoadingProgetti(false);
   }, [password]);
 
   const caricaRichieste = useCallback(async () => {
     setLoadingRichieste(true);
-    const res = await fetch(`${API_BASE}/api/admin/richieste-gestionale`, { headers: { "x-admin-password": password } });
+    const res = await fetch(`${API_BASE}/api/admin/richieste-gestionale`, { headers: adminHeaders(password) });
     if (res.ok) setRichieste(await res.json());
     setLoadingRichieste(false);
   }, [password]);
@@ -154,7 +157,7 @@ export default function Admin() {
     setLicenzeSaving(true);
     const res = await fetch(`${API_BASE}/api/admin/gestionale/contatore`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", "x-admin-password": password },
+      headers: { "Content-Type": "application/json", ...adminHeaders(password) },
       body: JSON.stringify({ licenze: val }),
     });
     if (res.ok) { const d = await res.json(); setLicenze(d.licenze); setLicenzeInput(String(d.licenze)); }
@@ -163,19 +166,28 @@ export default function Admin() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    if (authBusy) return;
     const submittedPassword = password.trim();
     if (!submittedPassword) { setAuthError("Inserisci la password"); return; }
+    setAuthBusy(true);
     setAuthError("Verifica in corso...");
     try {
       const res = await fetch(`${API_BASE}/api/admin/verify`, {
-        headers: { "x-admin-password": submittedPassword },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: submittedPassword }),
         cache: "no-store",
       });
       if (res.ok) {
         setPassword(submittedPassword);
         setAutenticato(true); setAuthError("");
       } else if (res.status === 401) {
-        setAuthError("Password errata: deve coincidere con ADMIN_PASSWORD del sito che stai usando.");
+        const result = await res.json().catch(() => ({}));
+        setAuthError(result.code === "ADMIN_CREDENTIAL_MISSING"
+          ? "Il server non ha ricevuto la password. Ricarica la pagina e riprova."
+          : result.code === "ADMIN_PASSWORD_INVALID"
+            ? "Il server ha ricevuto la password, ma non coincide con ADMIN_PASSWORD del sito pubblico."
+            : "Accesso rifiutato dal server. Il problema non è stato identificato come password errata.");
       } else if (res.status === 429) {
         const retryAfter = Number(res.headers.get("Retry-After"));
         const minutes = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.ceil(retryAfter / 60) : 10;
@@ -187,6 +199,8 @@ export default function Admin() {
       }
     } catch {
       setAuthError("Impossibile contattare il server. Controlla la connessione e riprova.");
+    } finally {
+      setAuthBusy(false);
     }
   }
 
@@ -237,7 +251,7 @@ export default function Admin() {
     const method = editingProgettoId ? "PUT" : "POST";
 
     const res = await fetch(url, {
-      method, headers: { "Content-Type": "application/json", "x-admin-password": password },
+      method, headers: { "Content-Type": "application/json", ...adminHeaders(password) },
       body: JSON.stringify(body),
     });
     const data = await res.json();
@@ -249,7 +263,7 @@ export default function Admin() {
 
   async function eliminaProgetto(id: string, nome: string) {
     if (!confirm(`Eliminare il progetto "${nome}"? Questa azione è irreversibile.`)) return;
-    await fetch(`${API_BASE}/api/admin/progetti/${id}`, { method: "DELETE", headers: { "x-admin-password": password } });
+    await fetch(`${API_BASE}/api/admin/progetti/${id}`, { method: "DELETE", headers: adminHeaders(password) });
     caricaProgetti();
   }
 
@@ -273,7 +287,7 @@ export default function Admin() {
       : `${API_BASE}/api/admin/clienti`;
     const res = await fetch(url, {
       method: editingClienteId ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json", "x-admin-password": password },
+      headers: { "Content-Type": "application/json", ...adminHeaders(password) },
       body: JSON.stringify(clienteForm),
     });
     const data = await res.json();
@@ -283,14 +297,14 @@ export default function Admin() {
 
   async function eliminaCliente(id: string, nome: string) {
     if (!confirm(`Eliminare il cliente "${nome}"?`)) return;
-    await fetch(`${API_BASE}/api/admin/clienti/${id}`, { method: "DELETE", headers: { "x-admin-password": password } });
+    await fetch(`${API_BASE}/api/admin/clienti/${id}`, { method: "DELETE", headers: adminHeaders(password) });
     caricaClienti();
   }
 
   async function creaCodice(e: React.FormEvent) {
     e.preventDefault(); setScontoError(""); setScontoSuccess("");
     const res = await fetch(`${API_BASE}/api/admin/codes`, {
-      method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password },
+      method: "POST", headers: { "Content-Type": "application/json", ...adminHeaders(password) },
       body: JSON.stringify({ code: formSconto.code, description: formSconto.description || undefined,
         discountPercent: Number(formSconto.discountPercent), maxUses: formSconto.maxUses ? Number(formSconto.maxUses) : undefined,
         expiresAt: formSconto.expiresAt || undefined }),
@@ -309,11 +323,15 @@ export default function Admin() {
           <h1 className="text-2xl font-bold text-gray-800 mb-1 text-center">Admin PromoApp</h1>
           <p className="text-gray-400 text-sm text-center mb-6">Pannello gestione</p>
           <form onSubmit={handleLogin} className="space-y-4">
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+            <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password" aria-label="Password admin"
               placeholder="Password admin"
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
-            {authError && <p className="text-red-500 text-sm">{authError}</p>}
-            <button type="submit" className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Accedi</button>
+            <button type="button" onClick={() => setShowPassword(!showPassword)} aria-pressed={showPassword} className="text-sm text-indigo-600 underline">
+              {showPassword ? "Nascondi password" : "Mostra password"}
+            </button>
+            {authError && <p role="status" className="text-red-500 text-sm">{authError}</p>}
+            <button type="submit" disabled={authBusy} className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition disabled:opacity-60">{authBusy ? "Verifica in corso…" : "Accedi"}</button>
           </form>
         </div>
       </div>
@@ -790,7 +808,7 @@ export default function Admin() {
                     <button onClick={async () => {
                       await fetch(`${API_BASE}/api/admin/richieste-gestionale/${richiestaAperta.id}`, {
                         method: "PATCH",
-                        headers: { "Content-Type": "application/json", "x-admin-password": password },
+                        headers: { "Content-Type": "application/json", ...adminHeaders(password) },
                         body: JSON.stringify(richiestaEdit),
                       });
                       setRichiestaAperta(null); caricaRichieste();
@@ -845,8 +863,8 @@ export default function Admin() {
                           <div className="flex items-center justify-between text-xs text-gray-400">
                             <span>Usi: {c.usedCount}{c.maxUses ? `/${c.maxUses}` : ""}{c.expiresAt && ` · Scade: ${new Date(c.expiresAt).toLocaleDateString("it-IT")}`}</span>
                             <div className="flex gap-2">
-                              <button onClick={async () => { await fetch(`${API_BASE}/api/admin/codes/${c.id}`, { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ active: !c.active }) }); caricaCodici(); }} className={`px-2 py-0.5 rounded-full text-xs font-medium ${c.active ? "bg-green-200 text-green-700 hover:bg-red-100 hover:text-red-600" : "bg-gray-200 text-gray-500 hover:bg-green-100 hover:text-green-600"}`}>{c.active ? "Attivo" : "Disattivo"}</button>
-                              <button onClick={async () => { if (!confirm(`Eliminare "${c.code}"?`)) return; await fetch(`${API_BASE}/api/admin/codes/${c.id}`, { method: "DELETE", headers: { "x-admin-password": password } }); caricaCodici(); }} className="text-red-400 hover:text-red-600 px-1">🗑</button>
+                              <button onClick={async () => { await fetch(`${API_BASE}/api/admin/codes/${c.id}`, { method: "PATCH", headers: { "Content-Type": "application/json", ...adminHeaders(password) }, body: JSON.stringify({ active: !c.active }) }); caricaCodici(); }} className={`px-2 py-0.5 rounded-full text-xs font-medium ${c.active ? "bg-green-200 text-green-700 hover:bg-red-100 hover:text-red-600" : "bg-gray-200 text-gray-500 hover:bg-green-100 hover:text-green-600"}`}>{c.active ? "Attivo" : "Disattivo"}</button>
+                              <button onClick={async () => { if (!confirm(`Eliminare "${c.code}"?`)) return; await fetch(`${API_BASE}/api/admin/codes/${c.id}`, { method: "DELETE", headers: adminHeaders(password) }); caricaCodici(); }} className="text-red-400 hover:text-red-600 px-1">🗑</button>
                             </div>
                           </div>
                         </div>

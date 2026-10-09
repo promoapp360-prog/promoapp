@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db, recensioniTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { matchesAdminPassword } from "../middlewares/adminAuthorization";
+import { authorizeAdminRequest } from "../middlewares/adminAuthorization";
 
 const router = Router();
 
@@ -68,7 +68,7 @@ router.get("/recensioni", async (req, res) => {
 
 // ── PATCH /api/recensioni/:id/verifica — verifica (admin) ──
 router.patch("/recensioni/:id/verifica", async (req, res) => {
-  if (!matchesAdminPassword(req.get("x-admin-password"))) {
+  if (!authorizeAdminRequest(req)) {
     res.status(401).json({ success: false, message: "Non autorizzato." });
     return;
   }
@@ -90,7 +90,7 @@ router.patch("/recensioni/:id/verifica", async (req, res) => {
 
 // ── GET /api/recensioni/pending — lista in attesa (admin) ──
 router.get("/recensioni/pending", async (req, res) => {
-  if (!matchesAdminPassword(req.get("x-admin-password"))) {
+  if (!authorizeAdminRequest(req)) {
     res.status(401).json({ success: false, message: "Non autorizzato." });
     return;
   }

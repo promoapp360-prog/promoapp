@@ -4,14 +4,14 @@ import { richiesteGestionaleTable } from "@workspace/db";
 import { eq, desc, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { Resend } from "resend";
-import { matchesAdminPassword } from "../middlewares/adminAuthorization";
+import { authorizeAdminRequest } from "../middlewares/adminAuthorization";
 
 const router = Router();
 const resend = new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = "derosa.lazio@gmail.com";
 
 function checkAuth(req: any, res: any): boolean {
-  if (!matchesAdminPassword(req.get("x-admin-password"))) {
+  if (!authorizeAdminRequest(req)) {
     res.status(401).json({ error: "Non autorizzato" });
     return false;
   }

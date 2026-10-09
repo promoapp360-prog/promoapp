@@ -11,7 +11,7 @@ function harness(secret: string | undefined) {
     let allowed = false;
     let status = 200;
     const headers: Record<string, string> = {};
-    const req = { path, method, ip: "test-client", get: () => candidate };
+    const req = { path, method, ip: "test-client", get: (name: string) => name === "x-admin-password" ? candidate : undefined };
     const res = {
       setHeader(name: string, value: string) { headers[name] = value; },
       status(code: number) { status = code; return this; },
@@ -88,7 +88,7 @@ test("credential changes are picked up without stale module constants", () => {
   const authorize = createAdminAuthorization(() => configured);
   const attempt = (candidate: string) => {
     let allowed = false;
-    const req = { path: "/admin/verify", method: "GET", ip: "test", get: () => candidate };
+    const req = { path: "/admin/verify", method: "GET", ip: "test", get: (name: string) => name === "x-admin-password" ? candidate : undefined };
     const res = { setHeader() {}, status() { return this; }, json() {} };
     authorize(req as never, res as never, (() => { allowed = true; }) as never);
     return allowed;

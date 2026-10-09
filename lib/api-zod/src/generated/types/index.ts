@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./adminAccessResult";
+export * from "./adminCredentialInput";
 export * from "./commercialLead";
 export * from "./commercialLeadAttribution";
 export * from "./contactRequest";

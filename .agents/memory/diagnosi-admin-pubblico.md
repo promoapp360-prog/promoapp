@@ -14,3 +14,9 @@ Un HTTP 401 dimostra soltanto che il server ha rifiutato la credenziale ricevuta
 **Why:** un caso riprodotto offline, come gli spazi introdotti copiando il secret, identifica un difetto del codice ma non prova che sia la causa del singolo rifiuto pubblico.
 
 **How to apply:** non leggere né stampare le password reali; distinguere chiaramente test sintetici riusciti, pubblicazione ancora necessaria e accesso reale non verificato.
+
+Per le verifiche di accesso, attraversare via HTTP il router reale e tutti i controlli di autorizzazione; verificare anche una richiesta amministrativa successiva al login.
+
+**Why:** i soli test con richieste simulate al middleware non verificano il trasporto browser/server né eventuali controlli aggiuntivi nelle rotte. Le intestazioni HTTP non accettano tutte le stringhe Unicode, mentre il corpo JSON UTF-8 sì.
+
+**How to apply:** usare esclusivamente credenziali fittizie e dati isolati, senza avviare servizi esterni o interrogare il database reale. Non registrare password, credenziali codificate o loro impronte nei log diagnostici.

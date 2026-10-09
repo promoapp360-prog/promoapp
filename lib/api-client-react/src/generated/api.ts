@@ -17,6 +17,8 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AdminAccessResult,
+  AdminCredentialInput,
   CommercialLead,
   ContactRequest,
   ContactResponse,
@@ -35,6 +37,92 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+/**
+ * @summary Verifica la password admin tramite JSON UTF-8
+ */
+export const getVerifyAdminAccessUrl = () => {
+  return `/api/admin/verify`;
+};
+
+export const verifyAdminAccess = async (
+  adminCredentialInput: AdminCredentialInput,
+  options?: RequestInit,
+): Promise<AdminAccessResult> => {
+  return customFetch<AdminAccessResult>(getVerifyAdminAccessUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(adminCredentialInput),
+  });
+};
+
+export const getVerifyAdminAccessMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyAdminAccess>>,
+    TError,
+    { data: BodyType<AdminCredentialInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyAdminAccess>>,
+  TError,
+  { data: BodyType<AdminCredentialInput> },
+  TContext
+> => {
+  const mutationKey = ["verifyAdminAccess"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyAdminAccess>>,
+    { data: BodyType<AdminCredentialInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return verifyAdminAccess(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VerifyAdminAccessMutationResult = NonNullable<
+  Awaited<ReturnType<typeof verifyAdminAccess>>
+>;
+export type VerifyAdminAccessMutationBody = BodyType<AdminCredentialInput>;
+export type VerifyAdminAccessMutationError = ErrorType<void>;
+
+/**
+ * @summary Verifica la password admin tramite JSON UTF-8
+ */
+export const useVerifyAdminAccess = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyAdminAccess>>,
+    TError,
+    { data: BodyType<AdminCredentialInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof verifyAdminAccess>>,
+  TError,
+  { data: BodyType<AdminCredentialInput> },
+  TContext
+> => {
+  return useMutation(getVerifyAdminAccessMutationOptions(options));
+};
 
 /**
  * @summary Invia una richiesta di preventivo

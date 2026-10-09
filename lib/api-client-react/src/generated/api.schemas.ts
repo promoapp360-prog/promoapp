@@ -5,6 +5,15 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface AdminCredentialInput {
+  /** @minLength 1 */
+  password: string;
+}
+
+export interface AdminAccessResult {
+  ok: boolean;
+}
+
 export interface TrackingConfig {
   gtmId?: string;
   ga4Id?: string;

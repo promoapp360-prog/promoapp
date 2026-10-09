@@ -11,6 +11,26 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /admin/verify:
+    post:
+      operationId: verifyAdminAccess
+      summary: Verifica la password admin tramite JSON UTF-8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCredentialInput"
+      responses:
+        "200":
+          description: Credenziale accettata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccessResult"
+        "401": { description: Credenziale mancante o rifiutata }
+        "429": { description: "Troppi tentativi, consultare Retry-After" }
+        "503": { description: Password admin non configurata }
   /invia-contatto:
     post:
       operationId: submitContact
@@ -133,6 +153,16 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    AdminCredentialInput:
+      type: object
+      required: [password]
+      properties:
+        password: { type: string, minLength: 1 }
+    AdminAccessResult:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
     TrackingConfig:
       type: object
       properties:

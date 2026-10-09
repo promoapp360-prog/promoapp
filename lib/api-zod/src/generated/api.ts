@@ -8,6 +8,18 @@
 import * as zod from "zod";
 
 /**
+ * @summary Verifica la password admin tramite JSON UTF-8
+ */
+
+export const VerifyAdminAccessBody = zod.object({
+  password: zod.string().min(1),
+});
+
+export const VerifyAdminAccessResponse = zod.object({
+  ok: zod.boolean(),
+});
+
+/**
  * @summary Invia una richiesta di preventivo
  */
 export const submitContactBodyNomeAttivitaMin = 2;
