@@ -19,11 +19,27 @@ export default function AdminOverviewPanel({ data, days, onDays, visitsOnly }: {
         </article>)}
       </div>}
       <div className="flex justify-between flex-wrap items-center gap-3">
-        <h2 className="text-xl font-bold">Visite del sito</h2>
+        <h2 className="text-xl font-bold">Conteggio visite</h2>
         <label className="text-sm text-slate-600">Periodo <select aria-label="Periodo delle visite" value={days} onChange={e => onDays(Number(e.target.value))} className="ml-2 bg-white border border-slate-200 rounded-lg p-2">
           <option value={7}>Ultimi 7 giorni</option><option value={30}>Ultimi 30 giorni</option><option value={90}>Ultimi 90 giorni</option>
         </select></label>
       </div>
+      <article className="bg-white border border-indigo-200 rounded-2xl p-5">
+        <h3 className="font-bold text-lg">Visite a promoapp.it/sitiweb</h3>
+        <p className="text-sm text-slate-500 mt-2 mb-5">Solo gli accessi a /sitiweb, anche con la barra finale. Le altre pagine del sito non sono incluse.</p>
+        {data.sitiweb ? <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {[
+            ["Visite nel periodo", data.sitiweb.visits, `Ultimi ${data.days} giorni`],
+            ["Visualizzazioni nel periodo", data.sitiweb.pageViews, `Ultimi ${data.days} giorni`],
+            ["Visite totali registrate", data.sitiweb.totalVisits, "Dall’inizio della raccolta"],
+            ["Visualizzazioni totali", data.sitiweb.totalPageViews, "Dall’inizio della raccolta"],
+          ].map(([label, value, note]) => <div key={label} className="bg-indigo-50 rounded-xl p-4">
+            <p className="text-sm text-indigo-900">{label}</p><p className="text-3xl font-bold text-indigo-950 mt-3">{number(Number(value))}</p>
+            <p className="text-xs text-slate-500 mt-3">{note}</p>
+          </div>)}
+        </div> : <p role="alert" className="text-sm text-red-700">Conteggio della pagina non disponibile: aggiorna il pannello dopo la pubblicazione del server.</p>}
+      </article>
+      <h3 className="font-bold">Tutto il sito</h3>
       <div className="grid sm:grid-cols-2 gap-4">
         {[["Visite (sessioni)", data.visits], ["Pagine visualizzate", data.pageViews]].map(([label, value]) =>
           <article key={label} className="bg-indigo-950 text-white rounded-2xl p-6">
@@ -39,7 +55,7 @@ export default function AdminOverviewPanel({ data, days, onDays, visitsOnly }: {
       </p>
       <div className="grid lg:grid-cols-2 gap-5">
         <article className="bg-white border border-slate-200 rounded-2xl p-5">
-          <h3 className="font-bold mb-4">Andamento giornaliero</h3>
+          <h3 className="font-bold mb-4">Andamento giornaliero · tutto il sito</h3>
           <div className="max-h-80 overflow-auto"><table className="w-full text-sm text-left"><thead className="text-slate-500"><tr><th className="py-2">Giorno</th><th>Visite</th><th>Pagine</th></tr></thead>
             <tbody>{data.daily.map(day => <tr key={day.date} className="border-t border-slate-100"><td className="py-3">{date(day.date)}</td><td>{number(day.visits)}</td><td>{number(day.pageViews)}</td></tr>)}</tbody>
           </table></div>

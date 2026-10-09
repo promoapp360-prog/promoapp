@@ -10,7 +10,7 @@ const period = `created_at >= (((now() AT TIME ZONE 'Europe/Rome')::date - ($1::
 export const adminData = {
   async overview(days: number) {
     await Promise.all([ensureLeadSchema(), ensureVisitSchema()]);
-    const [contacts, reviews, views, daily, pages, start] = await Promise.all([
+    const [contacts, reviews, views, daily, pages, start, sitiweb] = await Promise.all([
       pool.query(`SELECT count(*)::int AS contacts, count(*) FILTER (WHERE stato='Nuovo')::int AS "newContacts" FROM commercial_leads WHERE privacy=true`),
       pool.query(`SELECT count(*)::int AS reviews, count(*) FILTER (WHERE NOT verificata)::int AS "pendingReviews",
         round(avg(stelle::numeric) FILTER (WHERE verificata AND stelle ~ '^[1-5]$'),1)::float AS "averageRating" FROM recensioni`),
@@ -24,8 +24,14 @@ export const adminData = {
       pool.query(`SELECT path, count(*)::int AS "pageViews" FROM site_page_views WHERE ${period}
         GROUP BY path ORDER BY count(*) DESC, path LIMIT 15`, [days]),
       pool.query(`SELECT min(created_at) AS "trackingStartedAt" FROM site_page_views`),
+      pool.query(`SELECT
+        count(DISTINCT session_id) FILTER (WHERE ${period})::int AS visits,
+        count(*) FILTER (WHERE ${period})::int AS "pageViews",
+        count(DISTINCT session_id)::int AS "totalVisits", count(*)::int AS "totalPageViews"
+        FROM site_page_views WHERE path IN ('/sitiweb', '/sitiweb/')`, [days]),
     ]);
-    return { days, ...contacts.rows[0], ...reviews.rows[0], ...views.rows[0], ...start.rows[0], daily: daily.rows, pages: pages.rows };
+    return { days, ...contacts.rows[0], ...reviews.rows[0], ...views.rows[0], ...start.rows[0],
+      sitiweb: { path: "/sitiweb", ...sitiweb.rows[0] }, daily: daily.rows, pages: pages.rows };
   },
   async contacts() {
     await ensureLeadSchema();

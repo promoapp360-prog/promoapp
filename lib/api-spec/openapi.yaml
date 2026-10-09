@@ -254,10 +254,20 @@ components:
       properties:
         path: { type: string }
         pageViews: { type: integer }
+    LandingVisitStats:
+      type: object
+      required: [path, visits, pageViews, totalVisits, totalPageViews]
+      properties:
+        path: { type: string }
+        visits: { type: integer }
+        pageViews: { type: integer }
+        totalVisits: { type: integer }
+        totalPageViews: { type: integer }
     AdminOverview:
       type: object
-      required: [days, contacts, newContacts, reviews, pendingReviews, averageRating, visits, pageViews, trackingStartedAt, daily, pages]
+      required: [days, contacts, newContacts, reviews, pendingReviews, averageRating, visits, pageViews, trackingStartedAt, daily, pages, sitiweb]
       properties:
+        sitiweb: { $ref: "#/components/schemas/LandingVisitStats" }
         days: { type: integer }
         contacts: { type: integer }
         newContacts: { type: integer }

@@ -27,6 +27,7 @@ function Routes() {
       {/* Alias mantenuto per non interrompere eventuali link già condivisi. */}
       <Route path="/preventivo" component={Preventivo} />
       <Route path="/siti-web">{() => <ServiceLanding service="siti-web" />}</Route>
+      <Route path="/sitiweb">{() => <ServiceLanding service="siti-web" />}</Route>
       <Route path="/web-app">{() => <ServiceLanding service="web-app" />}</Route>
       <Route path="/menu-digitali">{() => <ServiceLanding service="menu-digitali" />}</Route>
       <Route path="/menu-digitale">{() => <Redirect to={`/menu-digitali${window.location.search}`} replace />}</Route>

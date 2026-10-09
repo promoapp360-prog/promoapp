@@ -23,7 +23,12 @@ async function withApp(run: (base: string, records: unknown[]) => Promise<void>,
       return { days, contacts: contacts.length, newContacts: contacts.filter(c => c.stato === "Nuovo").length,
         reviews: reviews.length, pendingReviews: reviews.filter(r => !r.verificata).length,
         averageRating: reviews.some(r => r.verificata) ? 5 : null, visits: new Set(visits.map(v => v.sessionId)).size,
-        pageViews: visits.length, trackingStartedAt: visits.length ? new Date().toISOString() : null, daily: [], pages: [] };
+         pageViews: visits.length, trackingStartedAt: visits.length ? new Date().toISOString() : null, daily: [], pages: [],
+         sitiweb: { path: "/sitiweb",
+           visits: new Set(visits.filter(v => ["/sitiweb", "/sitiweb/"].includes(v.path)).map(v => v.sessionId)).size,
+           pageViews: visits.filter(v => ["/sitiweb", "/sitiweb/"].includes(v.path)).length,
+           totalVisits: new Set(visits.filter(v => ["/sitiweb", "/sitiweb/"].includes(v.path)).map(v => v.sessionId)).size,
+           totalPageViews: visits.filter(v => ["/sitiweb", "/sitiweb/"].includes(v.path)).length } };
     },
     async contacts() { return contacts; },
     async updateContact(id: string, stato: string) {
@@ -165,5 +170,11 @@ test("site visits require consent, exclude private pages and bots, deduplicate e
     const auth = await login(base);
     const stats = await (await fetch(`${base}/admin/overview`, { headers: auth })).json();
     assert.equal(stats.pageViews, 2); assert.equal(stats.visits, 1);
+     for (const path of ["/sitiweb", "/sitiweb/"]) {
+       assert.equal((await fetch(`${base}/visits`, body({ ...visit, id: randomUUID(), path }))).status, 204);
+     }
+     const landing = (await (await fetch(`${base}/admin/overview`, { headers: auth })).json()).sitiweb;
+     assert.equal(landing.path, "/sitiweb"); assert.equal(landing.visits, 1); assert.equal(landing.pageViews, 2);
+     assert.equal(landing.totalVisits, 1); assert.equal(landing.totalPageViews, 2);
   });
 });

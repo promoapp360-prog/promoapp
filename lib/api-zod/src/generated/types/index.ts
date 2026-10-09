@@ -23,6 +23,7 @@ export * from "./contactStateInputStato";
 export * from "./getAdminOverviewDays";
 export * from "./getAdminOverviewParams";
 export * from "./healthStatus";
+export * from "./landingVisitStats";
 export * from "./leadEvent";
 export * from "./leadUpdate";
 export * from "./leadUpdateStato";

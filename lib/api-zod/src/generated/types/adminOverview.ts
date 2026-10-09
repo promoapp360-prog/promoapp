@@ -5,10 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { LandingVisitStats } from "./landingVisitStats";
 import type { VisitDay } from "./visitDay";
 import type { VisitedPage } from "./visitedPage";
 
 export interface AdminOverview {
+  sitiweb: LandingVisitStats;
   days: number;
   contacts: number;
   newContacts: number;

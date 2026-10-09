@@ -39,6 +39,13 @@ export const GetAdminOverviewQueryParams = zod.object({
 });
 
 export const GetAdminOverviewResponse = zod.object({
+  sitiweb: zod.object({
+    path: zod.string(),
+    visits: zod.number(),
+    pageViews: zod.number(),
+    totalVisits: zod.number(),
+    totalPageViews: zod.number(),
+  }),
   days: zod.number(),
   contacts: zod.number(),
   newContacts: zod.number(),

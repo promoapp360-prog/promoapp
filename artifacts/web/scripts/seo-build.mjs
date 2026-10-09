@@ -31,7 +31,7 @@ try {
       : path.startsWith("/per/") ? React.createElement(SectorLanding, { slug: path.split("/")[2] })
       : path === "/menu-demo" ? React.createElement(MenuDemo)
       : ["/", "/preventivo"].includes(path) ? React.createElement(Home)
-        : React.createElement(ServiceLanding, { service: path.slice(1) });
+        : React.createElement(ServiceLanding, { service: path === "/sitiweb" ? "siti-web" : path.slice(1) });
     const body = renderToString(React.createElement(Router, { ssrPath: path }, element));
     const html = seoHtml(template, path).replace('<div id="root"></div>', `<div id="root">${body}</div>`);
     const file = resolve(out, path === "/" ? "index.html" : `${path.slice(1)}/index.html`);

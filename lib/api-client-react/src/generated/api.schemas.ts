@@ -81,7 +81,16 @@ export interface VisitedPage {
   pageViews: number;
 }
 
+export interface LandingVisitStats {
+  path: string;
+  visits: number;
+  pageViews: number;
+  totalVisits: number;
+  totalPageViews: number;
+}
+
 export interface AdminOverview {
+  sitiweb: LandingVisitStats;
   days: number;
   contacts: number;
   newContacts: number;

@@ -17,6 +17,12 @@ export default {
     description: "Fai trovare la tua attività online con un sito professionale da 399 € + IVA. Inclusioni, hosting, dominio ed extra chiariti nel preventivo.",
     h1: "Il tuo sito web professionale da 399 € + IVA.",
   },
+  "/sitiweb": {
+    title: "Sito web professionale da 399 € + IVA | PromoApp.it",
+    description: "Fai trovare la tua attività online con un sito professionale da 399 € + IVA. Inclusioni, hosting, dominio ed extra chiariti nel preventivo.",
+    h1: "Il tuo sito web professionale da 399 € + IVA.",
+    canonical: "/siti-web",
+  },
   "/menu-digitali": {
     title: "Menu digitale QR a 99 € + IVA una tantum | PromoApp.it",
     description: "Il menu del tuo locale sullo smartphone: realizzazione base a 99 € + IVA una tantum. Hosting, aggiornamenti e assistenza da concordare a parte.",

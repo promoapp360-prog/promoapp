@@ -44,6 +44,7 @@ test("real PostgreSQL queries use isolated temporary fixtures and preserve all p
     assert.equal(week.visits, 1); assert.equal(week.pageViews, 2); assert.equal(week.daily.length, 7);
     assert.equal(week.daily.reduce((sum: number, day: { pageViews: number }) => sum + day.pageViews, 0), 2);
     assert.equal(week.pages.length, 2);
+    assert.deepEqual(week.sitiweb, { path: "/sitiweb", visits: 0, pageViews: 0, totalVisits: 0, totalPageViews: 0 });
     const quarter = await adminData.overview(90);
     assert.equal(quarter.visits, 2); assert.equal(quarter.pageViews, 3); assert.equal(quarter.daily.length, 90);
     assert.equal((await adminData.contacts()).length, 2);
@@ -57,6 +58,14 @@ test("real PostgreSQL queries use isolated temporary fixtures and preserve all p
     const event = { id: randomUUID(), sessionId, path: "/menu-digitali" };
     await saveVisit(event); await saveVisit(event);
     assert.equal((await adminData.overview(7)).pageViews, 3);
+    await client.query(`INSERT INTO site_page_views(id,session_id,path,created_at) VALUES
+      ($1,$2,'/sitiweb',now()),($3,$2,'/sitiweb/',now()),
+      ($4,$5,'/sitiweb',now()-interval '60 days'),($6,$5,'/sitiweb-other',now())`,
+    [randomUUID(), sessionId, randomUUID(), randomUUID(), oldSession, randomUUID()]);
+    const landingWeek = (await adminData.overview(7)).sitiweb;
+    assert.deepEqual(landingWeek, { path: "/sitiweb", visits: 1, pageViews: 2, totalVisits: 2, totalPageViews: 3 });
+    const landingQuarter = (await adminData.overview(90)).sitiweb;
+    assert.deepEqual(landingQuarter, { path: "/sitiweb", visits: 2, pageViews: 3, totalVisits: 2, totalPageViews: 3 });
   } finally {
     pool.query = original;
     await client.query("ROLLBACK");
