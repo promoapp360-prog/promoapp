@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
 import { appPath, CONSENT_KEY, hasConsentChoice, readConsent, type Consent } from "../../lib/marketing";
 import { updateTrackingConsent } from "../../lib/analytics";
 import "../../styles/consent.css";
 
 export default function CookieConsent() {
+  const [path] = useLocation();
   const [open, setOpen] = useState(!hasConsentChoice());
   const [custom, setCustom] = useState(false);
   const [choice, setChoice] = useState<Consent>(readConsent);
@@ -30,7 +32,7 @@ export default function CookieConsent() {
       window.location.reload();
     }
   }
-  if (!open) return null;
+  if (!open || /^\/(admin|gestione-contatti)(\/|$)/.test(path)) return null;
   return <section className="consent-panel" role="region" aria-label="Preferenze cookie">
     <div className="consent-content"><div>
       <h2>La tua privacy, la tua scelta</h2>
@@ -38,7 +40,7 @@ export default function CookieConsent() {
         <a href={appPath("/cookie.html")}>Leggi la Cookie Policy</a>.</p>
       {custom && <fieldset className="consent-options"><legend>Personalizza il consenso</legend>
         <label><input type="checkbox" checked disabled /> Necessari (sempre attivi)</label>
-        <label><input type="checkbox" checked={choice.analytics} onChange={(e) => setChoice({ ...choice, analytics: e.target.checked })} /> Statistiche (Google Analytics)</label>
+        <label><input type="checkbox" checked={choice.analytics} onChange={(e) => setChoice({ ...choice, analytics: e.target.checked })} /> Statistiche del sito e Google Analytics</label>
         <label><input type="checkbox" checked={choice.marketing} onChange={(e) => setChoice({ ...choice, marketing: e.target.checked })} /> Marketing (Google Ads e Meta)</label>
       </fieldset>}
     </div><div className="consent-actions">

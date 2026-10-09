@@ -1,0 +1,10 @@
+---
+name: Perimetro del pannello admin
+description: Ambito approvato del nuovo admin e dati da conservare durante le sostituzioni.
+---
+
+L’utente ha richiesto un unico pannello admin con statistiche, recensioni, contatti ricevuti e numero di visite. Ha confermato di sostituire il vecchio admin conservando i dati e i servizi del sito pubblico.
+
+**Why:** l’utente riteneva che ci fossero «troppe back end» e ha chiesto di eliminare il vecchio admin, non il sito pubblico né il database.
+
+**How to apply:** non reintrodurre le vecchie sezioni amministrative di progetti, clienti, acconti, sconti e gestionali senza una nuova richiesta. Conservare i relativi dati e i percorsi pubblici dei clienti. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.

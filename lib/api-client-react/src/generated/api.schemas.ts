@@ -10,8 +10,91 @@ export interface AdminCredentialInput {
   password: string;
 }
 
-export interface AdminAccessResult {
-  ok: boolean;
+export interface AdminSession {
+  authenticated: boolean;
+  csrfToken?: string;
+}
+
+export interface AdminContact {
+  id: string;
+  nomeAttivita: string;
+  settore: string;
+  whatsapp: string;
+  /** @nullable */
+  email?: string | null;
+  messaggio: string;
+  servizio: string;
+  pagina?: string;
+  stato: string;
+  createdAt: string;
+}
+
+export type ContactStateInputStato =
+  (typeof ContactStateInputStato)[keyof typeof ContactStateInputStato];
+
+export const ContactStateInputStato = {
+  Nuovo: "Nuovo",
+  Contattato: "Contattato",
+  Interessato: "Interessato",
+  Preventivo_inviato: "Preventivo inviato",
+  Cliente_acquisito: "Cliente acquisito",
+  Non_interessato: "Non interessato",
+} as const;
+
+export interface ContactStateInput {
+  stato: ContactStateInputStato;
+}
+
+export interface AdminReview {
+  id: string;
+  nome: string;
+  attivita: string;
+  testo: string;
+  stelle: string;
+  verificata: boolean;
+  createdAt: string;
+}
+
+export interface ReviewPublicationInput {
+  verificata: boolean;
+}
+
+export interface SiteVisitInput {
+  id: string;
+  sessionId: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  path: string;
+  analyticsConsent: boolean;
+}
+
+export interface VisitDay {
+  date: string;
+  visits: number;
+  pageViews: number;
+}
+
+export interface VisitedPage {
+  path: string;
+  pageViews: number;
+}
+
+export interface AdminOverview {
+  days: number;
+  contacts: number;
+  newContacts: number;
+  reviews: number;
+  pendingReviews: number;
+  /** @nullable */
+  averageRating: number | null;
+  visits: number;
+  pageViews: number;
+  /** @nullable */
+  trackingStartedAt: string | null;
+  daily: VisitDay[];
+  pages: VisitedPage[];
 }
 
 export interface TrackingConfig {
@@ -183,22 +266,15 @@ export interface HealthStatus {
   status: string;
 }
 
-export type ListCommercialLeadsParams = {
-  servizio?: string;
-  campagna?: string;
-  tipoAttivita?: string;
-  settore?: string;
-  stato?: string;
-  from?: string;
-  to?: string;
+export type GetAdminOverviewParams = {
+  days?: GetAdminOverviewDays;
 };
 
-export type ExportCommercialLeadsParams = {
-  servizio?: string;
-  campagna?: string;
-  tipoAttivita?: string;
-  settore?: string;
-  stato?: string;
-  from?: string;
-  to?: string;
-};
+export type GetAdminOverviewDays =
+  (typeof GetAdminOverviewDays)[keyof typeof GetAdminOverviewDays];
+
+export const GetAdminOverviewDays = {
+  NUMBER_7: 7,
+  NUMBER_30: 30,
+  NUMBER_90: 90,
+} as const;

@@ -1,22 +1,13 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { richiesteGestionaleTable } from "@workspace/db";
-import { eq, desc, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { Resend } from "resend";
-import { authorizeAdminRequest } from "../middlewares/adminAuthorization";
 
 const router = Router();
 const resend = new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = "derosa.lazio@gmail.com";
-
-function checkAuth(req: any, res: any): boolean {
-  if (!authorizeAdminRequest(req)) {
-    res.status(401).json({ error: "Non autorizzato" });
-    return false;
-  }
-  return true;
-}
 
 router.post("/richiesta-gestionale", async (req, res) => {
   const { tipo, nome, cognome, email, telefono, tipoSoggetto, ragioneSociale, piva, codiceFiscale, settore, note } = req.body as Record<string, string>;
@@ -85,24 +76,6 @@ router.post("/richiesta-gestionale", async (req, res) => {
   res.json({ ok: true });
 });
 
-router.get("/admin/richieste-gestionale", async (req, res) => {
-  if (!checkAuth(req, res)) return;
-  const rows = await db.select().from(richiesteGestionaleTable).orderBy(desc(richiesteGestionaleTable.createdAt));
-  res.json(rows);
-});
-
-router.patch("/admin/richieste-gestionale/:id", async (req, res) => {
-  if (!checkAuth(req, res)) return;
-  const { id } = req.params;
-  const { stato, username, passwordGestionale } = req.body as Record<string, string>;
-  await db.update(richiesteGestionaleTable).set({
-    ...(stato ? { stato } : {}),
-    ...(username !== undefined ? { username } : {}),
-    ...(passwordGestionale !== undefined ? { passwordGestionale } : {}),
-  }).where(eq(richiesteGestionaleTable.id, id));
-  res.json({ ok: true });
-});
-
 /* ── Contatore visite Gestionale360 (pubblico) ── */
 router.post("/gestionale/visita", async (_req, res) => {
   await db.execute(sql`
@@ -123,15 +96,6 @@ router.get("/gestionale/contatore", async (_req, res) => {
   const row = await db.execute(sql`SELECT value FROM app_settings WHERE key = 'licenze_g360'`);
   const value = (row.rows[0] as any)?.value ?? "47";
   res.json({ licenze: parseInt(value, 10) });
-});
-
-/* ── Aggiorna contatore (admin) ── */
-router.patch("/admin/gestionale/contatore", async (req, res) => {
-  if (!checkAuth(req, res)) return;
-  const { licenze } = req.body as { licenze: number };
-  if (typeof licenze !== "number" || licenze < 0) { res.status(400).json({ error: "Valore non valido" }); return; }
-  await db.execute(sql`INSERT INTO app_settings (key, value) VALUES ('licenze_g360', ${String(licenze)}) ON CONFLICT (key) DO UPDATE SET value = ${String(licenze)}`);
-  res.json({ ok: true, licenze });
 });
 
 export default router;

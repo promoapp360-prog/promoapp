@@ -1,67 +1,79 @@
 import type { Request, RequestHandler } from "express";
-import { timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
-// HTTP header values lose surrounding whitespace during browser transport.
-// Normalize the configured secret the same way; never log either value.
-export function matchesAdminPassword(candidate: string | undefined, configured = process.env.ADMIN_PASSWORD): boolean {
-  const expected = configured?.trim();
-  const supplied = candidate?.trim();
-  if (!expected || !supplied) return false;
-  const a = Buffer.from(supplied), b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
+const COOKIE = "promoapp_admin";
+const TTL = 8 * 60 * 60;
+const safeEqual = (a: string, b: string) => {
+  const left = Buffer.from(a), right = Buffer.from(b);
+  return left.length === right.length && timingSafeEqual(left, right);
+};
+const signature = (payload: string, password: string, key: string) =>
+  createHmac("sha256", key).update(password).update("\0").update(payload).digest("hex");
+
+function session(req: Pick<Request, "get">, password?: string, key?: string) {
+  if (!password?.trim() || !key) return undefined;
+  const cookie = req.get("cookie")?.split(";").map(v => v.trim()).find(v => v.startsWith(`${COOKIE}=`))?.slice(COOKIE.length + 1);
+  if (!cookie || !/^\d{10,13}\.[a-f0-9]{48}\.[a-f0-9]{64}$/.test(cookie)) return undefined;
+  const [expiry, nonce, mac] = cookie.split(".");
+  if (Number(expiry) <= Math.floor(Date.now() / 1000) || Number(expiry) > Math.floor(Date.now() / 1000) + TTL) return undefined;
+  return safeEqual(mac, signature(`${expiry}.${nonce}`, password.trim(), key)) ? nonce : undefined;
 }
 
-export function readAdminCredential(req: Pick<Request, "path" | "method" | "get" | "body">): string | undefined {
-  // A project's own "password" field must never authorize an admin mutation.
-  if (req.path === "/admin/verify" && req.method === "POST") {
-    return typeof req.body?.password === "string" ? req.body.password : undefined;
-  }
-  const encoded = req.get("x-admin-credential");
-  if (encoded !== undefined) {
-    if (!encoded || encoded.length > 8192 || !/^[A-Za-z0-9+/]+={0,2}$/.test(encoded) || encoded.length % 4 !== 0) return undefined;
-    const bytes = Buffer.from(encoded, "base64");
-    if (bytes.toString("base64") !== encoded) return undefined;
-    const decoded = bytes.toString("utf8");
-    if (!Buffer.from(decoded, "utf8").equals(bytes)) return undefined;
-    return decoded;
-  }
-  // Retain compatibility with pages opened before this update.
-  return req.get("x-admin-password");
-}
-
-export function authorizeAdminRequest(req: Pick<Request, "path" | "method" | "get" | "body">): boolean {
-  return matchesAdminPassword(readAdminCredential(req));
-}
-
-export function createAdminAuthorization(credential = () => process.env.ADMIN_PASSWORD): RequestHandler {
+export function createAdminAuthorization(
+  credential = () => process.env.ADMIN_PASSWORD,
+  signingKey = () => process.env.SESSION_SECRET,
+): RequestHandler {
   const failures = new Map<string, { count: number; expires: number }>();
   return (req, res, next) => {
-  const protectedRoute = req.path === "/admin" || req.path.startsWith("/admin/") ||
-    req.path === "/recensioni/pending" ||
-    (req.path.startsWith("/recensioni/") && ["PATCH", "DELETE"].includes(req.method));
-  if (!protectedRoute) { next(); return; }
-  res.setHeader("Cache-Control", "no-store");
-  const configured = credential()?.trim();
-  if (!configured) { res.status(503).json({ code: "ADMIN_PASSWORD_MISSING", message: "Configura ADMIN_PASSWORD nei segreti per abilitare l'amministrazione." }); return; }
-  const now = Date.now();
-  for (const [key, entry] of failures) if (entry.expires < now) failures.delete(key);
-  const ip = req.ip ?? "unknown";
-  const entry = failures.get(ip) ?? { count: 0, expires: now + 600000 };
-  if (entry.count >= 10 || failures.size > 10000) {
-    res.setHeader("Retry-After", String(Math.max(1, Math.ceil((entry.expires - now) / 1000))));
-    res.status(429).json({ message: "Troppi tentativi di accesso. Attendi 10 minuti prima di riprovare." }); return;
-  }
-  const supplied = readAdminCredential(req);
-  if (!matchesAdminPassword(supplied, configured)) {
-    entry.count++; failures.set(ip, entry);
-    const code = supplied?.trim() ? "ADMIN_PASSWORD_INVALID" : "ADMIN_CREDENTIAL_MISSING";
-    if (req.path === "/admin/verify") {
-      req.log?.warn({ event: "admin_login_rejected", code, transport: req.method === "POST" ? "json" : "header" }, "Accesso admin rifiutato");
+    const path = req.path.toLowerCase();
+    const protectedRoute = path === "/admin" || path.startsWith("/admin/");
+    if (!protectedRoute) { next(); return; }
+    res.setHeader("Cache-Control", "no-store");
+    const origin = req.get("origin");
+    if (origin) {
+      try {
+        if (![req.hostname, "promoapp.it", "www.promoapp.it", ...(process.env.REPLIT_DOMAINS ?? "").split(",")].includes(new URL(origin).hostname)) {
+          res.status(403).json({ message: "Origine non autorizzata." }); return;
+        }
+      } catch { res.status(403).json({ message: "Origine non valida." }); return; }
     }
-    res.status(401).json({ code, message: code === "ADMIN_CREDENTIAL_MISSING" ? "Il server non ha ricevuto la password admin." : "La password ricevuta non corrisponde al secret del server." }); return;
-  }
-  failures.delete(ip);
-  next();
+    const password = credential()?.trim(), key = signingKey();
+    if (!password || !key) {
+      res.status(503).json({ message: "Accesso admin non configurato: servono ADMIN_PASSWORD e SESSION_SECRET sul server." });
+      return;
+    }
+    const cookieOptions = { httpOnly: true, secure: req.secure || process.env.NODE_ENV === "production", sameSite: "strict" as const, path: "/api" };
+    if (path === "/admin/login" && req.method === "POST") {
+      if (!req.is("application/json")) { res.status(415).json({ message: "Invia la password tramite JSON." }); return; }
+      const now = Date.now();
+      for (const [ip, entry] of failures) if (entry.expires <= now) failures.delete(ip);
+      const ip = req.ip ?? "unknown", entry = failures.get(ip) ?? { count: 0, expires: now + 600000 };
+      if (entry.count >= 10 || failures.size >= 10000) {
+        res.setHeader("Retry-After", String(Math.max(1, Math.ceil((entry.expires - now) / 1000))));
+        res.status(429).json({ message: "Troppi tentativi. Attendi 10 minuti." }); return;
+      }
+      const supplied = typeof req.body?.password === "string" ? req.body.password.trim() : "";
+      if (!supplied || !safeEqual(supplied, password)) {
+        entry.count++; failures.set(ip, entry);
+        req.log?.warn({ event: "admin_login_rejected" }, "Accesso admin rifiutato");
+        res.status(401).json({ message: supplied ? "Password non valida per questo server." : "Inserisci la password." }); return;
+      }
+      failures.delete(ip);
+      const nonce = randomBytes(24).toString("hex");
+      const payload = `${Math.floor(Date.now() / 1000) + TTL}.${nonce}`;
+      res.cookie(COOKIE, `${payload}.${signature(payload, password, key)}`, { ...cookieOptions, maxAge: TTL * 1000 });
+      res.json({ authenticated: true, csrfToken: nonce }); return;
+    }
+    const nonce = session(req, password, key);
+    if (!nonce) { res.status(401).json({ message: "Accedi al pannello admin." }); return; }
+    if (!["GET", "HEAD", "OPTIONS"].includes(req.method) && !safeEqual(req.get("x-admin-csrf") ?? "", nonce)) {
+      res.status(403).json({ message: "Richiesta non autorizzata. Ricarica il pannello." }); return;
+    }
+    if (path === "/admin/session" && req.method === "GET") { res.json({ authenticated: true, csrfToken: nonce }); return; }
+    if (path === "/admin/logout" && req.method === "POST") {
+      res.clearCookie(COOKIE, cookieOptions); res.json({ authenticated: false }); return;
+    }
+    next();
   };
 }
 export const adminAuthorization = createAdminAuthorization();

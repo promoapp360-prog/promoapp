@@ -6,6 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface AdminAccessResult {
-  ok: boolean;
+export interface ReviewPublicationInput {
+  verificata: boolean;
 }

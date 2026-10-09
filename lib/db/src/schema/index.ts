@@ -23,3 +23,4 @@ export * from "./progetti";
 export * from "./gestionali";
 export * from "./recensioni";
 export * from "./leads";
+export * from "./site-visits";

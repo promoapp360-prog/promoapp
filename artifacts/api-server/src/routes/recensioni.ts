@@ -2,7 +2,6 @@ import { Router } from "express";
 import { db, recensioniTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { authorizeAdminRequest } from "../middlewares/adminAuthorization";
 
 const router = Router();
 
@@ -62,49 +61,6 @@ router.get("/recensioni", async (req, res) => {
     res.json({ success: true, data: rows });
   } catch (err) {
     req.log.error({ err }, "Errore fetch recensioni");
-    res.status(500).json({ success: false, message: "Errore nel caricamento." });
-  }
-});
-
-// ── PATCH /api/recensioni/:id/verifica — verifica (admin) ──
-router.patch("/recensioni/:id/verifica", async (req, res) => {
-  if (!authorizeAdminRequest(req)) {
-    res.status(401).json({ success: false, message: "Non autorizzato." });
-    return;
-  }
-
-  const { id } = req.params;
-  try {
-    await db
-      .update(recensioniTable)
-      .set({ verificata: true })
-      .where(eq(recensioniTable.id, id));
-
-    req.log.info({ id }, "Recensione verificata");
-    res.json({ success: true });
-  } catch (err) {
-    req.log.error({ err }, "Errore verifica recensione");
-    res.status(500).json({ success: false, message: "Errore nella verifica." });
-  }
-});
-
-// ── GET /api/recensioni/pending — lista in attesa (admin) ──
-router.get("/recensioni/pending", async (req, res) => {
-  if (!authorizeAdminRequest(req)) {
-    res.status(401).json({ success: false, message: "Non autorizzato." });
-    return;
-  }
-
-  try {
-    const rows = await db
-      .select()
-      .from(recensioniTable)
-      .where(eq(recensioniTable.verificata, false))
-      .orderBy(desc(recensioniTable.createdAt));
-
-    res.json({ success: true, data: rows });
-  } catch (err) {
-    req.log.error({ err }, "Errore fetch recensioni pending");
     res.status(500).json({ success: false, message: "Errore nel caricamento." });
   }
 });

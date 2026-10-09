@@ -8,15 +8,145 @@
 import * as zod from "zod";
 
 /**
- * @summary Verifica la password admin tramite JSON UTF-8
+ * @summary Accede all’unico pannello e crea una sessione HttpOnly
  */
 
-export const VerifyAdminAccessBody = zod.object({
+export const LoginAdminBody = zod.object({
   password: zod.string().min(1),
 });
 
-export const VerifyAdminAccessResponse = zod.object({
-  ok: zod.boolean(),
+export const LoginAdminResponse = zod.object({
+  authenticated: zod.boolean(),
+  csrfToken: zod.string().optional(),
+});
+
+export const GetAdminSessionResponse = zod.object({
+  authenticated: zod.boolean(),
+  csrfToken: zod.string().optional(),
+});
+
+export const LogoutAdminResponse = zod.object({
+  authenticated: zod.boolean(),
+  csrfToken: zod.string().optional(),
+});
+
+export const getAdminOverviewQueryDaysDefault = 30;
+
+export const GetAdminOverviewQueryParams = zod.object({
+  days: zod
+    .union([zod.literal(7), zod.literal(30), zod.literal(90)])
+    .default(getAdminOverviewQueryDaysDefault),
+});
+
+export const GetAdminOverviewResponse = zod.object({
+  days: zod.number(),
+  contacts: zod.number(),
+  newContacts: zod.number(),
+  reviews: zod.number(),
+  pendingReviews: zod.number(),
+  averageRating: zod.number().nullable(),
+  visits: zod.number(),
+  pageViews: zod.number(),
+  trackingStartedAt: zod.coerce.date().nullable(),
+  daily: zod.array(
+    zod.object({
+      date: zod.string(),
+      visits: zod.number(),
+      pageViews: zod.number(),
+    }),
+  ),
+  pages: zod.array(
+    zod.object({
+      path: zod.string(),
+      pageViews: zod.number(),
+    }),
+  ),
+});
+
+export const ListAdminContactsResponseItem = zod.object({
+  id: zod.string(),
+  nomeAttivita: zod.string(),
+  settore: zod.string(),
+  whatsapp: zod.string(),
+  email: zod.string().nullish(),
+  messaggio: zod.string(),
+  servizio: zod.string(),
+  pagina: zod.string().optional(),
+  stato: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListAdminContactsResponse = zod.array(
+  ListAdminContactsResponseItem,
+);
+
+export const UpdateAdminContactParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateAdminContactBody = zod.object({
+  stato: zod.enum([
+    "Nuovo",
+    "Contattato",
+    "Interessato",
+    "Preventivo inviato",
+    "Cliente acquisito",
+    "Non interessato",
+  ]),
+});
+
+export const UpdateAdminContactResponse = zod.object({
+  id: zod.string(),
+  nomeAttivita: zod.string(),
+  settore: zod.string(),
+  whatsapp: zod.string(),
+  email: zod.string().nullish(),
+  messaggio: zod.string(),
+  servizio: zod.string(),
+  pagina: zod.string().optional(),
+  stato: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+
+export const ListAdminReviewsResponseItem = zod.object({
+  id: zod.string(),
+  nome: zod.string(),
+  attivita: zod.string(),
+  testo: zod.string(),
+  stelle: zod.string(),
+  verificata: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+export const ListAdminReviewsResponse = zod.array(ListAdminReviewsResponseItem);
+
+export const ModerateAdminReviewParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const ModerateAdminReviewBody = zod.object({
+  verificata: zod.boolean(),
+});
+
+export const ModerateAdminReviewResponse = zod.object({
+  id: zod.string(),
+  nome: zod.string(),
+  attivita: zod.string(),
+  testo: zod.string(),
+  stelle: zod.string(),
+  verificata: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+
+export const DeleteAdminReviewParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const recordSiteVisitBodyPathMax = 200;
+
+export const RecordSiteVisitBody = zod.object({
+  id: zod.string().uuid(),
+  sessionId: zod.string().uuid(),
+  path: zod.string().min(1).max(recordSiteVisitBodyPathMax),
+  analyticsConsent: zod.literal(true),
 });
 
 /**
@@ -135,197 +265,6 @@ export const SubmitContactResponse = zod.object({
   leadId: zod.string().optional(),
   duplicate: zod.boolean().optional(),
   notification: zod.enum(["sent", "pending"]).optional(),
-});
-
-export const ListCommercialLeadsQueryParams = zod.object({
-  servizio: zod.coerce.string().optional(),
-  campagna: zod.coerce.string().optional(),
-  tipoAttivita: zod.coerce.string().optional(),
-  settore: zod.coerce.string().optional(),
-  stato: zod.coerce.string().optional(),
-  from: zod.date().optional(),
-  to: zod.date().optional(),
-});
-
-export const listCommercialLeadsResponseQuoteAmountCentsMin = 0;
-export const listCommercialLeadsResponseQuoteAmountCentsMax = 2147483647;
-export const listCommercialLeadsResponseQuoteAmountCentsMultipleOf = 1;
-
-export const listCommercialLeadsResponseSaleAmountCentsMin = 0;
-export const listCommercialLeadsResponseSaleAmountCentsMax = 2147483647;
-export const listCommercialLeadsResponseSaleAmountCentsMultipleOf = 1;
-
-export const listCommercialLeadsResponseEventsItemQuoteAmountCentsMultipleOf = 1;
-
-export const listCommercialLeadsResponseEventsItemSaleAmountCentsMultipleOf = 1;
-
-export const ListCommercialLeadsResponseItem = zod.object({
-  id: zod.string(),
-  nomeAttivita: zod.string(),
-  settore: zod.string(),
-  whatsapp: zod.string(),
-  slug: zod.string(),
-  servizio: zod.string().optional(),
-  pagina: zod.string(),
-  variant: zod.string().optional(),
-  stato: zod.string(),
-  notification: zod.string(),
-  createdAt: zod.coerce.date(),
-  qualifiedAt: zod.coerce.date().nullish(),
-  quoteAmountCents: zod
-    .number()
-    .min(listCommercialLeadsResponseQuoteAmountCentsMin)
-    .max(listCommercialLeadsResponseQuoteAmountCentsMax)
-    .multipleOf(listCommercialLeadsResponseQuoteAmountCentsMultipleOf)
-    .nullish(),
-  saleAmountCents: zod
-    .number()
-    .min(listCommercialLeadsResponseSaleAmountCentsMin)
-    .max(listCommercialLeadsResponseSaleAmountCentsMax)
-    .multipleOf(listCommercialLeadsResponseSaleAmountCentsMultipleOf)
-    .nullish(),
-  marketingConsent: zod.boolean(),
-  analyticsConsent: zod.boolean(),
-  attribution: zod.record(zod.string(), zod.string()),
-  events: zod.array(
-    zod.object({
-      event: zod.string(),
-      at: zod.string(),
-      quoteAmountCents: zod
-        .number()
-        .multipleOf(
-          listCommercialLeadsResponseEventsItemQuoteAmountCentsMultipleOf,
-        )
-        .nullish(),
-      saleAmountCents: zod
-        .number()
-        .multipleOf(
-          listCommercialLeadsResponseEventsItemSaleAmountCentsMultipleOf,
-        )
-        .nullish(),
-    }),
-  ),
-});
-export const ListCommercialLeadsResponse = zod.array(
-  ListCommercialLeadsResponseItem,
-);
-
-export const UpdateCommercialLeadParams = zod.object({
-  id: zod.coerce.string(),
-});
-
-export const updateCommercialLeadBodyQuoteAmountCentsMin = 0;
-export const updateCommercialLeadBodyQuoteAmountCentsMax = 2147483647;
-export const updateCommercialLeadBodyQuoteAmountCentsMultipleOf = 1;
-
-export const updateCommercialLeadBodySaleAmountCentsMin = 0;
-export const updateCommercialLeadBodySaleAmountCentsMax = 2147483647;
-export const updateCommercialLeadBodySaleAmountCentsMultipleOf = 1;
-
-export const UpdateCommercialLeadBody = zod.object({
-  qualified: zod.boolean().optional(),
-  quoteAmountCents: zod
-    .number()
-    .min(updateCommercialLeadBodyQuoteAmountCentsMin)
-    .max(updateCommercialLeadBodyQuoteAmountCentsMax)
-    .multipleOf(updateCommercialLeadBodyQuoteAmountCentsMultipleOf)
-    .nullish(),
-  saleAmountCents: zod
-    .number()
-    .min(updateCommercialLeadBodySaleAmountCentsMin)
-    .max(updateCommercialLeadBodySaleAmountCentsMax)
-    .multipleOf(updateCommercialLeadBodySaleAmountCentsMultipleOf)
-    .nullish(),
-  stato: zod.enum([
-    "Nuovo",
-    "Contattato",
-    "Interessato",
-    "Preventivo inviato",
-    "Cliente acquisito",
-    "Non interessato",
-  ]),
-});
-
-export const updateCommercialLeadResponseQuoteAmountCentsMin = 0;
-export const updateCommercialLeadResponseQuoteAmountCentsMax = 2147483647;
-export const updateCommercialLeadResponseQuoteAmountCentsMultipleOf = 1;
-
-export const updateCommercialLeadResponseSaleAmountCentsMin = 0;
-export const updateCommercialLeadResponseSaleAmountCentsMax = 2147483647;
-export const updateCommercialLeadResponseSaleAmountCentsMultipleOf = 1;
-
-export const updateCommercialLeadResponseEventsItemQuoteAmountCentsMultipleOf = 1;
-
-export const updateCommercialLeadResponseEventsItemSaleAmountCentsMultipleOf = 1;
-
-export const UpdateCommercialLeadResponse = zod.object({
-  id: zod.string(),
-  nomeAttivita: zod.string(),
-  settore: zod.string(),
-  whatsapp: zod.string(),
-  slug: zod.string(),
-  servizio: zod.string().optional(),
-  pagina: zod.string(),
-  variant: zod.string().optional(),
-  stato: zod.string(),
-  notification: zod.string(),
-  createdAt: zod.coerce.date(),
-  qualifiedAt: zod.coerce.date().nullish(),
-  quoteAmountCents: zod
-    .number()
-    .min(updateCommercialLeadResponseQuoteAmountCentsMin)
-    .max(updateCommercialLeadResponseQuoteAmountCentsMax)
-    .multipleOf(updateCommercialLeadResponseQuoteAmountCentsMultipleOf)
-    .nullish(),
-  saleAmountCents: zod
-    .number()
-    .min(updateCommercialLeadResponseSaleAmountCentsMin)
-    .max(updateCommercialLeadResponseSaleAmountCentsMax)
-    .multipleOf(updateCommercialLeadResponseSaleAmountCentsMultipleOf)
-    .nullish(),
-  marketingConsent: zod.boolean(),
-  analyticsConsent: zod.boolean(),
-  attribution: zod.record(zod.string(), zod.string()),
-  events: zod.array(
-    zod.object({
-      event: zod.string(),
-      at: zod.string(),
-      quoteAmountCents: zod
-        .number()
-        .multipleOf(
-          updateCommercialLeadResponseEventsItemQuoteAmountCentsMultipleOf,
-        )
-        .nullish(),
-      saleAmountCents: zod
-        .number()
-        .multipleOf(
-          updateCommercialLeadResponseEventsItemSaleAmountCentsMultipleOf,
-        )
-        .nullish(),
-    }),
-  ),
-});
-
-export const NotifyCommercialLeadParams = zod.object({
-  id: zod.coerce.string(),
-});
-
-export const NotifyCommercialLeadResponse = zod.object({
-  success: zod.boolean(),
-  message: zod.string().optional(),
-  leadId: zod.string().optional(),
-  duplicate: zod.boolean().optional(),
-  notification: zod.enum(["sent", "pending"]).optional(),
-});
-
-export const ExportCommercialLeadsQueryParams = zod.object({
-  servizio: zod.coerce.string().optional(),
-  campagna: zod.coerce.string().optional(),
-  tipoAttivita: zod.coerce.string().optional(),
-  settore: zod.coerce.string().optional(),
-  stato: zod.coerce.string().optional(),
-  from: zod.date().optional(),
-  to: zod.date().optional(),
 });
 
 export const GetTrackingConfigResponse = zod.object({

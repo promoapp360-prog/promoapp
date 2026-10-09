@@ -8,7 +8,6 @@ import ServiceLanding from "./pages/ServiceLanding";
 import MenuDemo from "./pages/MenuDemo";
 import SectorLanding from "./pages/SectorLanding";
 import ThankYou from "./pages/ThankYou";
-const LeadsAdmin = lazy(() => import("./pages/LeadsAdmin"));
 const Admin = lazy(() => import("./pages/Admin"));
 import CookieConsent from "./components/marketing/CookieConsent";
 import PageSEO from "./components/marketing/PageSEO";
@@ -34,7 +33,7 @@ function Routes() {
       <Route path="/menu-demo" component={MenuDemo} />
       <Route path="/per/:slug">{(params) => <SectorLanding slug={params.slug} />}</Route>
       <Route path="/grazie" component={ThankYou} />
-      <Route path="/gestione-contatti">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><LeadsAdmin /></Suspense>}</Route>
+      <Route path="/gestione-contatti">{() => <Redirect to="/admin" replace />}</Route>
       <Route path="/admin">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin /></Suspense>}</Route>
       {/* Homepage esistente conservata e aggiornata, con il suo modulo recensioni. */}
       <Route path="/" component={Preventivo} />

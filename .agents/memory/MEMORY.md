@@ -4,3 +4,4 @@
 - [Verifiche pubblicitarie](verifiche-pubblicitarie.md) — distinguere eventi browser e ricezione nei provider; configurazione runtime vuota non significa assenza di tag.
 - [Interi nullable](nullable-integer-validation.md) — il generatore può perdere il vincolo intero: dichiarare multipleOf e verificare il rifiuto dei decimali.
 - [Diagnosi admin pubblico](diagnosi-admin-pubblico.md) — secret del progetto e pubblicazione sono distinti; un 401 non identifica da solo la causa.
+- [Perimetro admin](admin-scope.md) — unico pannello per statistiche, recensioni, contatti e visite; conservare dati e servizi pubblici, senza ripristinare le vecchie sezioni.

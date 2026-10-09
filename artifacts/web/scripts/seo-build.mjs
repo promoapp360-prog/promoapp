@@ -24,10 +24,10 @@ try {
   const { default: MenuDemo } = await server.ssrLoadModule("/src/pages/MenuDemo.tsx");
   const { default: SectorLanding } = await server.ssrLoadModule("/src/pages/SectorLanding.tsx");
   const { default: ThankYou } = await server.ssrLoadModule("/src/pages/ThankYou.tsx");
-  const { default: LeadsAdmin } = await server.ssrLoadModule("/src/pages/LeadsAdmin.tsx");
+  const { default: Admin } = await server.ssrLoadModule("/src/pages/Admin.tsx");
   for (const path of Object.keys(pages)) {
     const element = path === "/grazie" ? React.createElement(ThankYou)
-      : path === "/gestione-contatti" ? React.createElement(LeadsAdmin)
+      : ["/gestione-contatti", "/admin"].includes(path) ? React.createElement(Admin)
       : path.startsWith("/per/") ? React.createElement(SectorLanding, { slug: path.split("/")[2] })
       : path === "/menu-demo" ? React.createElement(MenuDemo)
       : ["/", "/preventivo"].includes(path) ? React.createElement(Home)

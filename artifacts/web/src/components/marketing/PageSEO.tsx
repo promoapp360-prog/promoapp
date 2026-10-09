@@ -10,7 +10,11 @@ export default function PageSEO() {
   useEffect(() => {
     const clean = path.length > 1 ? path.replace(/\/$/, "") : path;
     const notFound = clean.startsWith("/per/") && !Object.hasOwn(seoPages, clean);
-    const seo = (seoPages as Record<string, SEO>)[clean] ?? (notFound ? {
+    const seo = /^\/(admin|gestione-contatti)(\/|$)/.test(clean) ? {
+      title: "Admin | PromoApp.it",
+      description: "Area riservata per statistiche, recensioni, contatti ricevuti e visite del sito.",
+      noindex: true,
+    } : (seoPages as Record<string, SEO>)[clean] ?? (notFound ? {
       title: "Pagina non trovata | PromoApp.it",
       description: "Questo settore non è disponibile. Torna alla homepage e scegli una soluzione per la tua attività.",
       noindex: true,

@@ -11,10 +11,10 @@ tags:
   - name: health
     description: Health operations
 paths:
-  /admin/verify:
+  /admin/login:
     post:
-      operationId: verifyAdminAccess
-      summary: Verifica la password admin tramite JSON UTF-8
+      operationId: loginAdmin
+      summary: Accede all’unico pannello e crea una sessione HttpOnly
       requestBody:
         required: true
         content:
@@ -27,10 +27,110 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AdminAccessResult"
+                $ref: "#/components/schemas/AdminSession"
         "401": { description: Credenziale mancante o rifiutata }
         "429": { description: "Troppi tentativi, consultare Retry-After" }
         "503": { description: Password admin non configurata }
+  /admin/session:
+    get:
+      operationId: getAdminSession
+      responses:
+        "200":
+          description: Sessione valida
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminSession" }
+        "401": { description: Accesso richiesto }
+  /admin/logout:
+    post:
+      operationId: logoutAdmin
+      responses:
+        "200":
+          description: Sessione chiusa nel browser
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminSession" }
+  /admin/overview:
+    get:
+      operationId: getAdminOverview
+      parameters:
+        - { name: days, in: query, schema: { type: integer, enum: [7, 30, 90], default: 30 } }
+      responses:
+        "200":
+          description: Statistiche reali
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminOverview" }
+  /admin/contacts:
+    get:
+      operationId: listAdminContacts
+      responses:
+        "200":
+          description: Contatti ricevuti, inclusi messaggi ed email
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/AdminContact" } }
+  /admin/contacts/{id}:
+    patch:
+      operationId: updateAdminContact
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContactStateInput" }
+      responses:
+        "200":
+          description: Stato aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminContact" }
+        "404": { description: Contatto non trovato }
+  /admin/reviews:
+    get:
+      operationId: listAdminReviews
+      responses:
+        "200":
+          description: Recensioni pubblicate e in attesa
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/AdminReview" } }
+  /admin/reviews/{id}:
+    patch:
+      operationId: moderateAdminReview
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReviewPublicationInput" }
+      responses:
+        "200":
+          description: Pubblicazione aggiornata
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminReview" }
+        "404": { description: Recensione non trovata }
+    delete:
+      operationId: deleteAdminReview
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "204": { description: Recensione eliminata }
+        "404": { description: Recensione non trovata }
+  /visits:
+    post:
+      operationId: recordSiteVisit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SiteVisitInput" }
+      responses:
+        "204": { description: Visualizzazione registrata o duplicato ignorato }
+        "400": { description: Dati o consenso non validi }
   /invia-contatto:
     post:
       operationId: submitContact
@@ -61,74 +161,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContactResponse"
-  /admin/leads:
-    get:
-      operationId: listCommercialLeads
-      tags: [contacts]
-      parameters:
-        - { name: servizio, in: query, schema: { type: string } }
-        - { name: campagna, in: query, schema: { type: string } }
-        - { name: tipoAttivita, in: query, schema: { type: string } }
-        - { name: settore, in: query, schema: { type: string } }
-        - { name: stato, in: query, schema: { type: string } }
-        - { name: from, in: query, schema: { type: string, format: date } }
-        - { name: to, in: query, schema: { type: string, format: date } }
-      responses:
-        "200":
-          description: Contatti autorizzati
-          content:
-            application/json:
-              schema: { type: array, items: { $ref: "#/components/schemas/CommercialLead" } }
-        "401": { description: Accesso negato }
-        "503": { description: Credenziale amministrativa non configurata }
-  /admin/leads/{id}:
-    patch:
-      operationId: updateCommercialLead
-      parameters:
-        - { name: id, in: path, required: true, schema: { type: string } }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: "#/components/schemas/LeadUpdate" }
-      responses:
-        "200":
-          description: Contatto aggiornato
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/CommercialLead" }
-        "401": { description: Accesso negato }
-        "404": { description: Contatto non trovato }
-  /admin/leads/{id}/notify:
-    post:
-      operationId: notifyCommercialLead
-      parameters:
-        - { name: id, in: path, required: true, schema: { type: string } }
-      responses:
-        "200":
-          description: Notifica ritentata
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/ContactResponse" }
-        "401": { description: Accesso negato }
-  /admin/leads/export:
-    get:
-      operationId: exportCommercialLeads
-      parameters:
-        - { name: servizio, in: query, schema: { type: string } }
-        - { name: campagna, in: query, schema: { type: string } }
-        - { name: tipoAttivita, in: query, schema: { type: string } }
-        - { name: settore, in: query, schema: { type: string } }
-        - { name: stato, in: query, schema: { type: string } }
-        - { name: from, in: query, schema: { type: string, format: date } }
-        - { name: to, in: query, schema: { type: string, format: date } }
-      responses:
-        "200":
-          description: CSV contatti con informativa accettata
-          content:
-            text/csv:
-              schema: { type: string }
-        "401": { description: Accesso negato }
   /marketing-config:
     get:
       operationId: getTrackingConfig
@@ -158,11 +190,85 @@ components:
       required: [password]
       properties:
         password: { type: string, minLength: 1 }
-    AdminAccessResult:
+    AdminSession:
       type: object
-      required: [ok]
+      required: [authenticated]
       properties:
-        ok: { type: boolean }
+        authenticated: { type: boolean }
+        csrfToken: { type: string }
+    AdminContact:
+      type: object
+      required: [id, nomeAttivita, settore, whatsapp, messaggio, servizio, stato, createdAt]
+      properties:
+        id: { type: string }
+        nomeAttivita: { type: string }
+        settore: { type: string }
+        whatsapp: { type: string }
+        email: { type: ["string", "null"] }
+        messaggio: { type: string }
+        servizio: { type: string }
+        pagina: { type: string }
+        stato: { type: string }
+        createdAt: { type: string, format: date-time }
+    ContactStateInput:
+      type: object
+      required: [stato]
+      properties:
+        stato:
+          type: string
+          enum: [Nuovo, Contattato, Interessato, Preventivo inviato, Cliente acquisito, Non interessato]
+    AdminReview:
+      type: object
+      required: [id, nome, attivita, testo, stelle, verificata, createdAt]
+      properties:
+        id: { type: string }
+        nome: { type: string }
+        attivita: { type: string }
+        testo: { type: string }
+        stelle: { type: string }
+        verificata: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    ReviewPublicationInput:
+      type: object
+      required: [verificata]
+      properties:
+        verificata: { type: boolean }
+    SiteVisitInput:
+      type: object
+      required: [id, sessionId, path, analyticsConsent]
+      properties:
+        id: { type: string, format: uuid }
+        sessionId: { type: string, format: uuid }
+        path: { type: string, minLength: 1, maxLength: 200 }
+        analyticsConsent: { type: boolean, enum: [true] }
+    VisitDay:
+      type: object
+      required: [date, visits, pageViews]
+      properties:
+        date: { type: string }
+        visits: { type: integer }
+        pageViews: { type: integer }
+    VisitedPage:
+      type: object
+      required: [path, pageViews]
+      properties:
+        path: { type: string }
+        pageViews: { type: integer }
+    AdminOverview:
+      type: object
+      required: [days, contacts, newContacts, reviews, pendingReviews, averageRating, visits, pageViews, trackingStartedAt, daily, pages]
+      properties:
+        days: { type: integer }
+        contacts: { type: integer }
+        newContacts: { type: integer }
+        reviews: { type: integer }
+        pendingReviews: { type: integer }
+        averageRating: { type: ["number", "null"] }
+        visits: { type: integer }
+        pageViews: { type: integer }
+        trackingStartedAt: { type: ["string", "null"], format: date-time }
+        daily: { type: array, items: { $ref: "#/components/schemas/VisitDay" } }
+        pages: { type: array, items: { $ref: "#/components/schemas/VisitedPage" } }
     TrackingConfig:
       type: object
       properties:

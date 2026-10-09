@@ -1,6 +1,7 @@
 import type { TrackingConfig } from "@workspace/api-client-react";
 import { appPath, captureAttribution, persistAttribution, readConsent, serviceCodes, type Service, type Consent } from "./marketing";
 import { commercialVariant, sectors } from "./commercial";
+import { recordSitePage } from "./site-visits";
 
 declare global {
   interface Window {
@@ -42,6 +43,7 @@ function configure(consent: Consent) {
   if (privatePage()) return;
   persistAttribution();
   if (!ready) return;
+  recordSitePage(activePath);
   if (!window.gtag) {
     window.gtag = gtag;
   }
