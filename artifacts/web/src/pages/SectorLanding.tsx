@@ -9,6 +9,7 @@ import { whatsappUrl } from "../lib/marketing";
 import { trackEvent, trackWhatsApp } from "../lib/analytics";
 import "../styles/commercial.css";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
+import { sectorOfferCopy } from "../lib/sector-offers";
 
 export default function SectorLanding({ slug }: { slug: string }) {
   useMobileFormVisibility(slug);
@@ -19,6 +20,7 @@ export default function SectorLanding({ slug }: { slug: string }) {
     <Link href="/" className="whatsapp-link">Torna alla homepage</Link>
   </div></section></MarketingLayout>;
   const incentive = commercialIncentive();
+  const offers = sectorOfferCopy[slug as keyof typeof sectorOfferCopy];
   const cta = incentive.demoActive ? incentive.cta : sector.cta;
   return <MarketingLayout slug={slug}><div className="sector-content">
     <section className="sl-hero"><div className="marketing-container sl-hero-grid">
@@ -58,10 +60,10 @@ export default function SectorLanding({ slug }: { slug: string }) {
     <section className="sl-section dark"><div className="marketing-container">
       <h2 className="sl-h2">Prezzi di partenza, senza confondere i servizi</h2>
       <div className="sl-grid c3">
-        {sector.offers.includes("website") && <article className="sl-card"><h3>Sito web professionale</h3><p className="text-xl font-bold">{prices.website.label}</p><p>Presentazione dell'attività e contatti. Non comprende automaticamente il gestionale.</p></article>}
-        {sector.offers.includes("webapp") && <article className="sl-card"><h3>Web app e gestionale su misura</h3><p className="text-xl font-bold">{prices.webapp.label}</p>
-          {webappStartingPrice() && <p>{webappStartingPrice()}</p>}<p>Agenda, prenotazioni e integrazioni definite sul tuo progetto.</p></article>}
-        {sector.offers.includes("menu") && <article className="sl-card"><h3>Menu digitale QR</h3><p className="text-xl font-bold">{prices.menu.label}</p><p>Realizzazione base. Hosting, aggiornamenti e assistenza da concordare a parte.</p></article>}
+        {sector.offers.includes("website") && <article className="sl-card"><h3>Sito web per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.website.label}</p><p>{offers.website}</p><p>Non comprende automaticamente il gestionale.</p></article>}
+        {sector.offers.includes("webapp") && <article className="sl-card"><h3>Gestionale per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.webapp.label}</p>
+          {webappStartingPrice() && <p>{webappStartingPrice()}</p>}<p>{offers.webapp}</p><p>Funzioni, tempi e costi definiti nel preventivo.</p></article>}
+        {sector.offers.includes("menu") && <article className="sl-card"><h3>Menu QR per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.menu.label}</p><p>Piatti, prezzi e allergeni forniti dal locale, consultabili dal QR al tavolo.</p><p>Realizzazione base. Hosting, aggiornamenti e assistenza da concordare a parte.</p></article>}
       </div><p className="text-sm mt-4">{prices.note}</p>
     </div></section>
     <section className="sl-section"><div className="marketing-container">

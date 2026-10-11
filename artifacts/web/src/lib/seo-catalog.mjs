@@ -34,5 +34,11 @@ export default {
     h1: "Un’app su misura per organizzare meglio la tua attività.",
   },
   "/grazie": { title: "Richiesta ricevuta | PromoApp.it", description: "La tua richiesta è stata salvata. Ti ricontatteremo al numero indicato.", noindex: true },
+  "/whatsapp": {
+    title: "Parliamo del tuo progetto | PromoApp.it",
+    description: "Raccontaci cosa ti serve su WhatsApp. Ti rispondiamo noi, senza moduli e senza impegno.",
+    h1: "Siti, app e gestionali su misura per la tua attività.",
+    noindex: true,
+  },
   "/gestione-contatti": { title: "Gestione contatti | PromoApp.it", description: "Area amministrativa riservata.", noindex: true },
 };

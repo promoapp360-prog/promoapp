@@ -24,9 +24,11 @@ try {
   const { default: MenuDemo } = await server.ssrLoadModule("/src/pages/MenuDemo.tsx");
   const { default: SectorLanding } = await server.ssrLoadModule("/src/pages/SectorLanding.tsx");
   const { default: ThankYou } = await server.ssrLoadModule("/src/pages/ThankYou.tsx");
+  const { default: WhatsAppLanding } = await server.ssrLoadModule("/src/pages/WhatsAppLanding.tsx");
   const { default: Admin } = await server.ssrLoadModule("/src/pages/Admin.tsx");
   for (const path of Object.keys(pages)) {
     const element = path === "/grazie" ? React.createElement(ThankYou)
+      : path === "/whatsapp" ? React.createElement(WhatsAppLanding)
       : ["/gestione-contatti", "/admin"].includes(path) ? React.createElement(Admin)
       : path.startsWith("/per/") ? React.createElement(SectorLanding, { slug: path.split("/")[2] })
       : path === "/menu-demo" ? React.createElement(MenuDemo)

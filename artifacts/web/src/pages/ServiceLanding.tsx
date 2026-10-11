@@ -111,10 +111,13 @@ function List({ items, extra }: { items: string[]; extra?: boolean }) {
   return <ul className={`sl-list${extra ? " extra" : ""}`}>{items.map((i) => <li key={i}>{i}</li>)}</ul>;
 }
 
-function Scope({ inc, ext, title }: { inc: string[]; ext: string[]; title: string }) {
+function Scope({ inc, ext, title, guaranteed = [] }: { inc: string[]; ext: string[]; title: string; guaranteed?: string[] }) {
   return (
     <div className="sl-scope">
-      <div className="sl-box in"><h3>{title}</h3><List items={inc} /></div>
+      <div className="sl-box in">
+        {guaranteed.length > 0 && <><h3>Sempre incluso</h3><List items={guaranteed} /></>}
+        <h3>{title}</h3><List items={inc} />
+      </div>
       <div className="sl-box out"><h3>Da quotare a parte</h3><List items={ext} extra /></div>
     </div>
   );
@@ -217,10 +220,11 @@ function SitiWeb() {
           <p className="sl-eyebrow">Ambito del progetto</p>
           <h2 className="sl-h2">399 € + IVA, scritto chiaro</h2>
           <p className="sl-lead">Da 399 € + IVA per un sito istituzionale. Pagine, contenuti e funzionalità comprese vengono confermati nel preventivo: l'elenco indica gli aspetti da concordare, non un pacchetto automatico.</p>
-          <Scope title="Da concordare nel preventivo" inc={[
-            "Numero delle pagine istituzionali",
+          <Scope title="Da concordare nel preventivo" guaranteed={[
             "Design responsive per smartphone, tablet e computer",
             "Modulo di contatto funzionante",
+          ]} inc={[
+            "Numero delle pagine istituzionali",
             "SEO di base",
             "Stile del brand e collegamenti ai social",
             "Testi e foto forniti da te",

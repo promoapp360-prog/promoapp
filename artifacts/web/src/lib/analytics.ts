@@ -2,6 +2,7 @@ import type { TrackingConfig } from "@workspace/api-client-react";
 import { appPath, captureAttribution, persistAttribution, readConsent, serviceCodes, type Service, type Consent } from "./marketing";
 import { commercialVariant, sectors } from "./commercial";
 import { recordSitePage } from "./site-visits";
+import { whatsappChoices } from "./whatsapp-choices";
 
 declare global {
   interface Window {
@@ -14,6 +15,8 @@ declare global {
 let config: TrackingConfig = {};
 let googleOnly = false;
 let ready = false, googleStarted = false, metaStarted = false, gtmStarted = false;
+let resolveTrackingReady: () => void;
+const trackingReady = new Promise<void>(resolve => { resolveTrackingReady = resolve; });
 let consentDefaultSet = false;
 let activePath = "/", lastPage = "";
 let lastAdsPage = "";
@@ -75,7 +78,7 @@ function configure(consent: Consent) {
   }
   // Google Ads URL-based goals need the current virtual page, not just GA4 events.
   // Keep a separate marker so granting marketing after analytics also measures
-  // the current page. No conversion event or label is added to the landing.
+  // the current page. Page views alone never emit an explicit conversion.
   if (!gtm && adsConfigured && consent.marketing && lastAdsPage !== activePath) {
     window.gtag?.("event", "page_view", {
       send_to: ads,
@@ -119,7 +122,7 @@ export async function initTracking(options: { googleOnly?: boolean } = {}) {
       for (const [key, value] of Object.entries(runtime)) if (value) (config as Record<string, string>)[key] = value;
     }
   } catch { /* Tracking must never block enquiries. */ }
-  ready = true; configure(readConsent());
+  ready = true; configure(readConsent()); resolveTrackingReady();
 }
 export function updateTrackingConsent(consent: Consent) { configure(consent); }
 export function trackPage(path: string) { activePath = path; captureAttribution(); configure(readConsent()); }
@@ -155,4 +158,36 @@ export function trackWhatsApp(service: Service, placement: string, slug = "gener
   if (privatePage()) return;
   trackEvent("whatsapp_click", service, placement, slug);
   if (readConsent().marketing && metaStarted) window.fbq?.("trackCustom", "WhatsAppClick", { service, placement, sector: slug });
+}
+
+/** Only the new landing uses this dedicated Ads conversion; other CTAs stay unchanged. */
+export async function trackWhatsAppLanding(placement: "hero" | "sticky" | "sector", slug = "generale") {
+  if (activePath !== "/whatsapp" || privatePage()) return;
+  if (placement === "sector" && !Object.hasOwn(sectors, slug) && !whatsappChoices.some(choice => choice.slug === slug)) return;
+  const atClick = readConsent();
+  if (!atClick.analytics && !atClick.marketing) return;
+  // A fast click in a new tab must not be lost while marketing-config is loading.
+  if (!ready) await trackingReady;
+  const current = readConsent();
+  // Do not replay a click under a different consent choice or page.
+  if (activePath !== "/whatsapp" || current.analytics !== atClick.analytics || current.marketing !== atClick.marketing) return;
+  const position = `whatsapp-landing-${placement}`;
+  trackWhatsApp("generale", position, slug);
+  if (!current.marketing || !/^AW-\d+$/.test(config.googleAdsId ?? "")) return;
+  const label = config.googleAdsWhatsAppLabel ?? "";
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(label)) {
+    console.warn("PromoApp: conversione WhatsApp non attiva; manca googleAdsWhatsAppLabel in marketing-config.");
+    return;
+  }
+  const destination = `${config.googleAdsId}/${label}`;
+  const clickId = globalThis.crypto?.randomUUID?.() ?? `wa-${Date.now()}-${++eventSequence}`;
+  if (gtmStarted) {
+    // The existing container owns Google tags. A dedicated custom-event trigger
+    // avoids loading a second tag or reusing the lead conversion.
+    window.dataLayer ??= [];
+    window.dataLayer.push({ event: "whatsapp_ads_conversion", send_to: destination,
+      transaction_id: clickId, page_path: "/whatsapp", placement: position, sector: slug });
+  } else if (googleStarted && adsConfigured) {
+    window.gtag?.("event", "conversion", { send_to: destination, transaction_id: clickId });
+  }
 }

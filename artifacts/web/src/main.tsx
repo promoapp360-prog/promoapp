@@ -9,6 +9,7 @@ import MenuDemo from "./pages/MenuDemo";
 import SectorLanding from "./pages/SectorLanding";
 import ThankYou from "./pages/ThankYou";
 const Admin = lazy(() => import("./pages/Admin"));
+import WhatsAppLanding from "./pages/WhatsAppLanding";
 import CookieConsent from "./components/marketing/CookieConsent";
 import PageSEO from "./components/marketing/PageSEO";
 import { setBaseUrl } from "@workspace/api-client-react";
@@ -26,6 +27,7 @@ function Routes() {
       <Route path="/lavori/:id" component={PreviewPage} />
       {/* Alias mantenuto per non interrompere eventuali link già condivisi. */}
       <Route path="/preventivo" component={Preventivo} />
+      <Route path="/whatsapp" component={WhatsAppLanding} />
       <Route path="/siti-web">{() => <ServiceLanding service="siti-web" />}</Route>
       <Route path="/sitiweb">{() => <ServiceLanding service="siti-web" />}</Route>
       <Route path="/web-app">{() => <ServiceLanding service="web-app" />}</Route>

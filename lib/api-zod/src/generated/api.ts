@@ -279,6 +279,7 @@ export const GetTrackingConfigResponse = zod.object({
   ga4Id: zod.string().optional(),
   googleAdsId: zod.string().optional(),
   googleAdsLeadLabel: zod.string().optional(),
+  googleAdsWhatsAppLabel: zod.string().optional(),
   metaPixelId: zod.string().optional(),
 });
 

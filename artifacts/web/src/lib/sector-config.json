@@ -9,10 +9,10 @@
     "headline": "Più organizzazione per il tuo ristorante, meno tempo perso al telefono.",
     "intro": "Riduci le chiamate durante il servizio e rendi menu, informazioni e richieste di prenotazione accessibili dal telefono dei tuoi clienti.",
     "benefits": [
-      { "title": "Menu QR a portata di tavolo", "description": "Il cliente inquadra il QR e legge piatti e prezzi sul telefono: può scegliere senza aspettare una copia cartacea." },
-      { "title": "Prenotazioni da organizzare", "description": "Raccogli giorno, orario e numero di ospiti in una richiesta ordinata, così puoi valutare i tavoli prima di confermare." },
-      { "title": "Richieste senza messaggi sparsi", "description": "Una soluzione dedicata può riunire le richieste del locale e aiutarti a seguirle anche durante i momenti di servizio." },
-      { "title": "Un rapporto che continua", "description": "Valutiamo strumenti di fidelizzazione per invitare i clienti a tornare, con regole e consensi definiti per il tuo locale." }
+      { "title": "Meno interruzioni durante il servizio", "description": "Prenotazioni e richieste arrivano online, non al telefono mentre servi ai tavoli." },
+      { "title": "Menu sempre consultabile da smartphone", "description": "Il cliente inquadra il QR e vede piatti, prezzi e allergeni senza aspettare la carta." },
+      { "title": "Richieste di prenotazione ordinate", "description": "Tutte le richieste in un unico posto, con data, orario e numero di persone." },
+      { "title": "Informazioni chiare su orari e contatti", "description": "Orari, indirizzo e telefono sempre aggiornati, anche su Google." }
     ],
     "mockup": { "kind": "menu", "title": "Menu del locale", "tabs": ["Antipasti", "Primi", "Dolci"], "rows": [
       { "title": "Primo del giorno", "detail": "Descrizione e ingredienti", "badge": "12,00 €" },

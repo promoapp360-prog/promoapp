@@ -71,6 +71,9 @@
 .dark .sl-steps p{color:#c3c1e4}
 
 .sl-scope{display:grid;gap:14px}
+.sl-scope .sl-list + h3{margin-top:24px}
+.sl-grid > *,.sl-scope > *,.sl-hero-grid > *{min-width:0}
+.sl-card h3,.sl-card p{overflow-wrap:anywhere}
 .sl-list{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:.9rem}
 .sl-list li{position:relative;padding-left:26px}
 .sl-list li::before{content:"";position:absolute;left:0;top:.5em;width:12px;height:7px;border-left:2.5px solid var(--em);border-bottom:2.5px solid var(--em);transform:rotate(-45deg) translateY(-3px)}

@@ -26,3 +26,9 @@ L'utente ha dichiarato che la conversione Google Ads è già configurata sulla v
 **Why:** l'utente richiede l'installazione del tag e il riconoscimento della pagina di ringraziamento, non una nuova azione di conversione. Un secondo evento manuale potrebbe duplicare i risultati.
 
 **How to apply:** distinguere le visualizzazioni delle pagine dalle conversioni; verificare separatamente l'invio dal browser e il riconoscimento effettivo nell'account Google Ads.
+
+Per la nuova landing `/whatsapp`, l’utente ha invece richiesto una conversione Google Ads dedicata ai clic sui suoi pulsanti WhatsApp. L’obiettivo è soltanto aprire una conversazione, senza moduli o menu; non modificare gli obiettivi delle altre pagine.
+
+**Why:** richiesta esplicita per una destinazione delle campagne Google Ads; supera il divieto di nuove conversioni soltanto per questi clic, non per i moduli o la visita a `/grazie`.
+
+**How to apply:** usare la stessa azione dedicata per tutti i pulsanti WhatsApp di `/whatsapp`, inclusi quelli dei settori, distinta da quella dei moduli. Lasciare vuota l’etichetta dei moduli se non configurata, rispettare il consenso e preservare Meta. Un clic non dimostra l’invio effettivo di un messaggio; distinguere test offline, emissione browser e ricezione in Google Ads.

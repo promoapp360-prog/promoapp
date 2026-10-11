@@ -27,11 +27,23 @@ Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati
 
 **How to apply:** mantenere le recensioni pubbliche visibili e non interpretare il footer compatto come una richiesta di rimuovere la società dalle informative privacy.
 
+Per `/siti-web`, responsive e modulo di contatto sono «Sempre incluso». Gli altri aspetti del sito e gli extra restano da concordare nel preventivo.
+
+**Why:** l’utente ha richiesto esplicitamente responsive e modulo tra «Sempre incluso», superando per questi due elementi la precedente prudenza sul pacchetto base.
+
+**How to apply:** non rimettere questi due elementi tra le opzioni da concordare e non estendere l’inclusione automatica a hosting, dominio, e-commerce o gestionali.
+
 L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie. Per siti e web app preferire una proposta personalizzata gratuita e senza impegno. Anteprime gratuite solo se effettivamente disponibili; demo entro 48 ore e tempi di risposta WhatsApp richiedono conferma operativa.
 
 **Why:** il documento definitivo consente di predisporre la modalità demo ma vieta di attivare promesse temporali non confermate; preserva identità grafica e approccio mobile-first.
 
 **How to apply:** conservare la distinzione fra siti web e funzioni personalizzate; non cambiare prezzi, promesse o dati aziendali senza approvazione.
+
+Per la landing pubblicitaria `/whatsapp`, l’utente ha approvato demo gratuita entro 48 ore, pagamento a fasi e assistenza iniziale inclusa. Ha poi richiesto la dicitura «Seguiamo pochi progetti al mese per curarli bene: scrivici ora per una demo gratuita entro 48 ore.» mantenendo «Nessun vincolo».
+
+**Why:** queste sono le promesse approvate nel testo esatto della nuova pagina; l’utente ha vietato modifiche alle altre pagine.
+
+**How to apply:** mantenere le promesse approvate soltanto su `/whatsapp`, senza estenderle automaticamente al resto del sito. La scelta rapida deve restare compatta: quattro categorie e «Altro», prima del pulsante principale, non l’elenco completo degli undici settori.
 
 Confrontare le nuove specifiche con quanto già realizzato e riutilizzare ciò che è corretto: «non spendiamo soldi inutilmente».
 

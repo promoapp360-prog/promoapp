@@ -286,6 +286,7 @@ components:
         ga4Id: { type: string }
         googleAdsId: { type: string }
         googleAdsLeadLabel: { type: string }
+        googleAdsWhatsAppLabel: { type: string }
         metaPixelId: { type: string }
     LeadUpdate:
       type: object

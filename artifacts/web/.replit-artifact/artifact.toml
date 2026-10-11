@@ -79,8 +79,105 @@ from = "/gestione-contatti"
 to = "/gestione-contatti/index.html"
 
 [[services.production.rewrites]]
+from = "/whatsapp"
+to = "/whatsapp/index.html"
+
+[[services.production.rewrites]]
+from = "/whatsapp/"
+to = "/whatsapp/index.html"
+
+[[services.production.rewrites]]
+from = "/per/ristoranti"
+to = "/per/ristoranti/index.html"
+
+[[services.production.rewrites]]
+from = "/per/ristoranti/"
+to = "/per/ristoranti/index.html"
+
+[[services.production.rewrites]]
+from = "/per/bb-hotel"
+to = "/per/bb-hotel/index.html"
+
+[[services.production.rewrites]]
+from = "/per/bb-hotel/"
+to = "/per/bb-hotel/index.html"
+
+[[services.production.rewrites]]
+from = "/per/centri-estetici"
+to = "/per/centri-estetici/index.html"
+
+[[services.production.rewrites]]
+from = "/per/centri-estetici/"
+to = "/per/centri-estetici/index.html"
+
+[[services.production.rewrites]]
+from = "/per/parrucchieri"
+to = "/per/parrucchieri/index.html"
+
+[[services.production.rewrites]]
+from = "/per/parrucchieri/"
+to = "/per/parrucchieri/index.html"
+
+[[services.production.rewrites]]
+from = "/per/studi-medici"
+to = "/per/studi-medici/index.html"
+
+[[services.production.rewrites]]
+from = "/per/studi-medici/"
+to = "/per/studi-medici/index.html"
+
+[[services.production.rewrites]]
+from = "/per/palestre"
+to = "/per/palestre/index.html"
+
+[[services.production.rewrites]]
+from = "/per/palestre/"
+to = "/per/palestre/index.html"
+
+[[services.production.rewrites]]
+from = "/per/negozi"
+to = "/per/negozi/index.html"
+
+[[services.production.rewrites]]
+from = "/per/negozi/"
+to = "/per/negozi/index.html"
+
+[[services.production.rewrites]]
+from = "/per/officine"
+to = "/per/officine/index.html"
+
+[[services.production.rewrites]]
+from = "/per/officine/"
+to = "/per/officine/index.html"
+
+[[services.production.rewrites]]
+from = "/per/agenzie-immobiliari"
+to = "/per/agenzie-immobiliari/index.html"
+
+[[services.production.rewrites]]
+from = "/per/agenzie-immobiliari/"
+to = "/per/agenzie-immobiliari/index.html"
+
+[[services.production.rewrites]]
+from = "/per/studi-legali"
+to = "/per/studi-legali/index.html"
+
+[[services.production.rewrites]]
+from = "/per/studi-legali/"
+to = "/per/studi-legali/index.html"
+
+[[services.production.rewrites]]
+from = "/per/agenti-commercio"
+to = "/per/agenti-commercio/index.html"
+
+[[services.production.rewrites]]
+from = "/per/agenti-commercio/"
+to = "/per/agenti-commercio/index.html"
+
+[[services.production.rewrites]]
 from = "/*"
 to = "/index.html"
+ 
 
 [services.env]
 PORT = "22333"

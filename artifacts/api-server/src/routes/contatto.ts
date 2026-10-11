@@ -11,6 +11,7 @@ router.get("/marketing-config", (_req, res) => {
   res.json({
     gtmId: process.env.GTM_ID ?? "", ga4Id: process.env.GA4_ID ?? "",
     googleAdsId: process.env.GOOGLE_ADS_ID ?? "", googleAdsLeadLabel: process.env.GOOGLE_ADS_LEAD_LABEL ?? "",
+    googleAdsWhatsAppLabel: process.env.GOOGLE_ADS_WHATSAPP_LABEL ?? "",
     metaPixelId: process.env.META_PIXEL_ID ?? "",
   });
 });

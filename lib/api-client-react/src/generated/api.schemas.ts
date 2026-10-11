@@ -111,6 +111,7 @@ export interface TrackingConfig {
   ga4Id?: string;
   googleAdsId?: string;
   googleAdsLeadLabel?: string;
+  googleAdsWhatsAppLabel?: string;
   metaPixelId?: string;
 }
 
