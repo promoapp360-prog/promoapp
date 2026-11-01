@@ -11,6 +11,12 @@ PromoApp realizza siti web, web app, gestionali personalizzati e soluzioni digit
 
 I costi tecnici di funzionamento partono da 9,90 € al mese e variano secondo soluzione e risorse; l’importo viene comunicato prima dell’attivazione. Non sono un abbonamento al software né un rinnovo annuale. Usare «attivazione definitiva» per descrivere l’attivazione.
 
+La dicitura «Attivazione definitiva» deve essere ben evidente nei box dei servizi.
+
+**Why:** l’utente la considera un’informazione commerciale importante.
+
+**How to apply:** mantenerla leggibile e in risalto in tutti e tre i box, con trattamento uniforme anche da mobile.
+
 **Why:** condizioni commerciali espresse dall’utente; esiste un costo mensile, quindi non promettere assenza di costi ricorrenti o canoni.
 
 **How to apply:** distinguere attivazione e costi tecnici; non includere automaticamente dominio, servizi esterni, utilizzo illimitato o assistenza illimitata. Per aggiornamenti di comunicazione commerciale cambiare soltanto i testi, preservando grafica, struttura, collegamenti e funzionalità; non modificare automaticamente testi legali.
