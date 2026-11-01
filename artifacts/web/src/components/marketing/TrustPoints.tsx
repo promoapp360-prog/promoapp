@@ -11,7 +11,7 @@ export default function TrustPoints({ service = "generale" }: { service?: Servic
   const contact = commercialTrust.projectContact;
   const points = [
     ["Prima vedi, poi decidi", commercialIncentive().promise],
-    ["Preventivo scritto prima di iniziare", "Funzioni, inclusioni, extra e costi periodici definiti con chiarezza prima della realizzazione."],
+    ["Funzioni e costi chiari prima di iniziare", "399 € + IVA di attivazione definitiva per siti web, web app e gestionali. Costi tecnici di funzionamento da 9,90 € al mese, comunicati prima dell’attivazione."],
     [staged ? "Pagamento a fasi" : "Modalità di pagamento chiare", staged ? "Il progetto prevede un pagamento legato alle fasi concordate nel preventivo." : "Importi e scadenze vengono concordati sul prodotto scelto, senza condizioni prese da altre offerte."],
     [support ? `${days} giorni di assistenza iniziale` : "Assistenza da concordare", support ? "Periodo iniziale incluso nei limiti descritti nel preventivo; attività successive e costi sono distinti." : "Canali, durata, ambito ed eventuali costi dell'assistenza vengono definiti prima dell'avvio."],
     ["Rapporto diretto", "Confrontati con il referente che segue la realizzazione e chiarisci le esigenze senza dover conoscere la tecnologia."],

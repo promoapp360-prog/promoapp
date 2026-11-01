@@ -40,6 +40,19 @@ for (const sector of Object.values(sectors)) {
 }
 assert.equal(new Set(descriptions).size, 44);
 ok("11 settori, 44 descrizioni distinte, 11 mockup e 33 FAQ");
+for (const service of ["website", "webapp", "management"]) {
+  assert.equal(commercial.prices[service].label, "399 € + IVA · Attivazione definitiva");
+}
+assert.equal(commercial.prices.menu.amount, 99);
+assert.equal(commercial.prices.menu.label, "99 € + IVA · Attivazione definitiva");
+assert.ok(commercial.prices.note.includes("da 9,90 € al mese"));
+for (const route of ["", "preventivo", "siti-web", "sitiweb", "web-app", "menu-digitali", "whatsapp", ...Object.keys(sectors).map(slug => `per/${slug}`)]) {
+  const html = await readFile(resolve(root, "dist/public", route, "index.html"), "utf8");
+  assert.ok(!/\bda\s+399\s*€|una tantum|nessun costo ricorrente|nessun canone/i.test(html), `${route}: obsolete offer`);
+  assert.ok(html.includes("da 9,90 € al mese"), `${route}: running costs visible`);
+  if (route !== "menu-digitali") assert.ok(html.includes("399 €"), `${route}: activation price visible`);
+}
+ok("offerta 399 € per siti, web app e gestionali; Menu QR 99 €; costi tecnici da 9,90 € su tutte le landing");
 const settings = { mode: "personalized_demo", demoDeliveryConfirmed: false, demoDeliveryHours: 48,
   whatsappResponseConfirmed: false, whatsappResponseHours: 2 };
 assert.equal(commercial.commercialIncentive().demoActive, false);

@@ -118,7 +118,7 @@ function Scope({ inc, ext, title, guaranteed = [] }: { inc: string[]; ext: strin
         {guaranteed.length > 0 && <><h3>Sempre incluso</h3><List items={guaranteed} /></>}
         <h3>{title}</h3><List items={inc} />
       </div>
-      <div className="sl-box out"><h3>Da quotare a parte</h3><List items={ext} extra /></div>
+        <div className="sl-box out"><h3>Costi tecnici e servizi aggiuntivi</h3><List items={ext} extra /></div>
     </div>
   );
 }
@@ -180,14 +180,14 @@ function SitiWeb() {
     <>
       <Hero
         service="siti-web" kicker="Siti web per attività italiane"
-        h1={<>Il tuo sito web professionale da <b>399 € + IVA.</b></>}
+        h1={<>Il tuo sito web professionale a <b>399 € + IVA.</b></>}
         sub="Presenta la tua attività online, valorizza i tuoi servizi e permetti ai clienti di contattarti facilmente."
-        price={["399 €", "+ IVA"]} priceNote="hosting e dominio a parte"
-        note="Parli direttamente con chi realizza il sito."
+        price={["399 €", "+ IVA"]} priceNote="Attivazione definitiva"
+        note="Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione."
       />
       <section className="sl-section alt"><div className="marketing-container sl-demo-wrap">
         <div><p className="sl-eyebrow">Prima di decidere</p><h2 className="sl-h2">Come potrebbe presentarsi la tua attività</h2>
-          <p className="sl-lead">Un esempio illustrativo per immaginare il tuo sito. Non descrive un pacchetto automaticamente incluso: definiamo insieme pagine, contenuti ed eventuali extra.</p>
+          <p className="sl-lead">Un esempio illustrativo per immaginare il tuo sito. Definiamo insieme le pagine, i contenuti e le funzioni comprese nell’attivazione a 399 € + IVA.</p>
            <a href="#preventivo" className="whatsapp-link" onClick={() => trackEvent("cta_click", "siti-web", "product-example")}>Richiedi una proposta personalizzata</a>
         </div><WebsiteExample />
       </div></section>
@@ -209,7 +209,7 @@ function SitiWeb() {
           <h2 className="sl-h2">Semplice, senza giri</h2>
           <Steps items={[
             { t: "Ci racconti il progetto", d: "Un messaggio su WhatsApp o il modulo: attività, stile, cosa vuoi mostrare." },
-            { t: "Ricevi il preventivo", d: "Ti diciamo cosa è compreso e quali eventuali extra servono, in chiaro." },
+            { t: "Definiamo la tua soluzione", d: "Ti mostriamo le funzioni comprese nell’attivazione a 399 € + IVA e i relativi costi tecnici di funzionamento." },
             { t: "Costruiamo il sito", d: "Tu ci invii testi e foto; noi lo realizziamo e lo condividiamo per le tue correzioni." },
             { t: "Online", d: "Pubblichiamo il sito su hosting e dominio concordati." },
           ]} />
@@ -219,7 +219,7 @@ function SitiWeb() {
         <div className="marketing-container">
           <p className="sl-eyebrow">Ambito del progetto</p>
           <h2 className="sl-h2">399 € + IVA, scritto chiaro</h2>
-          <p className="sl-lead">Da 399 € + IVA per un sito istituzionale. Pagine, contenuti e funzionalità comprese vengono confermati nel preventivo: l'elenco indica gli aspetti da concordare, non un pacchetto automatico.</p>
+          <p className="sl-lead">399 € + IVA di attivazione definitiva. Definiamo insieme pagine, contenuti e funzionalità comprese, per adattare il sito alla tua attività.</p>
           <Scope title="Da concordare nel preventivo" guaranteed={[
             "Design responsive per smartphone, tablet e computer",
             "Modulo di contatto funzionante",
@@ -229,11 +229,11 @@ function SitiWeb() {
             "Stile del brand e collegamenti ai social",
             "Testi e foto forniti da te",
           ]} ext={[
-            "Hosting e dominio: preventivati a parte, con costo ricorrente",
-            "E-commerce e vendita online",
-            "Area riservata con login",
-            "Integrazioni di prenotazione",
-            "Pagine e funzioni aggiuntive",
+            "Costi tecnici di funzionamento da 9,90 € al mese per i servizi necessari, come database e hosting. L’importo varia in base alla soluzione e alle risorse richieste e viene comunicato prima dell’attivazione.",
+            "Dominio: condizioni comunicate prima dell’attivazione",
+            "Servizi esterni eventualmente necessari",
+            "Risorse tecniche in base alla soluzione",
+            "Assistenza secondo le condizioni concordate",
           ]} />
         </div>
       </section>
@@ -246,9 +246,9 @@ function SitiWeb() {
         <div className="marketing-container">
           <h2 className="sl-h2">Domande frequenti</h2>
           <Faq items={[
-            { t: "Cosa mi serve per iniziare?", d: "Logo se lo hai, testi delle pagine, alcune foto e i dati di contatto dell'attività." },
-            { t: "Chi si occupa di hosting e dominio?", d: "Li preventiviamo a parte: sono costi ricorrenti che definiamo insieme prima di partire." },
-            { t: "Posso vendere online dal sito?", d: "Il sito base presenta la tua attività. E-commerce e login si valutano e quotano separatamente." },
+            { t: "Anche le app e i gestionali costano 399 €?", d: "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese." },
+            { t: "Cosa pago dopo l’attivazione?", d: "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente." },
+            { t: "E se ho bisogno di un progetto più articolato?", d: "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere." },
             { t: "Posso aggiungere pagine e funzionalità?", d: "Sì. Numero di pagine e funzioni vengono concordati nel preventivo; le estensioni si valutano separatamente." },
             { t: "Il prezzo include l'IVA?", d: "No, 399 € è più IVA." },
           ]} />
@@ -266,8 +266,8 @@ function WebApp() {
         service="web-app" kicker="Web app e strumenti su misura"
         h1={<>Un&apos;app su misura per <b>organizzare meglio la tua attività.</b></>}
         sub="Realizziamo soluzioni personalizzate per organizzare prenotazioni, appuntamenti, clienti, ordini e attività quotidiane."
-        price={["Su preventivo", "ambito, tempi e manutenzione definiti sul progetto"]}
-        note={webappStartingPrice() ?? "Nessun pacchetto standard: parti dal tuo caso concreto."}
+        price={["399 € + IVA", "Attivazione definitiva"]}
+        note={webappStartingPrice() ?? "Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione."}
       />
       <section className="sl-section">
         <div className="marketing-container">
@@ -312,7 +312,7 @@ function WebApp() {
           <h2 className="sl-h2">Dal confronto al progetto</h2>
           <Steps items={[
             { t: "Ascolto", d: "Ci spieghi come lavori oggi e cosa ti fa perdere tempo." },
-            { t: "Proposta", d: "Definiamo funzioni, ambito e preventivo, compresi tempi e manutenzione." },
+            { t: "Definiamo la tua soluzione", d: "Ti mostriamo le funzioni comprese nell’attivazione a 399 € + IVA e i relativi costi tecnici di funzionamento." },
             { t: "Sviluppo", d: "Ti mostriamo l'avanzamento e raccogliamo le tue indicazioni." },
             { t: "Messa in uso", d: "Pubblichiamo la web app e concordiamo l'assistenza successiva." },
           ]} />
@@ -327,9 +327,9 @@ function WebApp() {
         <div className="marketing-container">
           <h2 className="sl-h2">Domande frequenti</h2>
           <Faq items={[
-            { t: "Quanto costa una web app?", d: "Dipende dalle funzioni richieste. Dopo un confronto ti inviamo un preventivo specifico." },
-            { t: "Quanto tempo serve?", d: "I tempi dipendono dal progetto e li indichiamo nel preventivo." },
-            { t: "Sarà negli store?", d: "Una web app si usa dal browser. La pubblicazione negli store è possibile solo se concordata a parte." },
+            { t: "Anche le app e i gestionali costano 399 €?", d: "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese." },
+            { t: "Cosa pago dopo l’attivazione?", d: "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente." },
+            { t: "E se ho bisogno di un progetto più articolato?", d: "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere." },
             { t: "E dopo la consegna?", d: "Manutenzione e assistenza vengono definite insieme, in base alle esigenze." },
           ]} />
         </div>
@@ -346,8 +346,8 @@ function MenuDigitali() {
         service="menu-digitali" kicker="Menu digitali per ristoranti"
         h1={<>Il tuo menu digitale QR a soli <b>99 € + IVA.</b></>}
         sub="I clienti inquadrano il QR code e consultano il menu direttamente dallo smartphone."
-        price={["99 €", "+ IVA una tantum"]}
-        note="Prezzo base una tantum. Extra e costi periodici sono indicati sotto."
+        price={["99 €", "+ IVA · Attivazione definitiva"]}
+        note="Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione."
         side={<MenuDemo />}
       />
       <section className="sl-section">
@@ -380,7 +380,7 @@ function MenuDigitali() {
       <section className="sl-section">
         <div className="marketing-container">
           <p className="sl-eyebrow">Prezzo e extra</p>
-          <h2 className="sl-h2">99 € + IVA, una tantum</h2>
+          <h2 className="sl-h2">99 € + IVA, attivazione definitiva</h2>
           <Scope title="Nel prezzo base" inc={[
             "Menu consultabile da smartphone",
             "Accesso tramite QR code",
@@ -389,8 +389,8 @@ function MenuDigitali() {
             "Ordinazioni e pagamenti dal menu",
             "Modifica autonoma del menu (area admin)",
             "Versioni in più lingue",
-            "Hosting e dominio: costo ricorrente concordato",
-            "Manutenzione: servizio periodico concordato a parte",
+            "Costi tecnici di funzionamento da 9,90 € al mese per i servizi necessari, come database e hosting. L’importo varia in base alla soluzione e alle risorse richieste e viene comunicato prima dell’attivazione.",
+            "Manutenzione e assistenza: condizioni concordate a parte",
           ]} />
         </div>
       </section>
@@ -416,7 +416,7 @@ function MenuDigitali() {
           <Faq items={[
             { t: "Come funziona il menu con QR code?", d: "Il cliente inquadra il QR e consulta piatti e bevande dal browser dello smartphone, senza installare un'app." },
             { t: "Posso modificare piatti e prezzi?", d: "Modalità e costi degli aggiornamenti vengono chiariti nel preventivo. Non sono promesse modifiche illimitate; l'area di modifica autonoma si quota separatamente." },
-            { t: "Ci sono costi aggiuntivi rispetto ai 99 €?", d: "99 € + IVA è il prezzo una tantum della realizzazione base. Hosting, dominio e assistenza si concordano a parte; ordini, pagamenti e altre funzioni sono extra su preventivo." },
+            { t: "Cosa pago dopo l’attivazione del menu?", d: "Il Menu QR mantiene il prezzo di 99 € + IVA di attivazione definitiva. Costi tecnici di funzionamento da 9,90 € al mese per i servizi necessari, come database e hosting. L’importo varia in base alla soluzione e alle risorse richieste e viene comunicato prima dell’attivazione. Dominio, aggiornamenti, assistenza e funzioni aggiuntive seguono le condizioni concordate." },
           ]} />
         </div>
       </section>

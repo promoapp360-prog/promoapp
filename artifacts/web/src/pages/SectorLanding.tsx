@@ -45,25 +45,25 @@ export default function SectorLanding({ slug }: { slug: string }) {
       <p className="sl-lead">Una schermata illustrativa per immaginare il tuo progetto, non un gestionale già attivo.</p>
       <SectorMockup sector={sector} businessName={business.slug === slug ? business.name : ""} />
       <details className="sl-card mt-6"><summary className="cursor-pointer font-semibold">Le funzioni da scegliere insieme</summary>
-        <p className="mt-3 mb-3">Non un pacchetto indistinto: includiamo nel preventivo soltanto ciò che concordiamo.</p>
+        <p className="mt-3 mb-3">Adattiamo la soluzione alla tua attività e definiamo insieme le funzioni comprese nell’attivazione a 399 € + IVA.</p>
         <ul className="sl-list">{sector.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
       </details>
     </div></section>
     <section className="sl-section"><div className="marketing-container">
       <h2 className="sl-h2">Come iniziare</h2>
       <ol className="sl-steps">
-        <li><h3>1. Ci racconti la tua attività</h3><p>Lascia tre dati. Ti ricontattiamo per capire esigenze e strumenti già utilizzati.</p></li>
-        <li><h3>2. Valutiamo una possibile soluzione</h3><p>Ti presentiamo un esempio o un'anteprima illustrativa e definiamo funzioni, costi e tempi.</p></li>
-        <li><h3>3. Decidi senza impegno</h3><p>Valuti il preventivo scritto. La realizzazione inizia soltanto dopo l'accordo sul progetto.</p></li>
+        <li><h3>1. Raccontaci la tua attività</h3><p>Ci spieghi come lavori e quali strumenti ti servono.</p></li>
+        <li><h3>2. Definiamo la tua soluzione</h3><p>Ti mostriamo le funzioni comprese nell’attivazione a 399 € + IVA e i relativi costi tecnici di funzionamento.</p></li>
+        <li><h3>3. Realizziamo e attiviamo</h3><p>Prepariamo la soluzione per la tua attività e ti accompagniamo nell’avvio.</p></li>
       </ol>
     </div></section>
     <section className="sl-section dark"><div className="marketing-container">
-      <h2 className="sl-h2">Prezzi di partenza, senza confondere i servizi</h2>
+      <h2 className="sl-h2">La tua soluzione, con attivazione definitiva</h2>
       <div className="sl-grid c3">
-        {sector.offers.includes("website") && <article className="sl-card"><h3>Sito web per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.website.label}</p><p>{offers.website}</p><p>Non comprende automaticamente il gestionale.</p></article>}
+        {sector.offers.includes("website") && <article className="sl-card"><h3>Sito web per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.website.label}</p><p>{offers.website}</p><p>Definiamo insieme le funzioni comprese nell’attivazione.</p></article>}
         {sector.offers.includes("webapp") && <article className="sl-card"><h3>Gestionale per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.webapp.label}</p>
-          {webappStartingPrice() && <p>{webappStartingPrice()}</p>}<p>{offers.webapp}</p><p>Funzioni, tempi e costi definiti nel preventivo.</p></article>}
-        {sector.offers.includes("menu") && <article className="sl-card"><h3>Menu QR per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.menu.label}</p><p>Piatti, prezzi e allergeni forniti dal locale, consultabili dal QR al tavolo.</p><p>Realizzazione base. Hosting, aggiornamenti e assistenza da concordare a parte.</p></article>}
+          {webappStartingPrice() && <p>{webappStartingPrice()}</p>}<p>{offers.webapp}</p><p>Definiamo insieme le funzioni comprese nell’attivazione.</p></article>}
+        {sector.offers.includes("menu") && <article className="sl-card"><h3>Menu QR per {sector.name.toLowerCase()}</h3><p className="text-xl font-bold">{prices.menu.label}</p><p>Piatti, prezzi e allergeni forniti dal locale, consultabili dal QR al tavolo.</p><p>Menu QR: attivazione definitiva a 99 € + IVA. Costi tecnici di funzionamento da 9,90 € al mese, comunicati prima dell’attivazione.</p></article>}
       </div><p className="text-sm mt-4">{prices.note}</p>
     </div></section>
     <section className="sl-section"><div className="marketing-container">

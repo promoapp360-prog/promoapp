@@ -16,9 +16,9 @@ export const serviceNames: Record<Service, string> = {
 };
 const messages: Record<Service, string> = {
   generale: "Buongiorno, ho visto PromoApp e vorrei una proposta gratuita e senza impegno per la mia attività.",
-  "siti-web": "Buongiorno, vorrei informazioni sul sito web da 399 € + IVA.",
+  "siti-web": "Buongiorno, vorrei informazioni sul sito web a 399 € + IVA di attivazione definitiva.",
   "web-app": "Ciao PromoApp! Vorrei un preventivo per una web app o un gestionale personalizzato. La mia idea è...",
-  "menu-digitali": "Buongiorno, vorrei informazioni sul menu digitale QR a 99 € + IVA una tantum per il mio locale.",
+  "menu-digitali": "Buongiorno, vorrei informazioni sul menu digitale QR a 99 € + IVA di attivazione definitiva per il mio locale.",
 };
 export const WHATSAPP_NUMBER = "393793602035";
 export const whatsappUrl = (service: Service = "generale", slug?: string) => {

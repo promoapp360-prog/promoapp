@@ -1,10 +1,10 @@
 {
   "prices": {
-    "website": { "amount": 399, "label": "Da 399 € + IVA" },
-    "menu": { "amount": 99, "label": "99 € + IVA una tantum" },
-    "webapp": { "label": "Su preventivo" },
-    "management": { "label": "Su preventivo" },
-    "note": "Funzionalità extra, hosting e dominio vengono definiti nel preventivo."
+    "website": { "amount": 399, "label": "399 € + IVA · Attivazione definitiva" },
+    "menu": { "amount": 99, "label": "99 € + IVA · Attivazione definitiva" },
+    "webapp": { "label": "399 € + IVA · Attivazione definitiva" },
+    "management": { "label": "399 € + IVA · Attivazione definitiva" },
+    "note": "Costi tecnici di funzionamento da 9,90 € al mese per i servizi necessari, come database e hosting. L’importo varia in base alla soluzione e alle risorse richieste e viene comunicato prima dell’attivazione."
   },
   "incentive": {
     "mode": "standard",
@@ -27,14 +27,14 @@
     "activeVariant": "control",
     "variants": {
       "control": {
-        "headline": "Siti web, app e gestionali su misura per la tua attività.",
+        "headline": "Siti web, app e gestionali per la tua attività.",
         "cta": "Raccontaci il tuo progetto",
         "whatsappLabel": "Scrivici su WhatsApp",
         "formPosition": "hero",
         "pricePresentation": "cards"
       },
       "benefits": {
-        "headline": "Più ordine nella tua attività, meno tempo perso.",
+        "headline": "Siti web, app e gestionali per la tua attività.",
         "cta": "Parliamo della tua attività",
         "whatsappLabel": "Parliamone su WhatsApp",
         "formPosition": "after-services",

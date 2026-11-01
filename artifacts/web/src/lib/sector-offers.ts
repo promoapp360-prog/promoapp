@@ -28,7 +28,7 @@ export const sectorOfferCopy: Record<keyof typeof sectors, { website: string; we
   },
   negozi: {
     website: "Mostra il negozio, i prodotti e i contatti per chiedere informazioni e disponibilità.",
-    webapp: "Clienti, richieste disponibilità e catalogo; magazzino e programmi fedeltà su preventivo dedicato.",
+    webapp: "Clienti, richieste disponibilità, catalogo e magazzino: definiamo insieme le funzioni utili al tuo negozio.",
   },
   officine: {
     website: "Presenta interventi, servizi, sede e contatti dell'officina per i clienti della tua zona.",
@@ -40,7 +40,7 @@ export const sectorOfferCopy: Record<keyof typeof sectors, { website: string; we
   },
   "studi-legali": {
     website: "Presenta lo studio, i professionisti e gli ambiti di attività con informazioni e contatti chiari.",
-    webapp: "Richieste di appuntamento e agenda organizzativa. Un'area riservata richiede un progetto separato.",
+    webapp: "Richieste di appuntamento e agenda organizzativa, con accessi e funzioni concordati per il tuo studio.",
   },
   "agenti-commercio": {
     website: "Presenta l'attività, i settori rappresentati e i contatti per nuove relazioni commerciali.",

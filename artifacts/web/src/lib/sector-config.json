@@ -1,9 +1,9 @@
 {
   "ristoranti": {
     "cta": "Richiedi una proposta per il tuo ristorante",
-    "whatsappMessage": "Buongiorno, vorrei una proposta per il mio ristorante: menu QR a 99 € + IVA una tantum oppure prenotazioni e gestione su preventivo.",
+    "whatsappMessage": "Buongiorno, vorrei informazioni per il mio ristorante: siti, web app e gestionali a 399 € + IVA di attivazione definitiva oppure Menu QR a 99 € + IVA di attivazione definitiva.",
     "metaTitle": "Menu QR e soluzioni per ristoranti | PromoApp.it",
-    "metaDescription": "Menu QR a 99 € + IVA una tantum, siti da 399 € + IVA e strumenti su preventivo per organizzare richieste e prenotazioni del ristorante.",
+    "metaDescription": "Siti, web app e gestionali per ristoranti: 399 € + IVA di attivazione definitiva. Costi tecnici da 9,90 € al mese. Menu QR: 99 € + IVA di attivazione definitiva.",
     "offers": ["website", "menu", "webapp"],
     "name": "Ristoranti", "activity": "Ristorante / Bar / Pizzeria", "menu": true,
     "headline": "Più organizzazione per il tuo ristorante, meno tempo perso al telefono.",
@@ -22,7 +22,7 @@
     "features": ["Menu QR aggiornabile", "Richieste di prenotazione tavoli", "Gestione clienti e preferenze", "Informazioni su allergeni inserite dal locale", "Promozioni e fidelity su richiesta"],
     "example": "Un cliente consulta il menu dal QR sul tavolo; un altro chiede disponibilità prima di arrivare. Tu gestisci le richieste in un unico spazio.",
     "faq": [
-      ["Posso partire soltanto dal menu QR?", "Sì. La realizzazione del menu base costa 99 € + IVA una tantum. Hosting, aggiornamenti e assistenza si concordano a parte; prenotazioni, ordini e fidelity richiedono un preventivo dedicato."],
+      ["Posso partire soltanto dal menu QR?", "Sì. Il Menu QR costa 99 € + IVA di attivazione definitiva. Siti, web app e gestionali sono proposti a 399 € + IVA di attivazione definitiva, con le funzioni concordate. Costi tecnici di funzionamento da 9,90 € al mese, comunicati prima dell’attivazione. Aggiornamenti e assistenza mantengono le condizioni concordate."],
       ["Si collega al mio gestionale di cassa?", "Valutiamo il gestionale che utilizzi e le possibilità di integrazione prima di formulare la proposta."],
       ["Chi aggiorna piatti, prezzi e allergeni?", "Concordiamo il metodo di aggiornamento. I contenuti e le informazioni sugli allergeni devono essere verificati dal locale."]
     ]
@@ -31,7 +31,7 @@
     "cta": "Richiedi una proposta per la tua struttura",
     "whatsappMessage": "Buongiorno, gestisco un B&B o hotel e vorrei organizzare disponibilità, camere e richieste degli ospiti. Possiamo valutare una soluzione?",
     "metaTitle": "Siti e strumenti per B&B e hotel | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e strumenti su misura per disponibilità, camere e richieste di prenotazione del tuo B&B o hotel. Proposta iniziale gratuita.",
+    "metaDescription": "Siti, web app e gestionali per B&B e hotel: 399 € + IVA di attivazione definitiva. Costi tecnici di funzionamento da 9,90 € al mese. Anteprima gratuita.",
     "offers": ["website", "webapp"],
     "name": "B&B e hotel", "activity": "B&B / Hotel", "menu": false,
     "headline": "Gestisci disponibilità, camere e prenotazioni in modo più semplice.",
@@ -52,14 +52,14 @@
     "faq": [
       ["Sostituisce Booking o il mio channel manager?", "Non automaticamente. Collegamenti a portali e channel manager richiedono una verifica tecnica e un preventivo specifico."],
       ["Le prenotazioni sono subito confermate?", "Il flusso può prevedere una richiesta da approvare o una conferma automatica, in base alle regole concordate."],
-      ["Posso iniziare con il sito della struttura?", "Sì, il sito professionale parte da 399 € + IVA; disponibilità e gestione prenotazioni sono extra da quotare."]
+      ["Posso iniziare con il sito della struttura?", "Sì. Siti web, web app e gestionali sono proposti a 399 € + IVA di attivazione definitiva. Definiamo insieme le funzioni per la tua struttura, come disponibilità e richieste di prenotazione. Costi tecnici di funzionamento da 9,90 € al mese, comunicati prima dell’attivazione."]
     ]
   },
   "centri-estetici": {
     "cta": "Richiedi una proposta per il tuo centro estetico",
     "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, operatori e clienti del mio centro estetico. Mi interessa una proposta gratuita.",
     "metaTitle": "Agenda e soluzioni per centri estetici | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e gestionali su preventivo per centri estetici: organizza trattamenti, appuntamenti, operatori e relazioni con le clienti.",
+    "metaDescription": "Siti, web app e gestionali per centri estetici: 399 € + IVA di attivazione definitiva. Appuntamenti e clienti; costi tecnici di funzionamento da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Centri estetici", "activity": "Centro Estetico / SPA", "menu": false,
     "headline": "Organizza gli appuntamenti del tuo centro estetico e dedica più tempo alle clienti.",
@@ -80,14 +80,14 @@
     "faq": [
       ["Posso gestire più cabine?", "Sì, possiamo progettare l'agenda tenendo conto di cabine, operatori e durata dei trattamenti."],
       ["È possibile richiedere un acconto?", "È un'integrazione da valutare nel preventivo, con condizioni di pagamento e cancellazione definite dal centro."],
-      ["Sono inclusi messaggi automatici?", "Invii, canali e relativi costi periodici vengono concordati prima dell'attivazione."]
+      ["Sono inclusi messaggi automatici?", "Definiamo insieme le funzioni comprese nell’attivazione a 399 € + IVA. Costi tecnici di funzionamento da 9,90 € al mese; eventuali invii e servizi esterni sono indicati separatamente e comunicati prima dell’attivazione."]
     ]
   },
   "parrucchieri": {
     "cta": "Richiedi una proposta per il tuo salone",
     "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, collaboratori e clienti del mio salone o barber shop. Possiamo valutare una soluzione su misura?",
     "metaTitle": "Prenotazioni e siti per parrucchieri | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e agende su preventivo per parrucchieri e barber: appuntamenti, collaboratori e clienti. Proposta gratuita e senza impegno.",
+    "metaDescription": "Siti, web app e gestionali per parrucchieri e barber: 399 € + IVA di attivazione definitiva. Costi tecnici di funzionamento da 9,90 € al mese. Contatto senza impegno.",
     "offers": ["website", "webapp"],
     "name": "Parrucchieri e barber", "activity": "Parrucchiere / Barber", "menu": false,
     "headline": "Meno chiamate per prenotare, più tempo per il tuo salone.",
@@ -108,14 +108,14 @@
     "faq": [
       ["Posso distinguere i tempi di taglio e colore?", "Sì. Studiamo durate, tempi di posa e vincoli del salone per configurare l'agenda."],
       ["Devo cambiare il mio modo di lavorare?", "Partiamo dalle tue abitudini e scegliamo le funzioni utili, senza aggiungere passaggi inutili."],
-      ["Posso iniziare senza prenotazione online?", "Sì. Un sito presenta servizi e contatti; l'agenda può essere aggiunta con un preventivo dedicato."]
+      ["Posso iniziare senza prenotazione online?", "Sì. Scegliamo insieme le funzioni per il tuo salone: sito, web app e gestionale sono proposti a 399 € + IVA di attivazione definitiva. Puoi scegliere una soluzione con agenda e richieste di appuntamento. Costi tecnici di funzionamento da 9,90 € al mese."]
     ]
   },
   "studi-medici": {
     "cta": "Richiedi una proposta per il tuo studio medico",
     "whatsappMessage": "Buongiorno, vorrei valutare sito, agenda e richieste di appuntamento per il mio studio medico, senza raccogliere dati clinici nel modulo pubblico.",
     "metaTitle": "Siti e agenda per studi medici | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per appuntamenti dello studio medico. Dati sanitari e integrazioni richiedono analisi specifiche.",
+    "metaDescription": "Siti, web app e gestionali per studi medici: 399 € + IVA di attivazione definitiva. Costi tecnici da 9,90 € al mese. Dati sanitari: analisi specifica.",
     "offers": ["website", "webapp"],
     "name": "Studi medici", "activity": "Studio Medico / Dentista", "menu": false,
     "headline": "Una gestione più semplice degli appuntamenti del tuo studio.",
@@ -143,7 +143,7 @@
     "cta": "Richiedi una proposta per la tua palestra",
     "whatsappMessage": "Buongiorno, vorrei organizzare corsi, iscritti e prenotazioni della mia palestra. Mi interessa una proposta su misura.",
     "metaTitle": "Corsi e prenotazioni per palestre | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e gestionali su misura per palestre: calendario corsi, iscritti e prenotazioni con regole concordate. Richiedi una proposta.",
+    "metaDescription": "Siti, web app e gestionali per palestre: 399 € + IVA di attivazione definitiva. Corsi, iscritti e prenotazioni; costi tecnici di funzionamento da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Palestre e fitness", "activity": "Palestra / Fitness", "menu": false,
     "headline": "Gestisci iscrizioni, lezioni e prenotazioni in un unico strumento.",
@@ -163,7 +163,7 @@
     "example": "L'iscritto consulta il calendario e prenota un corso. Il centro controlla i posti disponibili e le regole del pacchetto acquistato.",
     "faq": [
       ["Posso limitare i posti per corso?", "Sì, la gestione capienza e le eventuali liste d'attesa vengono definite sulle tue esigenze."],
-      ["Sono inclusi pagamenti e abbonamenti?", "Sono moduli da progettare e quotare separatamente, con regole e costi chiari."],
+      ["Sono inclusi pagamenti e abbonamenti della palestra?", "Definiamo insieme le funzioni comprese nell’attivazione a 399 € + IVA, secondo le esigenze del centro. Eventuali sviluppi aggiuntivi e servizi di pagamento esterni vengono concordati separatamente."],
       ["Funziona anche per un personal trainer?", "Sì, possiamo partire da una soluzione più semplice per appuntamenti e pacchetti individuali."]
     ]
   },
@@ -171,7 +171,7 @@
     "cta": "Richiedi una proposta per il tuo negozio",
     "whatsappMessage": "Buongiorno, vorrei presentare il mio negozio e organizzare prodotti, clienti e magazzino. Possiamo parlarne?",
     "metaTitle": "Siti e gestionali per negozi | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e gestionali su preventivo per negozi: prodotti, clienti e magazzino. E-commerce e integrazioni vengono quotati separatamente.",
+    "metaDescription": "Siti, web app e gestionali per negozi: 399 € + IVA di attivazione definitiva. Prodotti, clienti e magazzino; costi tecnici di funzionamento da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Negozi e retail", "activity": "Negozio / Retail", "menu": false,
     "headline": "Prodotti, clienti e magazzino: organizza meglio il tuo negozio.",
@@ -187,7 +187,7 @@
       { "title": "Articolo B", "detail": "Variante grande", "badge": "Da riordinare" },
       { "title": "Articolo C", "detail": "Variante speciale", "badge": "Su richiesta" }
     ] },
-    "features": ["Sito del negozio", "Catalogo prodotti", "Richieste disponibilità", "Gestione clienti", "Magazzino e fidelity su preventivo"],
+    "features": ["Sito del negozio", "Catalogo prodotti", "Richieste disponibilità", "Gestione clienti", "Magazzino e fidelity secondo le funzioni concordate"],
     "example": "Un cliente vede un prodotto dal telefono e chiede disponibilità. Tu rispondi con le informazioni utili e organizzi il ritiro.",
     "faq": [
       ["Il catalogo è già un ecommerce?", "No. Un catalogo presenta i prodotti; carrello, pagamenti, spedizioni e integrazioni ecommerce richiedono un progetto specifico."],
@@ -199,7 +199,7 @@
     "cta": "Richiedi una proposta per la tua officina",
     "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, clienti e interventi della mia officina. Vorrei valutare uno strumento personalizzato.",
     "metaTitle": "Agenda e gestionali per officine | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per officine: agenda, clienti, interventi e promemoria. Proposta iniziale gratuita e senza impegno.",
+    "metaDescription": "Siti, web app e gestionali per officine: 399 € + IVA di attivazione definitiva. Agenda, clienti e interventi; costi tecnici di funzionamento da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Officine e autorimesse", "activity": "Autorimessa / Meccanico", "menu": false,
     "headline": "Appuntamenti, clienti e interventi: organizza il lavoro della tua officina.",
@@ -227,7 +227,7 @@
     "cta": "Richiedi una proposta per la tua agenzia",
     "whatsappMessage": "Buongiorno, vorrei organizzare immobili, richieste e appuntamenti della mia agenzia immobiliare. Possiamo valutare una soluzione su misura?",
     "metaTitle": "Siti e strumenti per agenzie immobiliari | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per immobili, contatti e appuntamenti. Collegamenti ai portali solo dopo verifica tecnica.",
+    "metaDescription": "Siti, web app e gestionali per agenzie immobiliari: 399 € + IVA di attivazione definitiva. Immobili, contatti e visite; costi tecnici da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Agenzie immobiliari", "activity": "Agenzia Immobiliare", "menu": false,
     "headline": "Organizza immobili, richieste e appuntamenti in un unico posto.",
@@ -255,7 +255,7 @@
     "cta": "Richiedi una proposta per il tuo studio legale",
     "whatsappMessage": "Buongiorno, vorrei valutare un sito e strumenti organizzativi per appuntamenti e attività del mio studio legale, senza inviare documenti riservati qui.",
     "metaTitle": "Siti e organizzazione per studi legali | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per appuntamenti e organizzazione dello studio legale. Fascicoli riservati richiedono verifiche dedicate.",
+    "metaDescription": "Siti, web app e gestionali per studi legali: 399 € + IVA di attivazione definitiva. Costi tecnici da 9,90 € al mese. Dati riservati: verifiche dedicate.",
     "offers": ["website", "webapp"],
     "name": "Studi legali e notarili", "activity": "Studio Legale / Notarile", "menu": false,
     "headline": "Organizza appuntamenti e attività del tuo studio con strumenti su misura.",
@@ -264,26 +264,26 @@
       { "title": "Appuntamenti senza documenti pubblici", "description": "Le persone possono richiedere un incontro tramite i recapiti, senza inviare fascicoli o documentazione riservata nel modulo." },
       { "title": "Agenda per le attività dello studio", "description": "Organizza incontri e impegni operativi in una vista condivisa, con accessi e responsabilità da definire nel progetto." },
       { "title": "Promemoria degli impegni", "description": "Valutiamo avvisi organizzativi sui canali concordati: non sostituiscono il controllo professionale delle scadenze legali." },
-      { "title": "Richieste gestite con un flusso", "description": "Aiuta il personale a distinguere primi contatti e appuntamenti, senza promettere un gestionale pratiche nel sito base." }
+      { "title": "Richieste gestite con un flusso", "description": "Aiuta il personale a distinguere primi contatti e appuntamenti, con le funzioni organizzative concordate per il tuo studio." }
     ],
     "mockup": { "kind": "calendar", "title": "Agenda attività dello studio", "tabs": ["Appuntamenti", "Attività", "Richieste"], "rows": [
       { "title": "Incontro conoscitivo", "detail": "09:30 · Professionista A", "badge": "In agenda" },
       { "title": "Attività organizzativa", "detail": "11:00 · Nessun fascicolo pubblico", "badge": "Da seguire" },
       { "title": "Richiesta di contatto", "detail": "Canale riservato da concordare", "badge": "Nuova" }
     ] },
-    "features": ["Sito dello studio", "Presentazione ambiti professionali", "Richieste di appuntamento", "Agenda organizzativa", "Area riservata soltanto su progetto dedicato"],
+    "features": ["Sito dello studio", "Presentazione ambiti professionali", "Richieste di appuntamento", "Agenda organizzativa", "Accessi riservati secondo le funzioni concordate"],
     "example": "Una persona trova l'ambito professionale dello studio e richiede un contatto. Il professionista concorda poi un canale adatto per i dettagli riservati.",
     "faq": [
       ["Posso raccogliere documenti dal sito?", "Solo dopo un'analisi specifica di sicurezza, accessi, conservazione e responsabilità; non è incluso nel modulo pubblico."],
       ["Il sito può presentare i professionisti?", "Sì, con informazioni fornite e approvate dallo studio nel rispetto delle regole professionali applicabili."],
-      ["È incluso un gestionale pratiche?", "No. La gestione delle pratiche è un progetto separato da definire nel preventivo."]
+      ["Posso scegliere un gestionale per lo studio?", "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda anche web app e gestionali, con funzioni concordate prima di iniziare. La gestione di fascicoli e documenti riservati richiede verifiche specifiche; eventuali sviluppi aggiuntivi vengono concordati separatamente."]
     ]
   },
   "agenti-commercio": {
     "cta": "Richiedi una proposta per la tua attività commerciale",
     "whatsappMessage": "Buongiorno, sono un agente di commercio e vorrei consultare clienti, pianificare visite e raccogliere ordini dallo smartphone. Vorrei una proposta su misura.",
     "metaTitle": "Clienti e ordini per agenti di commercio | PromoApp.it",
-    "metaDescription": "Siti da 399 € + IVA e strumenti su preventivo per agenti di commercio: clienti, visite, cataloghi e raccolta ordini da smartphone.",
+    "metaDescription": "Siti, web app e gestionali per agenti di commercio: 399 € + IVA di attivazione definitiva. Clienti, visite e ordini; costi tecnici da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Agenti di commercio", "activity": "Agente di Commercio", "menu": false,
     "headline": "Clienti, visite e ordini sempre a portata di mano.",

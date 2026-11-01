@@ -284,7 +284,7 @@ export default function Preventivo() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 shimmer-badge border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full mb-3">
               <i className="fas fa-mobile-screen-button text-emerald-400"></i>
-               Soluzioni digitali per imprese e attività
+               399 € + IVA di attivazione definitiva.
             </div>
 
             {/* Headline */}
@@ -292,12 +292,12 @@ export default function Preventivo() {
               <span className="gradient-text">{variant.headline}</span>
             </h1>
             <p className="text-indigo-200/80 text-base leading-relaxed mb-4 max-w-md">
-              Trasformiamo le esigenze della tua impresa in strumenti digitali concreti. Dalla presenza online alla gestione di clienti, prenotazioni e attività quotidiane.
+              Porta online la tua attività e semplifica il lavoro con una soluzione personalizzata per gestire clienti, appuntamenti, ordini o magazzino.
             </p>
             <div className="grid grid-cols-3 gap-2 mb-4" aria-label="Prezzi dei servizi">
-              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="block text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">Su preventivo</strong></Link>
-              <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">Da 399 €</strong><span className="block text-[10px]">+ IVA</span></Link>
-              <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 €</strong><span className="block text-[10px]">+ IVA · una tantum</span></Link>
+              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="block text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA · Attivazione definitiva</strong></Link>
+              <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="block text-[10px]">Attivazione definitiva</span></Link>
+              <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 €</strong><span className="block text-[10px]">+ IVA · Attivazione definitiva</span></Link>
             </div>
 
             <a href="#preventivo"
@@ -307,7 +307,7 @@ export default function Preventivo() {
             </a>
             <a href="#servizi" className="inline-block text-white font-bold text-sm underline underline-offset-4 mb-3"
               onClick={() => trackEvent("cta_click", "generale", "hero-services")}>Scopri i nostri servizi</a>
-            <p className="text-indigo-100 text-sm mb-3">Una proposta personalizzata, gratuita e senza impegno. Nessun prodotto standard da scegliere per forza.</p>
+            <p className="text-indigo-100 text-sm mb-3">Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione.</p>
             <p className="text-indigo-200 text-xs mb-4">{incentive.responseNote}</p>
             <div className="flex flex-col items-center gap-4 mb-4">
               <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
@@ -380,9 +380,9 @@ export default function Preventivo() {
         <div className="max-w-5xl mx-auto">
           <h2 className="font-bold text-white text-2xl mb-5">Come funziona PromoApp</h2>
           <ol className="grid sm:grid-cols-3 gap-3">
-            {[["Ci racconti la tua attività", "Partiamo dalle tue esigenze e dagli strumenti che usi già."],
-              ["Ricevi una proposta chiara", "Proposta iniziale gratuita e senza impegno; funzioni, costi e tempi concordati."],
-              ["Realizziamo il tuo progetto", "Parli direttamente con chi realizza la soluzione e definisci avvio e assistenza."]].map(([title, text], index) =>
+            {[["Raccontaci la tua attività", "Ci spieghi come lavori e quali strumenti ti servono."],
+              ["Definiamo la tua soluzione", "Ti mostriamo le funzioni comprese nell’attivazione a 399 € + IVA e i relativi costi tecnici di funzionamento."],
+              ["Realizziamo e attiviamo", "Prepariamo la soluzione per la tua attività e ti accompagniamo nell’avvio."]].map(([title, text], index) =>
               <li key={title} className="glass-card rounded-2xl p-5"><p className="text-emerald-300 font-black mb-2">{index + 1}. {title}</p><p className="text-indigo-200 text-sm">{text}</p></li>)}
           </ol>
           <p className="text-indigo-200 text-sm mt-4">{prices.note}</p>
@@ -583,9 +583,9 @@ export default function Preventivo() {
           <TrustPoints />
           <h2 className="font-bold text-white text-2xl mb-5 mt-8">Prima di iniziare</h2>
           <div className="space-y-3">
-            {[["Non so quale soluzione scegliere: posso contattarvi?", "Sì. Partiamo dalle tue attività quotidiane e ti aiutiamo a capire cosa serve, senza richiederti competenze tecniche."],
-              ["Il sito da 399 € comprende un gestionale?", "No. Il sito professionale parte da 399 € + IVA. Prenotazioni, gestionali, pagamenti e altre integrazioni sono su preventivo."],
-              ["Devo impegnarmi per ricevere la proposta?", "No. La proposta iniziale è gratuita e senza impegno. Costi, funzioni e tempi vengono concordati prima di iniziare."]].map(([question, answer]) =>
+            {[["Anche le app e i gestionali costano 399 €?", "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese."],
+              ["Cosa pago dopo l’attivazione?", "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente."],
+              ["E se ho bisogno di un progetto più articolato?", "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere."]].map(([question, answer]) =>
               <details key={question} className="glass-card rounded-xl p-4"><summary className="text-white text-sm font-bold cursor-pointer">{question}</summary><p className="text-indigo-200 text-sm mt-3">{answer}</p></details>)}
           </div>
           <div className="mt-8 text-center">

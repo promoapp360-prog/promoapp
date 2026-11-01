@@ -84,7 +84,7 @@ export default function WhatsAppLanding() {
         </a>
         <p className="wl-note">Seguiamo pochi progetti al mese per curarli bene: scrivici ora per una demo gratuita entro 48 ore.</p>
         <p className="wl-note">Nessun vincolo</p>
-        <p className="wl-services">Siti web professionali da 399 € + IVA · Prenotazioni e appuntamenti online · Gestionali e magazzino · Fidelity digitale · Menu QR</p>
+        <p className="wl-services">Siti web, web app e gestionali: 399 € + IVA di attivazione definitiva. Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione. Menu QR: 99 € + IVA di attivazione definitiva.</p>
         <p className="wl-human">Parli direttamente con chi realizza il tuo progetto, non con un call center.</p>
       </main>
       <footer className="wl-footer">

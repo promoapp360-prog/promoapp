@@ -3,11 +3,17 @@ name: Vincoli commerciali PromoApp
 description: Posizionamento, affidabilità delle prove e limiti richiesti per PromoApp.it
 ---
 
-PromoApp realizza siti web, web app, gestionali personalizzati e soluzioni digitali per piccole e medie imprese. La gerarchia commerciale richiesta è: prima progetti digitali personalizzati, poi siti da 399 € + IVA, infine menu QR da 99 € + IVA una tantum come prodotto complementare.
+PromoApp realizza siti web, web app, gestionali personalizzati e soluzioni digitali per piccole e medie imprese. L’offerta commerciale approvata è 399 € + IVA di attivazione definitiva per siti web, web app e gestionali. Menu QR rimane un prodotto separato a 99 € + IVA di attivazione definitiva.
 
-**Why:** l'utente vuole attrarre anche imprenditori e aziende disposti a investire in soluzioni professionali, non soltanto chi cerca il prezzo più basso.
+**Why:** l’utente ha sostituito la precedente distinzione tra siti con prezzo iniziale e gestionali soltanto su preventivo: vuole vendere le proprie soluzioni adattate all’attività e generare contatti.
 
-**How to apply:** mantenere coerenti homepage, landing, annunci e preventivi con i diversi servizi.
+**How to apply:** non scrivere «da 399 €» né presentare app e gestionali esclusivamente su preventivo. Sviluppi più articolati possono avere una proposta aggiuntiva, da spiegare discretamente nelle FAQ, senza promettere qualsiasi sviluppo senza limiti.
+
+I costi tecnici di funzionamento partono da 9,90 € al mese e variano secondo soluzione e risorse; l’importo viene comunicato prima dell’attivazione. Non sono un abbonamento al software né un rinnovo annuale. Usare «attivazione definitiva» per descrivere l’attivazione.
+
+**Why:** condizioni commerciali espresse dall’utente; esiste un costo mensile, quindi non promettere assenza di costi ricorrenti o canoni.
+
+**How to apply:** distinguere attivazione e costi tecnici; non includere automaticamente dominio, servizi esterni, utilizzo illimitato o assistenza illimitata. Per aggiornamenti di comunicazione commerciale cambiare soltanto i testi, preservando grafica, struttura, collegamenti e funzionalità; non modificare automaticamente testi legali.
 
 Non ricreare il progetto da zero, non perdere recensioni o dati, non cambiare dominio e non inventare recensioni, clienti, risultati economici, progetti, offerte o servizi inclusi.
 
@@ -31,7 +37,7 @@ Per `/siti-web`, responsive e modulo di contatto sono «Sempre incluso». Gli al
 
 **Why:** l’utente ha richiesto esplicitamente responsive e modulo tra «Sempre incluso», superando per questi due elementi la precedente prudenza sul pacchetto base.
 
-**How to apply:** non rimettere questi due elementi tra le opzioni da concordare e non estendere l’inclusione automatica a hosting, dominio, e-commerce o gestionali.
+**How to apply:** non rimettere questi due elementi tra le opzioni da concordare e non estendere l’inclusione automatica a dominio, servizi esterni o funzionalità non concordate. Web app e gestionali rientrano nella nuova offerta a 399 € + IVA con le funzioni definite insieme.
 
 L'utente richiede una homepage orientata ai benefici e alle campagne pubblicitarie. Per siti e web app preferire una proposta personalizzata gratuita e senza impegno. Anteprime gratuite solo se effettivamente disponibili; demo entro 48 ore e tempi di risposta WhatsApp richiedono conferma operativa.
 
@@ -51,7 +57,7 @@ Confrontare le nuove specifiche con quanto già realizzato e riutilizzare ciò c
 
 **How to apply:** distinguere correzioni indispensabili da aggiunte rinviabili; evitare rifacimenti, nuovi servizi a consumo e ripetizioni di test pesanti non necessari.
 
-Il menu digitale base è un'offerta una tantum: non convertirla automaticamente in abbonamento. Hosting, dominio, aggiornamenti illimitati e assistenza continuativa non sono automaticamente inclusi.
+Il menu digitale base mantiene il prezzo di 99 € + IVA di attivazione definitiva: non convertirlo automaticamente in abbonamento software. Costi tecnici da 9,90 € al mese, variabili e comunicati prima dell’attivazione; dominio, aggiornamenti illimitati e assistenza continuativa non sono automaticamente inclusi.
 
 **Why:** regole commerciali del documento fornito dall'utente e approvato per le correzioni essenziali.
 
