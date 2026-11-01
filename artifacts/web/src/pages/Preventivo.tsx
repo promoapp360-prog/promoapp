@@ -295,9 +295,9 @@ export default function Preventivo() {
               Porta online la tua attività e semplifica il lavoro con una soluzione personalizzata per gestire clienti, appuntamenti, ordini o magazzino.
             </p>
             <div className="grid grid-cols-3 gap-2 mb-4" aria-label="Prezzi dei servizi">
-              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="block text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA · Attivazione definitiva</strong></Link>
-              <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="block text-[10px]">Attivazione definitiva</span></Link>
-              <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="block text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 €</strong><span className="block text-[10px]">+ IVA · Attivazione definitiva</span></Link>
+              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="block text-[10px]">Attivazione definitiva</span></Link>
+              <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="block text-[10px]">Attivazione definitiva</span></Link>
+              <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 € + IVA</strong><span className="block text-[10px]">Attivazione definitiva</span></Link>
             </div>
 
             <a href="#preventivo"
