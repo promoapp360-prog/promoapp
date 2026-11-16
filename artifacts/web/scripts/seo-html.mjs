@@ -1,5 +1,6 @@
 import pages from "../src/lib/seo-catalog.mjs";
 import homeFaq from "../src/lib/home-faq.json" with { type: "json" };
+import sectors from "../src/lib/sector-config.json" with { type: "json" };
 import projects from "../src/lib/approved-projects.json" with { type: "json" };
 const SITE = "https://www.promoapp.it";
 // Dati strutturati: aiutano Google a capire chi siamo, cosa offriamo e le FAQ.
@@ -21,6 +22,8 @@ function structuredData(path, page) {
   } else {
     graph.push({ "@type": "Service", name: page.h1 ?? page.title, description: page.description, url: `${SITE}${path}`,
       provider: { "@id": `${SITE}/#organization` }, areaServed: { "@type": "Country", name: "Italia" } });
+    const sector = path.startsWith("/per/") ? sectors[path.slice(5)] : undefined;
+    if (sector) graph.push({ "@type": "FAQPage", mainEntity: sector.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) });
     graph.push({ "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
       { "@type": "ListItem", position: 2, name: page.h1 ?? page.title, item: `${SITE}${path}` }] });

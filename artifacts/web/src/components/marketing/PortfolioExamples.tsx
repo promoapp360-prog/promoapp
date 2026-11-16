@@ -41,3 +41,29 @@ export default function PortfolioExamples() {
     </div>
   </section>;
 }
+
+// Caso reale collegato a un settore: compare solo dove esiste un progetto autorizzato.
+const SECTOR_CASES: Record<string, string> = {
+  "centri-estetici": "L'Angolo del Benessere",
+  parrucchieri: "L'Angolo del Benessere",
+  ristoranti: "KEOS Milano",
+  negozi: "Esse Mobile",
+};
+export function SectorCase({ slug }: { slug: string }) {
+  const p = approvedProjects(projects).find((item) => item.title === SECTOR_CASES[slug]);
+  if (!p) return null;
+  return <section className="sl-section" id="caso-reale"><div className="marketing-container">
+    <h2 className="sl-h2">Un progetto reale: {p.title}</h2>
+    <p className="sl-lead">{p.businessType}. Un lavoro già realizzato da PromoApp, non un esempio illustrativo.</p>
+    <article className="sl-card grid md:grid-cols-2 gap-6 items-center">
+      <img src={appPath(p.image)} alt={`${p.title}: progetto realizzato da PromoApp per ${p.businessType}`}
+        loading="lazy" decoding="async" width={800} height={500} className="w-full rounded-xl" />
+      <div>
+        <p><strong>Esigenza: </strong>{p.need}</p>
+        <p className="mt-3"><strong>Soluzione: </strong>{p.solution}</p>
+        <ul className="sl-list mt-3">{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
+        <a href="#preventivo" className="whatsapp-link mt-4" onClick={() => trackEvent("cta_click", "generale", "sector-case", slug)}>Voglio una soluzione così</a>
+      </div>
+    </article>
+  </div></section>;
+}

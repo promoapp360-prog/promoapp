@@ -10,6 +10,7 @@ import { trackEvent, trackWhatsApp } from "../lib/analytics";
 import "../styles/commercial.css";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import { sectorOfferCopy } from "../lib/sector-offers";
+import { SectorCase } from "../components/marketing/PortfolioExamples";
 
 export default function SectorLanding({ slug }: { slug: string }) {
   useMobileFormVisibility(slug);
@@ -40,6 +41,7 @@ export default function SectorLanding({ slug }: { slug: string }) {
         <div className="sl-ico" aria-hidden="true">{String(index + 1).padStart(2, "0")}</div>
         <h3>{benefit.title}</h3><p>{benefit.description}</p></article>)}</div>
     </div></section>
+    <SectorCase slug={slug} />
     <section className="sl-section alt" id="esempio"><div className="marketing-container">
       <h2 className="sl-h2">Un esempio per {sector.name.toLowerCase()}</h2>
       <p className="sl-lead">Una schermata illustrativa per immaginare il tuo progetto, non un gestionale già attivo.</p>
