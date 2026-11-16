@@ -307,20 +307,25 @@ export default function Preventivo() {
               <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
             </div>
 
-            <a href="#preventivo"
-              onClick={() => trackEvent("cta_click", "generale", "hero")}
-              className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
-              {variant.cta}
+            <div className="flex flex-col sm:flex-row gap-3 mb-3">
+              <a href="#preventivo"
+                onClick={() => trackEvent("cta_click", "generale", "hero")}
+                className="flex flex-1 items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 min-h-12">
+                {variant.cta}
+              </a>
+              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
+                className="flex flex-1 items-center justify-center gap-2 border-2 border-emerald-300/70 hover:bg-white/10 text-white font-bold text-sm rounded-full px-5 py-3 min-h-12">
+                <i className="fab fa-whatsapp text-emerald-300 text-lg" aria-hidden="true" /> {variant.whatsappLabel}
+              </a>
+            </div>
+            <a href="#progetti" className="flex items-center gap-2 text-indigo-100 text-sm mb-4 min-h-11"
+              onClick={() => trackEvent("cta_click", "generale", "hero-projects")}>
+              <i className="fas fa-circle-check text-emerald-300" aria-hidden="true" />
+              <span>Già al lavoro per attività di Milano, Barletta e Reggio Calabria. <strong className="underline underline-offset-4 text-white">Guarda i progetti</strong></span>
             </a>
-            <a href="#servizi" className="inline-block text-white font-bold text-sm underline underline-offset-4 mb-3"
-              onClick={() => trackEvent("cta_click", "generale", "hero-services")}>Scopri i nostri servizi</a>
             <p className="text-indigo-100 text-sm mb-3">Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione.</p>
             <p className="text-indigo-200 text-xs mb-4">{incentive.responseNote}</p>
             <div className="flex flex-col items-center gap-4 mb-4">
-              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
-                className="inline-flex items-center justify-center gap-2 text-emerald-300 font-bold text-sm min-h-11">
-                <i className="fab fa-whatsapp" aria-hidden="true" /> {variant.whatsappLabel}
-              </a>
               {reviews.length > 0 && <a
                 href="#recensioni"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-black text-white transition hover:border-emerald-300/50 hover:bg-white/15"
