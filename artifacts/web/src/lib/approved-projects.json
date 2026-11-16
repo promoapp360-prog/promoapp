@@ -68,5 +68,19 @@
       "Versione desktop e mobile"
     ],
     "image": "/portfolio/restano.webp"
+  },
+  {
+    "approved": true,
+    "title": "BoccaGo",
+    "businessType": "Menu digitale QR per ristoranti e bar · Progetto PromoApp",
+    "need": "Dare a ristoranti e bar un menu digitale semplice da aggiornare, senza abbonamento mensile.",
+    "solution": "Piattaforma con menu QR, ordini e contatti dei clienti gestiti da un unico pannello, da telefono o computer.",
+    "features": [
+      "Menu QR aggiornabile",
+      "Ordini dal telefono",
+      "Contatti dei clienti",
+      "Pannello unico per il locale"
+    ],
+    "image": "/portfolio/boccago.webp"
   }
 ]
