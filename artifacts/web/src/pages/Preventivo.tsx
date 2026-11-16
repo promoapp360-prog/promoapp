@@ -18,6 +18,12 @@ const SERVICES = [
   { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali QR", price: prices.menu.label, desc: "Un prodotto complementare per presentare il menu del tuo locale su smartphone.", cta: "Scopri i menu digitali" },
 ];
 
+const MARKETING = [
+  { icon: "fab fa-meta", title: "Campagne Meta", desc: "Inserzioni su Facebook e Instagram per ricevere richieste e messaggi WhatsApp da clienti della tua zona." },
+  { icon: "fab fa-google", title: "Campagne Google Ads", desc: "Annunci sulla ricerca Google per farti trovare da chi sta cercando proprio il tuo servizio." },
+  { icon: "fas fa-magnifying-glass-chart", title: "SEO", desc: "Ottimizzazione del sito per comparire nei risultati organici di Google, anche nelle ricerche locali." },
+];
+
 const SETTORI = [
   "Negozio / Retail",
   "Ristorante / Bar / Pizzeria",
@@ -360,6 +366,21 @@ export default function Preventivo() {
             </Link>)}
           </div>
           <p className="text-[10px] text-indigo-200/70 mt-4">{prices.note}</p>
+          <div className="glass-card rounded-2xl p-5 mt-6 scroll-mt-5" id="marketing">
+            <p className="text-emerald-300 text-xs font-black uppercase tracking-[0.2em] mb-2">Non solo sviluppo</p>
+            <h2 className="font-bold text-white text-xl mb-2">Ti aiutiamo anche a farti trovare: campagne Meta, Google Ads e SEO</h2>
+            <p className="text-indigo-200 text-sm mb-4">Un sito o un’app funzionano quando arrivano i clienti. Per questo possiamo occuparci anche della tua pubblicità online e del posizionamento su Google.</p>
+            <ul className="grid sm:grid-cols-3 gap-3">
+              {MARKETING.map((item) => <li key={item.title} className="rounded-xl border border-white/15 bg-white/5 p-4">
+                <i className={`${item.icon} text-emerald-300 text-lg`} aria-hidden="true" />
+                <h3 className="text-white font-bold text-sm mt-2">{item.title}</h3>
+                <p className="text-indigo-200 text-xs mt-1">{item.desc}</p>
+              </li>)}
+            </ul>
+            <p className="text-[11px] text-indigo-200/80 mt-4">Servizi su preventivo, concordati prima di iniziare. Il budget pubblicitario viene pagato direttamente a Meta e Google.</p>
+            <a href="#preventivo" onClick={() => trackEvent("cta_click", "generale", "marketing")}
+              className="inline-flex items-center gap-2 mt-4 bg-emerald-500 hover:bg-emerald-400 text-white px-5 py-3 rounded-full font-bold text-sm min-h-12">Chiedi una proposta per la tua pubblicità</a>
+          </div>
           {variant.formPosition === "after-services" && <div className="max-w-xl mx-auto mt-8 scroll-mt-5" id="preventivo">
             <HomeContactForm form={form} onChange={handleChange} onSubmit={handleSubmit} sent={sent} loading={loading} error={error}
               privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />

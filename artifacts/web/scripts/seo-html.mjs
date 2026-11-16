@@ -6,7 +6,8 @@ const SITE = "https://www.promoapp.it";
 const organization = {
   "@type": "ProfessionalService", "@id": `${SITE}/#organization`, name: "PromoApp.it", url: `${SITE}/`,
   logo: `${SITE}/logo.svg`, image: `${SITE}/og-promoapp.png`,
-  description: "Siti web, web app, gestionali personalizzati e menu digitali QR per attività locali e professionisti.",
+  description: "Siti web, web app, gestionali personalizzati e menu digitali QR per attività locali e professionisti. Gestione di campagne Meta, Google Ads e SEO.",
+  knowsAbout: ["Sviluppo siti web", "Web app e gestionali", "Menu digitali QR", "Campagne Meta Ads", "Campagne Google Ads", "SEO"],
   legalName: "Sophia 2005 S.r.l.", vatID: "IT08223951008", telephone: "+393793602035",
   areaServed: { "@type": "Country", name: "Italia" }, priceRange: "€€",
   sameAs: ["https://www.facebook.com/profile.php?id=61568000249468", "https://www.instagram.com/promoapp.it"],
