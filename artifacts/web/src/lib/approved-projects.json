@@ -54,5 +54,19 @@
       "Stampa comande"
     ],
     "image": "/portfolio/keos-milano-card.webp"
+  },
+  {
+    "approved": true,
+    "title": "RESTANO",
+    "businessType": "Piattaforma web · Progetto PromoApp",
+    "need": "Raccogliere e conservare i ricordi di una persona cara, con il contributo di chi l'ha conosciuta.",
+    "solution": "Piattaforma web per computer e smartphone che organizza storie, fotografie ed episodi in uno spazio condiviso dalla famiglia.",
+    "features": [
+      "Storie ed episodi",
+      "Archivio fotografie",
+      "Contributi di familiari e amici",
+      "Versione desktop e mobile"
+    ],
+    "image": "/portfolio/restano.webp"
   }
 ]
