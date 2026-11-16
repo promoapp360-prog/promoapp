@@ -1,1 +1,58 @@
-[]
+[
+  {
+    "approved": true,
+    "title": "La Bottega degli Artigiani",
+    "businessType": "Impresa di ristrutturazioni · Milano",
+    "need": "Ricevere richieste di sopralluogo qualificate dalle campagne Google, invece di semplici telefonate generiche.",
+    "solution": "Sito con landing dedicata alle ristrutturazioni chiavi in mano e modulo di richiesta in due passaggi.",
+    "features": [
+      "Richiesta sopralluogo in 2 passaggi",
+      "Chiamata e WhatsApp in un tocco",
+      "Recensioni Google in evidenza",
+      "Pagine pronte per Google Ads"
+    ],
+    "image": "/portfolio/bottega-artigiani.webp"
+  },
+  {
+    "approved": true,
+    "title": "L'Angolo del Benessere",
+    "businessType": "Centro estetico e parrucchiera · Barletta",
+    "need": "Far prenotare le clienti in autonomia, a qualsiasi ora, senza gestire tutto al telefono.",
+    "solution": "Sito con prenotazione online collegato a un gestionale per trattamenti, orari e pacchetti, più una landing per le campagne Meta.",
+    "features": [
+      "Prenotazioni online 24/7",
+      "Trattamenti e orari gestiti dal centro",
+      "Pacchetti e gift card",
+      "Landing per le sponsorizzate Meta"
+    ],
+    "image": "/portfolio/angolo-del-benessere.webp"
+  },
+  {
+    "approved": true,
+    "title": "Esse Mobile",
+    "businessType": "Riparazione smartphone · Reggio Calabria",
+    "need": "Trasformare le visite al sito in richieste di preventivo veloci da smartphone.",
+    "solution": "Sito pensato per il mobile con preventivo via WhatsApp: il cliente manda una foto e riceve il prezzo.",
+    "features": [
+      "Preventivo tramite foto su WhatsApp",
+      "Pulsanti chiama e scrivi sempre visibili",
+      "Servizi e garanzie in chiaro",
+      "Ottimizzato per le ricerche locali"
+    ],
+    "image": "/portfolio/esse-mobile.webp"
+  },
+  {
+    "approved": true,
+    "title": "KEOS Milano",
+    "businessType": "Club, ristorante e spazio eventi · Milano",
+    "need": "Fidelizzare i clienti del locale e gestire ordini e comande in modo digitale.",
+    "solution": "Web app installabile su smartphone con tessera Club Card digitale, ordini e stampa delle comande.",
+    "features": [
+      "Tessera fedeltà digitale",
+      "App installabile senza store",
+      "Ordini dal telefono",
+      "Stampa comande"
+    ],
+    "image": "/portfolio/keos-milano-card.webp"
+  }
+]

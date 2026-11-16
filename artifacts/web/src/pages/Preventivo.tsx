@@ -9,6 +9,7 @@ import type { ContactResponse } from "@workspace/api-client-react";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import HomeContactForm from "../components/marketing/HomeContactForm";
 import PortfolioExamples from "../components/marketing/PortfolioExamples";
+import homeFaq from "../lib/home-faq.json";
 import "../styles/commercial.css";
 
 const SERVICES = [
@@ -335,6 +336,8 @@ export default function Preventivo() {
         </div>
       </section>
 
+      <PortfolioExamples />
+
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
           <h2 className="font-bold text-white text-2xl mb-2">Progetti digitali personalizzati</h2>
@@ -374,7 +377,6 @@ export default function Preventivo() {
           </div>
         </div>
       </section>
-      <PortfolioExamples />
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
@@ -581,11 +583,9 @@ export default function Preventivo() {
         <div className="max-w-5xl mx-auto">
           <h2 className="font-bold text-white text-2xl mb-5">Perché PromoApp</h2>
           <TrustPoints />
-          <h2 className="font-bold text-white text-2xl mb-5 mt-8">Prima di iniziare</h2>
+          <h2 className="font-bold text-white text-2xl mb-5 mt-8" id="faq">Domande frequenti</h2>
           <div className="space-y-3">
-            {[["Anche le app e i gestionali costano 399 €?", "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese."],
-              ["Cosa pago dopo l’attivazione?", "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente."],
-              ["E se ho bisogno di un progetto più articolato?", "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere."]].map(([question, answer]) =>
+            {homeFaq.map(([question, answer]) =>
               <details key={question} className="glass-card rounded-xl p-4"><summary className="text-white text-sm font-bold cursor-pointer">{question}</summary><p className="text-indigo-200 text-sm mt-3">{answer}</p></details>)}
           </div>
           <div className="mt-8 text-center">

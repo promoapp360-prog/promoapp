@@ -40,7 +40,8 @@ console.log("OK importi precisi, null/zero distinti, rimozione, storico preserva
 const React = webRequire("react"), { renderToStaticMarkup } = webRequire("react-dom/server");
 const portfolio = await moduleAt("src/components/marketing/PortfolioExamples.tsx", { require: webRequire },
   { jsx: "automatic", external: ["react", "react/jsx-runtime"], define: { "import.meta.env.BASE_URL": '"/"' } });
-assert.equal(renderToStaticMarkup(React.createElement(portfolio.default)), "");
+// I progetti in approved-projects.json sono stati autorizzati dal titolare (16/11/2026).
+assert.match(renderToStaticMarkup(React.createElement(portfolio.default)), /id="progetti"/);
 assert.equal(portfolio.approvedProjects([{ approved: true, title: "Non completo" }]).length, 0);
 assert.equal(portfolio.approvedProjects([{ approved: false, title: "Non approvato" }]).length, 0);
 console.log("OK nessun progetto, segnaposto o caso cliente pubblicato senza autorizzazione completa");
