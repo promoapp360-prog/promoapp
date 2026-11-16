@@ -347,7 +347,7 @@ export default function Preventivo() {
         </div>
       </section>
 
-      <PortfolioExamples />
+      <PortfolioExamples onCta={() => trackEvent("cta_click", "generale", "portfolio")} />
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">

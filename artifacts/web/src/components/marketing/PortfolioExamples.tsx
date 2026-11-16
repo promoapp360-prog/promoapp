@@ -1,6 +1,5 @@
 import projects from "../../lib/approved-projects.json";
 import { appPath } from "../../lib/marketing";
-import { trackEvent } from "../../lib/analytics";
 
 type Project = { approved: boolean; title: string; businessType: string; need: string; solution: string; features: string[]; image: string };
 export function approvedProjects(items: unknown[]): Project[] {
@@ -12,7 +11,8 @@ export function approvedProjects(items: unknown[]): Project[] {
       Array.isArray(p.features) && p.features.length > 0 && p.features.every((v) => typeof v === "string" && v.trim());
   });
 }
-export default function PortfolioExamples() {
+// Il tracciamento del clic arriva dalla pagina, così questo componente resta senza dipendenze dal tracking.
+export default function PortfolioExamples({ onCta }: { onCta?: () => void } = {}) {
   const approved = approvedProjects(projects);
   if (!approved.length) return null;
   return <section className="relative z-10 px-4 py-10 scroll-mt-5" id="progetti" aria-labelledby="progetti-title">
@@ -20,7 +20,9 @@ export default function PortfolioExamples() {
       <p className="text-emerald-300 text-xs font-black uppercase tracking-[0.2em] mb-2">Progetti reali, clienti reali</p>
       <h2 id="progetti-title" className="font-black text-2xl md:text-3xl mb-2">Cosa abbiamo realizzato per attività come la tua</h2>
       <p className="text-indigo-200 text-sm mb-6 max-w-2xl">Siti, prenotazioni online, gestionali ed e-commerce già al lavoro per imprese locali in tutta Italia.</p>
-      <div className="grid sm:grid-cols-2 gap-4">{approved.map((p, index) => <article key={p.title} className="glass-card rounded-2xl overflow-hidden flex flex-col">
+      <p className="sm:hidden text-indigo-200 text-xs mb-3" aria-hidden="true">Scorri per vedere tutti i progetti →</p>
+      {/* Su mobile le schede scorrono in orizzontale, così i servizi restano raggiungibili senza uno scroll lunghissimo. */}
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0">{approved.map((p, index) => <article key={p.title} className="glass-card rounded-2xl overflow-hidden flex flex-col shrink-0 w-[85%] snap-center sm:w-auto">
         <img src={appPath(p.image)} alt={`${p.title}: progetto realizzato da PromoApp per ${p.businessType}`}
           loading={index < 2 ? "eager" : "lazy"} decoding="async" width={800} height={500}
           className="w-full aspect-[16/10] object-cover object-top bg-white/5" />
@@ -33,7 +35,7 @@ export default function PortfolioExamples() {
         </div>
       </article>)}</div>
       <div className="mt-6 text-center">
-        <a href="#preventivo" onClick={() => trackEvent("cta_click", "generale", "portfolio")}
+        <a href="#preventivo" onClick={onCta}
           className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-3 rounded-full font-bold text-sm min-h-12">
           Voglio una soluzione così per la mia attività
         </a>
@@ -49,7 +51,7 @@ const SECTOR_CASES: Record<string, string> = {
   ristoranti: "KEOS Milano",
   negozi: "Esse Mobile",
 };
-export function SectorCase({ slug }: { slug: string }) {
+export function SectorCase({ slug, onCta }: { slug: string; onCta?: () => void }) {
   const p = approvedProjects(projects).find((item) => item.title === SECTOR_CASES[slug]);
   if (!p) return null;
   return <section className="sl-section" id="caso-reale"><div className="marketing-container">
@@ -62,7 +64,7 @@ export function SectorCase({ slug }: { slug: string }) {
         <p><strong>Esigenza: </strong>{p.need}</p>
         <p className="mt-3"><strong>Soluzione: </strong>{p.solution}</p>
         <ul className="sl-list mt-3">{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
-        <a href="#preventivo" className="whatsapp-link mt-4" onClick={() => trackEvent("cta_click", "generale", "sector-case", slug)}>Voglio una soluzione così</a>
+        <a href="#preventivo" className="whatsapp-link mt-4" onClick={onCta}>Voglio una soluzione così</a>
       </div>
     </article>
   </div></section>;

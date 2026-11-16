@@ -41,7 +41,7 @@ export default function SectorLanding({ slug }: { slug: string }) {
         <div className="sl-ico" aria-hidden="true">{String(index + 1).padStart(2, "0")}</div>
         <h3>{benefit.title}</h3><p>{benefit.description}</p></article>)}</div>
     </div></section>
-    <SectorCase slug={slug} />
+    <SectorCase slug={slug} onCta={() => trackEvent("cta_click", "generale", "sector-case", slug)} />
     <section className="sl-section alt" id="esempio"><div className="marketing-container">
       <h2 className="sl-h2">Un esempio per {sector.name.toLowerCase()}</h2>
       <p className="sl-lead">Una schermata illustrativa per immaginare il tuo progetto, non un gestionale già attivo.</p>
