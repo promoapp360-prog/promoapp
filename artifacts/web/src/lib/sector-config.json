@@ -2,7 +2,7 @@
   "ristoranti": {
     "cta": "Richiedi una proposta per il tuo ristorante",
     "whatsappMessage": "Buongiorno, vorrei informazioni per il mio ristorante: siti, web app e gestionali a 399 € + IVA di attivazione definitiva oppure Menu QR a 99 € + IVA di attivazione definitiva.",
-    "metaTitle": "Menu QR e soluzioni per ristoranti | PromoApp.it",
+    "metaTitle": "Menu digitale QR e gestionale per ristoranti | PromoApp.it",
     "metaDescription": "Siti, web app e gestionali per ristoranti: 399 € + IVA di attivazione definitiva. Costi tecnici da 9,90 € al mese. Menu QR: 99 € + IVA di attivazione definitiva.",
     "offers": ["website", "menu", "webapp"],
     "name": "Ristoranti", "activity": "Ristorante / Bar / Pizzeria", "menu": true,
@@ -58,7 +58,7 @@
   "centri-estetici": {
     "cta": "Richiedi una proposta per il tuo centro estetico",
     "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, operatori e clienti del mio centro estetico. Mi interessa una proposta gratuita.",
-    "metaTitle": "Agenda e soluzioni per centri estetici | PromoApp.it",
+    "metaTitle": "Gestionale e prenotazioni per centri estetici | PromoApp.it",
     "metaDescription": "Siti, web app e gestionali per centri estetici: 399 € + IVA di attivazione definitiva. Appuntamenti e clienti; costi tecnici di funzionamento da 9,90 € al mese.",
     "offers": ["website", "webapp"],
     "name": "Centri estetici", "activity": "Centro Estetico / SPA", "menu": false,
@@ -86,7 +86,7 @@
   "parrucchieri": {
     "cta": "Richiedi una proposta per il tuo salone",
     "whatsappMessage": "Buongiorno, vorrei organizzare appuntamenti, collaboratori e clienti del mio salone o barber shop. Possiamo valutare una soluzione su misura?",
-    "metaTitle": "Prenotazioni e siti per parrucchieri | PromoApp.it",
+    "metaTitle": "Prenotazioni online e sito per parrucchieri | PromoApp.it",
     "metaDescription": "Siti, web app e gestionali per parrucchieri e barber: 399 € + IVA di attivazione definitiva. Costi tecnici di funzionamento da 9,90 € al mese. Contatto senza impegno.",
     "offers": ["website", "webapp"],
     "name": "Parrucchieri e barber", "activity": "Parrucchiere / Barber", "menu": false,
@@ -114,7 +114,7 @@
   "studi-medici": {
     "cta": "Richiedi una proposta per il tuo studio medico",
     "whatsappMessage": "Buongiorno, vorrei valutare sito, agenda e richieste di appuntamento per il mio studio medico, senza raccogliere dati clinici nel modulo pubblico.",
-    "metaTitle": "Siti e agenda per studi medici | PromoApp.it",
+    "metaTitle": "Gestionale e agenda online per studi medici | PromoApp.it",
     "metaDescription": "Siti, web app e gestionali per studi medici: 399 € + IVA di attivazione definitiva. Costi tecnici da 9,90 € al mese. Dati sanitari: analisi specifica.",
     "offers": ["website", "webapp"],
     "name": "Studi medici", "activity": "Studio Medico / Dentista", "menu": false,
