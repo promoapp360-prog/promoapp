@@ -1,0 +1,202 @@
+{
+  "/siti-web": {
+    "sections": [
+      {
+        "heading": "Creazione siti web per attività locali",
+        "paragraphs": [
+          "Un sito web per ristorante, bar, negozio o studio deve rendere subito chiari servizi, orari e modi per contattare l’attività. La struttura viene definita insieme: quali pagine servono, quali informazioni il cliente cerca più spesso e quali richieste vuoi ricevere. Per una ricerca come “sito web per ristorante”, ad esempio, sono utili menu, posizione, orari e un collegamento diretto ai recapiti, se previsti nel progetto.",
+          "La creazione di siti web per attività locali parte dai contenuti reali dell’impresa, non da risultati o recensioni inventati. Il design responsive e il modulo di contatto funzionante sono sempre inclusi nell’offerta; pagine, testi, foto, SEO di base e servizi esterni si concordano nel preventivo. Dominio, hosting e altri costi tecnici vengono spiegati prima dell’attivazione."
+        ]
+      }
+    ],
+    "faq": [
+      ["Realizzate un sito web per ristorante o bar?", "Sì. Possiamo presentare orari, servizi, menu e contatti del locale. Pagine e funzioni vengono definite nel preventivo; ordini e pagamenti online non sono inclusi automaticamente."],
+      ["Il sito funziona su smartphone?", "Sì. Il design responsive per smartphone, tablet e computer e il modulo di contatto funzionante sono sempre inclusi nell’offerta."],
+      ["Chi prepara testi e fotografie?", "I contenuti e le fotografie vengono forniti o concordati prima dell’avvio. Non pubblichiamo immagini, recensioni o risultati di clienti senza autorizzazione."],
+      ["Quanto costa realizzare il sito?", "L’attivazione definitiva per un sito web costa 399 € + IVA. I costi tecnici di funzionamento partono da 9,90 € al mese e vengono comunicati prima dell’attivazione."],
+      ["Posso aggiungere prenotazioni o ordini?", "Sì, dopo una verifica delle esigenze e delle integrazioni. Le funzioni aggiuntive e i relativi costi vengono indicati nella proposta prima di procedere."]
+    ]
+  },
+  "/web-app": {
+    "faq": [
+      ["Anche le app e i gestionali costano 399 €?", "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese."],
+      ["Cosa pago dopo l’attivazione?", "I costi tecnici necessari al funzionamento partono da 9,90 € al mese. Importo, risorse e servizi esterni vengono indicati prima dell’attivazione; gli extra sono concordati separatamente."],
+      ["E se ho bisogno di un progetto più articolato?", "Possiamo valutare sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere."],
+      ["E dopo la consegna?", "Manutenzione e assistenza vengono definite insieme, in base alle esigenze del progetto."]
+    ]
+  },
+  "/menu-digitali": {
+    "faq": [
+      ["Come funziona il menu con QR code?", "Il cliente inquadra il QR e consulta piatti e bevande dal browser dello smartphone, senza installare un’app."],
+      ["Posso modificare piatti e prezzi?", "Definiamo nel preventivo come aggiornare contenuti e prezzi. Gli aggiornamenti illimitati e un’area di modifica autonoma non sono inclusi automaticamente."],
+      ["Cosa pago dopo l’attivazione del menu?", "Il Menu QR costa 99 € + IVA di attivazione definitiva. I costi tecnici partono da 9,90 € al mese e vengono comunicati prima dell’attivazione; dominio, assistenza e funzioni aggiuntive seguono le condizioni concordate."],
+      ["Sono inclusi ordini e pagamenti dal tavolo?", "No, non nel menu base. Ordini, pagamenti, integrazioni e flussi al tavolo richiedono una verifica e una proposta separata."]
+    ]
+  },
+  "/controllo-sito": {
+    "sections": [
+      {
+        "heading": "Una revisione del sito, spiegata con chiarezza",
+        "paragraphs": [
+          "Il controllo gratuito del sito è una valutazione pratica dei punti che possono ostacolare clienti e visitatori: informazioni poco visibili, errori nelle pagine, caricamento lento, moduli che non inviano oppure collegamenti a servizi esterni da verificare. Ricevi indicazioni comprensibili e priorità concrete, così puoi decidere se intervenire e da dove cominciare.",
+          "La richiesta è riservata a chi possiede il sito o ha l’autorizzazione del titolare. PromoApp non lancia scansioni automatiche su indirizzi scelti da altri: il sito viene esaminato manualmente dopo la richiesta e il consenso. Non chiediamo password, credenziali o accessi amministrativi per inviare il modulo; eventuali verifiche ulteriori si concordano separatamente."
+        ]
+      }
+    ],
+    "faq": [
+      ["Come funziona il controllo gratuito?", "Invii il sito e almeno un recapito. Dopo la verifica della richiesta prepariamo una valutazione chiara e ti ricontattiamo entro 48 ore."],
+      ["Devo essere proprietario del sito?", "Sì, oppure devi avere l’autorizzazione del titolare. Il modulo chiede una conferma esplicita prima di inviare la richiesta."],
+      ["Cosa comprende il report?", "La revisione considera informazioni esposte, velocità ed errori visibili, collegamenti esterni e funzionamento dei moduli o dei contatti, nei limiti di una verifica manuale."],
+      ["Il controllo avvia una scansione automatica?", "No. Non eseguiamo scansioni automatiche di URL arbitrari. La richiesta autorizzata viene valutata manualmente; eventuali attività tecniche aggiuntive richiedono un accordo separato."],
+      ["Sono obbligato a chiedere un intervento?", "No. Il controllo e il report non ti impegnano ad acquistare servizi. Se desideri un intervento, ricevi una proposta separata prima di decidere."]
+    ]
+  },
+  "/gestionali": {
+    "title": "Gestionale su misura per imprese | PromoApp.it",
+    "description": "Un gestionale personalizzato per clienti, appuntamenti e processi aziendali. Funzioni concordate; costi tecnici da 9,90 € al mese.",
+    "h1": "Gestionale personalizzato per il lavoro di ogni giorno",
+    "intro": "Un gestionale utile parte dal modo in cui lavora la tua attività. Definiamo insieme quali informazioni organizzare, quali passaggi semplificare e quali funzioni hanno davvero senso.",
+    "service": "web-app",
+    "sections": [
+      {
+        "heading": "Un gestionale costruito sui processi dell’impresa",
+        "paragraphs": [
+          "Un gestionale personalizzato può aiutare a riunire richieste, clienti, appuntamenti, ordini o attività interne in un flusso più leggibile. Prima di progettare l’interfaccia, raccogliamo le esigenze e descriviamo i passaggi che vuoi gestire. La proposta distingue le funzioni comprese nell’attivazione da eventuali sviluppi aggiuntivi, collegamenti con altri software e costi tecnici necessari.",
+          "Non proponiamo un pacchetto identico per tutte le imprese. Un’attività che riceve richieste di appuntamento ha bisogni diversi da un negozio che organizza prodotti e contatti o da un’impresa che coordina attività interne. Per questo ruoli, schermate, notifiche, dati e report si definiscono prima di iniziare, senza promettere collegamenti che non siano stati verificati."
+        ]
+      },
+      {
+        "heading": "Gestionale per centro estetico, salone e studio",
+        "paragraphs": [
+          "Per un gestionale centro estetico si possono valutare agenda, durata dei trattamenti, cabine, operatori e richieste delle clienti. Per un salone, invece, possono essere importanti servizi con tempi diversi, collaboratori e disponibilità. Lo strumento deve seguire le regole effettive dell’attività: gli appuntamenti possono arrivare come richieste da confermare o seguire un flusso diverso, concordato con il titolare.",
+          "Anche studi e professionisti possono richiedere un sistema per organizzare contatti e appuntamenti. I dati raccolti e le responsabilità di gestione si definiscono in base al caso; non inseriamo automaticamente informazioni sanitarie o documenti riservati in un modulo pubblico."
+        ]
+      },
+      {
+        "heading": "Software per bar e ristoranti: funzioni da valutare",
+        "paragraphs": [
+          "Un software per bar e ristoranti può organizzare richieste, clienti, ordini o comande, ma ogni integrazione dipende dai sistemi già usati dal locale. Un menu digitale QR è un prodotto distinto: ordini e pagamenti dal tavolo non fanno parte del menu base e si valutano come funzioni aggiuntive. Prima di formulare una proposta verifichiamo quali strumenti esistono, quali dati devono passare e quali autorizzazioni sono disponibili.",
+          "La stessa attenzione vale per magazzino, report, promemoria e programmi fedeltà. Sono possibilità da progettare, non funzioni automatiche incluse in ogni gestionale. Le condizioni, gli eventuali servizi esterni e le risorse necessarie vengono presentati nel preventivo."
+        ]
+      },
+      {
+        "heading": "Dall’analisi alla messa in uso",
+        "paragraphs": [
+          "Il percorso inizia con una descrizione delle attività quotidiane e dei problemi che vuoi risolvere. Insieme scegliamo le priorità, definiamo una prima versione e concordiamo come verificare il risultato. Durante lo sviluppo puoi dare indicazioni sulle schermate e sul flusso; le modifiche e le integrazioni fuori ambito vengono valutate prima di essere realizzate.",
+          "L’attivazione definitiva di siti, web app e gestionali è di 399 € + IVA. I costi tecnici di funzionamento partono da 9,90 € al mese e variano secondo soluzione e risorse; l’importo viene comunicato prima dell’attivazione. Assistenza, dominio e servizi esterni seguono le condizioni riportate nella proposta."
+        ]
+      }
+    ],
+    "faq": [
+      ["Quanto costa un gestionale personalizzato?", "L’attivazione definitiva per web app e gestionali è di 399 € + IVA. Funzioni aggiuntive e sviluppi più articolati vengono concordati nel preventivo; i costi tecnici partono da 9,90 € al mese."],
+      ["Il gestionale centro estetico include le prenotazioni?", "Agenda e richieste di appuntamento si definiscono in base a trattamenti, operatori, cabine e regole del centro. Le funzioni esatte sono specificate prima dell’avvio."],
+      ["Il software si collega ai programmi che uso già?", "Prima analizziamo software, API, licenze e autorizzazioni. Un collegamento viene proposto solo dopo averne verificato la fattibilità e i relativi costi."],
+      ["Posso usare il gestionale da smartphone?", "L’accesso da browser e il design responsive si definiscono per il progetto. Un’app pubblicata sugli store non è inclusa automaticamente."],
+      ["Il menu QR comprende ordini al tavolo?", "No, il menu base presenta i contenuti tramite QR. Ordini e pagamenti al tavolo sono funzioni aggiuntive, da verificare e concordare separatamente."]
+    ],
+    "related": [
+      ["/app-prenotazioni", "Scopri le prenotazioni online"],
+      ["/siti-web", "Scopri i siti web locali"],
+      ["/menu-digitali", "Scopri il menu digitale QR"]
+    ]
+  },
+  "/app-prenotazioni": {
+    "title": "Prenotazioni online per saloni | PromoApp.it",
+    "description": "Organizza prenotazioni online per parrucchieri, centri estetici e studi con un flusso su misura e costi chiari prima dell’avvio.",
+    "h1": "Prenotazioni online per saloni e attività locali",
+    "intro": "Un sistema di prenotazione dovrebbe aiutare le persone a inviare una richiesta e l’attività a gestirla secondo disponibilità e regole reali. Il flusso si definisce insieme, prima dello sviluppo.",
+    "service": "web-app",
+    "sections": [
+      {
+        "heading": "Prenotazioni online per parrucchiere e barber",
+        "paragraphs": [
+          "Le prenotazioni online per un parrucchiere possono partire dalla scelta del servizio, dalla durata prevista e dalla disponibilità del salone. Se lavorano più persone, si può valutare anche la selezione del collaboratore. Il flusso deve rispettare i tempi di taglio, colore e posa indicati dall’attività, evitando di confermare automaticamente orari che devono essere prima controllati.",
+          "Il sito può presentare servizi, orari, indirizzo e recapiti, mentre una web app o un gestionale può organizzare richieste e agenda. Sono soluzioni diverse: nella proposta specifichiamo cosa è compreso, quali attività restano manuali e se sono necessari servizi esterni."
+        ]
+      },
+      {
+        "heading": "Agenda e gestionale per centro estetico",
+        "paragraphs": [
+          "Un gestionale centro estetico può essere configurato per trattamenti, durata, operatrici e cabine, se queste esigenze vengono incluse nel progetto. Le clienti possono consultare le informazioni e richiedere un appuntamento; il centro stabilisce se confermare ogni richiesta o rendere disponibili orari secondo le proprie regole.",
+          "Promemoria, pacchetti, acconti, gift card e pagamenti non si attivano automaticamente. Prima di inserirli analizziamo canali, condizioni di cancellazione, consensi e costi di eventuali fornitori. Così il sistema rispecchia il servizio reale senza promettere funzioni o integrazioni non verificate."
+        ]
+      },
+      {
+        "heading": "Un progetto già realizzato per un’attività locale",
+        "paragraphs": [
+          "A Barletta, L’Angolo del Benessere ha un sito con prenotazione online collegato a un gestionale per trattamenti, orari e pacchetti, oltre a una landing per le campagne Meta. È un progetto autorizzato e documentato nel portfolio PromoApp. Le funzioni mostrate descrivono quel caso specifico e non costituiscono un pacchetto automatico per ogni nuova attività.",
+          "Per saloni, centri estetici e studi partiamo dalle stesse domande: quali appuntamenti vuoi ricevere, chi gestisce il calendario, quali dati sono davvero necessari e come si conferma una richiesta? Le risposte guidano la proposta e aiutano a evitare passaggi superflui."
+        ]
+      },
+      {
+        "heading": "Prezzi e funzioni definiti prima di iniziare",
+        "paragraphs": [
+          "L’attivazione definitiva di web app e gestionali è di 399 € + IVA. Costi tecnici di funzionamento, a partire da 9,90 € al mese, variano secondo soluzione e risorse e vengono comunicati prima dell’attivazione. Numero di operatori, integrazioni, servizi di messaggistica, assistenza e altre funzioni si concordano nella proposta.",
+          "Non devi cambiare subito il tuo modo di lavorare. Puoi iniziare da un sito che presenta l’attività e raccoglie contatti, oppure valutare un flusso di prenotazione più articolato. Ti mostriamo le opzioni dopo aver ascoltato le esigenze e prima di chiederti di procedere."
+        ]
+      }
+    ],
+    "faq": [
+      ["Posso avere prenotazioni online per parrucchiere?", "Sì. Possiamo valutare servizi, durate, collaboratori e regole del salone. La proposta specifica se le richieste sono confermate automaticamente o verificate dall’attività."],
+      ["Il gestionale centro estetico comprende acconti?", "Acconti, regole di cancellazione e pagamenti sono funzioni da analizzare e concordare. Eventuali servizi esterni e relativi costi vengono indicati prima dell’avvio."],
+      ["Posso ricevere prenotazioni dal sito senza un’app?", "Sì. Il sito può raccogliere richieste di appuntamento. Un calendario e le funzioni gestionali si aggiungono solo se definite nel progetto."],
+      ["Quanto costa il sistema di prenotazione?", "L’attivazione definitiva per web app e gestionali è di 399 € + IVA. I costi tecnici partono da 9,90 € al mese e vengono comunicati prima dell’attivazione."],
+      ["Avete già realizzato progetti con prenotazioni?", "Sì. L’Angolo del Benessere, a Barletta, usa un sito con prenotazione online collegato a un gestionale per trattamenti, orari e pacchetti."]
+    ],
+    "related": [
+      ["/gestionali", "Scopri i gestionali personalizzati"],
+      ["/siti-web", "Scopri i siti web per attività locali"],
+      ["/menu-digitali", "Scopri il menu digitale QR"]
+    ]
+  },
+  "/siti-web-milano": {
+    "title": "Siti web a Milano per imprese | PromoApp.it",
+    "description": "Realizzazione di siti web per attività a Milano. Scopri due progetti PromoApp realizzati in città e richiedi una proposta senza impegno.",
+    "h1": "Siti web a Milano per attività e imprese",
+    "intro": "PromoApp lavora con attività di Milano per presentare servizi, facilitare i contatti e organizzare richieste online. Qui trovi esempi di progetti reali svolti in città, con esigenze e soluzioni descritte senza promesse generiche.",
+    "city": "Milano",
+    "service": "siti-web",
+    "projects": ["La Bottega degli Artigiani", "KEOS Milano"],
+    "sections": [
+      {
+        "heading": "Un sito web chiaro per le attività di Milano",
+        "paragraphs": [
+          "Un sito web per un’attività a Milano deve aiutare chi cerca un servizio a capire cosa offre l’impresa, dove opera e come chiedere informazioni. La struttura può includere pagine istituzionali, descrizione dei servizi, contatti e collegamenti ai canali dell’attività. Numero e contenuto delle pagine vengono concordati prima dell’avvio, insieme ai testi e alle fotografie disponibili.",
+          "La ricerca “siti web Milano” comprende attività con esigenze molto diverse: un ristorante deve presentare informazioni aggiornate sul locale, mentre un’impresa di servizi può voler raccogliere richieste di sopralluogo. Per questo la progettazione parte dall’obiettivo concreto e non da una promessa di posizionamento o da un modello uguale per tutti."
+        ]
+      },
+      {
+        "heading": "Due progetti PromoApp realizzati a Milano",
+        "paragraphs": [
+          "La Bottega degli Artigiani, impresa di ristrutturazioni a Milano, ha un sito con una landing dedicata alle ristrutturazioni chiavi in mano e un modulo di richiesta in due passaggi. Il progetto è stato pensato per raccogliere richieste di sopralluogo e rendere più chiari i recapiti e le informazioni utili.",
+          "KEOS Milano, club, ristorante e spazio eventi, ha una web app installabile su smartphone con tessera Club Card digitale, ordini e stampa delle comande. Sono due esempi diversi: il primo è un sito per un’impresa locale, il secondo una piattaforma digitale per un locale. Le funzioni mostrate appartengono ai progetti effettivamente realizzati."
+        ]
+      },
+      {
+        "heading": "Siti web per imprese locali, senza promesse non verificate",
+        "paragraphs": [
+          "Il design responsive e il modulo di contatto funzionante sono sempre inclusi nell’offerta per i siti web. Pagine, testi, fotografie e SEO di base si definiscono nel preventivo. Un sito non garantisce da solo un determinato numero di visite o una posizione specifica su Google: la visibilità dipende anche dalla concorrenza, dai contenuti e dalle attività successive.",
+          "PromoApp può seguire il progetto a distanza, confrontandosi con il titolare e condividendo una proposta prima dell’avvio. I progetti locali citati in questa pagina sono a Milano; non rappresentano una sede fisica o un ufficio aperto al pubblico in città."
+        ]
+      },
+      {
+        "heading": "Costi comunicati prima dell’attivazione",
+        "paragraphs": [
+          "L’attivazione definitiva di un sito web è di 399 € + IVA. I costi tecnici necessari al funzionamento partono da 9,90 € al mese, variano in base alla soluzione e alle risorse e vengono comunicati prima dell’attivazione. Dominio, servizi esterni, assistenza e funzioni aggiuntive seguono quanto concordato nella proposta.",
+          "Se gestisci un negozio, uno studio, un ristorante o un’impresa di servizi a Milano, puoi raccontarci cosa deve fare il sito e quali informazioni i clienti cercano. Valutiamo insieme la struttura e i passaggi utili; puoi chiedere una proposta gratuita e senza impegno prima di decidere."
+        ]
+      }
+    ],
+    "faq": [
+      ["Avete già realizzato siti web a Milano?", "Sì. La Bottega degli Artigiani è un’impresa di ristrutturazioni a Milano con sito e modulo di richiesta sopralluogo; KEOS Milano ha una web app per club, ristorante e spazio eventi."],
+      ["PromoApp ha un ufficio a Milano?", "Questa pagina presenta progetti realizzati in città. Il lavoro viene seguito online; non dichiariamo una sede fisica o un ufficio aperto al pubblico a Milano."],
+      ["Quanto costa un sito web per un’attività di Milano?", "L’attivazione definitiva costa 399 € + IVA. Costi tecnici da 9,90 € al mese, variabili secondo soluzione e risorse, vengono comunicati prima dell’attivazione."],
+      ["Il prezzo include il posizionamento su Google?", "Include la SEO di base concordata per il sito. Nessun servizio può garantire una posizione specifica o un numero certo di visite; attività SEO aggiuntive si valutano separatamente."]
+    ],
+    "related": [
+      ["/siti-web", "Siti web per attività locali"],
+      ["/gestionali", "Gestionali personalizzati"],
+      ["/lavori", "Tutti i progetti PromoApp"]
+    ]
+  }
+}

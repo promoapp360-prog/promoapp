@@ -15,7 +15,13 @@ export default function MarketingLayout({ service = "generale", slug, children, 
     <main>{children}</main>
     <footer className="marketing-footer"><div className="marketing-container">
       <p><strong>PromoApp.it</strong> · P.IVA 08223951008</p>
+      <p className="mt-2 text-sm">
+        <a href="tel:+393793602035">+39 379 360 2035</a>
+        <span aria-hidden="true"> · </span>
+        <a href="mailto:sophiaderos0@gmail.com">sophiaderos0@gmail.com</a>
+      </p>
       <nav aria-label="Informazioni legali" className="flex flex-wrap gap-4 mt-3">
+        <Link href="/lavori">Lavori</Link><Link href="/siti-web-milano">Siti web a Milano</Link>
         <a href={appPath("/dati-societari.html")}>Dati societari</a><a href={appPath("/privacy.html")}>Privacy</a>
         <a href={appPath("/cookie.html")}>Cookie</a>
         <button type="button" onClick={() => window.dispatchEvent(new Event("promoapp-cookie-settings"))}>Preferenze cookie</button>

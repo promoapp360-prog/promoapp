@@ -50,7 +50,7 @@ export default function LeadForm({ service = "generale", slug = "generale", acti
   }
   return <form className="lead-form" onSubmit={submit} onInvalid={invalid} data-testid={`form-${slug}`}
     onFocusCapture={() => { if (!started.current) { trackEvent("form_start", service, "form", slug); started.current = true; } }}>
-    <h3>{cta ?? serviceCta[service]}</h3>
+    <h2>{cta ?? serviceCta[service]}</h2>
     <p className="text-sm text-gray-500">Tre dati, nessun impegno. {service === "menu-digitali" ? incentive.promise : "Richiedi una proposta personalizzata in base alle esigenze della tua attività."}</p>
     <div><label htmlFor={`${id}-name`}>Nome attività *</label><input id={`${id}-name`} name="nome_attivita" autoComplete="organization"
       value={form.nome_attivita} onChange={change} required minLength={2} maxLength={160} placeholder="Il nome della tua attività" /></div>

@@ -13,7 +13,7 @@ import homeFaq from "../lib/home-faq.json";
 import "../styles/commercial.css";
 
 const SERVICES = [
-  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Prenotazioni, clienti e processi aziendali: partiamo dalle tue esigenze, non da un pacchetto standard.", cta: "Parlaci della tua idea" },
+  { path: "/gestionali", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Prenotazioni, clienti e processi aziendali: partiamo dalle tue esigenze, non da un pacchetto standard.", cta: "Parlaci della tua idea" },
   { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: prices.website.label, desc: "Una presenza online professionale, che può evolvere con nuove funzioni concordate.", cta: "Scopri i siti web" },
   { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali QR", price: prices.menu.label, desc: "Un prodotto complementare per presentare il menu del tuo locale su smartphone.", cta: "Scopri i menu digitali" },
 ];
@@ -305,7 +305,7 @@ export default function Preventivo() {
               Porta online la tua attività e semplifica il lavoro con una soluzione personalizzata per gestire clienti, appuntamenti, ordini o magazzino.
             </p>
             <div className="grid grid-cols-3 gap-2 mb-4" aria-label="Prezzi dei servizi">
-              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
+              <Link href="/gestionali" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
               <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
               <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
             </div>
@@ -359,7 +359,7 @@ export default function Preventivo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
             <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
           </div>)}</div>
-          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Parlaci della tua idea →</Link>
+          <Link href="/gestionali" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Parlaci della tua idea →</Link>
         </div>
       </section>
       <section className="relative z-10 px-4 py-8" id="servizi">
@@ -654,10 +654,19 @@ export default function Preventivo() {
       {/* ── FOOTER ── */}
       <footer className="relative z-10 border-t border-white/10 py-7 px-4 mt-2">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-          <span className="text-xs text-indigo-300/60">
-            © {new Date().getFullYear()} Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
-          </span>
+          <div className="text-center md:text-left">
+            <span className="block text-xs text-indigo-300/60">
+              © {new Date().getFullYear()} Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
+            </span>
+            <span className="mt-2 block text-xs text-indigo-300/70">
+              <a href="tel:+393793602035" className="hover:text-white transition">+39 379 360 2035</a>
+              <span aria-hidden="true"> · </span>
+              <a href="mailto:sophiaderos0@gmail.com" className="hover:text-white transition">sophiaderos0@gmail.com</a>
+            </span>
+          </div>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-indigo-300/60">
+            <Link href="/lavori" className="hover:text-white transition">Lavori</Link>
+            <Link href="/siti-web-milano" className="hover:text-white transition">Siti web a Milano</Link>
             <a href={appPath("/dati-societari.html")} className="hover:text-white transition">Dati societari</a>
             <a href={appPath("/privacy.html")} className="hover:text-white transition">Privacy</a>
             <a href={appPath("/cookie.html")} className="hover:text-white transition">Cookie</a>

@@ -98,7 +98,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
     finally { setBusy(""); }
   }
 
-  if (checking) return <main className="min-h-screen bg-slate-50 grid place-items-center"><p role="status">Verifica della sessione…</p></main>;
+  if (checking) return <main className="min-h-screen bg-slate-50 grid place-items-center"><h1 className="sr-only">Area riservata PromoApp</h1><p role="status">Verifica della sessione…</p></main>;
   if (!authenticated) return (
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-5 py-20" style={{ fontFamily: "Poppins, sans-serif" }}>
       <section className="w-full max-w-md rounded-3xl bg-white p-7 sm:p-9 shadow-xl">

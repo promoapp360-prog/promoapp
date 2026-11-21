@@ -33,6 +33,12 @@ Mostrare lavori reali solo se completi e autorizzati, separandoli dagli esempi i
 
 **How to apply:** ottenere l'approvazione dei singoli lavori prima di usarli come prova commerciale; non eliminare i dati dei progetti cliente.
 
+Le schede marcate «Progetto PromoApp» descrivono prodotti interni, non lavori per clienti: non attribuire loro città o inserirle nel portfolio locale come prove commerciali. Le pagine portfolio e local SEO devono usare solo lavori cliente approvati con città documentata.
+
+**Why:** i progetti interni e i casi cliente hanno valore diverso come prova commerciale; città e clienti non vanno dedotti o inventati.
+
+**How to apply:** separare le demo dei prodotti dalle schede dei lavori cliente e verificare autorizzazione e località prima di aggiungere una pagina o un dato strutturato.
+
 Mostrare PromoApp e partita IVA nel footer compatto, con un collegamento ai dati societari; mantenere la denominazione completa nelle informazioni legali. Non mostrare Admin nel footer pubblico. Il modulo per scrivere una recensione deve aprirsi al clic.
 
 **Why:** l'utente ha approvato questa soluzione per rendere la pagina più compatta senza eliminare l'identità della società dalle informazioni legali e ha scelto esplicitamente «Rimuovi Admin dal footer».

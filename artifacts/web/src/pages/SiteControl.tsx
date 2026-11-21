@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import MarketingLayout from "../components/marketing/MarketingLayout";
+import { SEOFAQs, SEOSections } from "../components/marketing/SEOContent";
 import { appPath, WHATSAPP_NUMBER } from "../lib/marketing";
 
 type FormValues = {
@@ -175,6 +176,8 @@ export default function SiteControl() {
             </div>
           </div>
         </section>
+        <SEOSections pagePath="/controllo-sito" />
+        <SEOFAQs pagePath="/controllo-sito" />
       </div>
     </MarketingLayout>
   );
