@@ -22,12 +22,17 @@ import type {
   AdminOverview,
   AdminReview,
   AdminSession,
+  AdminSiteControlRequest,
   ContactRequest,
   ContactResponse,
   ContactStateInput,
   GetAdminOverviewParams,
   HealthStatus,
+  ListAdminSiteControlRequestsParams,
   ReviewPublicationInput,
+  SiteControlRequestInput,
+  SiteControlRequestReceipt,
+  SiteControlRequestStatusInput,
   SiteVisitInput,
   TrackingConfig,
 } from "./api.schemas";
@@ -736,6 +741,197 @@ export const useDeleteAdminReview = <
   return useMutation(getDeleteAdminReviewMutationOptions(options));
 };
 
+/**
+ * @summary Elenca le richieste di controllo sito
+ */
+export const getListAdminSiteControlRequestsUrl = (
+  params?: ListAdminSiteControlRequestsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/controlli?${stringifiedParams}`
+    : `/api/admin/controlli`;
+};
+
+export const listAdminSiteControlRequests = async (
+  params?: ListAdminSiteControlRequestsParams,
+  options?: RequestInit,
+): Promise<AdminSiteControlRequest[]> => {
+  return customFetch<AdminSiteControlRequest[]>(
+    getListAdminSiteControlRequestsUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getListAdminSiteControlRequestsQueryKey = (
+  params?: ListAdminSiteControlRequestsParams,
+) => {
+  return [`/api/admin/controlli`, ...(params ? [params] : [])] as const;
+};
+
+export const getListAdminSiteControlRequestsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAdminSiteControlRequests>>,
+  TError = ErrorType<void>,
+>(
+  params?: ListAdminSiteControlRequestsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listAdminSiteControlRequests>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListAdminSiteControlRequestsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listAdminSiteControlRequests>>
+  > = ({ signal }) =>
+    listAdminSiteControlRequests(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminSiteControlRequests>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListAdminSiteControlRequestsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listAdminSiteControlRequests>>
+>;
+export type ListAdminSiteControlRequestsQueryError = ErrorType<void>;
+
+/**
+ * @summary Elenca le richieste di controllo sito
+ */
+
+export function useListAdminSiteControlRequests<
+  TData = Awaited<ReturnType<typeof listAdminSiteControlRequests>>,
+  TError = ErrorType<void>,
+>(
+  params?: ListAdminSiteControlRequestsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listAdminSiteControlRequests>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListAdminSiteControlRequestsQueryOptions(
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getUpdateAdminSiteControlRequestUrl = (id: string) => {
+  return `/api/admin/controlli/${id}`;
+};
+
+export const updateAdminSiteControlRequest = async (
+  id: string,
+  siteControlRequestStatusInput: SiteControlRequestStatusInput,
+  options?: RequestInit,
+): Promise<AdminSiteControlRequest> => {
+  return customFetch<AdminSiteControlRequest>(
+    getUpdateAdminSiteControlRequestUrl(id),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(siteControlRequestStatusInput),
+    },
+  );
+};
+
+export const getUpdateAdminSiteControlRequestMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminSiteControlRequest>>,
+    TError,
+    { id: string; data: BodyType<SiteControlRequestStatusInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateAdminSiteControlRequest>>,
+  TError,
+  { id: string; data: BodyType<SiteControlRequestStatusInput> },
+  TContext
+> => {
+  const mutationKey = ["updateAdminSiteControlRequest"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateAdminSiteControlRequest>>,
+    { id: string; data: BodyType<SiteControlRequestStatusInput> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateAdminSiteControlRequest(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateAdminSiteControlRequestMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateAdminSiteControlRequest>>
+>;
+export type UpdateAdminSiteControlRequestMutationBody =
+  BodyType<SiteControlRequestStatusInput>;
+export type UpdateAdminSiteControlRequestMutationError = ErrorType<void>;
+
+export const useUpdateAdminSiteControlRequest = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminSiteControlRequest>>,
+    TError,
+    { id: string; data: BodyType<SiteControlRequestStatusInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateAdminSiteControlRequest>>,
+  TError,
+  { id: string; data: BodyType<SiteControlRequestStatusInput> },
+  TContext
+> => {
+  return useMutation(getUpdateAdminSiteControlRequestMutationOptions(options));
+};
+
 export const getRecordSiteVisitUrl = () => {
   return `/api/visits`;
 };
@@ -900,6 +1096,96 @@ export const useSubmitContact = <
   TContext
 > => {
   return useMutation(getSubmitContactMutationOptions(options));
+};
+
+/**
+ * @summary Richiede un controllo gratuito del sito
+ */
+export const getSubmitSiteControlRequestUrl = () => {
+  return `/api/controlli`;
+};
+
+export const submitSiteControlRequest = async (
+  siteControlRequestInput: SiteControlRequestInput,
+  options?: RequestInit,
+): Promise<SiteControlRequestReceipt> => {
+  return customFetch<SiteControlRequestReceipt>(
+    getSubmitSiteControlRequestUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(siteControlRequestInput),
+    },
+  );
+};
+
+export const getSubmitSiteControlRequestMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof submitSiteControlRequest>>,
+    TError,
+    { data: BodyType<SiteControlRequestInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof submitSiteControlRequest>>,
+  TError,
+  { data: BodyType<SiteControlRequestInput> },
+  TContext
+> => {
+  const mutationKey = ["submitSiteControlRequest"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof submitSiteControlRequest>>,
+    { data: BodyType<SiteControlRequestInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return submitSiteControlRequest(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SubmitSiteControlRequestMutationResult = NonNullable<
+  Awaited<ReturnType<typeof submitSiteControlRequest>>
+>;
+export type SubmitSiteControlRequestMutationBody =
+  BodyType<SiteControlRequestInput>;
+export type SubmitSiteControlRequestMutationError = ErrorType<void>;
+
+/**
+ * @summary Richiede un controllo gratuito del sito
+ */
+export const useSubmitSiteControlRequest = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof submitSiteControlRequest>>,
+    TError,
+    { data: BodyType<SiteControlRequestInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof submitSiteControlRequest>>,
+  TError,
+  { data: BodyType<SiteControlRequestInput> },
+  TContext
+> => {
+  return useMutation(getSubmitSiteControlRequestMutationOptions(options));
 };
 
 export const getGetTrackingConfigUrl = () => {

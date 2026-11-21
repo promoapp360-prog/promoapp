@@ -272,6 +272,69 @@ export interface ContactResponse {
   notification?: ContactResponseNotification;
 }
 
+export type SiteControlRequestStatus =
+  (typeof SiteControlRequestStatus)[keyof typeof SiteControlRequestStatus];
+
+export const SiteControlRequestStatus = {
+  Nuova: "Nuova",
+  In_analisi: "In analisi",
+  Report_inviato: "Report inviato",
+  Cliente_acquisito: "Cliente acquisito",
+} as const;
+
+export interface SiteControlRequestStatusInput {
+  status: SiteControlRequestStatus;
+}
+
+export interface SiteControlRequestInput {
+  /**
+   * @minLength 3
+   * @maxLength 2048
+   */
+  siteUrl: string;
+  /**
+   * @minLength 2
+   * @maxLength 160
+   */
+  nomeAttivita: string;
+  /** @maxLength 254 */
+  email?: string;
+  /** @maxLength 30 */
+  whatsapp?: string;
+  authorization: boolean;
+  privacyAccepted: boolean;
+  /** @maxLength 200 */
+  honeypot?: string;
+}
+
+export interface SiteControlRequestReceipt {
+  success: boolean;
+  message: string;
+}
+
+export type AdminSiteControlRequestNotification =
+  (typeof AdminSiteControlRequestNotification)[keyof typeof AdminSiteControlRequestNotification];
+
+export const AdminSiteControlRequestNotification = {
+  sent: "sent",
+  pending: "pending",
+} as const;
+
+export interface AdminSiteControlRequest {
+  id: string;
+  siteUrl: string;
+  nomeAttivita: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  whatsapp: string | null;
+  authorization: boolean;
+  privacyAccepted: boolean;
+  status: SiteControlRequestStatus;
+  notification: AdminSiteControlRequestNotification;
+  createdAt: string;
+}
+
 export interface HealthStatus {
   status: string;
 }
@@ -288,3 +351,7 @@ export const GetAdminOverviewDays = {
   NUMBER_30: 30,
   NUMBER_90: 90,
 } as const;
+
+export type ListAdminSiteControlRequestsParams = {
+  status?: SiteControlRequestStatus;
+};

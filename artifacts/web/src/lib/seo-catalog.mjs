@@ -34,6 +34,12 @@ export default {
     h1: "Un’app su misura per organizzare meglio la tua attività.",
   },
   "/grazie": { title: "Richiesta ricevuta | PromoApp.it", description: "La tua richiesta è stata salvata. Ti ricontatteremo al numero indicato.", noindex: true },
+  "/controllo-sito": {
+    title: "Controllo gratuito del sito web | PromoApp",
+    description: "Scopri gratis se il tuo sito è sicuro, veloce e se ti fa perdere clienti. Report chiaro in 48 ore.",
+    h1: "Controllo gratuito del sito web",
+  },
+  "/admin/controlli": { title: "Controlli siti — Admin | PromoApp", description: "Area riservata per gestire le richieste di controllo dei siti.", noindex: true },
   "/whatsapp": {
     title: "Parliamo del tuo progetto | PromoApp.it",
     description: "Raccontaci cosa ti serve su WhatsApp. Ti rispondiamo noi, senza moduli e senza impegno.",

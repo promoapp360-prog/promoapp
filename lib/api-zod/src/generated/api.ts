@@ -147,6 +147,67 @@ export const DeleteAdminReviewParams = zod.object({
   id: zod.coerce.string(),
 });
 
+/**
+ * @summary Elenca le richieste di controllo sito
+ */
+export const ListAdminSiteControlRequestsQueryParams = zod.object({
+  status: zod
+    .enum(["Nuova", "In analisi", "Report inviato", "Cliente acquisito"])
+    .optional(),
+});
+
+export const ListAdminSiteControlRequestsResponseItem = zod.object({
+  id: zod.string().uuid(),
+  siteUrl: zod.string(),
+  nomeAttivita: zod.string(),
+  email: zod.string().nullable(),
+  whatsapp: zod.string().nullable(),
+  authorization: zod.boolean(),
+  privacyAccepted: zod.boolean(),
+  status: zod.enum([
+    "Nuova",
+    "In analisi",
+    "Report inviato",
+    "Cliente acquisito",
+  ]),
+  notification: zod.enum(["sent", "pending"]),
+  createdAt: zod.coerce.date(),
+});
+export const ListAdminSiteControlRequestsResponse = zod.array(
+  ListAdminSiteControlRequestsResponseItem,
+);
+
+export const UpdateAdminSiteControlRequestParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const UpdateAdminSiteControlRequestBody = zod.object({
+  status: zod.enum([
+    "Nuova",
+    "In analisi",
+    "Report inviato",
+    "Cliente acquisito",
+  ]),
+});
+
+export const UpdateAdminSiteControlRequestResponse = zod.object({
+  id: zod.string().uuid(),
+  siteUrl: zod.string(),
+  nomeAttivita: zod.string(),
+  email: zod.string().nullable(),
+  whatsapp: zod.string().nullable(),
+  authorization: zod.boolean(),
+  privacyAccepted: zod.boolean(),
+  status: zod.enum([
+    "Nuova",
+    "In analisi",
+    "Report inviato",
+    "Cliente acquisito",
+  ]),
+  notification: zod.enum(["sent", "pending"]),
+  createdAt: zod.coerce.date(),
+});
+
 export const recordSiteVisitBodyPathMax = 200;
 
 export const RecordSiteVisitBody = zod.object({
@@ -272,6 +333,47 @@ export const SubmitContactResponse = zod.object({
   leadId: zod.string().optional(),
   duplicate: zod.boolean().optional(),
   notification: zod.enum(["sent", "pending"]).optional(),
+});
+
+/**
+ * @summary Richiede un controllo gratuito del sito
+ */
+export const submitSiteControlRequestBodySiteUrlMin = 3;
+export const submitSiteControlRequestBodySiteUrlMax = 2048;
+
+export const submitSiteControlRequestBodyNomeAttivitaMin = 2;
+export const submitSiteControlRequestBodyNomeAttivitaMax = 160;
+
+export const submitSiteControlRequestBodyEmailMax = 254;
+
+export const submitSiteControlRequestBodyWhatsappMax = 30;
+
+export const submitSiteControlRequestBodyHoneypotMax = 200;
+
+export const SubmitSiteControlRequestBody = zod.object({
+  siteUrl: zod
+    .string()
+    .min(submitSiteControlRequestBodySiteUrlMin)
+    .max(submitSiteControlRequestBodySiteUrlMax),
+  nomeAttivita: zod
+    .string()
+    .min(submitSiteControlRequestBodyNomeAttivitaMin)
+    .max(submitSiteControlRequestBodyNomeAttivitaMax),
+  email: zod
+    .string()
+    .email()
+    .max(submitSiteControlRequestBodyEmailMax)
+    .optional(),
+  whatsapp: zod
+    .string()
+    .max(submitSiteControlRequestBodyWhatsappMax)
+    .optional(),
+  authorization: zod.literal(true),
+  privacyAccepted: zod.literal(true),
+  honeypot: zod
+    .string()
+    .max(submitSiteControlRequestBodyHoneypotMax)
+    .optional(),
 });
 
 export const GetTrackingConfigResponse = zod.object({

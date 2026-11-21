@@ -8,6 +8,7 @@ import ServiceLanding from "./pages/ServiceLanding";
 import MenuDemo from "./pages/MenuDemo";
 import SectorLanding from "./pages/SectorLanding";
 import ThankYou from "./pages/ThankYou";
+import SiteControl from "./pages/SiteControl";
 const Admin = lazy(() => import("./pages/Admin"));
 import WhatsAppLanding from "./pages/WhatsAppLanding";
 import CookieConsent from "./components/marketing/CookieConsent";
@@ -34,10 +35,12 @@ function Routes() {
       <Route path="/menu-digitali">{() => <ServiceLanding service="menu-digitali" />}</Route>
       <Route path="/menu-digitale">{() => <Redirect to={`/menu-digitali${window.location.search}`} replace />}</Route>
       <Route path="/menu-demo" component={MenuDemo} />
+      <Route path="/controllo-sito" component={SiteControl} />
       <Route path="/per/:slug">{(params) => <SectorLanding slug={params.slug} />}</Route>
       <Route path="/grazie" component={ThankYou} />
       <Route path="/gestione-contatti">{() => <Redirect to="/admin" replace />}</Route>
-      <Route path="/admin">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin /></Suspense>}</Route>
+      <Route path="/admin/controlli">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin initialTab="controls" /></Suspense>}</Route>
+      <Route path="/admin">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin initialTab="overview" /></Suspense>}</Route>
       {/* Homepage esistente conservata e aggiornata, con il suo modulo recensioni. */}
       <Route path="/" component={Preventivo} />
       <Route component={Preventivo} />

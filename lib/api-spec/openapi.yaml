@@ -120,6 +120,43 @@ paths:
       responses:
         "204": { description: Recensione eliminata }
         "404": { description: Recensione non trovata }
+  /admin/controlli:
+    get:
+      operationId: listAdminSiteControlRequests
+      summary: Elenca le richieste di controllo sito
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/SiteControlRequestStatus"
+      responses:
+        "200":
+          description: Richieste di controllo ricevute
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AdminSiteControlRequest" }
+        "400": { description: Stato non valido }
+  /admin/controlli/{id}:
+    patch:
+      operationId: updateAdminSiteControlRequest
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SiteControlRequestStatusInput" }
+      responses:
+        "200":
+          description: Stato aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminSiteControlRequest" }
+        "400": { description: Stato non valido }
+        "404": { description: Richiesta non trovata }
   /visits:
     post:
       operationId: recordSiteVisit
@@ -161,6 +198,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContactResponse"
+  /controlli:
+    post:
+      operationId: submitSiteControlRequest
+      tags: [contacts]
+      summary: Richiede un controllo gratuito del sito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SiteControlRequestInput" }
+      responses:
+        "201":
+          description: Richiesta ricevuta
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SiteControlRequestReceipt" }
+        "400": { description: Dati non validi o autorizzazione mancante }
+        "403": { description: Origine non autorizzata }
+        "429": { description: Limite richieste raggiunto }
+        "503": { description: Salvataggio temporaneamente non disponibile }
   /marketing-config:
     get:
       operationId: getTrackingConfig
@@ -402,6 +459,45 @@ components:
         notification:
           type: string
           enum: [sent, pending]
+    SiteControlRequestStatus:
+      type: string
+      enum: [Nuova, In analisi, Report inviato, Cliente acquisito]
+    SiteControlRequestStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status: { $ref: "#/components/schemas/SiteControlRequestStatus" }
+    SiteControlRequestInput:
+      type: object
+      required: [siteUrl, nomeAttivita, authorization, privacyAccepted]
+      properties:
+        siteUrl: { type: string, minLength: 3, maxLength: 2048 }
+        nomeAttivita: { type: string, minLength: 2, maxLength: 160 }
+        email: { type: string, format: email, maxLength: 254 }
+        whatsapp: { type: string, maxLength: 30 }
+        authorization: { type: boolean, enum: [true] }
+        privacyAccepted: { type: boolean, enum: [true] }
+        honeypot: { type: string, maxLength: 200 }
+    SiteControlRequestReceipt:
+      type: object
+      required: [success, message]
+      properties:
+        success: { type: boolean, enum: [true] }
+        message: { type: string }
+    AdminSiteControlRequest:
+      type: object
+      required: [id, siteUrl, nomeAttivita, email, whatsapp, authorization, privacyAccepted, status, notification, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        siteUrl: { type: string }
+        nomeAttivita: { type: string }
+        email: { type: ["string", "null"] }
+        whatsapp: { type: ["string", "null"] }
+        authorization: { type: boolean }
+        privacyAccepted: { type: boolean }
+        status: { $ref: "#/components/schemas/SiteControlRequestStatus" }
+        notification: { type: string, enum: [sent, pending] }
+        createdAt: { type: string, format: date-time }
     HealthStatus:
       type: object
       properties:

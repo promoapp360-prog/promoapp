@@ -9,6 +9,7 @@ import gestionaliRouter from "./gestionali";
 import recensioniRouter from "./recensioni";
 import proxyRouter from "./proxy";
 import visitsRouter from "./visits";
+import siteControlsRouter from "./site-controls";
 import { adminAuthorization } from "../middlewares/adminAuthorization";
 
 const router: IRouter = Router();
@@ -17,6 +18,7 @@ router.use(adminAuthorization);
 router.use(healthRouter);
 router.use(contattoRouter);
 router.use(visitsRouter);
+router.use(siteControlsRouter);
 router.use(checkoutRouter);
 router.use(adminRouter);
 router.use(lavoriRouter);

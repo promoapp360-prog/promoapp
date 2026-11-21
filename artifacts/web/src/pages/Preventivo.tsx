@@ -250,7 +250,7 @@ export default function Preventivo() {
       />
 
       {/* ── NAV ── */}
-      <nav className="relative z-10 w-full px-5 pt-4 pb-2 flex justify-between items-center max-w-5xl mx-auto">
+      <nav className="relative z-10 w-full px-5 pt-4 pb-2 flex flex-wrap justify-between items-center gap-y-1 max-w-5xl mx-auto">
         <span className="text-[1.35rem] font-black tracking-tighter text-white select-none">
           Promo<span className="text-emerald-400">App</span>
           <span className="text-indigo-300">.it</span>
@@ -258,12 +258,15 @@ export default function Preventivo() {
         <a
           href="#preventivo"
           onClick={() => trackEvent("cta_click", "generale", "nav")}
-          className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-full font-bold text-sm transition shadow-lg shadow-emerald-900/30 hover:shadow-emerald-500/30"
+          className="order-2 flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-full font-bold text-sm transition shadow-lg shadow-emerald-900/30 hover:shadow-emerald-500/30 md:order-3"
           data-testid="link-nav-proposta"
         >
           <i className="fas fa-paper-plane text-base" aria-hidden="true"></i>
           Richiedi proposta
         </a>
+        <Link href="/controllo-sito" className="order-3 basis-full py-2 text-center text-xs font-bold text-emerald-100 underline underline-offset-4 hover:text-white md:order-2 md:ml-auto md:mr-4 md:basis-auto">
+          Controllo gratuito
+        </Link>
       </nav>
 
       {/* ── WhatsApp float ── */}
@@ -390,6 +393,32 @@ export default function Preventivo() {
             <HomeContactForm form={form} onChange={handleChange} onSubmit={handleSubmit} sent={sent} loading={loading} error={error}
               privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
           </div>}
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-10" aria-labelledby="controllo-sito-title">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-white/15 bg-white/5 p-5 text-white sm:p-8">
+          <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Un controllo gratuito, senza tecnicismi</p>
+          <h2 id="controllo-sito-title" className="text-2xl font-black sm:text-3xl">Il tuo sito è sicuro? Te lo diciamo gratis.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-indigo-100">Analizziamo il tuo sito web come farebbe un esperto di sicurezza e ti mandiamo un report chiaro, senza tecnicismi.</p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {[
+              ["fa-key", "Dati esposti", "chiavi, password o file nascosti visibili a chiunque"],
+              ["fa-gauge-high", "Velocità ed errori", "cosa rallenta il sito e cosa non funziona"],
+              ["fa-link", "Servizi collegati", "strumenti esterni e possibili rischi"],
+              ["fa-user-xmark", "Clienti persi", "moduli, prenotazioni o WhatsApp che non funzionano"],
+            ].map(([icon, title, description]) => (
+              <article key={title} className="flex gap-4 rounded-2xl border border-white/10 bg-indigo-950/25 p-4">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-400/15 text-emerald-300">
+                  <i className={`fas ${icon} text-lg`} aria-hidden="true" />
+                </span>
+                <div><h3 className="font-bold">{title}</h3><p className="mt-1 text-xs leading-5 text-indigo-200">{description}</p></div>
+              </article>
+            ))}
+          </div>
+          <Link href="/controllo-sito" className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-400">
+            <i className="fas fa-shield-halved" aria-hidden="true" /> Richiedi il controllo gratuito
+          </Link>
         </div>
       </section>
 
