@@ -246,12 +246,19 @@ export default function AdminFinancePanel({
             </div>
           ) : (
             <div className="space-y-3">
-              {data.projects.map((project) => (
+              {data.projects.map((project) => {
+                const client = data.clients.find((item) => item.id === project.clientId);
+                const customerName = client?.companyName || project.clientName;
+                const contactName = client?.companyName && client.name !== client.companyName ? client.name : null;
+                return (
                 <article key={project.id} className={`rounded-xl border p-4 ${project.active ? "border-slate-200" : "border-dashed border-slate-300 bg-slate-50 opacity-75"}`} data-testid={`card-finance-project-${project.id}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h4 className="break-words font-semibold">{project.name}</h4>
-                      <p className="text-sm text-slate-500">{project.clientName}{!project.active && " · Archiviato"}</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Cliente</p>
+                      <h4 className="break-words font-semibold">{customerName}</h4>
+                      {contactName && <p className="text-xs text-slate-500">Referente: {contactName}</p>}
+                      <p className="mt-1 text-sm text-slate-500"><span className="font-semibold text-slate-600">Lavoro:</span> {project.name}</p>
+                      {!project.active && <p className="mt-1 text-xs text-slate-500">Archiviato</p>}
                     </div>
                     <p className="shrink-0 text-sm font-bold">{money(project.totalAmountCents)}</p>
                   </div>
@@ -282,7 +289,8 @@ export default function AdminFinancePanel({
                     </button>
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

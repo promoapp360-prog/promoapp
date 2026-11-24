@@ -20,3 +20,9 @@ Nel bilancio lavori, la modalità “a rate” è selezionabile anche senza cono
 **Why:** l’utente ha chiarito che il conteggio delle rate è facoltativo e che gli interessa monitorare il residuo da incassare.
 
 **How to apply:** non rendere obbligatorio il numero di rate; usa i movimenti ancora non incassati per il residuo per cliente e mantieni il totale complessivo.
+
+Nelle schede dei lavori, mostrare prima il nome della persona o della società cliente e poi il nome del lavoro.
+
+**Why:** l’utente ha richiesto quest’ordine per riconoscere subito a chi appartiene ogni lavoro.
+
+**How to apply:** mettere in evidenza il cliente prima del lavoro; se sono presenti società e referente, mostrare la società come cliente e il referente come informazione secondaria.
