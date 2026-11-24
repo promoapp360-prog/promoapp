@@ -106,6 +106,317 @@ export interface AdminOverview {
   pages: VisitedPage[];
 }
 
+export type AdminFinanceProjectPaymentType =
+  (typeof AdminFinanceProjectPaymentType)[keyof typeof AdminFinanceProjectPaymentType];
+
+export const AdminFinanceProjectPaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
+export interface AdminFinanceProject {
+  id: string;
+  /** @nullable */
+  clientId: string | null;
+  clientName: string;
+  name: string;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  totalAmountCents: number;
+  paymentType: AdminFinanceProjectPaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount: number | null;
+  notes: string;
+  active: boolean;
+  createdAt: string;
+  /** @minimum 0 */
+  receivedCents: number;
+  /** @minimum 0 */
+  outstandingCents: number;
+}
+
+export type AdminFinanceEntryDirection =
+  (typeof AdminFinanceEntryDirection)[keyof typeof AdminFinanceEntryDirection];
+
+export const AdminFinanceEntryDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export type AdminFinanceEntryCategory =
+  (typeof AdminFinanceEntryCategory)[keyof typeof AdminFinanceEntryCategory];
+
+export const AdminFinanceEntryCategory = {
+  deposit: "deposit",
+  balance: "balance",
+  monthly_fee: "monthly_fee",
+  facebook: "facebook",
+  replit: "replit",
+  other: "other",
+} as const;
+
+export interface AdminFinanceEntry {
+  id: string;
+  /** @nullable */
+  projectId: string | null;
+  /** @nullable */
+  projectName: string | null;
+  /** @nullable */
+  clientName: string | null;
+  direction: AdminFinanceEntryDirection;
+  category: AdminFinanceEntryCategory;
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  dueDate: string;
+  /** @nullable */
+  paidAt: string | null;
+  repeatMonthly: boolean;
+  createdAt: string;
+}
+
+export interface AdminFinanceSummary {
+  /** @pattern ^\d{4}-(0[1-9]|1[0-2])$ */
+  month: string;
+  receivedCents: number;
+  expensesCents: number;
+  balanceCents: number;
+  outstandingCents: number;
+  overdueIncomeCents: number;
+  unpaidExpensesCents: number;
+}
+
+export interface AdminFinanceClient {
+  id: string;
+  name: string;
+  /** @nullable */
+  companyName: string | null;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  phone: string | null;
+  notes: string;
+  createdAt: string;
+}
+
+export interface AdminFinanceData {
+  summary: AdminFinanceSummary;
+  clients: AdminFinanceClient[];
+  projects: AdminFinanceProject[];
+  entries: AdminFinanceEntry[];
+}
+
+export interface FinanceClientInput {
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name: string;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  companyName?: string | null;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email?: string | null;
+  /**
+   * @maxLength 60
+   * @nullable
+   */
+  phone?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+}
+
+export interface FinanceClientUpdate {
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name?: string;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  companyName?: string | null;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email?: string | null;
+  /**
+   * @maxLength 60
+   * @nullable
+   */
+  phone?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+}
+
+export type FinanceProjectInputPaymentType =
+  (typeof FinanceProjectInputPaymentType)[keyof typeof FinanceProjectInputPaymentType];
+
+export const FinanceProjectInputPaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
+export interface FinanceProjectInput {
+  clientId: string;
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name: string;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  totalAmountCents: number;
+  paymentType: FinanceProjectInputPaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents?: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount?: number | null;
+  /** @maxLength 4000 */
+  notes?: string;
+}
+
+export type FinanceProjectUpdatePaymentType =
+  (typeof FinanceProjectUpdatePaymentType)[keyof typeof FinanceProjectUpdatePaymentType];
+
+export const FinanceProjectUpdatePaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
+export interface FinanceProjectUpdate {
+  clientId?: string;
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name?: string;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  totalAmountCents?: number;
+  paymentType?: FinanceProjectUpdatePaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents?: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount?: number | null;
+  /** @maxLength 4000 */
+  notes?: string;
+  active?: boolean;
+}
+
+export type FinanceEntryInputDirection =
+  (typeof FinanceEntryInputDirection)[keyof typeof FinanceEntryInputDirection];
+
+export const FinanceEntryInputDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export type FinanceEntryInputCategory =
+  (typeof FinanceEntryInputCategory)[keyof typeof FinanceEntryInputCategory];
+
+export const FinanceEntryInputCategory = {
+  deposit: "deposit",
+  balance: "balance",
+  monthly_fee: "monthly_fee",
+  facebook: "facebook",
+  replit: "replit",
+  other: "other",
+} as const;
+
+export interface FinanceEntryInput {
+  /** @nullable */
+  projectId?: string | null;
+  direction: FinanceEntryInputDirection;
+  category: FinanceEntryInputCategory;
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  dueDate: string;
+  paid?: boolean;
+  repeatMonthly?: boolean;
+}
+
+export type FinanceEntryUpdateCategory =
+  (typeof FinanceEntryUpdateCategory)[keyof typeof FinanceEntryUpdateCategory];
+
+export const FinanceEntryUpdateCategory = {
+  deposit: "deposit",
+  balance: "balance",
+  monthly_fee: "monthly_fee",
+  facebook: "facebook",
+  replit: "replit",
+  other: "other",
+} as const;
+
+export interface FinanceEntryUpdate {
+  category?: FinanceEntryUpdateCategory;
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description?: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents?: number;
+  dueDate?: string;
+  repeatMonthly?: boolean;
+}
+
 export interface TrackingConfig {
   gtmId?: string;
   ga4Id?: string;
@@ -272,6 +583,69 @@ export interface ContactResponse {
   notification?: ContactResponseNotification;
 }
 
+export type SiteControlRequestStatus =
+  (typeof SiteControlRequestStatus)[keyof typeof SiteControlRequestStatus];
+
+export const SiteControlRequestStatus = {
+  Nuova: "Nuova",
+  In_analisi: "In analisi",
+  Report_inviato: "Report inviato",
+  Cliente_acquisito: "Cliente acquisito",
+} as const;
+
+export interface SiteControlRequestStatusInput {
+  status: SiteControlRequestStatus;
+}
+
+export interface SiteControlRequestInput {
+  /**
+   * @minLength 3
+   * @maxLength 2048
+   */
+  siteUrl: string;
+  /**
+   * @minLength 2
+   * @maxLength 160
+   */
+  nomeAttivita: string;
+  /** @maxLength 254 */
+  email?: string;
+  /** @maxLength 30 */
+  whatsapp?: string;
+  authorization: boolean;
+  privacyAccepted: boolean;
+  /** @maxLength 200 */
+  honeypot?: string;
+}
+
+export interface SiteControlRequestReceipt {
+  success: boolean;
+  message: string;
+}
+
+export type AdminSiteControlRequestNotification =
+  (typeof AdminSiteControlRequestNotification)[keyof typeof AdminSiteControlRequestNotification];
+
+export const AdminSiteControlRequestNotification = {
+  sent: "sent",
+  pending: "pending",
+} as const;
+
+export interface AdminSiteControlRequest {
+  id: string;
+  siteUrl: string;
+  nomeAttivita: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  whatsapp: string | null;
+  authorization: boolean;
+  privacyAccepted: boolean;
+  status: SiteControlRequestStatus;
+  notification: AdminSiteControlRequestNotification;
+  createdAt: string;
+}
+
 export interface HealthStatus {
   status: string;
 }
@@ -288,3 +662,14 @@ export const GetAdminOverviewDays = {
   NUMBER_30: 30,
   NUMBER_90: 90,
 } as const;
+
+export type ListAdminSiteControlRequestsParams = {
+  status?: SiteControlRequestStatus;
+};
+
+export type GetAdminFinanceParams = {
+  /**
+   * @pattern ^\d{4}-(0[1-9]|1[0-2])$
+   */
+  month: string;
+};

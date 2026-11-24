@@ -9,12 +9,19 @@ import type { ContactResponse } from "@workspace/api-client-react";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import HomeContactForm from "../components/marketing/HomeContactForm";
 import PortfolioExamples from "../components/marketing/PortfolioExamples";
+import homeFaq from "../lib/home-faq.json";
 import "../styles/commercial.css";
 
 const SERVICES = [
-  { path: "/web-app", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Prenotazioni, clienti e processi aziendali: partiamo dalle tue esigenze, non da un pacchetto standard.", cta: "Parlaci della tua idea" },
+  { path: "/gestionali", icon: "fa-laptop-code", title: "Web app e gestionali personalizzati", price: prices.webapp.label, desc: "Prenotazioni, clienti e processi aziendali: partiamo dalle tue esigenze, non da un pacchetto standard.", cta: "Parlaci della tua idea" },
   { path: "/siti-web", icon: "fa-globe", title: "Siti web professionali", price: prices.website.label, desc: "Una presenza online professionale, che può evolvere con nuove funzioni concordate.", cta: "Scopri i siti web" },
   { path: "/menu-digitali", icon: "fa-qrcode", title: "Menu digitali QR", price: prices.menu.label, desc: "Un prodotto complementare per presentare il menu del tuo locale su smartphone.", cta: "Scopri i menu digitali" },
+];
+
+const MARKETING = [
+  { icon: "fab fa-meta", title: "Campagne Meta", desc: "Inserzioni su Facebook e Instagram per ricevere richieste e messaggi WhatsApp da clienti della tua zona." },
+  { icon: "fab fa-google", title: "Campagne Google Ads", desc: "Annunci sulla ricerca Google per farti trovare da chi sta cercando proprio il tuo servizio." },
+  { icon: "fas fa-magnifying-glass-chart", title: "SEO", desc: "Ottimizzazione del sito per comparire nei risultati organici di Google, anche nelle ricerche locali." },
 ];
 
 const SETTORI = [
@@ -243,7 +250,7 @@ export default function Preventivo() {
       />
 
       {/* ── NAV ── */}
-      <nav className="relative z-10 w-full px-5 pt-4 pb-2 flex justify-between items-center max-w-5xl mx-auto">
+      <nav className="relative z-10 w-full px-5 pt-4 pb-2 flex flex-wrap justify-between items-center gap-y-1 max-w-5xl mx-auto">
         <span className="text-[1.35rem] font-black tracking-tighter text-white select-none">
           Promo<span className="text-emerald-400">App</span>
           <span className="text-indigo-300">.it</span>
@@ -251,12 +258,15 @@ export default function Preventivo() {
         <a
           href="#preventivo"
           onClick={() => trackEvent("cta_click", "generale", "nav")}
-          className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-full font-bold text-sm transition shadow-lg shadow-emerald-900/30 hover:shadow-emerald-500/30"
+          className="order-2 flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-full font-bold text-sm transition shadow-lg shadow-emerald-900/30 hover:shadow-emerald-500/30 md:order-3"
           data-testid="link-nav-proposta"
         >
           <i className="fas fa-paper-plane text-base" aria-hidden="true"></i>
           Richiedi proposta
         </a>
+        <Link href="/controllo-sito" className="order-3 basis-full py-2 text-center text-xs font-bold text-emerald-100 underline underline-offset-4 hover:text-white md:order-2 md:ml-auto md:mr-4 md:basis-auto">
+          Controllo gratuito
+        </Link>
       </nav>
 
       {/* ── WhatsApp float ── */}
@@ -295,25 +305,30 @@ export default function Preventivo() {
               Porta online la tua attività e semplifica il lavoro con una soluzione personalizzata per gestire clienti, appuntamenti, ordini o magazzino.
             </p>
             <div className="grid grid-cols-3 gap-2 mb-4" aria-label="Prezzi dei servizi">
-              <Link href="/web-app" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
+              <Link href="/gestionali" className="rounded-xl border border-emerald-300/40 bg-emerald-400/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">App e gestionali</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
               <Link href="/siti-web" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Siti web</span><strong className="block text-amber-300 text-sm">399 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
               <Link href="/menu-digitali" className="rounded-xl border border-white/20 bg-white/10 p-2 text-center"><span className="flex min-h-8 items-center justify-center text-xs text-indigo-100">Menu QR</span><strong className="block text-amber-300 text-sm">99 € + IVA</strong><span className="mt-2 block rounded-md bg-amber-300 px-1 py-1.5 text-xs font-bold leading-tight text-indigo-950">Attivazione definitiva</span></Link>
             </div>
 
-            <a href="#preventivo"
-              onClick={() => trackEvent("cta_click", "generale", "hero")}
-              className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 mb-4 min-h-12">
-              {variant.cta}
+            <div className="flex flex-col sm:flex-row gap-3 mb-3">
+              <a href="#preventivo"
+                onClick={() => trackEvent("cta_click", "generale", "hero")}
+                className="flex flex-1 items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-full px-5 py-3 min-h-12">
+                {variant.cta}
+              </a>
+              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
+                className="flex flex-1 items-center justify-center gap-2 border-2 border-emerald-300/70 hover:bg-white/10 text-white font-bold text-sm rounded-full px-5 py-3 min-h-12">
+                <i className="fab fa-whatsapp text-emerald-300 text-lg" aria-hidden="true" /> {variant.whatsappLabel}
+              </a>
+            </div>
+            <a href="#progetti" className="flex items-center gap-2 text-indigo-100 text-sm mb-4 min-h-11"
+              onClick={() => trackEvent("cta_click", "generale", "hero-projects")}>
+              <i className="fas fa-circle-check text-emerald-300" aria-hidden="true" />
+              <span>Già al lavoro per attività di Milano, Barletta e Reggio Calabria. <strong className="underline underline-offset-4 text-white">Guarda i progetti</strong></span>
             </a>
-            <a href="#servizi" className="inline-block text-white font-bold text-sm underline underline-offset-4 mb-3"
-              onClick={() => trackEvent("cta_click", "generale", "hero-services")}>Scopri i nostri servizi</a>
             <p className="text-indigo-100 text-sm mb-3">Costi tecnici di funzionamento da 9,90 € al mese, in base al progetto. Importo comunicato prima dell’attivazione.</p>
             <p className="text-indigo-200 text-xs mb-4">{incentive.responseNote}</p>
             <div className="flex flex-col items-center gap-4 mb-4">
-              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" onClick={() => trackWhatsApp("generale", "hero")}
-                className="inline-flex items-center justify-center gap-2 text-emerald-300 font-bold text-sm min-h-11">
-                <i className="fab fa-whatsapp" aria-hidden="true" /> {variant.whatsappLabel}
-              </a>
               {reviews.length > 0 && <a
                 href="#recensioni"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-black text-white transition hover:border-emerald-300/50 hover:bg-white/15"
@@ -335,6 +350,8 @@ export default function Preventivo() {
         </div>
       </section>
 
+      <PortfolioExamples onCta={() => trackEvent("cta_click", "generale", "portfolio")} />
+
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
           <h2 className="font-bold text-white text-2xl mb-2">Progetti digitali personalizzati</h2>
@@ -342,7 +359,7 @@ export default function Preventivo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{FEATURES.map((item) => <div key={item.text} className="glass-card rounded-xl p-3 flex gap-3 items-center">
             <i className={`fas ${item.icon} text-emerald-300 w-5`} aria-hidden="true" /><p className="text-white text-xs font-semibold">{item.text}</p>
           </div>)}</div>
-          <Link href="/web-app" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Parlaci della tua idea →</Link>
+          <Link href="/gestionali" className="inline-block mt-4 text-emerald-300 text-sm font-bold">Parlaci della tua idea →</Link>
         </div>
       </section>
       <section className="relative z-10 px-4 py-8" id="servizi">
@@ -357,10 +374,51 @@ export default function Preventivo() {
             </Link>)}
           </div>
           <p className="text-[10px] text-indigo-200/70 mt-4">{prices.note}</p>
+          <div className="glass-card rounded-2xl p-5 mt-6 scroll-mt-5" id="marketing">
+            <p className="text-emerald-300 text-xs font-black uppercase tracking-[0.2em] mb-2">Non solo sviluppo</p>
+            <h2 className="font-bold text-white text-xl mb-2">Ti aiutiamo anche a farti trovare: campagne Meta, Google Ads e SEO</h2>
+            <p className="text-indigo-200 text-sm mb-4">Un sito o un’app funzionano quando arrivano i clienti. Per questo possiamo occuparci anche della tua pubblicità online e del posizionamento su Google.</p>
+            <ul className="grid sm:grid-cols-3 gap-3">
+              {MARKETING.map((item) => <li key={item.title} className="rounded-xl border border-white/15 bg-white/5 p-4">
+                <i className={`${item.icon} text-emerald-300 text-lg`} aria-hidden="true" />
+                <h3 className="text-white font-bold text-sm mt-2">{item.title}</h3>
+                <p className="text-indigo-200 text-xs mt-1">{item.desc}</p>
+              </li>)}
+            </ul>
+            <p className="text-[11px] text-indigo-200/80 mt-4">Servizi su preventivo, concordati prima di iniziare. Il budget pubblicitario viene pagato direttamente a Meta e Google.</p>
+            <a href="#preventivo" onClick={() => trackEvent("cta_click", "generale", "marketing")}
+              className="inline-flex items-center gap-2 mt-4 bg-emerald-500 hover:bg-emerald-400 text-white px-5 py-3 rounded-full font-bold text-sm min-h-12">Chiedi una proposta per la tua pubblicità</a>
+          </div>
           {variant.formPosition === "after-services" && <div className="max-w-xl mx-auto mt-8 scroll-mt-5" id="preventivo">
             <HomeContactForm form={form} onChange={handleChange} onSubmit={handleSubmit} sent={sent} loading={loading} error={error}
               privacy={privacy} onPrivacyChange={setPrivacy} sectors={SETTORI} />
           </div>}
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-10" aria-labelledby="controllo-sito-title">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-white/15 bg-white/5 p-5 text-white sm:p-8">
+          <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Un controllo gratuito, senza tecnicismi</p>
+          <h2 id="controllo-sito-title" className="text-2xl font-black sm:text-3xl">Il tuo sito è sicuro? Te lo diciamo gratis.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-indigo-100">Analizziamo il tuo sito web come farebbe un esperto di sicurezza e ti mandiamo un report chiaro, senza tecnicismi.</p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {[
+              ["fa-key", "Dati esposti", "chiavi, password o file nascosti visibili a chiunque"],
+              ["fa-gauge-high", "Velocità ed errori", "cosa rallenta il sito e cosa non funziona"],
+              ["fa-link", "Servizi collegati", "strumenti esterni e possibili rischi"],
+              ["fa-user-xmark", "Clienti persi", "moduli, prenotazioni o WhatsApp che non funzionano"],
+            ].map(([icon, title, description]) => (
+              <article key={title} className="flex gap-4 rounded-2xl border border-white/10 bg-indigo-950/25 p-4">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-400/15 text-emerald-300">
+                  <i className={`fas ${icon} text-lg`} aria-hidden="true" />
+                </span>
+                <div><h3 className="font-bold">{title}</h3><p className="mt-1 text-xs leading-5 text-indigo-200">{description}</p></div>
+              </article>
+            ))}
+          </div>
+          <Link href="/controllo-sito" className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-400">
+            <i className="fas fa-shield-halved" aria-hidden="true" /> Richiedi il controllo gratuito
+          </Link>
         </div>
       </section>
 
@@ -374,7 +432,6 @@ export default function Preventivo() {
           </div>
         </div>
       </section>
-      <PortfolioExamples />
 
       <section className="relative z-10 px-4 py-8">
         <div className="max-w-5xl mx-auto">
@@ -581,11 +638,9 @@ export default function Preventivo() {
         <div className="max-w-5xl mx-auto">
           <h2 className="font-bold text-white text-2xl mb-5">Perché PromoApp</h2>
           <TrustPoints />
-          <h2 className="font-bold text-white text-2xl mb-5 mt-8">Prima di iniziare</h2>
+          <h2 className="font-bold text-white text-2xl mb-5 mt-8" id="faq">Domande frequenti</h2>
           <div className="space-y-3">
-            {[["Anche le app e i gestionali costano 399 €?", "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese."],
-              ["Cosa pago dopo l’attivazione?", "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente."],
-              ["E se ho bisogno di un progetto più articolato?", "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere."]].map(([question, answer]) =>
+            {homeFaq.map(([question, answer]) =>
               <details key={question} className="glass-card rounded-xl p-4"><summary className="text-white text-sm font-bold cursor-pointer">{question}</summary><p className="text-indigo-200 text-sm mt-3">{answer}</p></details>)}
           </div>
           <div className="mt-8 text-center">
@@ -599,10 +654,19 @@ export default function Preventivo() {
       {/* ── FOOTER ── */}
       <footer className="relative z-10 border-t border-white/10 py-7 px-4 mt-2">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-          <span className="text-xs text-indigo-300/60">
-            © {new Date().getFullYear()} Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
-          </span>
+          <div className="text-center md:text-left">
+            <span className="block text-xs text-indigo-300/60">
+              © {new Date().getFullYear()} Promo<strong className="text-white/70">App</strong>.it · P.IVA 08223951008
+            </span>
+            <span className="mt-2 block text-xs text-indigo-300/70">
+              <a href="tel:+393793602035" className="hover:text-white transition">+39 379 360 2035</a>
+              <span aria-hidden="true"> · </span>
+              <a href="mailto:sophiaderos0@gmail.com" className="hover:text-white transition">sophiaderos0@gmail.com</a>
+            </span>
+          </div>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-indigo-300/60">
+            <Link href="/lavori" className="hover:text-white transition">Lavori</Link>
+            <Link href="/siti-web-milano" className="hover:text-white transition">Siti web a Milano</Link>
             <a href={appPath("/dati-societari.html")} className="hover:text-white transition">Dati societari</a>
             <a href={appPath("/privacy.html")} className="hover:text-white transition">Privacy</a>
             <a href={appPath("/cookie.html")} className="hover:text-white transition">Cookie</a>

@@ -22,7 +22,8 @@ let activePath = "/", lastPage = "";
 let lastAdsPage = "";
 let gaConfigured = false, adsConfigured = false;
 const sentLeads = new Set<string>();
-const privatePage = () => /^\/(?:admin|gestione-contatti|lavori)(?:\/|$)/.test(activePath) ||
+const privatePage = () => /^\/(?:admin|gestione-contatti)(?:\/|$)/.test(activePath) ||
+  /^\/lavori\/[^/]+$/.test(activePath) ||
   (activePath.startsWith("/per/") && !Object.hasOwn(sectors, activePath.slice(5)));
 let eventSequence = 0;
 function gtag(..._args: unknown[]) {

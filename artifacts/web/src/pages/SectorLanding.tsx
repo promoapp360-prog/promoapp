@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "wouter";
 import MarketingLayout from "../components/marketing/MarketingLayout";
 import LeadForm from "../components/marketing/LeadForm";
 import { sectors, prices, commercialIncentive, webappStartingPrice } from "../lib/commercial";
@@ -10,15 +9,14 @@ import { trackEvent, trackWhatsApp } from "../lib/analytics";
 import "../styles/commercial.css";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import { sectorOfferCopy } from "../lib/sector-offers";
+import { SectorCase } from "../components/marketing/PortfolioExamples";
+import NotFound from "./not-found";
 
 export default function SectorLanding({ slug }: { slug: string }) {
   useMobileFormVisibility(slug);
   const [business, setBusiness] = useState({ slug, name: "" });
   const sector = Object.hasOwn(sectors, slug) ? sectors[slug as keyof typeof sectors] : undefined;
-  if (!sector) return <MarketingLayout showFormLink={false}><section className="sl-section"><div className="marketing-container">
-    <h1 className="sl-h2">Pagina non trovata</h1><p className="sl-lead">Questo settore non è disponibile. Puoi tornare alla homepage e scegliere una soluzione per la tua attività.</p>
-    <Link href="/" className="whatsapp-link">Torna alla homepage</Link>
-  </div></section></MarketingLayout>;
+  if (!sector) return <NotFound />;
   const incentive = commercialIncentive();
   const offers = sectorOfferCopy[slug as keyof typeof sectorOfferCopy];
   const cta = incentive.demoActive ? incentive.cta : sector.cta;
@@ -40,6 +38,7 @@ export default function SectorLanding({ slug }: { slug: string }) {
         <div className="sl-ico" aria-hidden="true">{String(index + 1).padStart(2, "0")}</div>
         <h3>{benefit.title}</h3><p>{benefit.description}</p></article>)}</div>
     </div></section>
+    <SectorCase slug={slug} onCta={() => trackEvent("cta_click", "generale", "sector-case", slug)} />
     <section className="sl-section alt" id="esempio"><div className="marketing-container">
       <h2 className="sl-h2">Un esempio per {sector.name.toLowerCase()}</h2>
       <p className="sl-lead">Una schermata illustrativa per immaginare il tuo progetto, non un gestionale già attivo.</p>

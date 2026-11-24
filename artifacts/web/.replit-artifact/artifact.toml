@@ -175,7 +175,79 @@ from = "/per/agenti-commercio/"
 to = "/per/agenti-commercio/index.html"
 
 [[services.production.rewrites]]
-from = "/*"
+from = "/menu-digitale"
+to = "/menu-digitale/index.html"
+
+[[services.production.rewrites]]
+from = "/menu-digitale/"
+to = "/menu-digitale/index.html"
+
+[[services.production.rewrites]]
+from = "/sitiweb"
+to = "/sitiweb/index.html"
+
+[[services.production.rewrites]]
+from = "/sitiweb/"
+to = "/sitiweb/index.html"
+
+[[services.production.rewrites]]
+from = "/gestionali"
+to = "/gestionali/index.html"
+
+[[services.production.rewrites]]
+from = "/gestionali/"
+to = "/gestionali/index.html"
+
+[[services.production.rewrites]]
+from = "/app-prenotazioni"
+to = "/app-prenotazioni/index.html"
+
+[[services.production.rewrites]]
+from = "/app-prenotazioni/"
+to = "/app-prenotazioni/index.html"
+
+[[services.production.rewrites]]
+from = "/siti-web-milano"
+to = "/siti-web-milano/index.html"
+
+[[services.production.rewrites]]
+from = "/siti-web-milano/"
+to = "/siti-web-milano/index.html"
+
+[[services.production.rewrites]]
+from = "/lavori"
+to = "/lavori/index.html"
+
+[[services.production.rewrites]]
+from = "/lavori/"
+to = "/lavori/index.html"
+
+[[services.production.rewrites]]
+from = "/controllo-sito"
+to = "/controllo-sito/index.html"
+
+[[services.production.rewrites]]
+from = "/controllo-sito/"
+to = "/controllo-sito/index.html"
+
+[[services.production.rewrites]]
+from = "/admin"
+to = "/admin/index.html"
+
+[[services.production.rewrites]]
+from = "/admin/"
+to = "/admin/index.html"
+
+[[services.production.rewrites]]
+from = "/admin/controlli"
+to = "/admin/controlli/index.html"
+
+[[services.production.rewrites]]
+from = "/admin/controlli/"
+to = "/admin/controlli/index.html"
+
+[[services.production.rewrites]]
+from = "/lavori/*"
 to = "/index.html"
  
 

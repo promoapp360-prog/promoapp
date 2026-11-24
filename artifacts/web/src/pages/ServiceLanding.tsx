@@ -9,6 +9,7 @@ import { trackEvent } from "../lib/analytics";
 import { useMobileFormVisibility } from "../lib/useMobileFormVisibility";
 import { commercialIncentive, webappStartingPrice } from "../lib/commercial";
 import TrustPoints from "../components/marketing/TrustPoints";
+import { SEOFAQs, SEOSections } from "../components/marketing/SEOContent";
 
 type Service = "siti-web" | "web-app" | "menu-digitali";
 type Item = { t: string; d: string };
@@ -94,16 +95,6 @@ function Steps({ items, dark }: { items: Item[]; dark?: boolean }) {
     <ol className="sl-steps" data-dark={dark}>
       {items.map((s) => (<li key={s.t}><h3>{s.t}</h3><p>{s.d}</p></li>))}
     </ol>
-  );
-}
-
-function Faq({ items }: { items: Item[] }) {
-  return (
-    <div className="sl-faq">
-      {items.map((f) => (
-        <details key={f.t}><summary>{f.t}</summary><p>{f.d}</p></details>
-      ))}
-    </div>
   );
 }
 
@@ -242,18 +233,8 @@ function SitiWeb() {
           <VerifiedReviews />
         </div>
       </section>
-      <section className="sl-section alt">
-        <div className="marketing-container">
-          <h2 className="sl-h2">Domande frequenti</h2>
-          <Faq items={[
-            { t: "Anche le app e i gestionali costano 399 €?", d: "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese." },
-            { t: "Cosa pago dopo l’attivazione?", d: "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente." },
-            { t: "E se ho bisogno di un progetto più articolato?", d: "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere." },
-            { t: "Posso aggiungere pagine e funzionalità?", d: "Sì. Numero di pagine e funzioni vengono concordati nel preventivo; le estensioni si valutano separatamente." },
-            { t: "Il prezzo include l'IVA?", d: "No, 399 € è più IVA." },
-          ]} />
-        </div>
-      </section>
+      <SEOSections pagePath="/siti-web" />
+      <SEOFAQs pagePath="/siti-web" />
       <Contact service="siti-web" title="Richiedi il tuo preventivo" lead="Tre dati per una proposta gratuita e senza impegno. Oppure scrivici subito su WhatsApp." />
     </>
   );
@@ -323,17 +304,7 @@ function WebApp() {
           <VerifiedReviews />
         </div>
       </section>
-      <section className="sl-section alt">
-        <div className="marketing-container">
-          <h2 className="sl-h2">Domande frequenti</h2>
-          <Faq items={[
-            { t: "Anche le app e i gestionali costano 399 €?", d: "Sì. L’offerta a 399 € + IVA di attivazione definitiva riguarda siti web, web app e gestionali. Prima di iniziare definiamo insieme la soluzione e le funzioni comprese." },
-            { t: "Cosa pago dopo l’attivazione?", d: "Solo i costi tecnici necessari al funzionamento della soluzione, da 9,90 € al mese. L’importo dipende dal progetto e dalle risorse necessarie e viene comunicato prima dell’attivazione. Eventuali servizi aggiuntivi richiesti vengono indicati separatamente." },
-            { t: "E se ho bisogno di un progetto più articolato?", d: "Possiamo realizzare anche sviluppi e integrazioni aggiuntive, con una proposta dedicata concordata prima di procedere." },
-            { t: "E dopo la consegna?", d: "Manutenzione e assistenza vengono definite insieme, in base alle esigenze." },
-          ]} />
-        </div>
-      </section>
+      <SEOFAQs pagePath="/web-app" />
       <Contact service="web-app" title="Parliamo del tuo progetto" lead="Lascia tre dati: ti ricontattiamo per capire insieme cosa ti serve." />
     </>
   );
@@ -369,7 +340,7 @@ function MenuDigitali() {
             <p className="sl-lead">Tocca le categorie nel telefono: è questo il gesto che farà il tuo cliente. Una demo illustrativa, non il menu di un cliente.</p>
             <div className="sl-qrrow">
               <a href={appPath("/menu-demo")} target="_blank" rel="noopener noreferrer" aria-label="Apri il menu dimostrativo">
-                <img src={`${import.meta.env.BASE_URL}menu-demo-qr.svg`} width={110} height={110} alt="QR code scansionabile del menu dimostrativo su PromoApp.it" className="rounded-xl" />
+                <img src={`${import.meta.env.BASE_URL}menu-demo-qr.svg`} width={110} height={110} loading="eager" decoding="async" alt="QR code scansionabile del menu dimostrativo su PromoApp.it" className="rounded-xl" />
               </a>
               <span>Inquadra il QR o toccalo per aprire il menu dimostrativo.</span>
             </div>
@@ -410,16 +381,7 @@ function MenuDigitali() {
           <VerifiedReviews />
         </div>
       </section>
-      <section className="sl-section alt">
-        <div className="marketing-container">
-          <h2 className="sl-h2">Domande frequenti</h2>
-          <Faq items={[
-            { t: "Come funziona il menu con QR code?", d: "Il cliente inquadra il QR e consulta piatti e bevande dal browser dello smartphone, senza installare un'app." },
-            { t: "Posso modificare piatti e prezzi?", d: "Modalità e costi degli aggiornamenti vengono chiariti nel preventivo. Non sono promesse modifiche illimitate; l'area di modifica autonoma si quota separatamente." },
-            { t: "Cosa pago dopo l’attivazione del menu?", d: "Il Menu QR mantiene il prezzo di 99 € + IVA di attivazione definitiva. Costi tecnici di funzionamento da 9,90 € al mese per i servizi necessari, come database e hosting. L’importo varia in base alla soluzione e alle risorse richieste e viene comunicato prima dell’attivazione. Dominio, aggiornamenti, assistenza e funzioni aggiuntive seguono le condizioni concordate." },
-          ]} />
-        </div>
-      </section>
+      <SEOFAQs pagePath="/menu-digitali" />
       <Contact service="menu-digitali" title="Richiedi il tuo menu digitale" lead="Lasciaci i tuoi dati e ti rispondiamo direttamente, oppure scrivici su WhatsApp." />
     </>
   );

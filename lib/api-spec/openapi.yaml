@@ -120,6 +120,184 @@ paths:
       responses:
         "204": { description: Recensione eliminata }
         "404": { description: Recensione non trovata }
+  /admin/controlli:
+    get:
+      operationId: listAdminSiteControlRequests
+      summary: Elenca le richieste di controllo sito
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/SiteControlRequestStatus"
+      responses:
+        "200":
+          description: Richieste di controllo ricevute
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AdminSiteControlRequest" }
+        "400": { description: Stato non valido }
+  /admin/controlli/{id}:
+    patch:
+      operationId: updateAdminSiteControlRequest
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SiteControlRequestStatusInput" }
+      responses:
+        "200":
+          description: Stato aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminSiteControlRequest" }
+        "400": { description: Stato non valido }
+        "404": { description: Richiesta non trovata }
+  /admin/finance:
+    get:
+      operationId: getAdminFinance
+      summary: Elenca lavori e movimenti del bilancio interno
+      parameters:
+        - name: month
+          in: query
+          required: true
+          schema: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+      responses:
+        "200":
+          description: Riepilogo mensile, lavori e movimenti
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceData" }
+        "400": { description: Mese non valido }
+  /admin/finance/clients:
+    post:
+      operationId: createAdminFinanceClient
+      summary: Aggiunge un cliente all’anagrafica contabile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceClientInput" }
+      responses:
+        "201":
+          description: Cliente registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceClient" }
+        "400": { description: Dati cliente non validi }
+        "409": { description: Cliente già presente }
+  /admin/finance/clients/{id}:
+    patch:
+      operationId: updateAdminFinanceClient
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceClientUpdate" }
+      responses:
+        "200":
+          description: Cliente aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceClient" }
+        "400": { description: Dati cliente non validi }
+        "404": { description: Cliente non trovato }
+        "409": { description: Esiste già un cliente con questi dati }
+  /admin/finance/projects:
+    post:
+      operationId: createAdminFinanceProject
+      summary: Registra un nuovo lavoro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceProjectInput" }
+      responses:
+        "201":
+          description: Lavoro registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceProject" }
+        "400": { description: Dati non validi }
+        "404": { description: Cliente non trovato }
+  /admin/finance/projects/{id}:
+    patch:
+      operationId: updateAdminFinanceProject
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceProjectUpdate" }
+      responses:
+        "200":
+          description: Lavoro aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceProject" }
+        "400": { description: Dati non validi }
+        "404": { description: Lavoro non trovato }
+  /admin/finance/entries:
+    post:
+      operationId: createAdminFinanceEntry
+      summary: Registra una scadenza, un incasso o una spesa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceEntryInput" }
+      responses:
+        "201":
+          description: Movimento registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceEntry" }
+        "400": { description: Dati non validi }
+        "404": { description: Lavoro non trovato }
+  /admin/finance/entries/{id}:
+    patch:
+      operationId: updateAdminFinanceEntry
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceEntryUpdate" }
+      responses:
+        "200":
+          description: Movimento aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceEntry" }
+        "400": { description: Dati non validi }
+        "404": { description: Movimento non trovato }
+    delete:
+      operationId: deleteAdminFinanceEntry
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "204": { description: Movimento non pagato eliminato }
+        "404": { description: Movimento non trovato o già pagato }
+  /admin/finance/entries/{id}/paid:
+    post:
+      operationId: markAdminFinanceEntryPaid
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Movimento segnato come pagato o incassato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceEntry" }
+        "404": { description: Movimento non trovato }
   /visits:
     post:
       operationId: recordSiteVisit
@@ -161,6 +339,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContactResponse"
+  /controlli:
+    post:
+      operationId: submitSiteControlRequest
+      tags: [contacts]
+      summary: Richiede un controllo gratuito del sito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SiteControlRequestInput" }
+      responses:
+        "201":
+          description: Richiesta ricevuta
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SiteControlRequestReceipt" }
+        "400": { description: Dati non validi o autorizzazione mancante }
+        "403": { description: Origine non autorizzata }
+        "429": { description: Limite richieste raggiunto }
+        "503": { description: Salvataggio temporaneamente non disponibile }
   /marketing-config:
     get:
       operationId: getTrackingConfig
@@ -279,6 +477,128 @@ components:
         trackingStartedAt: { type: ["string", "null"], format: date-time }
         daily: { type: array, items: { $ref: "#/components/schemas/VisitDay" } }
         pages: { type: array, items: { $ref: "#/components/schemas/VisitedPage" } }
+    AdminFinanceProject:
+      type: object
+      required: [id, clientId, clientName, name, totalAmountCents, paymentType, depositAmountCents, installmentCount, notes, active, createdAt, receivedCents, outstandingCents]
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: ["string", "null"], format: uuid }
+        clientName: { type: string }
+        name: { type: string }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        notes: { type: string }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        receivedCents: { type: integer, minimum: 0, multipleOf: 1 }
+        outstandingCents: { type: integer, minimum: 0, multipleOf: 1 }
+    AdminFinanceEntry:
+      type: object
+      required: [id, projectId, projectName, clientName, direction, category, description, amountCents, dueDate, paidAt, repeatMonthly, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        projectName: { type: ["string", "null"] }
+        clientName: { type: ["string", "null"] }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        description: { type: string }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: string, format: date }
+        paidAt: { type: ["string", "null"], format: date-time }
+        repeatMonthly: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    AdminFinanceSummary:
+      type: object
+      required: [month, receivedCents, expensesCents, balanceCents, outstandingCents, overdueIncomeCents, unpaidExpensesCents]
+      properties:
+        month: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+        receivedCents: { type: integer, multipleOf: 1 }
+        expensesCents: { type: integer, multipleOf: 1 }
+        balanceCents: { type: integer, multipleOf: 1 }
+        outstandingCents: { type: integer, multipleOf: 1 }
+        overdueIncomeCents: { type: integer, multipleOf: 1 }
+        unpaidExpensesCents: { type: integer, multipleOf: 1 }
+    AdminFinanceData:
+      type: object
+      required: [summary, clients, projects, entries]
+      properties:
+        summary: { $ref: "#/components/schemas/AdminFinanceSummary" }
+        clients: { type: array, items: { $ref: "#/components/schemas/AdminFinanceClient" } }
+        projects: { type: array, items: { $ref: "#/components/schemas/AdminFinanceProject" } }
+        entries: { type: array, items: { $ref: "#/components/schemas/AdminFinanceEntry" } }
+    AdminFinanceClient:
+      type: object
+      required: [id, name, companyName, email, phone, notes, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        companyName: { type: ["string", "null"] }
+        email: { type: ["string", "null"], format: email }
+        phone: { type: ["string", "null"] }
+        notes: { type: string }
+        createdAt: { type: string, format: date-time }
+    FinanceClientInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 160 }
+        companyName: { type: ["string", "null"], maxLength: 160 }
+        email: { type: ["string", "null"], format: email, maxLength: 254 }
+        phone: { type: ["string", "null"], maxLength: 60 }
+        notes: { type: string, maxLength: 4000 }
+    FinanceClientUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 160 }
+        companyName: { type: ["string", "null"], maxLength: 160 }
+        email: { type: ["string", "null"], format: email, maxLength: 254 }
+        phone: { type: ["string", "null"], maxLength: 60 }
+        notes: { type: string, maxLength: 4000 }
+    FinanceProjectInput:
+      type: object
+      required: [clientId, name, totalAmountCents, paymentType]
+      properties:
+        clientId: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        notes: { type: string, maxLength: 4000 }
+    FinanceProjectUpdate:
+      type: object
+      properties:
+        clientId: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        notes: { type: string, maxLength: 4000 }
+        active: { type: boolean }
+    FinanceEntryInput:
+      type: object
+      required: [direction, category, description, amountCents, dueDate]
+      properties:
+        projectId: { type: ["string", "null"], format: uuid }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: string, format: date }
+        paid: { type: boolean, default: false }
+        repeatMonthly: { type: boolean, default: false }
+    FinanceEntryUpdate:
+      type: object
+      properties:
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: string, format: date }
+        repeatMonthly: { type: boolean }
     TrackingConfig:
       type: object
       properties:
@@ -402,6 +722,45 @@ components:
         notification:
           type: string
           enum: [sent, pending]
+    SiteControlRequestStatus:
+      type: string
+      enum: [Nuova, In analisi, Report inviato, Cliente acquisito]
+    SiteControlRequestStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status: { $ref: "#/components/schemas/SiteControlRequestStatus" }
+    SiteControlRequestInput:
+      type: object
+      required: [siteUrl, nomeAttivita, authorization, privacyAccepted]
+      properties:
+        siteUrl: { type: string, minLength: 3, maxLength: 2048 }
+        nomeAttivita: { type: string, minLength: 2, maxLength: 160 }
+        email: { type: string, format: email, maxLength: 254 }
+        whatsapp: { type: string, maxLength: 30 }
+        authorization: { type: boolean, enum: [true] }
+        privacyAccepted: { type: boolean, enum: [true] }
+        honeypot: { type: string, maxLength: 200 }
+    SiteControlRequestReceipt:
+      type: object
+      required: [success, message]
+      properties:
+        success: { type: boolean, enum: [true] }
+        message: { type: string }
+    AdminSiteControlRequest:
+      type: object
+      required: [id, siteUrl, nomeAttivita, email, whatsapp, authorization, privacyAccepted, status, notification, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        siteUrl: { type: string }
+        nomeAttivita: { type: string }
+        email: { type: ["string", "null"] }
+        whatsapp: { type: ["string", "null"] }
+        authorization: { type: boolean }
+        privacyAccepted: { type: boolean }
+        status: { $ref: "#/components/schemas/SiteControlRequestStatus" }
+        notification: { type: string, enum: [sent, pending] }
+        createdAt: { type: string, format: date-time }
     HealthStatus:
       type: object
       properties:
