@@ -208,6 +208,349 @@ export const UpdateAdminSiteControlRequestResponse = zod.object({
   createdAt: zod.coerce.date(),
 });
 
+/**
+ * @summary Elenca lavori e movimenti del bilancio interno
+ */
+export const getAdminFinanceQueryMonthRegExp = new RegExp(
+  "^\\d{4}-(0[1-9]|1[0-2])$",
+);
+
+export const GetAdminFinanceQueryParams = zod.object({
+  month: zod.coerce.string().regex(getAdminFinanceQueryMonthRegExp),
+});
+
+export const getAdminFinanceResponseSummaryMonthRegExp = new RegExp(
+  "^\\d{4}-(0[1-9]|1[0-2])$",
+);
+export const getAdminFinanceResponseSummaryReceivedCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseSummaryExpensesCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseSummaryBalanceCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseSummaryOutstandingCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseSummaryOverdueIncomeCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseSummaryUnpaidExpensesCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseProjectsItemTotalAmountCentsMin = 0;
+export const getAdminFinanceResponseProjectsItemTotalAmountCentsMax = 2147483647;
+export const getAdminFinanceResponseProjectsItemTotalAmountCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseProjectsItemReceivedCentsMin = 0;
+export const getAdminFinanceResponseProjectsItemReceivedCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseProjectsItemOutstandingCentsMin = 0;
+export const getAdminFinanceResponseProjectsItemOutstandingCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseEntriesItemAmountCentsMax = 2147483647;
+export const getAdminFinanceResponseEntriesItemAmountCentsMultipleOf = 1;
+
+export const GetAdminFinanceResponse = zod.object({
+  summary: zod.object({
+    month: zod.string().regex(getAdminFinanceResponseSummaryMonthRegExp),
+    receivedCents: zod
+      .number()
+      .multipleOf(getAdminFinanceResponseSummaryReceivedCentsMultipleOf),
+    expensesCents: zod
+      .number()
+      .multipleOf(getAdminFinanceResponseSummaryExpensesCentsMultipleOf),
+    balanceCents: zod
+      .number()
+      .multipleOf(getAdminFinanceResponseSummaryBalanceCentsMultipleOf),
+    outstandingCents: zod
+      .number()
+      .multipleOf(getAdminFinanceResponseSummaryOutstandingCentsMultipleOf),
+    overdueIncomeCents: zod
+      .number()
+      .multipleOf(getAdminFinanceResponseSummaryOverdueIncomeCentsMultipleOf),
+    unpaidExpensesCents: zod
+      .number()
+      .multipleOf(getAdminFinanceResponseSummaryUnpaidExpensesCentsMultipleOf),
+  }),
+  projects: zod.array(
+    zod.object({
+      id: zod.string().uuid(),
+      clientName: zod.string(),
+      name: zod.string(),
+      totalAmountCents: zod
+        .number()
+        .min(getAdminFinanceResponseProjectsItemTotalAmountCentsMin)
+        .max(getAdminFinanceResponseProjectsItemTotalAmountCentsMax)
+        .multipleOf(
+          getAdminFinanceResponseProjectsItemTotalAmountCentsMultipleOf,
+        ),
+      notes: zod.string(),
+      active: zod.boolean(),
+      createdAt: zod.coerce.date(),
+      receivedCents: zod
+        .number()
+        .min(getAdminFinanceResponseProjectsItemReceivedCentsMin)
+        .multipleOf(getAdminFinanceResponseProjectsItemReceivedCentsMultipleOf),
+      outstandingCents: zod
+        .number()
+        .min(getAdminFinanceResponseProjectsItemOutstandingCentsMin)
+        .multipleOf(
+          getAdminFinanceResponseProjectsItemOutstandingCentsMultipleOf,
+        ),
+    }),
+  ),
+  entries: zod.array(
+    zod.object({
+      id: zod.string().uuid(),
+      projectId: zod.string().uuid().nullable(),
+      projectName: zod.string().nullable(),
+      clientName: zod.string().nullable(),
+      direction: zod.enum(["income", "expense"]),
+      category: zod.enum([
+        "deposit",
+        "balance",
+        "monthly_fee",
+        "facebook",
+        "replit",
+        "other",
+      ]),
+      description: zod.string(),
+      amountCents: zod
+        .number()
+        .min(1)
+        .max(getAdminFinanceResponseEntriesItemAmountCentsMax)
+        .multipleOf(getAdminFinanceResponseEntriesItemAmountCentsMultipleOf),
+      dueDate: zod.coerce.date(),
+      paidAt: zod.coerce.date().nullable(),
+      repeatMonthly: zod.boolean(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Registra un nuovo lavoro
+ */
+export const createAdminFinanceProjectBodyClientNameMax = 160;
+
+export const createAdminFinanceProjectBodyNameMax = 160;
+
+export const createAdminFinanceProjectBodyTotalAmountCentsMin = 0;
+export const createAdminFinanceProjectBodyTotalAmountCentsMax = 2147483647;
+export const createAdminFinanceProjectBodyTotalAmountCentsMultipleOf = 1;
+
+export const createAdminFinanceProjectBodyNotesMax = 4000;
+
+export const CreateAdminFinanceProjectBody = zod.object({
+  clientName: zod
+    .string()
+    .min(1)
+    .max(createAdminFinanceProjectBodyClientNameMax),
+  name: zod.string().min(1).max(createAdminFinanceProjectBodyNameMax),
+  totalAmountCents: zod
+    .number()
+    .min(createAdminFinanceProjectBodyTotalAmountCentsMin)
+    .max(createAdminFinanceProjectBodyTotalAmountCentsMax)
+    .multipleOf(createAdminFinanceProjectBodyTotalAmountCentsMultipleOf),
+  notes: zod.string().max(createAdminFinanceProjectBodyNotesMax).optional(),
+});
+
+export const UpdateAdminFinanceProjectParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const updateAdminFinanceProjectBodyClientNameMax = 160;
+
+export const updateAdminFinanceProjectBodyNameMax = 160;
+
+export const updateAdminFinanceProjectBodyTotalAmountCentsMin = 0;
+export const updateAdminFinanceProjectBodyTotalAmountCentsMax = 2147483647;
+export const updateAdminFinanceProjectBodyTotalAmountCentsMultipleOf = 1;
+
+export const updateAdminFinanceProjectBodyNotesMax = 4000;
+
+export const UpdateAdminFinanceProjectBody = zod.object({
+  clientName: zod
+    .string()
+    .min(1)
+    .max(updateAdminFinanceProjectBodyClientNameMax)
+    .optional(),
+  name: zod
+    .string()
+    .min(1)
+    .max(updateAdminFinanceProjectBodyNameMax)
+    .optional(),
+  totalAmountCents: zod
+    .number()
+    .min(updateAdminFinanceProjectBodyTotalAmountCentsMin)
+    .max(updateAdminFinanceProjectBodyTotalAmountCentsMax)
+    .multipleOf(updateAdminFinanceProjectBodyTotalAmountCentsMultipleOf)
+    .optional(),
+  notes: zod.string().max(updateAdminFinanceProjectBodyNotesMax).optional(),
+  active: zod.boolean().optional(),
+});
+
+export const updateAdminFinanceProjectResponseTotalAmountCentsMin = 0;
+export const updateAdminFinanceProjectResponseTotalAmountCentsMax = 2147483647;
+export const updateAdminFinanceProjectResponseTotalAmountCentsMultipleOf = 1;
+
+export const updateAdminFinanceProjectResponseReceivedCentsMin = 0;
+export const updateAdminFinanceProjectResponseReceivedCentsMultipleOf = 1;
+
+export const updateAdminFinanceProjectResponseOutstandingCentsMin = 0;
+export const updateAdminFinanceProjectResponseOutstandingCentsMultipleOf = 1;
+
+export const UpdateAdminFinanceProjectResponse = zod.object({
+  id: zod.string().uuid(),
+  clientName: zod.string(),
+  name: zod.string(),
+  totalAmountCents: zod
+    .number()
+    .min(updateAdminFinanceProjectResponseTotalAmountCentsMin)
+    .max(updateAdminFinanceProjectResponseTotalAmountCentsMax)
+    .multipleOf(updateAdminFinanceProjectResponseTotalAmountCentsMultipleOf),
+  notes: zod.string(),
+  active: zod.boolean(),
+  createdAt: zod.coerce.date(),
+  receivedCents: zod
+    .number()
+    .min(updateAdminFinanceProjectResponseReceivedCentsMin)
+    .multipleOf(updateAdminFinanceProjectResponseReceivedCentsMultipleOf),
+  outstandingCents: zod
+    .number()
+    .min(updateAdminFinanceProjectResponseOutstandingCentsMin)
+    .multipleOf(updateAdminFinanceProjectResponseOutstandingCentsMultipleOf),
+});
+
+/**
+ * @summary Registra una scadenza, un incasso o una spesa
+ */
+export const createAdminFinanceEntryBodyDescriptionMax = 240;
+
+export const createAdminFinanceEntryBodyAmountCentsMax = 2147483647;
+export const createAdminFinanceEntryBodyAmountCentsMultipleOf = 1;
+
+export const createAdminFinanceEntryBodyPaidDefault = false;
+export const createAdminFinanceEntryBodyRepeatMonthlyDefault = false;
+
+export const CreateAdminFinanceEntryBody = zod.object({
+  projectId: zod.string().uuid().nullish(),
+  direction: zod.enum(["income", "expense"]),
+  category: zod.enum([
+    "deposit",
+    "balance",
+    "monthly_fee",
+    "facebook",
+    "replit",
+    "other",
+  ]),
+  description: zod
+    .string()
+    .min(1)
+    .max(createAdminFinanceEntryBodyDescriptionMax),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(createAdminFinanceEntryBodyAmountCentsMax)
+    .multipleOf(createAdminFinanceEntryBodyAmountCentsMultipleOf),
+  dueDate: zod.coerce.date(),
+  paid: zod.boolean().default(createAdminFinanceEntryBodyPaidDefault),
+  repeatMonthly: zod
+    .boolean()
+    .default(createAdminFinanceEntryBodyRepeatMonthlyDefault),
+});
+
+export const UpdateAdminFinanceEntryParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const updateAdminFinanceEntryBodyDescriptionMax = 240;
+
+export const updateAdminFinanceEntryBodyAmountCentsMax = 2147483647;
+export const updateAdminFinanceEntryBodyAmountCentsMultipleOf = 1;
+
+export const UpdateAdminFinanceEntryBody = zod.object({
+  category: zod
+    .enum(["deposit", "balance", "monthly_fee", "facebook", "replit", "other"])
+    .optional(),
+  description: zod
+    .string()
+    .min(1)
+    .max(updateAdminFinanceEntryBodyDescriptionMax)
+    .optional(),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(updateAdminFinanceEntryBodyAmountCentsMax)
+    .multipleOf(updateAdminFinanceEntryBodyAmountCentsMultipleOf)
+    .optional(),
+  dueDate: zod.coerce.date().optional(),
+  repeatMonthly: zod.boolean().optional(),
+});
+
+export const updateAdminFinanceEntryResponseAmountCentsMax = 2147483647;
+export const updateAdminFinanceEntryResponseAmountCentsMultipleOf = 1;
+
+export const UpdateAdminFinanceEntryResponse = zod.object({
+  id: zod.string().uuid(),
+  projectId: zod.string().uuid().nullable(),
+  projectName: zod.string().nullable(),
+  clientName: zod.string().nullable(),
+  direction: zod.enum(["income", "expense"]),
+  category: zod.enum([
+    "deposit",
+    "balance",
+    "monthly_fee",
+    "facebook",
+    "replit",
+    "other",
+  ]),
+  description: zod.string(),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(updateAdminFinanceEntryResponseAmountCentsMax)
+    .multipleOf(updateAdminFinanceEntryResponseAmountCentsMultipleOf),
+  dueDate: zod.coerce.date(),
+  paidAt: zod.coerce.date().nullable(),
+  repeatMonthly: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+
+export const DeleteAdminFinanceEntryParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const MarkAdminFinanceEntryPaidParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const markAdminFinanceEntryPaidResponseAmountCentsMax = 2147483647;
+export const markAdminFinanceEntryPaidResponseAmountCentsMultipleOf = 1;
+
+export const MarkAdminFinanceEntryPaidResponse = zod.object({
+  id: zod.string().uuid(),
+  projectId: zod.string().uuid().nullable(),
+  projectName: zod.string().nullable(),
+  clientName: zod.string().nullable(),
+  direction: zod.enum(["income", "expense"]),
+  category: zod.enum([
+    "deposit",
+    "balance",
+    "monthly_fee",
+    "facebook",
+    "replit",
+    "other",
+  ]),
+  description: zod.string(),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(markAdminFinanceEntryPaidResponseAmountCentsMax)
+    .multipleOf(markAdminFinanceEntryPaidResponseAmountCentsMultipleOf),
+  dueDate: zod.coerce.date(),
+  paidAt: zod.coerce.date().nullable(),
+  repeatMonthly: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+
 export const recordSiteVisitBodyPathMax = 200;
 
 export const RecordSiteVisitBody = zod.object({

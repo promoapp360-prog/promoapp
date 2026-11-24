@@ -1,14 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
-import type { AdminContact, AdminOverview, AdminReview, AdminSession, AdminSiteControlRequest, SiteControlRequestStatus } from "@workspace/api-client-react";
+import type {
+  AdminContact,
+  AdminFinanceData,
+  AdminOverview,
+  AdminReview,
+  AdminSession,
+  AdminSiteControlRequest,
+  FinanceEntryInput,
+  FinanceEntryUpdate,
+  FinanceProjectInput,
+  FinanceProjectUpdate,
+  SiteControlRequestStatus,
+} from "@workspace/api-client-react";
 import { adminApi, AdminApiError, clearAdminSession } from "../lib/admin-api";
 import { appPath } from "../lib/marketing";
 import AdminOverviewPanel from "../components/admin/AdminOverviewPanel";
 import AdminContactsPanel from "../components/admin/AdminContactsPanel";
 import AdminReviewsPanel from "../components/admin/AdminReviewsPanel";
 import AdminSiteControlsPanel from "../components/admin/AdminSiteControlsPanel";
+import AdminFinancePanel from "../components/admin/AdminFinancePanel";
 
-type AdminTab = "overview" | "contacts" | "reviews" | "visits" | "controls";
+type AdminTab = "overview" | "contacts" | "reviews" | "visits" | "controls" | "finance";
+function currentMonth() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
 export default function Admin({ initialTab = "overview" }: { initialTab?: AdminTab }) {
   const [, setLocation] = useLocation();
   const [checking, setChecking] = useState(true);
@@ -23,6 +40,8 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
   const [contacts, setContacts] = useState<AdminContact[]>([]);
   const [reviews, setReviews] = useState<AdminReview[]>([]);
   const [siteControls, setSiteControls] = useState<AdminSiteControlRequest[]>([]);
+  const [finance, setFinance] = useState<AdminFinanceData>();
+  const [financeMonth, setFinanceMonth] = useState(currentMonth);
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState("");
   const [updated, setUpdated] = useState("");
@@ -31,7 +50,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
   function reset() {
     requestId.current++;
     clearAdminSession(); setAuthenticated(false); setPassword("");
-    setOverview(undefined); setContacts([]); setReviews([]); setSiteControls([]); setUpdated(""); setLoading(false);
+    setOverview(undefined); setContacts([]); setReviews([]); setSiteControls([]); setFinance(undefined); setUpdated(""); setLoading(false);
   }
   function report(err: unknown) {
     if (err instanceof AdminApiError && err.status === 401) reset();
@@ -50,17 +69,20 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
     const id = ++requestId.current;
     setLoading(true);
     try {
-      const [summary, received, submitted, controls] = await Promise.all([
+      const [summary, received, submitted, controls, financeData] = await Promise.all([
         adminApi<AdminOverview>(`/overview?days=${days}`),
         adminApi<AdminContact[]>("/contacts"), adminApi<AdminReview[]>("/reviews"),
         adminApi<AdminSiteControlRequest[]>("/controlli"),
+        tab === "finance" ? adminApi<AdminFinanceData>(`/finance?month=${financeMonth}`) : Promise.resolve(undefined),
       ]);
       if (id !== requestId.current) return;
-      setOverview(summary); setContacts(received); setReviews(submitted); setSiteControls(controls); setError("");
+      setOverview(summary); setContacts(received); setReviews(submitted); setSiteControls(controls);
+      if (financeData) setFinance(financeData);
+      setError("");
       setUpdated(new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
     } catch (err) { if (id === requestId.current) report(err); }
     finally { if (id === requestId.current) setLoading(false); }
-  }, [days]);
+  }, [days, financeMonth, tab]);
   useEffect(() => { setTab(initialTab); }, [initialTab]);
   useEffect(() => {
     if (!authenticated) return;
@@ -89,6 +111,20 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
       await load();
     } catch (err) { report(err); }
     finally { setBusy(""); }
+  }
+  async function mutateFinance(path: string, method: string, body?: unknown): Promise<boolean> {
+    if (busy) return false;
+    setBusy(path); setError("");
+    try {
+      await adminApi(path, { method, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+      await load();
+      return true;
+    } catch (err) {
+      report(err);
+      return false;
+    } finally {
+      setBusy("");
+    }
   }
   async function logout() {
     if (busy) return;
@@ -136,11 +172,12 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
           </div>
         </header>
         <nav aria-label="Sezioni admin" className="flex flex-wrap gap-2 mb-6">
-          {([["overview", "Statistiche"], ["contacts", "Contatti ricevuti"], ["reviews", "Recensioni"], ["visits", "Visite"], ["controls", "Controlli gratuiti"]] as const).map(([value, label]) =>
+          {([["overview", "Statistiche"], ["contacts", "Contatti ricevuti"], ["reviews", "Recensioni"], ["visits", "Visite"], ["controls", "Controlli gratuiti"], ["finance", "Contabilità"]] as const).map(([value, label]) =>
             <button key={value} aria-current={tab === value ? "page" : undefined} onClick={() => {
               setTab(value);
-              setLocation(value === "controls" ? "/admin/controlli" : "/admin");
+              setLocation(value === "controls" ? "/admin/controlli" : value === "finance" ? "/admin?tab=finance" : "/admin");
             }}
+              data-testid={`button-admin-tab-${value}`}
               className={`rounded-xl px-4 py-3 text-sm font-semibold ${tab === value ? "bg-indigo-600 text-white" : "bg-white border border-slate-200 text-slate-600"}`}>{label}</button>)}
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5 text-sm">
@@ -155,6 +192,19 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
           onDelete={id => mutate(`/reviews/${encodeURIComponent(id)}`, "DELETE")} />}
         {tab === "controls" && <AdminSiteControlsPanel requests={siteControls} busy={!!busy}
           onStatus={(id, status: SiteControlRequestStatus) => mutate(`/controlli/${encodeURIComponent(id)}`, "PATCH", { status })} />}
+        {tab === "finance" && <AdminFinancePanel
+          data={finance}
+          month={financeMonth}
+          loading={loading}
+          busy={!!busy}
+          onMonth={setFinanceMonth}
+          onCreateProject={(input: FinanceProjectInput) => mutateFinance("/finance/projects", "POST", input)}
+          onUpdateProject={(id: string, input: FinanceProjectUpdate) => mutateFinance(`/finance/projects/${encodeURIComponent(id)}`, "PATCH", input)}
+          onCreateEntry={(input: FinanceEntryInput) => mutateFinance("/finance/entries", "POST", input)}
+          onUpdateEntry={(id: string, input: FinanceEntryUpdate) => mutateFinance(`/finance/entries/${encodeURIComponent(id)}`, "PATCH", input)}
+          onMarkPaid={(id: string) => mutateFinance(`/finance/entries/${encodeURIComponent(id)}/paid`, "POST")}
+          onDeleteEntry={(id: string) => mutateFinance(`/finance/entries/${encodeURIComponent(id)}`, "DELETE")}
+        />}
       </div>
     </main>
   );

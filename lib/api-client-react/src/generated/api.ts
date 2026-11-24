@@ -19,6 +19,9 @@ import type {
 import type {
   AdminContact,
   AdminCredentialInput,
+  AdminFinanceData,
+  AdminFinanceEntry,
+  AdminFinanceProject,
   AdminOverview,
   AdminReview,
   AdminSession,
@@ -26,6 +29,11 @@ import type {
   ContactRequest,
   ContactResponse,
   ContactStateInput,
+  FinanceEntryInput,
+  FinanceEntryUpdate,
+  FinanceProjectInput,
+  FinanceProjectUpdate,
+  GetAdminFinanceParams,
   GetAdminOverviewParams,
   HealthStatus,
   ListAdminSiteControlRequestsParams,
@@ -930,6 +938,592 @@ export const useUpdateAdminSiteControlRequest = <
   TContext
 > => {
   return useMutation(getUpdateAdminSiteControlRequestMutationOptions(options));
+};
+
+/**
+ * @summary Elenca lavori e movimenti del bilancio interno
+ */
+export const getGetAdminFinanceUrl = (params: GetAdminFinanceParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/finance?${stringifiedParams}`
+    : `/api/admin/finance`;
+};
+
+export const getAdminFinance = async (
+  params: GetAdminFinanceParams,
+  options?: RequestInit,
+): Promise<AdminFinanceData> => {
+  return customFetch<AdminFinanceData>(getGetAdminFinanceUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAdminFinanceQueryKey = (params?: GetAdminFinanceParams) => {
+  return [`/api/admin/finance`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetAdminFinanceQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminFinance>>,
+  TError = ErrorType<void>,
+>(
+  params: GetAdminFinanceParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getAdminFinance>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAdminFinanceQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminFinance>>> = ({
+    signal,
+  }) => getAdminFinance(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminFinance>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAdminFinanceQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminFinance>>
+>;
+export type GetAdminFinanceQueryError = ErrorType<void>;
+
+/**
+ * @summary Elenca lavori e movimenti del bilancio interno
+ */
+
+export function useGetAdminFinance<
+  TData = Awaited<ReturnType<typeof getAdminFinance>>,
+  TError = ErrorType<void>,
+>(
+  params: GetAdminFinanceParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getAdminFinance>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAdminFinanceQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Registra un nuovo lavoro
+ */
+export const getCreateAdminFinanceProjectUrl = () => {
+  return `/api/admin/finance/projects`;
+};
+
+export const createAdminFinanceProject = async (
+  financeProjectInput: FinanceProjectInput,
+  options?: RequestInit,
+): Promise<AdminFinanceProject> => {
+  return customFetch<AdminFinanceProject>(getCreateAdminFinanceProjectUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeProjectInput),
+  });
+};
+
+export const getCreateAdminFinanceProjectMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceProject>>,
+    TError,
+    { data: BodyType<FinanceProjectInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createAdminFinanceProject>>,
+  TError,
+  { data: BodyType<FinanceProjectInput> },
+  TContext
+> => {
+  const mutationKey = ["createAdminFinanceProject"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createAdminFinanceProject>>,
+    { data: BodyType<FinanceProjectInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createAdminFinanceProject(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateAdminFinanceProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createAdminFinanceProject>>
+>;
+export type CreateAdminFinanceProjectMutationBody =
+  BodyType<FinanceProjectInput>;
+export type CreateAdminFinanceProjectMutationError = ErrorType<void>;
+
+/**
+ * @summary Registra un nuovo lavoro
+ */
+export const useCreateAdminFinanceProject = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceProject>>,
+    TError,
+    { data: BodyType<FinanceProjectInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createAdminFinanceProject>>,
+  TError,
+  { data: BodyType<FinanceProjectInput> },
+  TContext
+> => {
+  return useMutation(getCreateAdminFinanceProjectMutationOptions(options));
+};
+
+export const getUpdateAdminFinanceProjectUrl = (id: string) => {
+  return `/api/admin/finance/projects/${id}`;
+};
+
+export const updateAdminFinanceProject = async (
+  id: string,
+  financeProjectUpdate: FinanceProjectUpdate,
+  options?: RequestInit,
+): Promise<AdminFinanceProject> => {
+  return customFetch<AdminFinanceProject>(getUpdateAdminFinanceProjectUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeProjectUpdate),
+  });
+};
+
+export const getUpdateAdminFinanceProjectMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceProject>>,
+    TError,
+    { id: string; data: BodyType<FinanceProjectUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateAdminFinanceProject>>,
+  TError,
+  { id: string; data: BodyType<FinanceProjectUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateAdminFinanceProject"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateAdminFinanceProject>>,
+    { id: string; data: BodyType<FinanceProjectUpdate> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateAdminFinanceProject(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateAdminFinanceProjectMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateAdminFinanceProject>>
+>;
+export type UpdateAdminFinanceProjectMutationBody =
+  BodyType<FinanceProjectUpdate>;
+export type UpdateAdminFinanceProjectMutationError = ErrorType<void>;
+
+export const useUpdateAdminFinanceProject = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceProject>>,
+    TError,
+    { id: string; data: BodyType<FinanceProjectUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateAdminFinanceProject>>,
+  TError,
+  { id: string; data: BodyType<FinanceProjectUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateAdminFinanceProjectMutationOptions(options));
+};
+
+/**
+ * @summary Registra una scadenza, un incasso o una spesa
+ */
+export const getCreateAdminFinanceEntryUrl = () => {
+  return `/api/admin/finance/entries`;
+};
+
+export const createAdminFinanceEntry = async (
+  financeEntryInput: FinanceEntryInput,
+  options?: RequestInit,
+): Promise<AdminFinanceEntry> => {
+  return customFetch<AdminFinanceEntry>(getCreateAdminFinanceEntryUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeEntryInput),
+  });
+};
+
+export const getCreateAdminFinanceEntryMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceEntry>>,
+    TError,
+    { data: BodyType<FinanceEntryInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createAdminFinanceEntry>>,
+  TError,
+  { data: BodyType<FinanceEntryInput> },
+  TContext
+> => {
+  const mutationKey = ["createAdminFinanceEntry"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createAdminFinanceEntry>>,
+    { data: BodyType<FinanceEntryInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createAdminFinanceEntry(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateAdminFinanceEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createAdminFinanceEntry>>
+>;
+export type CreateAdminFinanceEntryMutationBody = BodyType<FinanceEntryInput>;
+export type CreateAdminFinanceEntryMutationError = ErrorType<void>;
+
+/**
+ * @summary Registra una scadenza, un incasso o una spesa
+ */
+export const useCreateAdminFinanceEntry = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceEntry>>,
+    TError,
+    { data: BodyType<FinanceEntryInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createAdminFinanceEntry>>,
+  TError,
+  { data: BodyType<FinanceEntryInput> },
+  TContext
+> => {
+  return useMutation(getCreateAdminFinanceEntryMutationOptions(options));
+};
+
+export const getUpdateAdminFinanceEntryUrl = (id: string) => {
+  return `/api/admin/finance/entries/${id}`;
+};
+
+export const updateAdminFinanceEntry = async (
+  id: string,
+  financeEntryUpdate: FinanceEntryUpdate,
+  options?: RequestInit,
+): Promise<AdminFinanceEntry> => {
+  return customFetch<AdminFinanceEntry>(getUpdateAdminFinanceEntryUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeEntryUpdate),
+  });
+};
+
+export const getUpdateAdminFinanceEntryMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceEntry>>,
+    TError,
+    { id: string; data: BodyType<FinanceEntryUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateAdminFinanceEntry>>,
+  TError,
+  { id: string; data: BodyType<FinanceEntryUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateAdminFinanceEntry"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateAdminFinanceEntry>>,
+    { id: string; data: BodyType<FinanceEntryUpdate> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateAdminFinanceEntry(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateAdminFinanceEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateAdminFinanceEntry>>
+>;
+export type UpdateAdminFinanceEntryMutationBody = BodyType<FinanceEntryUpdate>;
+export type UpdateAdminFinanceEntryMutationError = ErrorType<void>;
+
+export const useUpdateAdminFinanceEntry = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceEntry>>,
+    TError,
+    { id: string; data: BodyType<FinanceEntryUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateAdminFinanceEntry>>,
+  TError,
+  { id: string; data: BodyType<FinanceEntryUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateAdminFinanceEntryMutationOptions(options));
+};
+
+export const getDeleteAdminFinanceEntryUrl = (id: string) => {
+  return `/api/admin/finance/entries/${id}`;
+};
+
+export const deleteAdminFinanceEntry = async (
+  id: string,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteAdminFinanceEntryUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteAdminFinanceEntryMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteAdminFinanceEntry>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteAdminFinanceEntry>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["deleteAdminFinanceEntry"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteAdminFinanceEntry>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteAdminFinanceEntry(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteAdminFinanceEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteAdminFinanceEntry>>
+>;
+
+export type DeleteAdminFinanceEntryMutationError = ErrorType<void>;
+
+export const useDeleteAdminFinanceEntry = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteAdminFinanceEntry>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteAdminFinanceEntry>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getDeleteAdminFinanceEntryMutationOptions(options));
+};
+
+export const getMarkAdminFinanceEntryPaidUrl = (id: string) => {
+  return `/api/admin/finance/entries/${id}/paid`;
+};
+
+export const markAdminFinanceEntryPaid = async (
+  id: string,
+  options?: RequestInit,
+): Promise<AdminFinanceEntry> => {
+  return customFetch<AdminFinanceEntry>(getMarkAdminFinanceEntryPaidUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getMarkAdminFinanceEntryPaidMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markAdminFinanceEntryPaid>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markAdminFinanceEntryPaid>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["markAdminFinanceEntryPaid"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markAdminFinanceEntryPaid>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return markAdminFinanceEntryPaid(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MarkAdminFinanceEntryPaidMutationResult = NonNullable<
+  Awaited<ReturnType<typeof markAdminFinanceEntryPaid>>
+>;
+
+export type MarkAdminFinanceEntryPaidMutationError = ErrorType<void>;
+
+export const useMarkAdminFinanceEntryPaid = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markAdminFinanceEntryPaid>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof markAdminFinanceEntryPaid>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getMarkAdminFinanceEntryPaidMutationOptions(options));
 };
 
 export const getRecordSiteVisitUrl = () => {

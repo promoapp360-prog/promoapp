@@ -157,6 +157,110 @@ paths:
               schema: { $ref: "#/components/schemas/AdminSiteControlRequest" }
         "400": { description: Stato non valido }
         "404": { description: Richiesta non trovata }
+  /admin/finance:
+    get:
+      operationId: getAdminFinance
+      summary: Elenca lavori e movimenti del bilancio interno
+      parameters:
+        - name: month
+          in: query
+          required: true
+          schema: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+      responses:
+        "200":
+          description: Riepilogo mensile, lavori e movimenti
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceData" }
+        "400": { description: Mese non valido }
+  /admin/finance/projects:
+    post:
+      operationId: createAdminFinanceProject
+      summary: Registra un nuovo lavoro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceProjectInput" }
+      responses:
+        "201":
+          description: Lavoro registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceProject" }
+        "400": { description: Dati non validi }
+  /admin/finance/projects/{id}:
+    patch:
+      operationId: updateAdminFinanceProject
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceProjectUpdate" }
+      responses:
+        "200":
+          description: Lavoro aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceProject" }
+        "400": { description: Dati non validi }
+        "404": { description: Lavoro non trovato }
+  /admin/finance/entries:
+    post:
+      operationId: createAdminFinanceEntry
+      summary: Registra una scadenza, un incasso o una spesa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceEntryInput" }
+      responses:
+        "201":
+          description: Movimento registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceEntry" }
+        "400": { description: Dati non validi }
+        "404": { description: Lavoro non trovato }
+  /admin/finance/entries/{id}:
+    patch:
+      operationId: updateAdminFinanceEntry
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceEntryUpdate" }
+      responses:
+        "200":
+          description: Movimento aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceEntry" }
+        "400": { description: Dati non validi }
+        "404": { description: Movimento non trovato }
+    delete:
+      operationId: deleteAdminFinanceEntry
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "204": { description: Movimento non pagato eliminato }
+        "404": { description: Movimento non trovato o già pagato }
+  /admin/finance/entries/{id}/paid:
+    post:
+      operationId: markAdminFinanceEntryPaid
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Movimento segnato come pagato o incassato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceEntry" }
+        "404": { description: Movimento non trovato }
   /visits:
     post:
       operationId: recordSiteVisit
@@ -336,6 +440,89 @@ components:
         trackingStartedAt: { type: ["string", "null"], format: date-time }
         daily: { type: array, items: { $ref: "#/components/schemas/VisitDay" } }
         pages: { type: array, items: { $ref: "#/components/schemas/VisitedPage" } }
+    AdminFinanceProject:
+      type: object
+      required: [id, clientName, name, totalAmountCents, notes, active, createdAt, receivedCents, outstandingCents]
+      properties:
+        id: { type: string, format: uuid }
+        clientName: { type: string }
+        name: { type: string }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        notes: { type: string }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        receivedCents: { type: integer, minimum: 0, multipleOf: 1 }
+        outstandingCents: { type: integer, minimum: 0, multipleOf: 1 }
+    AdminFinanceEntry:
+      type: object
+      required: [id, projectId, projectName, clientName, direction, category, description, amountCents, dueDate, paidAt, repeatMonthly, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        projectName: { type: ["string", "null"] }
+        clientName: { type: ["string", "null"] }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        description: { type: string }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: string, format: date }
+        paidAt: { type: ["string", "null"], format: date-time }
+        repeatMonthly: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    AdminFinanceSummary:
+      type: object
+      required: [month, receivedCents, expensesCents, balanceCents, outstandingCents, overdueIncomeCents, unpaidExpensesCents]
+      properties:
+        month: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+        receivedCents: { type: integer, multipleOf: 1 }
+        expensesCents: { type: integer, multipleOf: 1 }
+        balanceCents: { type: integer, multipleOf: 1 }
+        outstandingCents: { type: integer, multipleOf: 1 }
+        overdueIncomeCents: { type: integer, multipleOf: 1 }
+        unpaidExpensesCents: { type: integer, multipleOf: 1 }
+    AdminFinanceData:
+      type: object
+      required: [summary, projects, entries]
+      properties:
+        summary: { $ref: "#/components/schemas/AdminFinanceSummary" }
+        projects: { type: array, items: { $ref: "#/components/schemas/AdminFinanceProject" } }
+        entries: { type: array, items: { $ref: "#/components/schemas/AdminFinanceEntry" } }
+    FinanceProjectInput:
+      type: object
+      required: [clientName, name, totalAmountCents]
+      properties:
+        clientName: { type: string, minLength: 1, maxLength: 160 }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        notes: { type: string, maxLength: 4000 }
+    FinanceProjectUpdate:
+      type: object
+      properties:
+        clientName: { type: string, minLength: 1, maxLength: 160 }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        notes: { type: string, maxLength: 4000 }
+        active: { type: boolean }
+    FinanceEntryInput:
+      type: object
+      required: [direction, category, description, amountCents, dueDate]
+      properties:
+        projectId: { type: ["string", "null"], format: uuid }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: string, format: date }
+        paid: { type: boolean, default: false }
+        repeatMonthly: { type: boolean, default: false }
+    FinanceEntryUpdate:
+      type: object
+      properties:
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: string, format: date }
+        repeatMonthly: { type: boolean }
     TrackingConfig:
       type: object
       properties:

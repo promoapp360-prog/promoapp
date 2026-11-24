@@ -1,0 +1,268 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { randomUUID } from "node:crypto";
+import type { AddressInfo } from "node:net";
+import express from "express";
+import type {
+  AdminFinanceData,
+  AdminFinanceEntry,
+  AdminFinanceProject,
+  FinanceEntryInput,
+  FinanceEntryUpdate,
+  FinanceProjectInput,
+  FinanceProjectUpdate,
+} from "@workspace/api-zod";
+import { createAdminAuthorization } from "../src/middlewares/adminAuthorization";
+import { createAdminFinanceRouter } from "../src/routes/admin-finance";
+import { nextMonthlyDate } from "../src/lib/admin-finance-data";
+
+const PASSWORD = "Synthetic-finance-admin";
+const KEY = "Synthetic-finance-session-key";
+
+function makeRepository() {
+  const projects: AdminFinanceProject[] = [];
+  const entries: AdminFinanceEntry[] = [];
+  const data = {
+    async list(month: string): Promise<AdminFinanceData> {
+      const monthPaid = (entry: AdminFinanceEntry) => entry.paidAt &&
+        new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit" })
+          .format(new Date(entry.paidAt)) === month;
+      const receivedCents = entries.filter((entry) => entry.direction === "income" && monthPaid(entry))
+        .reduce((sum, entry) => sum + entry.amountCents, 0);
+      const expensesCents = entries.filter((entry) => entry.direction === "expense" && monthPaid(entry))
+        .reduce((sum, entry) => sum + entry.amountCents, 0);
+      return {
+        summary: {
+          month,
+          receivedCents,
+          expensesCents,
+          balanceCents: receivedCents - expensesCents,
+          outstandingCents: entries.filter((entry) => entry.direction === "income" && !entry.paidAt).reduce((sum, entry) => sum + entry.amountCents, 0),
+          overdueIncomeCents: 0,
+          unpaidExpensesCents: entries.filter((entry) => entry.direction === "expense" && !entry.paidAt).reduce((sum, entry) => sum + entry.amountCents, 0),
+        },
+        projects: [...projects],
+        entries: [...entries],
+      };
+    },
+    async createProject(input: FinanceProjectInput): Promise<AdminFinanceProject> {
+      const project = {
+        id: randomUUID(),
+        clientName: input.clientName,
+        name: input.name,
+        totalAmountCents: input.totalAmountCents,
+        notes: input.notes ?? "",
+        active: true,
+        createdAt: new Date(),
+        receivedCents: 0,
+        outstandingCents: 0,
+      };
+      projects.push(project);
+      return project;
+    },
+    async updateProject(id: string, input: FinanceProjectUpdate): Promise<AdminFinanceProject | undefined> {
+      const project = projects.find((item) => item.id === id);
+      if (project) Object.assign(project, input);
+      return project;
+    },
+    async createEntry(input: FinanceEntryInput): Promise<AdminFinanceEntry | undefined> {
+      if (input.projectId && !projects.some((project) => project.id === input.projectId)) return;
+      const project = projects.find((item) => item.id === input.projectId);
+      const entry: AdminFinanceEntry = {
+        id: randomUUID(),
+        projectId: input.projectId ?? null,
+        projectName: project?.name ?? null,
+        clientName: project?.clientName ?? null,
+        direction: input.direction,
+        category: input.category,
+        description: input.description,
+        amountCents: input.amountCents,
+        dueDate: input.dueDate,
+        paidAt: input.paid ? new Date() : null,
+        repeatMonthly: input.repeatMonthly ?? false,
+        createdAt: new Date(),
+      };
+      entries.push(entry);
+      return entry;
+    },
+    async updateEntry(id: string, input: FinanceEntryUpdate): Promise<AdminFinanceEntry | undefined | null> {
+      const entry = entries.find((item) => item.id === id);
+      if (!entry) return;
+      if (
+        input.category &&
+        ((entry.direction === "income" && ["facebook", "replit"].includes(input.category)) ||
+          (entry.direction === "expense" && ["deposit", "balance", "monthly_fee"].includes(input.category)))
+      ) return null;
+      Object.assign(entry, input, input.dueDate ? { dueDate: input.dueDate } : {});
+      return entry;
+    },
+    async markEntryPaid(id: string): Promise<AdminFinanceEntry | undefined> {
+      const entry = entries.find((item) => item.id === id);
+      if (entry) entry.paidAt ??= new Date();
+      return entry;
+    },
+    async deleteEntry(id: string): Promise<boolean> {
+      const entry = entries.find((item) => item.id === id);
+      if (!entry || entry.paidAt) return false;
+      entries.splice(entries.indexOf(entry), 1);
+      return true;
+    },
+  };
+  return { data: data as unknown as Parameters<typeof createAdminFinanceRouter>[0], projects, entries };
+}
+
+async function withApp(run: (base: string, state: ReturnType<typeof makeRepository>) => Promise<void>) {
+  const state = makeRepository();
+  const app = express();
+  app.use(express.json());
+  app.use((req, _res, next) => {
+    Object.assign(req, { log: { warn: () => {}, error: () => {} } });
+    next();
+  });
+  app.use("/api", createAdminAuthorization(() => PASSWORD, () => KEY), createAdminFinanceRouter(state.data));
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise<void>((resolve) => server.once("listening", resolve));
+  try {
+    await run(`http://127.0.0.1:${(server.address() as AddressInfo).port}/api`, state);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+}
+
+const post = (value: unknown) => ({
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(value),
+});
+
+async function login(base: string) {
+  const response = await fetch(`${base}/admin/login`, post({ password: PASSWORD }));
+  assert.equal(response.status, 200);
+  const result = await response.json() as { csrfToken: string };
+  return {
+    Cookie: response.headers.get("set-cookie")!.split(";")[0],
+    "x-admin-csrf": result.csrfToken,
+    "Content-Type": "application/json",
+  };
+}
+
+test("finance data remains protected and validates requested month", async () => {
+  await withApp(async (base) => {
+    assert.equal((await fetch(`${base}/admin/finance?month=2026-11`)).status, 401);
+    const auth = await login(base);
+    assert.equal((await fetch(`${base}/admin/finance?month=2026-13`, { headers: auth })).status, 400);
+    const response = await fetch(`${base}/admin/finance?month=2026-11`, { headers: auth });
+    assert.equal(response.status, 200);
+    assert.deepEqual((await response.json()).summary.month, "2026-11");
+  });
+});
+
+test("monthly due dates preserve their original billing day", () => {
+  assert.equal(nextMonthlyDate("2026-01-31", 31), "2026-02-28");
+  assert.equal(nextMonthlyDate("2028-01-31", 31), "2028-02-29");
+  assert.equal(nextMonthlyDate("2026-12-31", 31), "2027-01-31");
+});
+
+test("jobs, due income, expenses and payment reminders can be managed", async () => {
+  await withApp(async (base, state) => {
+    const auth = await login(base);
+    const projectsPath = `${base}/admin/finance/projects`;
+    assert.equal((await fetch(projectsPath, { ...post({ clientName: " ", name: "Sito", totalAmountCents: 250000 }), headers: auth })).status, 400);
+    const projectResponse = await fetch(projectsPath, {
+      ...post({ clientName: "Cliente di prova", name: "Sito web", totalAmountCents: 250000 }),
+      headers: auth,
+    });
+    assert.equal(projectResponse.status, 201);
+    const project = await projectResponse.json() as AdminFinanceProject;
+    assert.equal(project.totalAmountCents, 250000);
+    const archived = await fetch(`${projectsPath}/${project.id}`, {
+      method: "PATCH",
+      headers: auth,
+      body: JSON.stringify({ active: false }),
+    });
+    assert.equal(archived.status, 200);
+    assert.equal((await archived.json() as AdminFinanceProject).active, false);
+
+    const entriesPath = `${base}/admin/finance/entries`;
+    const mismatchedExpense = await fetch(entriesPath, {
+      ...post({
+        projectId: project.id,
+        direction: "income",
+        category: "facebook",
+        description: "Categoria non compatibile",
+        amountCents: 5000,
+        dueDate: "2026-11-30",
+      }),
+      headers: auth,
+    });
+    assert.equal(mismatchedExpense.status, 400);
+
+    const created = await fetch(entriesPath, {
+      ...post({
+        projectId: project.id,
+        direction: "income",
+        category: "deposit",
+        description: "Acconto iniziale",
+        amountCents: 100000,
+        dueDate: "2026-11-30",
+        repeatMonthly: false,
+      }),
+      headers: auth,
+    });
+    assert.equal(created.status, 201);
+    const entry = await created.json() as AdminFinanceEntry;
+    assert.equal(entry.projectName, project.name);
+    assert.equal(state.entries.length, 1);
+
+    const marked = await fetch(`${base}/admin/finance/entries/${entry.id}/paid`, {
+      method: "POST",
+      headers: auth,
+    });
+    assert.equal(marked.status, 200);
+    assert.ok((await marked.json() as AdminFinanceEntry).paidAt);
+
+    const replitExpense = await fetch(entriesPath, {
+      ...post({
+        direction: "expense",
+        category: "replit",
+        description: "Canone Replit",
+        amountCents: 2500,
+        dueDate: "2026-11-24",
+        repeatMonthly: true,
+      }),
+      headers: auth,
+    });
+    assert.equal(replitExpense.status, 201);
+    const expense = await replitExpense.json() as AdminFinanceEntry;
+    assert.equal(expense.category, "replit");
+    assert.equal((await fetch(`${base}/admin/finance/entries/${expense.id}/paid`, { method: "POST", headers: auth })).status, 200);
+
+    const facebookExpense = await fetch(entriesPath, {
+      ...post({
+        direction: "expense",
+        category: "facebook",
+        description: "Campagna Facebook",
+        amountCents: 5000,
+        dueDate: "2026-11-24",
+      }),
+      headers: auth,
+    });
+    assert.equal(facebookExpense.status, 201);
+    const facebookEntry = await facebookExpense.json() as AdminFinanceEntry;
+    assert.equal((await fetch(`${base}/admin/finance/entries/${facebookEntry.id}`, {
+      method: "DELETE",
+      headers: auth,
+    })).status, 204);
+
+    const cannotDeletePaid = await fetch(`${base}/admin/finance/entries/${entry.id}`, {
+      method: "DELETE",
+      headers: auth,
+    });
+    assert.equal(cannotDeletePaid.status, 404);
+
+    const summary = await (await fetch(`${base}/admin/finance?month=2026-11`, { headers: auth })).json();
+    assert.equal(summary.summary.receivedCents, 100000);
+    assert.equal(summary.summary.expensesCents, 2500);
+    assert.equal(summary.projects[0].id, project.id);
+  });
+});
