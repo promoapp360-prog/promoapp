@@ -59,6 +59,86 @@ function monthInRome(value: Date | string) {
   return `${part("year")}-${part("month")}`;
 }
 
+function FinanceMovementCard({
+  entry,
+  today,
+  busy,
+  onMarkPaid,
+  onEdit,
+  onDelete,
+}: {
+  entry: AdminFinanceEntry;
+  today: string;
+  busy: boolean;
+  onMarkPaid: (id: string) => Promise<boolean>;
+  onEdit: (entry: AdminFinanceEntry) => void;
+  onDelete: (id: string) => Promise<boolean>;
+}) {
+  const overdue = !entry.paidAt && dateOnly(entry.dueDate) < today;
+  const paid = Boolean(entry.paidAt);
+  return (
+    <article className={`rounded-xl border p-4 ${overdue ? "border-amber-300 bg-amber-50/40" : "border-slate-200"}`} data-testid={`row-finance-entry-${entry.id}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${entry.direction === "income" ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+              {entry.direction === "income" ? "Entrata" : "Spesa"}
+            </span>
+            <span className="text-xs text-slate-500">{categoryLabels[entry.category]}</span>
+            {entry.repeatMonthly && <span className="text-xs text-indigo-600">Mensile</span>}
+          </div>
+          <h5 className="mt-2 break-words text-sm font-semibold">{entry.description}</h5>
+          <p className="mt-1 text-xs text-slate-500">
+            {paid ? "Registrato" : "Scadenza"} {displayDate(entry.dueDate)}
+          </p>
+          {overdue && <p className="mt-1 text-xs font-semibold text-amber-800">Scaduto · promemoria da verificare</p>}
+          {paid && entry.paidAt && <p className="mt-1 text-xs text-emerald-700">Pagato/incassato il {new Date(entry.paidAt).toLocaleDateString("it-IT")}</p>}
+        </div>
+        <p className={`shrink-0 font-bold ${entry.direction === "income" ? "text-emerald-700" : "text-rose-700"}`}>
+          {entry.direction === "income" ? "+" : "−"}{money(entry.amountCents)}
+        </p>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-3">
+        {!paid && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void onMarkPaid(entry.id)}
+            className="text-xs font-semibold text-emerald-700 disabled:opacity-50"
+            data-testid={`button-mark-finance-paid-${entry.id}`}
+          >
+            {entry.direction === "income" ? "Segna incassato" : "Segna pagato"}
+          </button>
+        )}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => onEdit(entry)}
+          className="text-xs font-semibold text-indigo-700 disabled:opacity-50"
+          data-testid={`button-edit-finance-entry-${entry.id}`}
+        >
+          Modifica
+        </button>
+        {!paid && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              if (window.confirm("Eliminare questa scadenza non ancora pagata? Le registrazioni già pagate non vengono eliminate.")) {
+                void onDelete(entry.id);
+              }
+            }}
+            className="text-xs text-rose-700 disabled:opacity-50"
+            data-testid={`button-delete-finance-entry-${entry.id}`}
+          >
+            Elimina scadenza
+          </button>
+        )}
+      </div>
+    </article>
+  );
+}
+
 export default function AdminFinancePanel({
   data,
   month,
@@ -94,10 +174,6 @@ export default function AdminFinancePanel({
   const [filter, setFilter] = useState<"all" | "open" | "income" | "expense">("all");
   const summary = data?.summary;
   const today = todayInRome();
-  const openIncome = useMemo(
-    () => (data?.entries ?? []).filter((entry) => entry.direction === "income" && !entry.paidAt),
-    [data?.entries],
-  );
   const visibleEntries = useMemo(() => (data?.entries ?? []).filter((entry) => {
     const inSelectedMonth = !entry.paidAt || monthInRome(entry.paidAt) === month;
     if (!inSelectedMonth) return false;
@@ -105,6 +181,8 @@ export default function AdminFinancePanel({
     if (filter === "income" || filter === "expense") return entry.direction === filter;
     return true;
   }), [data?.entries, filter, month]);
+  const standaloneEntries = visibleEntries.filter((entry) => !entry.projectId);
+  const projectsWithoutClient = data?.projects.filter((project) => !project.clientId) ?? [];
   const outstandingByClient = useMemo(() => {
     const totals = new Map<string, number>();
     for (const project of data?.projects ?? []) {
@@ -117,6 +195,74 @@ export default function AdminFinancePanel({
 
   const saveProject = (input: FinanceProjectInput | FinanceProjectUpdate, id?: string) =>
     id ? onUpdateProject(id, input as FinanceProjectUpdate) : onCreateProject(input as FinanceProjectInput);
+
+  const renderProject = (project: AdminFinanceProject) => {
+    const projectEntries = visibleEntries.filter((entry) => entry.projectId === project.id);
+    const allProjectEntries = (data?.entries ?? []).filter((entry) => entry.projectId === project.id);
+    return (
+      <article key={project.id} className={`rounded-xl border p-4 ${project.active ? "border-slate-200" : "border-dashed border-slate-300 bg-slate-50 opacity-75"}`} data-testid={`card-finance-project-${project.id}`}>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Lavoro</p>
+            <h5 className="break-words font-semibold">{project.name}</h5>
+            {project.clientId === null && <p className="text-xs text-slate-500">Cliente non associato · {project.clientName}</p>}
+            {!project.active && <p className="mt-1 text-xs text-slate-500">Archiviato</p>}
+          </div>
+          <p className="shrink-0 text-sm font-bold">{money(project.totalAmountCents)}</p>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+          <p className="text-slate-500">Incassato <strong className="text-emerald-700">{money(project.receivedCents)}</strong></p>
+          <p className="text-slate-500">Da incassare <strong className="text-amber-700">{money(project.outstandingCents)}</strong></p>
+        </div>
+        <p className="mt-3 text-xs font-medium text-slate-600" data-testid={`text-finance-payment-plan-${project.id}`}>
+          {project.paymentType === "single"
+            ? "Unica soluzione"
+            : project.paymentType === "advance"
+              ? `Acconto ${money(project.depositAmountCents ?? 0)} · saldo ${money(project.totalAmountCents - (project.depositAmountCents ?? 0))}`
+              : project.installmentCount
+                ? `${project.installmentCount} rate indicate`
+                : "Pagamento a rate · numero non indicato"}
+        </p>
+        {project.notes && <p className="mt-3 whitespace-pre-wrap break-words text-xs text-slate-500">{project.notes}</p>}
+        <div className="mt-3 flex flex-wrap gap-3">
+          <button type="button" disabled={busy} onClick={() => setProjectEditor(project)} className="text-xs font-semibold text-indigo-700 disabled:opacity-50" data-testid={`button-edit-finance-project-${project.id}`}>
+            Modifica lavoro
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void onUpdateProject(project.id, { active: !project.active })}
+            className="text-xs text-slate-600 disabled:opacity-50"
+            data-testid={`button-archive-finance-project-${project.id}`}
+          >
+            {project.active ? "Archivia" : "Riattiva"}
+          </button>
+        </div>
+        <details className="mt-4 rounded-xl bg-slate-50 p-3" data-testid={`details-finance-project-movements-${project.id}`}>
+          <summary className="cursor-pointer text-sm font-semibold">
+            Movimenti collegati ({allProjectEntries.length})
+          </summary>
+          <div className="mt-3 space-y-2">
+            {projectEntries.length ? projectEntries.map((entry) => (
+              <FinanceMovementCard
+                key={entry.id}
+                entry={entry}
+                today={today}
+                busy={busy}
+                onMarkPaid={onMarkPaid}
+                onEdit={setEntryEditor}
+                onDelete={onDeleteEntry}
+              />
+            )) : (
+              <p className="text-xs text-slate-500">
+                {allProjectEntries.length ? "Nessun movimento con il mese e il filtro selezionati." : "Nessun movimento ancora collegato a questo lavoro."}
+              </p>
+            )}
+          </div>
+        </details>
+      </article>
+    );
+  };
 
   return (
     <section aria-label="Contabilità e bilancio lavori" className="space-y-6" data-testid="panel-admin-finance">
@@ -215,12 +361,14 @@ export default function AdminFinancePanel({
         )}
       </section>
 
-      <div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Lavori registrati">
+      <div className="space-y-5">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Contabilità per cliente">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold">Lavori</h3>
-              <p className="mt-1 text-xs text-slate-500">{data?.projects.length ?? 0} lavori registrati</p>
+              <h3 className="font-bold">Contabilità per cliente</h3>
+              <p className="mt-1 text-xs text-slate-500">
+                Lavori e movimenti collegati sono raggruppati sotto il rispettivo cliente.
+              </p>
             </div>
             <Button size="sm" onClick={() => setProjectEditor("new")} disabled={busy || !data?.clients.length} title={!data?.clients.length ? "Aggiungi prima un cliente" : undefined} data-testid="button-new-finance-project">
               Nuovo lavoro
@@ -240,90 +388,7 @@ export default function AdminFinancePanel({
             </div>
           )}
 
-          {!data?.projects.length ? (
-            <div className="rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
-              Non ci sono ancora lavori. Aggiungine uno per collegarci acconti, saldi e canoni.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {data.projects.map((project) => {
-                const client = data.clients.find((item) => item.id === project.clientId);
-                const customerName = client?.companyName || project.clientName;
-                const contactName = client?.companyName && client.name !== client.companyName ? client.name : null;
-                return (
-                <article key={project.id} className={`rounded-xl border p-4 ${project.active ? "border-slate-200" : "border-dashed border-slate-300 bg-slate-50 opacity-75"}`} data-testid={`card-finance-project-${project.id}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Cliente</p>
-                      <h4 className="break-words font-semibold">{customerName}</h4>
-                      {contactName && <p className="text-xs text-slate-500">Referente: {contactName}</p>}
-                      <p className="mt-1 text-sm text-slate-500"><span className="font-semibold text-slate-600">Lavoro:</span> {project.name}</p>
-                      {!project.active && <p className="mt-1 text-xs text-slate-500">Archiviato</p>}
-                    </div>
-                    <p className="shrink-0 text-sm font-bold">{money(project.totalAmountCents)}</p>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                    <p className="text-slate-500">Incassato <strong className="text-emerald-700">{money(project.receivedCents)}</strong></p>
-                    <p className="text-slate-500">Da incassare <strong className="text-amber-700">{money(project.outstandingCents)}</strong></p>
-                  </div>
-                  <p className="mt-3 text-xs font-medium text-slate-600" data-testid={`text-finance-payment-plan-${project.id}`}>
-                    {project.paymentType === "single"
-                      ? "Unica soluzione"
-                      : project.paymentType === "advance"
-                        ? `Acconto ${money(project.depositAmountCents ?? 0)} · saldo ${money(project.totalAmountCents - (project.depositAmountCents ?? 0))}`
-                        : project.installmentCount
-                          ? `${project.installmentCount} rate indicate · scadenze da inserire nei movimenti`
-                          : "Pagamento a rate · numero non indicato · scadenze nei movimenti"}
-                  </p>
-                  {project.notes && <p className="mt-3 whitespace-pre-wrap break-words text-xs text-slate-500">{project.notes}</p>}
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    <button type="button" disabled={busy} onClick={() => setProjectEditor(project)} className="text-xs font-semibold text-indigo-700 disabled:opacity-50" data-testid={`button-edit-finance-project-${project.id}`}>Modifica</button>
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => void onUpdateProject(project.id, { active: !project.active })}
-                      className="text-xs text-slate-600 disabled:opacity-50"
-                      data-testid={`button-archive-finance-project-${project.id}`}
-                    >
-                      {project.active ? "Archivia" : "Riattiva"}
-                    </button>
-                  </div>
-                </article>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Movimenti e scadenze">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 className="font-bold">Movimenti e promemoria</h3>
-              <p className="mt-1 text-xs text-slate-500">
-                {openIncome.length} {openIncome.length === 1 ? "incasso da riscuotere" : "incassi da riscuotere"}
-                {summary?.unpaidExpensesCents ? ` · ${money(summary.unpaidExpensesCents)} di spese da pagare` : ""}
-              </p>
-            </div>
-            <Button size="sm" onClick={() => setEntryEditor("new")} disabled={busy} data-testid="button-new-finance-entry">
-              Nuovo movimento
-            </Button>
-          </div>
-
-          {entryEditor && (
-            <div className="mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
-              <h4 className="mb-3 font-semibold">{entryEditor === "new" ? "Registra una scadenza o una spesa" : "Modifica movimento"}</h4>
-              <FinanceEntryForm
-                projects={data?.projects ?? []}
-                initial={entryEditor === "new" ? undefined : entryEditor}
-                busy={busy}
-                onCreate={onCreateEntry}
-                onUpdate={onUpdateEntry}
-                onCancel={() => setEntryEditor(null)}
-              />
-            </div>
-          )}
-
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-4 flex flex-wrap gap-2" aria-label="Filtra movimenti per tipo">
             {([
               ["all", "Tutti"],
               ["open", "Da fare"],
@@ -345,77 +410,109 @@ export default function AdminFinancePanel({
 
           {loading && !data ? (
             <p role="status" className="py-6 text-center text-sm text-slate-500">Caricamento contabilità…</p>
-          ) : !visibleEntries.length ? (
+          ) : !data?.clients.length && !projectsWithoutClient.length ? (
             <div className="rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
-              {data?.entries.length ? "Non ci sono movimenti da mostrare per questo mese e filtro." : "Nessun movimento registrato: aggiungi acconti, canoni o spese per iniziare."}
+              Registra un cliente, poi aggiungi i suoi lavori, incassi e spese.
             </div>
           ) : (
             <div className="space-y-3">
-              {visibleEntries.map((entry) => {
-                const overdue = !entry.paidAt && dateOnly(entry.dueDate) < today;
-                const paid = Boolean(entry.paidAt);
+              {(data?.clients ?? []).map((client) => {
+                const clientProjects = (data?.projects ?? []).filter((project) => project.clientId === client.id);
+                const received = clientProjects.reduce((sum, project) => sum + project.receivedCents, 0);
                 return (
-                  <article key={entry.id} className={`rounded-xl border p-4 ${overdue ? "border-amber-300 bg-amber-50/40" : "border-slate-200"}`} data-testid={`row-finance-entry-${entry.id}`}>
-                    <div className="flex flex-wrap items-start justify-between gap-3">
+                  <details key={client.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white" data-testid={`ledger-client-${client.id}`}>
+                    <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-4 p-4 hover:bg-slate-50">
                       <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className={`rounded-full px-2 py-1 text-[11px] font-bold ${entry.direction === "income" ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
-                            {entry.direction === "income" ? "Entrata" : "Spesa"}
-                          </span>
-                          <span className="text-xs text-slate-500">{categoryLabels[entry.category]}</span>
-                          {entry.repeatMonthly && <span className="text-xs text-indigo-600">Mensile</span>}
-                        </div>
-                        <h4 className="mt-2 break-words text-sm font-semibold">{entry.description}</h4>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {entry.projectName ? `${entry.clientName} · ${entry.projectName}` : "Voce generale"} · {paid ? "Registrato" : "Scadenza"} {displayDate(entry.dueDate)}
-                        </p>
-                        {overdue && <p className="mt-1 text-xs font-semibold text-amber-800">Scaduto · promemoria da verificare</p>}
-                        {paid && entry.paidAt && <p className="mt-1 text-xs text-emerald-700">Pagato/incassato il {new Date(entry.paidAt).toLocaleDateString("it-IT")}</p>}
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Cliente</p>
+                        <h4 className="break-words font-semibold">{client.companyName || client.name}</h4>
+                        {client.companyName && client.name !== client.companyName && <p className="text-xs text-slate-500">Referente: {client.name}</p>}
                       </div>
-                      <p className={`shrink-0 font-bold ${entry.direction === "income" ? "text-emerald-700" : "text-rose-700"}`}>
-                        {entry.direction === "income" ? "+" : "−"}{money(entry.amountCents)}
-                      </p>
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-3">
-                      {!paid && (
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => void onMarkPaid(entry.id)}
-                          className="text-xs font-semibold text-emerald-700 disabled:opacity-50"
-                          data-testid={`button-mark-finance-paid-${entry.id}`}
-                        >
-                          {entry.direction === "income" ? "Segna incassato" : "Segna pagato"}
+                      <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                        <span className="text-slate-500">{clientProjects.length} {clientProjects.length === 1 ? "lavoro" : "lavori"}</span>
+                        <span className="text-slate-500">Incassato <strong className="text-emerald-700">{money(received)}</strong></span>
+                        <span className="text-slate-500">Da incassare <strong className="text-amber-700">{money(outstandingByClient.get(client.id) ?? 0)}</strong></span>
+                        <span className="font-semibold text-indigo-600">Dettagli cliente</span>
+                      </div>
+                    </summary>
+                    <div className="space-y-4 border-t border-slate-200 p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="text-xs text-slate-500">
+                          {client.email && <p>{client.email}</p>}
+                          {client.phone && <p>{client.phone}</p>}
+                          {client.notes && <p className="mt-1 whitespace-pre-wrap">{client.notes}</p>}
+                        </div>
+                        <button type="button" disabled={busy} onClick={() => setClientEditor(client)} className="text-xs font-semibold text-indigo-700 disabled:opacity-50" data-testid={`button-edit-finance-client-${client.id}`}>
+                          Modifica cliente
                         </button>
-                      )}
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => setEntryEditor(entry)}
-                        className="text-xs font-semibold text-indigo-700 disabled:opacity-50"
-                        data-testid={`button-edit-finance-entry-${entry.id}`}
-                      >
-                        Modifica
-                      </button>
-                      {!paid && (
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => {
-                            if (window.confirm("Eliminare questa scadenza non ancora pagata? Le registrazioni già pagate non vengono eliminate.")) {
-                              void onDeleteEntry(entry.id);
-                            }
-                          }}
-                          className="text-xs text-rose-700 disabled:opacity-50"
-                          data-testid={`button-delete-finance-entry-${entry.id}`}
-                        >
-                          Elimina scadenza
-                        </button>
+                      </div>
+                      {clientProjects.length ? (
+                        <div className="space-y-3">{clientProjects.map(renderProject)}</div>
+                      ) : (
+                        <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">Nessun lavoro registrato per questo cliente.</p>
                       )}
                     </div>
-                  </article>
+                  </details>
                 );
               })}
+              {projectsWithoutClient.length > 0 && (
+                <details className="overflow-hidden rounded-2xl border border-dashed border-slate-300 bg-slate-50" data-testid="ledger-unassigned-projects">
+                  <summary className="cursor-pointer list-none p-4 font-semibold">Lavori senza cliente associato ({projectsWithoutClient.length})</summary>
+                  <div className="space-y-3 border-t border-slate-200 p-4">{projectsWithoutClient.map(renderProject)}</div>
+                </details>
+              )}
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Movimenti generali">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="font-bold">Movimenti generali</h3>
+              <p className="mt-1 text-xs text-slate-500">
+                Qui trovi solo incassi e spese non collegati a un lavoro. I movimenti dei lavori sono dentro il cliente.
+              </p>
+            </div>
+            <Button size="sm" onClick={() => setEntryEditor("new")} disabled={busy} data-testid="button-new-finance-entry">
+              Nuovo movimento
+            </Button>
+          </div>
+
+          {entryEditor && (
+            <div className="mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+              <h4 className="mb-3 font-semibold">{entryEditor === "new" ? "Registra una scadenza o una spesa" : "Modifica movimento"}</h4>
+              <p className="mb-3 text-xs text-slate-500">Collegando il movimento a un lavoro, verrà mostrato nella contabilità del relativo cliente.</p>
+              <FinanceEntryForm
+                projects={data?.projects ?? []}
+                initial={entryEditor === "new" ? undefined : entryEditor}
+                busy={busy}
+                onCreate={onCreateEntry}
+                onUpdate={onUpdateEntry}
+                onCancel={() => setEntryEditor(null)}
+              />
+            </div>
+          )}
+
+          {loading && !data ? (
+            <p role="status" className="py-6 text-center text-sm text-slate-500">Caricamento contabilità…</p>
+          ) : !standaloneEntries.length ? (
+            <div className="rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
+              {data?.entries.length
+                ? "Non ci sono movimenti generali da mostrare; le voci collegate ai lavori sono nei rispettivi clienti."
+                : "Nessun movimento generale registrato."}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {standaloneEntries.map((entry) => (
+                <FinanceMovementCard
+                  key={entry.id}
+                  entry={entry}
+                  today={today}
+                  busy={busy}
+                  onMarkPaid={onMarkPaid}
+                  onEdit={setEntryEditor}
+                  onDelete={onDeleteEntry}
+                />
+              ))}
             </div>
           )}
         </section>

@@ -26,3 +26,9 @@ Nelle schede dei lavori, mostrare prima il nome della persona o della società c
 **Why:** l’utente ha richiesto quest’ordine per riconoscere subito a chi appartiene ogni lavoro.
 
 **How to apply:** mettere in evidenza il cliente prima del lavoro; se sono presenti società e referente, mostrare la società come cliente e il referente come informazione secondaria.
+
+La contabilità deve essere raggruppata per cliente: lavori e movimenti associati vanno mostrati insieme sotto quel cliente; solo le voci senza lavoro associato restano generali.
+
+**Why:** l’utente ha chiesto esplicitamente che la contabilità sia divisa per cliente.
+
+**How to apply:** mantenere i riepiloghi per cliente e il totale complessivo; non spostare movimenti collegati ai lavori nella lista generale.
