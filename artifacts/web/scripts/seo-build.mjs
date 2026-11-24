@@ -16,6 +16,13 @@ const template = await readFile(resolve(out, "index.html"), "utf8");
 const server = await createServer({
   root, configFile: false, plugins: [react()],
   server: { middlewareMode: true }, appType: "custom",
+  resolve: {
+    alias: {
+      "@": resolve(root, "src"),
+      "@assets": resolve(root, "..", "..", "attached_assets"),
+    },
+    dedupe: ["react", "react-dom"],
+  },
   ssr: { noExternal: ["@workspace/api-client-react"] },
 });
 try {
