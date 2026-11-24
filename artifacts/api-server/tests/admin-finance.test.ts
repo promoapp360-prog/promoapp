@@ -35,6 +35,16 @@ function makeRepository() {
         .reduce((sum, entry) => sum + entry.amountCents, 0);
       const expensesCents = entries.filter((entry) => entry.direction === "expense" && monthPaid(entry))
         .reduce((sum, entry) => sum + entry.amountCents, 0);
+      const projectRows = projects.map((project) => {
+        const relatedIncome = entries.filter((entry) => entry.projectId === project.id && entry.direction === "income");
+        return {
+          ...project,
+          receivedCents: relatedIncome.filter((entry) => entry.paidAt)
+            .reduce((sum, entry) => sum + entry.amountCents, 0),
+          outstandingCents: relatedIncome.filter((entry) => !entry.paidAt)
+            .reduce((sum, entry) => sum + entry.amountCents, 0),
+        };
+      });
       return {
         summary: {
           month,
@@ -46,7 +56,7 @@ function makeRepository() {
           unpaidExpensesCents: entries.filter((entry) => entry.direction === "expense" && !entry.paidAt).reduce((sum, entry) => sum + entry.amountCents, 0),
         },
         clients: [...clients],
-        projects: [...projects],
+        projects: projectRows,
         entries: [...entries],
       };
     },
@@ -106,7 +116,7 @@ function makeRepository() {
       const total = input.totalAmountCents ?? project.totalAmountCents;
       if ((paymentType === "single" && (deposit !== null || count !== null)) ||
         (paymentType === "advance" && (deposit === null || deposit <= 0 || deposit > total || count !== null)) ||
-        (paymentType === "installments" && (deposit !== null || count === null || count < 2 || count > 60))) return null;
+        (paymentType === "installments" && (deposit !== null || (count !== null && (count < 2 || count > 60))))) return null;
       const client = input.clientId ? clients.find((item) => item.id === input.clientId) : undefined;
       if (input.clientId && !client) return null;
       Object.assign(project, input, client ? { clientId: client.id, clientName: client.name } : {});
@@ -255,16 +265,25 @@ test("jobs, due income, expenses and payment reminders can be managed", async ()
     assert.equal(project.clientId, client.id);
     assert.equal(project.paymentType, "advance");
     assert.equal(project.depositAmountCents, 100000);
-    assert.equal((await fetch(`${projectsPath}/${project.id}`, {
+    const rateModeWithoutCount = await fetch(`${projectsPath}/${project.id}`, {
       method: "PATCH",
       headers: auth,
-      body: JSON.stringify({ paymentType: "installments", depositAmountCents: null, installmentCount: 5 }),
-    })).status, 200);
+      body: JSON.stringify({ paymentType: "installments", depositAmountCents: null }),
+    });
+    assert.equal(rateModeWithoutCount.status, 200);
+    assert.equal((await rateModeWithoutCount.json() as AdminFinanceProject).installmentCount, null);
     assert.equal((await fetch(`${projectsPath}/${project.id}`, {
       method: "PATCH",
       headers: auth,
       body: JSON.stringify({ installmentCount: 1 }),
     })).status, 400);
+    const savedInstallmentCount = await fetch(`${projectsPath}/${project.id}`, {
+      method: "PATCH",
+      headers: auth,
+      body: JSON.stringify({ installmentCount: 5 }),
+    });
+    assert.equal(savedInstallmentCount.status, 200);
+    assert.equal((await savedInstallmentCount.json() as AdminFinanceProject).installmentCount, 5);
     const archived = await fetch(`${projectsPath}/${project.id}`, {
       method: "PATCH",
       headers: auth,
@@ -303,6 +322,9 @@ test("jobs, due income, expenses and payment reminders can be managed", async ()
     const entry = await created.json() as AdminFinanceEntry;
     assert.equal(entry.projectName, project.name);
     assert.equal(state.entries.length, 1);
+    const dueBalance = await (await fetch(`${base}/admin/finance?month=2026-11`, { headers: auth })).json();
+    assert.equal(dueBalance.summary.outstandingCents, 100000);
+    assert.equal(dueBalance.projects.find((item: AdminFinanceProject) => item.id === project.id).outstandingCents, 100000);
 
     const marked = await fetch(`${base}/admin/finance/entries/${entry.id}/paid`, {
       method: "POST",
@@ -310,6 +332,9 @@ test("jobs, due income, expenses and payment reminders can be managed", async ()
     });
     assert.equal(marked.status, 200);
     assert.ok((await marked.json() as AdminFinanceEntry).paidAt);
+    const paidBalance = await (await fetch(`${base}/admin/finance?month=2026-11`, { headers: auth })).json();
+    assert.equal(paidBalance.summary.outstandingCents, 0);
+    assert.equal(paidBalance.projects.find((item: AdminFinanceProject) => item.id === project.id).outstandingCents, 0);
 
     const replitExpense = await fetch(entriesPath, {
       ...post({

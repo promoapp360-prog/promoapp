@@ -52,10 +52,10 @@ const projectSchema = z.object({
     context.addIssue({ code: "custom", path: ["depositAmountCents"], message: "Inserisci un acconto positivo, non superiore al totale." });
   }
   if (values.paymentType === "installments" && (
-    values.depositAmountCents !== null || values.installmentCount === null ||
-    values.installmentCount < 2 || values.installmentCount > 60
+    values.depositAmountCents !== null ||
+    (values.installmentCount !== null && (values.installmentCount < 2 || values.installmentCount > 60))
   )) {
-    context.addIssue({ code: "custom", path: ["installmentCount"], message: "Indica da 2 a 60 rate." });
+    context.addIssue({ code: "custom", path: ["installmentCount"], message: "Indica un numero di rate da 2 a 60 oppure lascia il campo vuoto." });
   }
 });
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -330,13 +330,14 @@ export function FinanceProjectForm({
         {form.watch("paymentType") === "installments" && (
           <FormField control={form.control} name="installmentCount" render={({ field }) => (
             <FormItem>
-              <FormLabel>Numero di rate</FormLabel>
+              <FormLabel>Numero di rate (facoltativo)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   min="2"
                   max="60"
                   step="1"
+                  placeholder="Se noto"
                   value={field.value ?? ""}
                   onChange={(event) => field.onChange(event.target.value === "" ? null : Number(event.target.value))}
                   data-testid="input-finance-installment-count"
@@ -347,7 +348,9 @@ export function FinanceProjectForm({
           )} />
         )}
         <p className="text-xs text-slate-500 sm:col-span-2">
-          Qui registri l’accordo; le singole scadenze e gli incassi si aggiungono separatamente nei movimenti.
+          {form.watch("paymentType") === "installments"
+            ? "Il numero di rate è facoltativo. Registra importi e scadenze nei movimenti per aggiornare il residuo del cliente e il totale."
+            : "Qui registri l’accordo; le singole scadenze e gli incassi si aggiungono separatamente nei movimenti."}
         </p>
         <FormField control={form.control} name="name" render={({ field }) => (
           <FormItem>

@@ -39,8 +39,8 @@ function paymentTermsMatch(
     return depositAmountCents != null && depositAmountCents > 0 &&
       depositAmountCents <= totalAmountCents && installmentCount == null;
   }
-  return depositAmountCents == null && installmentCount != null &&
-    installmentCount >= 2 && installmentCount <= 60;
+  return depositAmountCents == null &&
+    (installmentCount == null || (installmentCount >= 2 && installmentCount <= 60));
 }
 
 export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {

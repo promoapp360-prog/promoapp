@@ -82,15 +82,17 @@ export function ensureFinanceSchema() {
           ALTER TABLE admin_finance_projects ADD CONSTRAINT admin_finance_projects_payment_type_check
             CHECK (payment_type IN ('single', 'advance', 'installments'));
         END IF;
-        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='admin_finance_projects_payment_details_check' AND conrelid='admin_finance_projects'::regclass) THEN
-          ALTER TABLE admin_finance_projects ADD CONSTRAINT admin_finance_projects_payment_details_check
+        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='admin_finance_projects_payment_details_v2_check' AND conrelid='admin_finance_projects'::regclass) THEN
+          ALTER TABLE admin_finance_projects ADD CONSTRAINT admin_finance_projects_payment_details_v2_check
             CHECK (
               (payment_type='single' AND deposit_amount_cents IS NULL AND installment_count IS NULL) OR
               (payment_type='advance' AND deposit_amount_cents IS NOT NULL AND deposit_amount_cents > 0 AND deposit_amount_cents <= total_amount_cents AND installment_count IS NULL) OR
-              (payment_type='installments' AND deposit_amount_cents IS NULL AND installment_count IS NOT NULL AND installment_count BETWEEN 2 AND 60)
+              (payment_type='installments' AND deposit_amount_cents IS NULL AND (installment_count IS NULL OR installment_count BETWEEN 2 AND 60))
             );
         END IF;
       END $$;
+      ALTER TABLE admin_finance_projects
+        DROP CONSTRAINT IF EXISTS admin_finance_projects_payment_details_check;
       CREATE TABLE IF NOT EXISTS admin_finance_entries (
         id text PRIMARY KEY,
         project_id text REFERENCES admin_finance_projects(id) ON DELETE SET NULL,
@@ -155,8 +157,8 @@ function validPaymentTerms(
     return depositAmountCents !== null && depositAmountCents > 0 &&
       depositAmountCents <= totalAmountCents && installmentCount === null;
   }
-  return depositAmountCents === null && installmentCount !== null &&
-    installmentCount >= 2 && installmentCount <= 60;
+  return depositAmountCents === null &&
+    (installmentCount === null || (installmentCount >= 2 && installmentCount <= 60));
 }
 
 function cleanOptional(value: string | null | undefined): string | null {

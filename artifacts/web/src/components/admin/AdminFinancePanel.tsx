@@ -105,6 +105,15 @@ export default function AdminFinancePanel({
     if (filter === "income" || filter === "expense") return entry.direction === filter;
     return true;
   }), [data?.entries, filter, month]);
+  const outstandingByClient = useMemo(() => {
+    const totals = new Map<string, number>();
+    for (const project of data?.projects ?? []) {
+      if (project.clientId) {
+        totals.set(project.clientId, (totals.get(project.clientId) ?? 0) + project.outstandingCents);
+      }
+    }
+    return totals;
+  }, [data?.projects]);
 
   const saveProject = (input: FinanceProjectInput | FinanceProjectUpdate, id?: string) =>
     id ? onUpdateProject(id, input as FinanceProjectUpdate) : onCreateProject(input as FinanceProjectInput);
@@ -194,6 +203,12 @@ export default function AdminFinancePanel({
                 {client.email && <p className="mt-2 break-all text-xs text-slate-600">{client.email}</p>}
                 {client.phone && <p className="mt-1 text-xs text-slate-600">{client.phone}</p>}
                 {client.notes && <p className="mt-2 whitespace-pre-wrap break-words text-xs text-slate-500">{client.notes}</p>}
+                <p className="mt-3 flex justify-between gap-3 border-t border-slate-100 pt-3 text-xs">
+                  <span className="text-slate-500">Da incassare sui lavori</span>
+                  <strong className="text-amber-700" data-testid={`text-finance-client-outstanding-${client.id}`}>
+                    {money(outstandingByClient.get(client.id) ?? 0)}
+                  </strong>
+                </p>
               </article>
             ))}
           </div>
@@ -249,7 +264,9 @@ export default function AdminFinancePanel({
                       ? "Unica soluzione"
                       : project.paymentType === "advance"
                         ? `Acconto ${money(project.depositAmountCents ?? 0)} · saldo ${money(project.totalAmountCents - (project.depositAmountCents ?? 0))}`
-                        : `${project.installmentCount ?? 0} rate concordate · scadenze da inserire nei movimenti`}
+                        : project.installmentCount
+                          ? `${project.installmentCount} rate indicate · scadenze da inserire nei movimenti`
+                          : "Pagamento a rate · numero non indicato · scadenze nei movimenti"}
                   </p>
                   {project.notes && <p className="mt-3 whitespace-pre-wrap break-words text-xs text-slate-500">{project.notes}</p>}
                   <div className="mt-3 flex flex-wrap gap-3">
