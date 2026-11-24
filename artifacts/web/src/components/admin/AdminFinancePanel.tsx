@@ -87,7 +87,9 @@ function FinanceMovementCard({
             <span className="text-xs text-slate-500">{categoryLabels[entry.category]}</span>
             {entry.repeatMonthly && <span className="text-xs text-indigo-600">Mensile</span>}
           </div>
-          <h5 className="mt-2 break-words text-sm font-semibold">{entry.description}</h5>
+          {entry.description.trim().toLocaleLowerCase("it-IT") !== categoryLabels[entry.category].toLocaleLowerCase("it-IT") && (
+            <h5 className="mt-2 break-words text-sm font-semibold">{entry.description}</h5>
+          )}
           <p className="mt-1 text-xs text-slate-500">
             {paid ? "Registrato" : "Scadenza"} {displayDate(entry.dueDate)}
           </p>
@@ -181,6 +183,18 @@ export default function AdminFinancePanel({
     if (filter === "income" || filter === "expense") return entry.direction === filter;
     return true;
   }), [data?.entries, filter, month]);
+  const totalBalance = useMemo(() => {
+    const entries = data?.entries ?? [];
+    return {
+      soldCents: (data?.projects ?? []).reduce((sum, project) => sum + project.totalAmountCents, 0),
+      spentCents: entries.filter((entry) => entry.direction === "expense" && entry.paidAt)
+        .reduce((sum, entry) => sum + entry.amountCents, 0),
+      receivedCents: entries.filter((entry) => entry.direction === "income" && entry.paidAt)
+        .reduce((sum, entry) => sum + entry.amountCents, 0),
+      outstandingCents: entries.filter((entry) => entry.direction === "income" && !entry.paidAt)
+        .reduce((sum, entry) => sum + entry.amountCents, 0),
+    };
+  }, [data?.entries, data?.projects]);
   const standaloneEntries = visibleEntries.filter((entry) => !entry.projectId);
   const projectsWithoutClient = data?.projects.filter((project) => !project.clientId) ?? [];
   const outstandingByClient = useMemo(() => {
@@ -285,12 +299,33 @@ export default function AdminFinancePanel({
         </label>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section aria-label="Bilancio complessivo" className="space-y-3">
+        <h3 className="font-semibold">Bilancio complessivo</h3>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["Venduto", totalBalance.soldCents, "text-indigo-700", "Somma degli importi concordati"],
+            ["Speso", totalBalance.spentCents, "text-rose-700", "Spese registrate come pagate"],
+            ["Incassato", totalBalance.receivedCents, "text-emerald-700", "Entrate già incassate"],
+            ["Da incassare", totalBalance.outstandingCents, "text-amber-700", "Entrate ancora aperte"],
+          ].map(([label, cents, color, description]) => (
+            <article key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-5">
+              <p className="text-sm text-slate-500">{label}</p>
+              <p className={`mt-2 text-2xl font-bold ${color}`} data-testid={`finance-total-${String(label).toLowerCase().replaceAll(" ", "-")}`}>
+                {money(Number(cents))}
+              </p>
+              <p className="mt-1 text-xs text-slate-400">{description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section aria-label="Riepilogo del mese" className="space-y-3">
+        <h3 className="font-semibold">Riepilogo del mese</h3>
+        <div className="grid gap-3 sm:grid-cols-3">
         {[
           ["Incassato nel mese", summary?.receivedCents ?? 0, "text-emerald-700"],
           ["Spese pagate nel mese", summary?.expensesCents ?? 0, "text-rose-700"],
           ["Saldo del mese", summary?.balanceCents ?? 0, (summary?.balanceCents ?? 0) < 0 ? "text-rose-700" : "text-indigo-700"],
-          ["Da riscuotere", summary?.outstandingCents ?? 0, "text-amber-700"],
         ].map(([label, cents, color]) => (
           <article key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-5">
             <p className="text-sm text-slate-500">{label}</p>
@@ -299,7 +334,8 @@ export default function AdminFinancePanel({
             </p>
           </article>
         ))}
-      </div>
+        </div>
+      </section>
 
       {summary && summary.overdueIncomeCents > 0 && (
         <div role="status" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950" data-testid="finance-overdue-reminder">

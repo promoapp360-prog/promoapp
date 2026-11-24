@@ -32,3 +32,9 @@ La contabilità deve essere raggruppata per cliente: lavori e movimenti associat
 **Why:** l’utente ha chiesto esplicitamente che la contabilità sia divisa per cliente.
 
 **How to apply:** mantenere i riepiloghi per cliente e il totale complessivo; non spostare movimenti collegati ai lavori nella lista generale.
+
+Il bilancio complessivo deve mostrare venduto, speso, incassato e da incassare. Una nuova entrata parte già come incassata; il dettaglio testuale è facoltativo perché la voce del menu ne indica già il tipo.
+
+**Why:** l’utente ha chiesto un riepilogo economico completo e ha segnalato la duplicazione fra voce e descrizione.
+
+**How to apply:** lasciare distinti i totali complessivi da quelli mensili; preselezionare “già incassato” per nuove entrate e usare la categoria come descrizione predefinita senza duplicarla nell’elenco.

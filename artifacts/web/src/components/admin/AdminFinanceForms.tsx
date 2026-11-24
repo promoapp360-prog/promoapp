@@ -64,7 +64,7 @@ const entrySchema = z.object({
   projectId: z.string(),
   direction: z.enum(["income", "expense"]),
   category: z.enum(["deposit", "balance", "monthly_fee", "facebook", "replit", "other"]),
-  description: z.string().trim().min(1, "Descrivi il movimento.").max(240),
+  description: z.string().trim().max(240),
   amountCents: z.number().int().min(1, "Inserisci un importo maggiore di zero.").max(2_147_483_647),
   dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Seleziona una data valida."),
   paid: z.boolean(),
@@ -92,6 +92,14 @@ const expenseCategories = [
   ["replit", "Replit"],
   ["other", "Altra spesa"],
 ] as const;
+const categoryDescriptions: Record<EntryFormValues["category"], string> = {
+  deposit: "Acconto",
+  balance: "Saldo",
+  monthly_fee: "Canone mensile",
+  facebook: "Facebook",
+  replit: "Replit",
+  other: "Altro",
+};
 
 function todayForInput() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -418,7 +426,7 @@ export function FinanceEntryForm({
       description: "",
       amountCents: 0,
       dueDate: todayForInput(),
-      paid: false,
+      paid: true,
       repeatMonthly: false,
     },
   });
@@ -430,7 +438,9 @@ export function FinanceEntryForm({
           projectId: initial.projectId ?? "",
           direction: initial.direction,
           category: initial.category,
-          description: initial.description,
+          description: initial.description.trim().toLocaleLowerCase("it-IT") === categoryDescriptions[initial.category].toLocaleLowerCase("it-IT")
+            ? ""
+            : initial.description,
           amountCents: initial.amountCents,
           dueDate: dateInputValue(initial.dueDate),
           paid: Boolean(initial.paidAt),
@@ -443,7 +453,7 @@ export function FinanceEntryForm({
           description: "",
           amountCents: 0,
           dueDate: todayForInput(),
-          paid: false,
+          paid: true,
           repeatMonthly: false,
         });
   }, [reset, initial?.id, initial?.projectId, initial?.direction, initial?.category, initial?.description, initial?.amountCents, initial?.dueDate, initial?.paidAt, initial?.repeatMonthly]);
@@ -454,7 +464,7 @@ export function FinanceEntryForm({
         onSubmit={form.handleSubmit(async (values) => {
           const common = {
             category: values.category,
-            description: values.description,
+            description: values.description.trim() || categoryDescriptions[values.category],
             amountCents: values.amountCents,
             dueDate: values.dueDate,
             repeatMonthly: values.repeatMonthly,
@@ -485,6 +495,7 @@ export function FinanceEntryForm({
                       const direction = event.target.value as EntryFormValues["direction"];
                       field.onChange(direction);
                       form.setValue("category", direction === "income" ? "deposit" : "facebook");
+                      form.setValue("paid", direction === "income");
                     }}
                     data-testid="select-finance-direction"
                   >
@@ -532,8 +543,8 @@ export function FinanceEntryForm({
         )} />
         <FormField control={form.control} name="description" render={({ field }) => (
           <FormItem>
-            <FormLabel>Descrizione</FormLabel>
-            <FormControl><Input {...field} placeholder="Es. Acconto iniziale" data-testid="input-finance-description" /></FormControl>
+            <FormLabel>Dettaglio aggiuntivo (facoltativo)</FormLabel>
+            <FormControl><Input {...field} placeholder="Es. prima rata, campagna estiva" data-testid="input-finance-description" /></FormControl>
             <FormMessage />
           </FormItem>
         )} />
