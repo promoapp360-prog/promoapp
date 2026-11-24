@@ -173,6 +173,42 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/AdminFinanceData" }
         "400": { description: Mese non valido }
+  /admin/finance/clients:
+    post:
+      operationId: createAdminFinanceClient
+      summary: Aggiunge un cliente all’anagrafica contabile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceClientInput" }
+      responses:
+        "201":
+          description: Cliente registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceClient" }
+        "400": { description: Dati cliente non validi }
+        "409": { description: Cliente già presente }
+  /admin/finance/clients/{id}:
+    patch:
+      operationId: updateAdminFinanceClient
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceClientUpdate" }
+      responses:
+        "200":
+          description: Cliente aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceClient" }
+        "400": { description: Dati cliente non validi }
+        "404": { description: Cliente non trovato }
+        "409": { description: Esiste già un cliente con questi dati }
   /admin/finance/projects:
     post:
       operationId: createAdminFinanceProject
@@ -189,6 +225,7 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/AdminFinanceProject" }
         "400": { description: Dati non validi }
+        "404": { description: Cliente non trovato }
   /admin/finance/projects/{id}:
     patch:
       operationId: updateAdminFinanceProject
@@ -442,12 +479,16 @@ components:
         pages: { type: array, items: { $ref: "#/components/schemas/VisitedPage" } }
     AdminFinanceProject:
       type: object
-      required: [id, clientName, name, totalAmountCents, notes, active, createdAt, receivedCents, outstandingCents]
+      required: [id, clientId, clientName, name, totalAmountCents, paymentType, depositAmountCents, installmentCount, notes, active, createdAt, receivedCents, outstandingCents]
       properties:
         id: { type: string, format: uuid }
+        clientId: { type: ["string", "null"], format: uuid }
         clientName: { type: string }
         name: { type: string }
         totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
         notes: { type: string }
         active: { type: boolean }
         createdAt: { type: string, format: date-time }
@@ -482,25 +523,60 @@ components:
         unpaidExpensesCents: { type: integer, multipleOf: 1 }
     AdminFinanceData:
       type: object
-      required: [summary, projects, entries]
+      required: [summary, clients, projects, entries]
       properties:
         summary: { $ref: "#/components/schemas/AdminFinanceSummary" }
+        clients: { type: array, items: { $ref: "#/components/schemas/AdminFinanceClient" } }
         projects: { type: array, items: { $ref: "#/components/schemas/AdminFinanceProject" } }
         entries: { type: array, items: { $ref: "#/components/schemas/AdminFinanceEntry" } }
+    AdminFinanceClient:
+      type: object
+      required: [id, name, companyName, email, phone, notes, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        companyName: { type: ["string", "null"] }
+        email: { type: ["string", "null"], format: email }
+        phone: { type: ["string", "null"] }
+        notes: { type: string }
+        createdAt: { type: string, format: date-time }
+    FinanceClientInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 160 }
+        companyName: { type: ["string", "null"], maxLength: 160 }
+        email: { type: ["string", "null"], format: email, maxLength: 254 }
+        phone: { type: ["string", "null"], maxLength: 60 }
+        notes: { type: string, maxLength: 4000 }
+    FinanceClientUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 160 }
+        companyName: { type: ["string", "null"], maxLength: 160 }
+        email: { type: ["string", "null"], format: email, maxLength: 254 }
+        phone: { type: ["string", "null"], maxLength: 60 }
+        notes: { type: string, maxLength: 4000 }
     FinanceProjectInput:
       type: object
-      required: [clientName, name, totalAmountCents]
+      required: [clientId, name, totalAmountCents, paymentType]
       properties:
-        clientName: { type: string, minLength: 1, maxLength: 160 }
+        clientId: { type: string, format: uuid }
         name: { type: string, minLength: 1, maxLength: 160 }
         totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
         notes: { type: string, maxLength: 4000 }
     FinanceProjectUpdate:
       type: object
       properties:
-        clientName: { type: string, minLength: 1, maxLength: 160 }
+        clientId: { type: string, format: uuid }
         name: { type: string, minLength: 1, maxLength: 160 }
         totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
         notes: { type: string, maxLength: 4000 }
         active: { type: boolean }
     FinanceEntryInput:

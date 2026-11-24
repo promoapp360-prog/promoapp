@@ -106,8 +106,19 @@ export interface AdminOverview {
   pages: VisitedPage[];
 }
 
+export type AdminFinanceProjectPaymentType =
+  (typeof AdminFinanceProjectPaymentType)[keyof typeof AdminFinanceProjectPaymentType];
+
+export const AdminFinanceProjectPaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
 export interface AdminFinanceProject {
   id: string;
+  /** @nullable */
+  clientId: string | null;
   clientName: string;
   name: string;
   /**
@@ -115,6 +126,19 @@ export interface AdminFinanceProject {
    * @maximum 2147483647
    */
   totalAmountCents: number;
+  paymentType: AdminFinanceProjectPaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount: number | null;
   notes: string;
   active: boolean;
   createdAt: string;
@@ -178,18 +202,87 @@ export interface AdminFinanceSummary {
   unpaidExpensesCents: number;
 }
 
+export interface AdminFinanceClient {
+  id: string;
+  name: string;
+  /** @nullable */
+  companyName: string | null;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  phone: string | null;
+  notes: string;
+  createdAt: string;
+}
+
 export interface AdminFinanceData {
   summary: AdminFinanceSummary;
+  clients: AdminFinanceClient[];
   projects: AdminFinanceProject[];
   entries: AdminFinanceEntry[];
 }
 
-export interface FinanceProjectInput {
+export interface FinanceClientInput {
   /**
    * @minLength 1
    * @maxLength 160
    */
-  clientName: string;
+  name: string;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  companyName?: string | null;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email?: string | null;
+  /**
+   * @maxLength 60
+   * @nullable
+   */
+  phone?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+}
+
+export interface FinanceClientUpdate {
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name?: string;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  companyName?: string | null;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email?: string | null;
+  /**
+   * @maxLength 60
+   * @nullable
+   */
+  phone?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+}
+
+export type FinanceProjectInputPaymentType =
+  (typeof FinanceProjectInputPaymentType)[keyof typeof FinanceProjectInputPaymentType];
+
+export const FinanceProjectInputPaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
+export interface FinanceProjectInput {
+  clientId: string;
   /**
    * @minLength 1
    * @maxLength 160
@@ -200,16 +293,34 @@ export interface FinanceProjectInput {
    * @maximum 2147483647
    */
   totalAmountCents: number;
+  paymentType: FinanceProjectInputPaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents?: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount?: number | null;
   /** @maxLength 4000 */
   notes?: string;
 }
 
+export type FinanceProjectUpdatePaymentType =
+  (typeof FinanceProjectUpdatePaymentType)[keyof typeof FinanceProjectUpdatePaymentType];
+
+export const FinanceProjectUpdatePaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
 export interface FinanceProjectUpdate {
-  /**
-   * @minLength 1
-   * @maxLength 160
-   */
-  clientName?: string;
+  clientId?: string;
   /**
    * @minLength 1
    * @maxLength 160
@@ -220,6 +331,19 @@ export interface FinanceProjectUpdate {
    * @maximum 2147483647
    */
   totalAmountCents?: number;
+  paymentType?: FinanceProjectUpdatePaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents?: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount?: number | null;
   /** @maxLength 4000 */
   notes?: string;
   active?: boolean;

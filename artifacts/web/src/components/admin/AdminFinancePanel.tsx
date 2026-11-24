@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
 import type {
+  AdminFinanceClient,
   AdminFinanceData,
   AdminFinanceEntry,
   AdminFinanceProject,
+  FinanceClientInput,
+  FinanceClientUpdate,
   FinanceEntryInput,
   FinanceEntryUpdate,
   FinanceProjectInput,
@@ -10,7 +13,7 @@ import type {
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FinanceEntryForm, FinanceProjectForm } from "./AdminFinanceForms";
+import { FinanceClientForm, FinanceEntryForm, FinanceProjectForm } from "./AdminFinanceForms";
 
 const currency = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" });
 const categoryLabels: Record<AdminFinanceEntry["category"], string> = {
@@ -62,6 +65,8 @@ export default function AdminFinancePanel({
   loading,
   busy,
   onMonth,
+  onCreateClient,
+  onUpdateClient,
   onCreateProject,
   onUpdateProject,
   onCreateEntry,
@@ -74,6 +79,8 @@ export default function AdminFinancePanel({
   loading: boolean;
   busy: boolean;
   onMonth: (month: string) => void;
+  onCreateClient: (input: FinanceClientInput) => Promise<boolean>;
+  onUpdateClient: (id: string, input: FinanceClientUpdate) => Promise<boolean>;
   onCreateProject: (input: FinanceProjectInput) => Promise<boolean>;
   onUpdateProject: (id: string, input: FinanceProjectUpdate) => Promise<boolean>;
   onCreateEntry: (input: FinanceEntryInput) => Promise<boolean>;
@@ -82,6 +89,7 @@ export default function AdminFinancePanel({
   onDeleteEntry: (id: string) => Promise<boolean>;
 }) {
   const [projectEditor, setProjectEditor] = useState<AdminFinanceProject | "new" | null>(null);
+  const [clientEditor, setClientEditor] = useState<AdminFinanceClient | "new" | null>(null);
   const [entryEditor, setEntryEditor] = useState<AdminFinanceEntry | "new" | null>(null);
   const [filter, setFilter] = useState<"all" | "open" | "income" | "expense">("all");
   const summary = data?.summary;
@@ -144,14 +152,62 @@ export default function AdminFinancePanel({
         </div>
       )}
 
+      <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Anagrafica clienti">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-bold">Anagrafica clienti</h3>
+            <p className="mt-1 text-xs text-slate-500">{data?.clients.length ?? 0} clienti registrati, collegabili ai lavori</p>
+          </div>
+          <Button size="sm" onClick={() => setClientEditor("new")} disabled={busy} data-testid="button-new-finance-client">
+            Nuovo cliente
+          </Button>
+        </div>
+        {clientEditor && (
+          <div className="mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+            <h4 className="mb-3 font-semibold">{clientEditor === "new" ? "Registra un cliente" : "Modifica cliente"}</h4>
+            <FinanceClientForm
+              initial={clientEditor === "new" ? undefined : clientEditor}
+              busy={busy}
+              onCreate={onCreateClient}
+              onUpdate={onUpdateClient}
+              onCancel={() => setClientEditor(null)}
+            />
+          </div>
+        )}
+        {!data?.clients.length ? (
+          <div className="rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
+            Nessun cliente registrato. Crea la prima anagrafica prima di aggiungere un lavoro.
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {data.clients.map((client) => (
+              <article key={client.id} className="rounded-xl border border-slate-200 p-4" data-testid={`card-finance-client-${client.id}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h4 className="break-words font-semibold">{client.name}</h4>
+                    {client.companyName && <p className="text-sm text-slate-500">{client.companyName}</p>}
+                  </div>
+                  <button type="button" disabled={busy} onClick={() => setClientEditor(client)} className="text-xs font-semibold text-indigo-700 disabled:opacity-50" data-testid={`button-edit-finance-client-${client.id}`}>
+                    Modifica
+                  </button>
+                </div>
+                {client.email && <p className="mt-2 break-all text-xs text-slate-600">{client.email}</p>}
+                {client.phone && <p className="mt-1 text-xs text-slate-600">{client.phone}</p>}
+                {client.notes && <p className="mt-2 whitespace-pre-wrap break-words text-xs text-slate-500">{client.notes}</p>}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
       <div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
         <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Lavori registrati">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold">Lavori e clienti</h3>
+              <h3 className="font-bold">Lavori</h3>
               <p className="mt-1 text-xs text-slate-500">{data?.projects.length ?? 0} lavori registrati</p>
             </div>
-            <Button size="sm" onClick={() => setProjectEditor("new")} disabled={busy} data-testid="button-new-finance-project">
+            <Button size="sm" onClick={() => setProjectEditor("new")} disabled={busy || !data?.clients.length} title={!data?.clients.length ? "Aggiungi prima un cliente" : undefined} data-testid="button-new-finance-project">
               Nuovo lavoro
             </Button>
           </div>
@@ -160,6 +216,7 @@ export default function AdminFinancePanel({
             <div className="mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
               <h4 className="mb-3 font-semibold">{projectEditor === "new" ? "Registra un lavoro" : "Modifica lavoro"}</h4>
               <FinanceProjectForm
+                clients={data?.clients ?? []}
                 initial={projectEditor === "new" ? undefined : projectEditor}
                 busy={busy}
                 onSave={saveProject}
@@ -187,6 +244,13 @@ export default function AdminFinancePanel({
                     <p className="text-slate-500">Incassato <strong className="text-emerald-700">{money(project.receivedCents)}</strong></p>
                     <p className="text-slate-500">Da incassare <strong className="text-amber-700">{money(project.outstandingCents)}</strong></p>
                   </div>
+                  <p className="mt-3 text-xs font-medium text-slate-600" data-testid={`text-finance-payment-plan-${project.id}`}>
+                    {project.paymentType === "single"
+                      ? "Unica soluzione"
+                      : project.paymentType === "advance"
+                        ? `Acconto ${money(project.depositAmountCents ?? 0)} · saldo ${money(project.totalAmountCents - (project.depositAmountCents ?? 0))}`
+                        : `${project.installmentCount ?? 0} rate concordate · scadenze da inserire nei movimenti`}
+                  </p>
                   {project.notes && <p className="mt-3 whitespace-pre-wrap break-words text-xs text-slate-500">{project.notes}</p>}
                   <div className="mt-3 flex flex-wrap gap-3">
                     <button type="button" disabled={busy} onClick={() => setProjectEditor(project)} className="text-xs font-semibold text-indigo-700 disabled:opacity-50" data-testid={`button-edit-finance-project-${project.id}`}>Modifica</button>

@@ -3,8 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type {
+  AdminFinanceClient,
   AdminFinanceEntry,
   AdminFinanceProject,
+  FinanceClientInput,
+  FinanceClientUpdate,
   FinanceEntryInput,
   FinanceEntryUpdate,
   FinanceProjectInput,
@@ -21,11 +24,39 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+const clientSchema = z.object({
+  name: z.string().trim().min(1, "Inserisci il nome del cliente.").max(160),
+  companyName: z.string().max(160),
+  email: z.string().max(254).email("Inserisci un’email valida.").or(z.literal("")),
+  phone: z.string().max(60),
+  notes: z.string().max(4000),
+});
+type ClientFormValues = z.infer<typeof clientSchema>;
+
 const projectSchema = z.object({
-  clientName: z.string().trim().min(1, "Inserisci il nome del cliente.").max(160),
+  clientId: z.string().uuid("Seleziona un cliente dall’anagrafica."),
   name: z.string().trim().min(1, "Inserisci il nome del lavoro.").max(160),
   totalAmountCents: z.number().int().min(0).max(2_147_483_647),
+  paymentType: z.enum(["single", "advance", "installments"]),
+  depositAmountCents: z.number().int().nullable(),
+  installmentCount: z.number().int().nullable(),
   notes: z.string().max(4000),
+}).superRefine((values, context) => {
+  if (values.paymentType === "single" && (values.depositAmountCents !== null || values.installmentCount !== null)) {
+    context.addIssue({ code: "custom", path: ["paymentType"], message: "Per la soluzione unica non servono altri dettagli." });
+  }
+  if (values.paymentType === "advance" && (
+    values.depositAmountCents === null || values.depositAmountCents <= 0 ||
+    values.depositAmountCents > values.totalAmountCents || values.installmentCount !== null
+  )) {
+    context.addIssue({ code: "custom", path: ["depositAmountCents"], message: "Inserisci un acconto positivo, non superiore al totale." });
+  }
+  if (values.paymentType === "installments" && (
+    values.depositAmountCents !== null || values.installmentCount === null ||
+    values.installmentCount < 2 || values.installmentCount > 60
+  )) {
+    context.addIssue({ code: "custom", path: ["installmentCount"], message: "Indica da 2 a 60 rate." });
+  }
 });
 type ProjectFormValues = z.infer<typeof projectSchema>;
 
@@ -77,12 +108,108 @@ function dateInputValue(value: Date | string) {
   return value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10);
 }
 
+export function FinanceClientForm({
+  initial,
+  busy,
+  onCreate,
+  onUpdate,
+  onCancel,
+}: {
+  initial?: AdminFinanceClient;
+  busy: boolean;
+  onCreate: (input: FinanceClientInput) => Promise<boolean>;
+  onUpdate: (id: string, input: FinanceClientUpdate) => Promise<boolean>;
+  onCancel: () => void;
+}) {
+  const form = useForm<ClientFormValues>({
+    resolver: zodResolver(clientSchema),
+    defaultValues: { name: "", companyName: "", email: "", phone: "", notes: "" },
+  });
+  const { reset } = form;
+
+  useEffect(() => {
+    reset(initial ? {
+      name: initial.name,
+      companyName: initial.companyName ?? "",
+      email: initial.email ?? "",
+      phone: initial.phone ?? "",
+      notes: initial.notes,
+    } : { name: "", companyName: "", email: "", phone: "", notes: "" });
+  }, [reset, initial?.id, initial?.name, initial?.companyName, initial?.email, initial?.phone, initial?.notes]);
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(async (values) => {
+          const input = {
+            name: values.name,
+            companyName: values.companyName.trim() || null,
+            email: values.email.trim() || null,
+            phone: values.phone.trim() || null,
+            notes: values.notes,
+          };
+          const saved = initial
+            ? await onUpdate(initial.id, input)
+            : await onCreate(input);
+          if (saved) onCancel();
+        })}
+        className="grid gap-4 sm:grid-cols-2"
+        data-testid="form-finance-client"
+      >
+        <FormField control={form.control} name="name" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nome cliente / referente</FormLabel>
+            <FormControl><Input {...field} autoComplete="name" data-testid="input-finance-client-name" /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="companyName" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Azienda (facoltativa)</FormLabel>
+            <FormControl><Input {...field} autoComplete="organization" data-testid="input-finance-client-company" /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="email" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Email (facoltativa)</FormLabel>
+            <FormControl><Input {...field} type="email" autoComplete="email" data-testid="input-finance-client-email" /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="phone" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Telefono (facoltativo)</FormLabel>
+            <FormControl><Input {...field} type="tel" autoComplete="tel" data-testid="input-finance-client-phone" /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="notes" render={({ field }) => (
+          <FormItem className="sm:col-span-2">
+            <FormLabel>Note (facoltative)</FormLabel>
+            <FormControl><textarea {...field} rows={2} className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm" data-testid="input-finance-client-notes" /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <div className="flex flex-wrap gap-2 sm:col-span-2">
+          <Button type="submit" disabled={busy} data-testid="button-save-finance-client">
+            {busy ? "Salvataggio…" : initial ? "Salva cliente" : "Aggiungi cliente"}
+          </Button>
+          <Button type="button" variant="outline" disabled={busy} onClick={onCancel} data-testid="button-cancel-finance-client">Annulla</Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
+
 export function FinanceProjectForm({
+  clients,
   initial,
   busy,
   onSave,
   onCancel,
 }: {
+  clients: AdminFinanceClient[];
   initial?: AdminFinanceProject;
   busy: boolean;
   onSave: (input: FinanceProjectInput | FinanceProjectUpdate, id?: string) => Promise<boolean>;
@@ -90,29 +217,51 @@ export function FinanceProjectForm({
 }) {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
-    defaultValues: { clientName: "", name: "", totalAmountCents: 0, notes: "" },
+    defaultValues: {
+      clientId: "",
+      name: "",
+      totalAmountCents: 0,
+      paymentType: "single",
+      depositAmountCents: null,
+      installmentCount: null,
+      notes: "",
+    },
   });
   const { reset } = form;
 
   useEffect(() => {
     reset(initial
       ? {
-          clientName: initial.clientName,
+          clientId: initial.clientId ?? "",
           name: initial.name,
           totalAmountCents: initial.totalAmountCents,
+          paymentType: initial.paymentType,
+          depositAmountCents: initial.depositAmountCents,
+          installmentCount: initial.installmentCount,
           notes: initial.notes,
         }
-      : { clientName: "", name: "", totalAmountCents: 0, notes: "" });
-  }, [reset, initial?.id, initial?.clientName, initial?.name, initial?.totalAmountCents, initial?.notes]);
+      : {
+          clientId: "",
+          name: "",
+          totalAmountCents: 0,
+          paymentType: "single",
+          depositAmountCents: null,
+          installmentCount: null,
+          notes: "",
+        });
+  }, [reset, initial?.id, initial?.clientId, initial?.name, initial?.totalAmountCents, initial?.paymentType, initial?.depositAmountCents, initial?.installmentCount, initial?.notes]);
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (values) => {
           const saved = await onSave({
-            clientName: values.clientName,
+            clientId: values.clientId,
             name: values.name,
             totalAmountCents: values.totalAmountCents,
+            paymentType: values.paymentType,
+            depositAmountCents: values.depositAmountCents,
+            installmentCount: values.installmentCount,
             notes: values.notes,
           }, initial?.id);
           if (saved) onCancel();
@@ -120,13 +269,86 @@ export function FinanceProjectForm({
         className="grid gap-4 sm:grid-cols-2"
         data-testid="form-finance-project"
       >
-        <FormField control={form.control} name="clientName" render={({ field }) => (
+        <FormField control={form.control} name="clientId" render={({ field }) => (
           <FormItem>
             <FormLabel>Cliente</FormLabel>
-            <FormControl><Input {...field} autoComplete="organization" data-testid="input-finance-client" /></FormControl>
+            <FormControl>
+              <select {...field} className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm" data-testid="select-finance-project-client">
+                <option value="">Seleziona un cliente</option>
+                {clients.map((client) => (
+                  <option key={client.id} value={client.id}>
+                    {client.name}{client.companyName ? ` · ${client.companyName}` : ""}
+                  </option>
+                ))}
+              </select>
+            </FormControl>
             <FormMessage />
           </FormItem>
         )} />
+        <FormField control={form.control} name="paymentType" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Modalità concordata</FormLabel>
+            <FormControl>
+              <select
+                {...field}
+                onChange={(event) => {
+                  const paymentType = event.target.value as ProjectFormValues["paymentType"];
+                  field.onChange(paymentType);
+                  if (paymentType !== "advance") form.setValue("depositAmountCents", null);
+                  if (paymentType !== "installments") form.setValue("installmentCount", null);
+                }}
+                className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"
+                data-testid="select-finance-payment-type"
+              >
+                <option value="single">Unica soluzione</option>
+                <option value="advance">Acconto + saldo</option>
+                <option value="installments">Rate</option>
+              </select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        {form.watch("paymentType") === "advance" && (
+          <FormField control={form.control} name="depositAmountCents" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Acconto concordato (€)</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0.01"
+                  max={Number(form.watch("totalAmountCents") ?? 0) / 100}
+                  step="0.01"
+                  value={field.value == null ? "" : Number(field.value) / 100}
+                  onChange={(event) => field.onChange(event.target.value === "" ? null : Math.round(Number(event.target.value) * 100))}
+                  data-testid="input-finance-deposit"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+        )}
+        {form.watch("paymentType") === "installments" && (
+          <FormField control={form.control} name="installmentCount" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Numero di rate</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="2"
+                  max="60"
+                  step="1"
+                  value={field.value ?? ""}
+                  onChange={(event) => field.onChange(event.target.value === "" ? null : Number(event.target.value))}
+                  data-testid="input-finance-installment-count"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+        )}
+        <p className="text-xs text-slate-500 sm:col-span-2">
+          Qui registri l’accordo; le singole scadenze e gli incassi si aggiungono separatamente nei movimenti.
+        </p>
         <FormField control={form.control} name="name" render={({ field }) => (
           <FormItem>
             <FormLabel>Lavoro</FormLabel>
@@ -162,7 +384,7 @@ export function FinanceProjectForm({
           <Button type="submit" disabled={busy} data-testid="button-save-finance-project">
             {busy ? "Salvataggio…" : initial ? "Salva modifiche" : "Aggiungi lavoro"}
           </Button>
-          <Button type="button" variant="outline" disabled={busy} onClick={onCancel}>Annulla</Button>
+          <Button type="button" variant="outline" disabled={busy} onClick={onCancel} data-testid="button-cancel-finance-project">Annulla</Button>
         </div>
       </form>
     </Form>

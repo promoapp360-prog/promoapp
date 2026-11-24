@@ -5,12 +5,14 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AdminFinanceClient } from "./adminFinanceClient";
 import type { AdminFinanceEntry } from "./adminFinanceEntry";
 import type { AdminFinanceProject } from "./adminFinanceProject";
 import type { AdminFinanceSummary } from "./adminFinanceSummary";
 
 export interface AdminFinanceData {
   summary: AdminFinanceSummary;
+  clients: AdminFinanceClient[];
   projects: AdminFinanceProject[];
   entries: AdminFinanceEntry[];
 }

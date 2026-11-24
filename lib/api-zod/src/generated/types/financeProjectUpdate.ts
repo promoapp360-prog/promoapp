@@ -5,13 +5,10 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { FinanceProjectUpdatePaymentType } from "./financeProjectUpdatePaymentType";
 
 export interface FinanceProjectUpdate {
-  /**
-   * @minLength 1
-   * @maxLength 160
-   */
-  clientName?: string;
+  clientId?: string;
   /**
    * @minLength 1
    * @maxLength 160
@@ -22,6 +19,19 @@ export interface FinanceProjectUpdate {
    * @maximum 2147483647
    */
   totalAmountCents?: number;
+  paymentType?: FinanceProjectUpdatePaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents?: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount?: number | null;
   /** @maxLength 4000 */
   notes?: string;
   active?: boolean;

@@ -4,9 +4,12 @@ import { randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import express from "express";
 import type {
+  AdminFinanceClient,
   AdminFinanceData,
   AdminFinanceEntry,
   AdminFinanceProject,
+  FinanceClientInput,
+  FinanceClientUpdate,
   FinanceEntryInput,
   FinanceEntryUpdate,
   FinanceProjectInput,
@@ -20,6 +23,7 @@ const PASSWORD = "Synthetic-finance-admin";
 const KEY = "Synthetic-finance-session-key";
 
 function makeRepository() {
+  const clients: AdminFinanceClient[] = [];
   const projects: AdminFinanceProject[] = [];
   const entries: AdminFinanceEntry[] = [];
   const data = {
@@ -41,16 +45,49 @@ function makeRepository() {
           overdueIncomeCents: 0,
           unpaidExpensesCents: entries.filter((entry) => entry.direction === "expense" && !entry.paidAt).reduce((sum, entry) => sum + entry.amountCents, 0),
         },
+        clients: [...clients],
         projects: [...projects],
         entries: [...entries],
       };
     },
-    async createProject(input: FinanceProjectInput): Promise<AdminFinanceProject> {
+    async createClient(input: FinanceClientInput): Promise<AdminFinanceClient | null> {
+      const key = JSON.stringify([input.name.trim().toLocaleLowerCase("it-IT"), (input.companyName ?? "").trim().toLocaleLowerCase("it-IT")]);
+      if (clients.some((client) => JSON.stringify([client.name.toLocaleLowerCase("it-IT"), (client.companyName ?? "").toLocaleLowerCase("it-IT")]) === key)) return null;
+      const client: AdminFinanceClient = {
+        id: randomUUID(),
+        name: input.name.trim(),
+        companyName: input.companyName ?? null,
+        email: input.email ?? null,
+        phone: input.phone ?? null,
+        notes: input.notes ?? "",
+        createdAt: new Date(),
+      };
+      clients.push(client);
+      return client;
+    },
+    async updateClient(id: string, input: FinanceClientUpdate): Promise<AdminFinanceClient | undefined | null> {
+      const client = clients.find((item) => item.id === id);
+      if (!client) return;
+      const nextName = input.name ?? client.name;
+      const nextCompany = input.companyName === undefined ? client.companyName : input.companyName;
+      if (clients.some((item) => item.id !== id &&
+        item.name.toLocaleLowerCase("it-IT") === nextName.toLocaleLowerCase("it-IT") &&
+        (item.companyName ?? "").toLocaleLowerCase("it-IT") === (nextCompany ?? "").toLocaleLowerCase("it-IT"))) return null;
+      Object.assign(client, input);
+      return client;
+    },
+    async createProject(input: FinanceProjectInput): Promise<AdminFinanceProject | undefined> {
+      const client = clients.find((item) => item.id === input.clientId);
+      if (!client) return;
       const project = {
         id: randomUUID(),
-        clientName: input.clientName,
+        clientId: client.id,
+        clientName: client.name,
         name: input.name,
         totalAmountCents: input.totalAmountCents,
+        paymentType: input.paymentType,
+        depositAmountCents: input.depositAmountCents ?? null,
+        installmentCount: input.installmentCount ?? null,
         notes: input.notes ?? "",
         active: true,
         createdAt: new Date(),
@@ -60,9 +97,19 @@ function makeRepository() {
       projects.push(project);
       return project;
     },
-    async updateProject(id: string, input: FinanceProjectUpdate): Promise<AdminFinanceProject | undefined> {
+    async updateProject(id: string, input: FinanceProjectUpdate): Promise<AdminFinanceProject | undefined | null> {
       const project = projects.find((item) => item.id === id);
-      if (project) Object.assign(project, input);
+      if (!project) return;
+      const paymentType = input.paymentType ?? project.paymentType;
+      const deposit = input.depositAmountCents === undefined ? project.depositAmountCents : input.depositAmountCents;
+      const count = input.installmentCount === undefined ? project.installmentCount : input.installmentCount;
+      const total = input.totalAmountCents ?? project.totalAmountCents;
+      if ((paymentType === "single" && (deposit !== null || count !== null)) ||
+        (paymentType === "advance" && (deposit === null || deposit <= 0 || deposit > total || count !== null)) ||
+        (paymentType === "installments" && (deposit !== null || count === null || count < 2 || count > 60))) return null;
+      const client = input.clientId ? clients.find((item) => item.id === input.clientId) : undefined;
+      if (input.clientId && !client) return null;
+      Object.assign(project, input, client ? { clientId: client.id, clientName: client.name } : {});
       return project;
     },
     async createEntry(input: FinanceEntryInput): Promise<AdminFinanceEntry | undefined> {
@@ -166,15 +213,58 @@ test("monthly due dates preserve their original billing day", () => {
 test("jobs, due income, expenses and payment reminders can be managed", async () => {
   await withApp(async (base, state) => {
     const auth = await login(base);
+    const clientsPath = `${base}/admin/finance/clients`;
+    assert.equal((await fetch(clientsPath, { ...post({ name: " " }), headers: auth })).status, 400);
+    const clientResponse = await fetch(clientsPath, {
+      ...post({ name: "Cliente di prova", companyName: "Promo Demo", email: "cliente@example.test", phone: "+39 000 000 0000" }),
+      headers: auth,
+    });
+    assert.equal(clientResponse.status, 201);
+    const client = await clientResponse.json() as AdminFinanceClient;
+    assert.equal(client.companyName, "Promo Demo");
+    assert.equal((await fetch(clientsPath, {
+      ...post({ name: "Cliente di prova", companyName: "Promo Demo" }),
+      headers: auth,
+    })).status, 409);
+    const updatedClient = await fetch(`${clientsPath}/${client.id}`, {
+      method: "PATCH",
+      headers: auth,
+      body: JSON.stringify({ phone: "+39 111 111 1111" }),
+    });
+    assert.equal(updatedClient.status, 200);
+
     const projectsPath = `${base}/admin/finance/projects`;
     assert.equal((await fetch(projectsPath, { ...post({ clientName: " ", name: "Sito", totalAmountCents: 250000 }), headers: auth })).status, 400);
+    assert.equal((await fetch(projectsPath, {
+      ...post({ clientId: client.id, name: "Sito", totalAmountCents: 250000, paymentType: "advance" }),
+      headers: auth,
+    })).status, 400);
     const projectResponse = await fetch(projectsPath, {
-      ...post({ clientName: "Cliente di prova", name: "Sito web", totalAmountCents: 250000 }),
+      ...post({
+        clientId: client.id,
+        name: "Sito web",
+        totalAmountCents: 250000,
+        paymentType: "advance",
+        depositAmountCents: 100000,
+      }),
       headers: auth,
     });
     assert.equal(projectResponse.status, 201);
     const project = await projectResponse.json() as AdminFinanceProject;
     assert.equal(project.totalAmountCents, 250000);
+    assert.equal(project.clientId, client.id);
+    assert.equal(project.paymentType, "advance");
+    assert.equal(project.depositAmountCents, 100000);
+    assert.equal((await fetch(`${projectsPath}/${project.id}`, {
+      method: "PATCH",
+      headers: auth,
+      body: JSON.stringify({ paymentType: "installments", depositAmountCents: null, installmentCount: 5 }),
+    })).status, 200);
+    assert.equal((await fetch(`${projectsPath}/${project.id}`, {
+      method: "PATCH",
+      headers: auth,
+      body: JSON.stringify({ installmentCount: 1 }),
+    })).status, 400);
     const archived = await fetch(`${projectsPath}/${project.id}`, {
       method: "PATCH",
       headers: auth,

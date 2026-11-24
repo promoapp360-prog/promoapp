@@ -5,9 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AdminFinanceProjectPaymentType } from "./adminFinanceProjectPaymentType";
 
 export interface AdminFinanceProject {
   id: string;
+  /** @nullable */
+  clientId: string | null;
   clientName: string;
   name: string;
   /**
@@ -15,6 +18,19 @@ export interface AdminFinanceProject {
    * @maximum 2147483647
    */
   totalAmountCents: number;
+  paymentType: AdminFinanceProjectPaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount: number | null;
   notes: string;
   active: boolean;
   createdAt: Date;

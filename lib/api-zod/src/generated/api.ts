@@ -238,6 +238,14 @@ export const getAdminFinanceResponseProjectsItemTotalAmountCentsMin = 0;
 export const getAdminFinanceResponseProjectsItemTotalAmountCentsMax = 2147483647;
 export const getAdminFinanceResponseProjectsItemTotalAmountCentsMultipleOf = 1;
 
+export const getAdminFinanceResponseProjectsItemDepositAmountCentsMin = 0;
+export const getAdminFinanceResponseProjectsItemDepositAmountCentsMax = 2147483647;
+export const getAdminFinanceResponseProjectsItemDepositAmountCentsMultipleOf = 1;
+
+export const getAdminFinanceResponseProjectsItemInstallmentCountMin = 2;
+export const getAdminFinanceResponseProjectsItemInstallmentCountMax = 60;
+export const getAdminFinanceResponseProjectsItemInstallmentCountMultipleOf = 1;
+
 export const getAdminFinanceResponseProjectsItemReceivedCentsMin = 0;
 export const getAdminFinanceResponseProjectsItemReceivedCentsMultipleOf = 1;
 
@@ -269,9 +277,21 @@ export const GetAdminFinanceResponse = zod.object({
       .number()
       .multipleOf(getAdminFinanceResponseSummaryUnpaidExpensesCentsMultipleOf),
   }),
+  clients: zod.array(
+    zod.object({
+      id: zod.string().uuid(),
+      name: zod.string(),
+      companyName: zod.string().nullable(),
+      email: zod.string().email().nullable(),
+      phone: zod.string().nullable(),
+      notes: zod.string(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
   projects: zod.array(
     zod.object({
       id: zod.string().uuid(),
+      clientId: zod.string().uuid().nullable(),
       clientName: zod.string(),
       name: zod.string(),
       totalAmountCents: zod
@@ -281,6 +301,23 @@ export const GetAdminFinanceResponse = zod.object({
         .multipleOf(
           getAdminFinanceResponseProjectsItemTotalAmountCentsMultipleOf,
         ),
+      paymentType: zod.enum(["single", "advance", "installments"]),
+      depositAmountCents: zod
+        .number()
+        .min(getAdminFinanceResponseProjectsItemDepositAmountCentsMin)
+        .max(getAdminFinanceResponseProjectsItemDepositAmountCentsMax)
+        .multipleOf(
+          getAdminFinanceResponseProjectsItemDepositAmountCentsMultipleOf,
+        )
+        .nullable(),
+      installmentCount: zod
+        .number()
+        .min(getAdminFinanceResponseProjectsItemInstallmentCountMin)
+        .max(getAdminFinanceResponseProjectsItemInstallmentCountMax)
+        .multipleOf(
+          getAdminFinanceResponseProjectsItemInstallmentCountMultipleOf,
+        )
+        .nullable(),
       notes: zod.string(),
       active: zod.boolean(),
       createdAt: zod.coerce.date(),
@@ -326,29 +363,112 @@ export const GetAdminFinanceResponse = zod.object({
 });
 
 /**
+ * @summary Aggiunge un cliente all’anagrafica contabile
+ */
+export const createAdminFinanceClientBodyNameMax = 160;
+
+export const createAdminFinanceClientBodyCompanyNameMax = 160;
+
+export const createAdminFinanceClientBodyEmailMax = 254;
+
+export const createAdminFinanceClientBodyPhoneMax = 60;
+
+export const createAdminFinanceClientBodyNotesMax = 4000;
+
+export const CreateAdminFinanceClientBody = zod.object({
+  name: zod.string().min(1).max(createAdminFinanceClientBodyNameMax),
+  companyName: zod
+    .string()
+    .max(createAdminFinanceClientBodyCompanyNameMax)
+    .nullish(),
+  email: zod
+    .string()
+    .email()
+    .max(createAdminFinanceClientBodyEmailMax)
+    .nullish(),
+  phone: zod.string().max(createAdminFinanceClientBodyPhoneMax).nullish(),
+  notes: zod.string().max(createAdminFinanceClientBodyNotesMax).optional(),
+});
+
+export const UpdateAdminFinanceClientParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const updateAdminFinanceClientBodyNameMax = 160;
+
+export const updateAdminFinanceClientBodyCompanyNameMax = 160;
+
+export const updateAdminFinanceClientBodyEmailMax = 254;
+
+export const updateAdminFinanceClientBodyPhoneMax = 60;
+
+export const updateAdminFinanceClientBodyNotesMax = 4000;
+
+export const UpdateAdminFinanceClientBody = zod.object({
+  name: zod.string().min(1).max(updateAdminFinanceClientBodyNameMax).optional(),
+  companyName: zod
+    .string()
+    .max(updateAdminFinanceClientBodyCompanyNameMax)
+    .nullish(),
+  email: zod
+    .string()
+    .email()
+    .max(updateAdminFinanceClientBodyEmailMax)
+    .nullish(),
+  phone: zod.string().max(updateAdminFinanceClientBodyPhoneMax).nullish(),
+  notes: zod.string().max(updateAdminFinanceClientBodyNotesMax).optional(),
+});
+
+export const UpdateAdminFinanceClientResponse = zod.object({
+  id: zod.string().uuid(),
+  name: zod.string(),
+  companyName: zod.string().nullable(),
+  email: zod.string().email().nullable(),
+  phone: zod.string().nullable(),
+  notes: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
  * @summary Registra un nuovo lavoro
  */
-export const createAdminFinanceProjectBodyClientNameMax = 160;
-
 export const createAdminFinanceProjectBodyNameMax = 160;
 
 export const createAdminFinanceProjectBodyTotalAmountCentsMin = 0;
 export const createAdminFinanceProjectBodyTotalAmountCentsMax = 2147483647;
 export const createAdminFinanceProjectBodyTotalAmountCentsMultipleOf = 1;
 
+export const createAdminFinanceProjectBodyDepositAmountCentsMin = 0;
+export const createAdminFinanceProjectBodyDepositAmountCentsMax = 2147483647;
+export const createAdminFinanceProjectBodyDepositAmountCentsMultipleOf = 1;
+
+export const createAdminFinanceProjectBodyInstallmentCountMin = 2;
+export const createAdminFinanceProjectBodyInstallmentCountMax = 60;
+export const createAdminFinanceProjectBodyInstallmentCountMultipleOf = 1;
+
 export const createAdminFinanceProjectBodyNotesMax = 4000;
 
 export const CreateAdminFinanceProjectBody = zod.object({
-  clientName: zod
-    .string()
-    .min(1)
-    .max(createAdminFinanceProjectBodyClientNameMax),
+  clientId: zod.string().uuid(),
   name: zod.string().min(1).max(createAdminFinanceProjectBodyNameMax),
   totalAmountCents: zod
     .number()
     .min(createAdminFinanceProjectBodyTotalAmountCentsMin)
     .max(createAdminFinanceProjectBodyTotalAmountCentsMax)
     .multipleOf(createAdminFinanceProjectBodyTotalAmountCentsMultipleOf),
+  paymentType: zod.enum(["single", "advance", "installments"]),
+  depositAmountCents: zod
+    .number()
+    .min(createAdminFinanceProjectBodyDepositAmountCentsMin)
+    .max(createAdminFinanceProjectBodyDepositAmountCentsMax)
+    .multipleOf(createAdminFinanceProjectBodyDepositAmountCentsMultipleOf)
+    .nullish(),
+  installmentCount: zod
+    .number()
+    .min(createAdminFinanceProjectBodyInstallmentCountMin)
+    .max(createAdminFinanceProjectBodyInstallmentCountMax)
+    .multipleOf(createAdminFinanceProjectBodyInstallmentCountMultipleOf)
+    .nullish(),
   notes: zod.string().max(createAdminFinanceProjectBodyNotesMax).optional(),
 });
 
@@ -356,22 +476,24 @@ export const UpdateAdminFinanceProjectParams = zod.object({
   id: zod.coerce.string().uuid(),
 });
 
-export const updateAdminFinanceProjectBodyClientNameMax = 160;
-
 export const updateAdminFinanceProjectBodyNameMax = 160;
 
 export const updateAdminFinanceProjectBodyTotalAmountCentsMin = 0;
 export const updateAdminFinanceProjectBodyTotalAmountCentsMax = 2147483647;
 export const updateAdminFinanceProjectBodyTotalAmountCentsMultipleOf = 1;
 
+export const updateAdminFinanceProjectBodyDepositAmountCentsMin = 0;
+export const updateAdminFinanceProjectBodyDepositAmountCentsMax = 2147483647;
+export const updateAdminFinanceProjectBodyDepositAmountCentsMultipleOf = 1;
+
+export const updateAdminFinanceProjectBodyInstallmentCountMin = 2;
+export const updateAdminFinanceProjectBodyInstallmentCountMax = 60;
+export const updateAdminFinanceProjectBodyInstallmentCountMultipleOf = 1;
+
 export const updateAdminFinanceProjectBodyNotesMax = 4000;
 
 export const UpdateAdminFinanceProjectBody = zod.object({
-  clientName: zod
-    .string()
-    .min(1)
-    .max(updateAdminFinanceProjectBodyClientNameMax)
-    .optional(),
+  clientId: zod.string().uuid().optional(),
   name: zod
     .string()
     .min(1)
@@ -383,6 +505,19 @@ export const UpdateAdminFinanceProjectBody = zod.object({
     .max(updateAdminFinanceProjectBodyTotalAmountCentsMax)
     .multipleOf(updateAdminFinanceProjectBodyTotalAmountCentsMultipleOf)
     .optional(),
+  paymentType: zod.enum(["single", "advance", "installments"]).optional(),
+  depositAmountCents: zod
+    .number()
+    .min(updateAdminFinanceProjectBodyDepositAmountCentsMin)
+    .max(updateAdminFinanceProjectBodyDepositAmountCentsMax)
+    .multipleOf(updateAdminFinanceProjectBodyDepositAmountCentsMultipleOf)
+    .nullish(),
+  installmentCount: zod
+    .number()
+    .min(updateAdminFinanceProjectBodyInstallmentCountMin)
+    .max(updateAdminFinanceProjectBodyInstallmentCountMax)
+    .multipleOf(updateAdminFinanceProjectBodyInstallmentCountMultipleOf)
+    .nullish(),
   notes: zod.string().max(updateAdminFinanceProjectBodyNotesMax).optional(),
   active: zod.boolean().optional(),
 });
@@ -390,6 +525,14 @@ export const UpdateAdminFinanceProjectBody = zod.object({
 export const updateAdminFinanceProjectResponseTotalAmountCentsMin = 0;
 export const updateAdminFinanceProjectResponseTotalAmountCentsMax = 2147483647;
 export const updateAdminFinanceProjectResponseTotalAmountCentsMultipleOf = 1;
+
+export const updateAdminFinanceProjectResponseDepositAmountCentsMin = 0;
+export const updateAdminFinanceProjectResponseDepositAmountCentsMax = 2147483647;
+export const updateAdminFinanceProjectResponseDepositAmountCentsMultipleOf = 1;
+
+export const updateAdminFinanceProjectResponseInstallmentCountMin = 2;
+export const updateAdminFinanceProjectResponseInstallmentCountMax = 60;
+export const updateAdminFinanceProjectResponseInstallmentCountMultipleOf = 1;
 
 export const updateAdminFinanceProjectResponseReceivedCentsMin = 0;
 export const updateAdminFinanceProjectResponseReceivedCentsMultipleOf = 1;
@@ -399,6 +542,7 @@ export const updateAdminFinanceProjectResponseOutstandingCentsMultipleOf = 1;
 
 export const UpdateAdminFinanceProjectResponse = zod.object({
   id: zod.string().uuid(),
+  clientId: zod.string().uuid().nullable(),
   clientName: zod.string(),
   name: zod.string(),
   totalAmountCents: zod
@@ -406,6 +550,19 @@ export const UpdateAdminFinanceProjectResponse = zod.object({
     .min(updateAdminFinanceProjectResponseTotalAmountCentsMin)
     .max(updateAdminFinanceProjectResponseTotalAmountCentsMax)
     .multipleOf(updateAdminFinanceProjectResponseTotalAmountCentsMultipleOf),
+  paymentType: zod.enum(["single", "advance", "installments"]),
+  depositAmountCents: zod
+    .number()
+    .min(updateAdminFinanceProjectResponseDepositAmountCentsMin)
+    .max(updateAdminFinanceProjectResponseDepositAmountCentsMax)
+    .multipleOf(updateAdminFinanceProjectResponseDepositAmountCentsMultipleOf)
+    .nullable(),
+  installmentCount: zod
+    .number()
+    .min(updateAdminFinanceProjectResponseInstallmentCountMin)
+    .max(updateAdminFinanceProjectResponseInstallmentCountMax)
+    .multipleOf(updateAdminFinanceProjectResponseInstallmentCountMultipleOf)
+    .nullable(),
   notes: zod.string(),
   active: zod.boolean(),
   createdAt: zod.coerce.date(),

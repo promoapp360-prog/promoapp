@@ -19,6 +19,7 @@ import type {
 import type {
   AdminContact,
   AdminCredentialInput,
+  AdminFinanceClient,
   AdminFinanceData,
   AdminFinanceEntry,
   AdminFinanceProject,
@@ -29,6 +30,8 @@ import type {
   ContactRequest,
   ContactResponse,
   ContactStateInput,
+  FinanceClientInput,
+  FinanceClientUpdate,
   FinanceEntryInput,
   FinanceEntryUpdate,
   FinanceProjectInput,
@@ -1033,6 +1036,174 @@ export function useGetAdminFinance<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Aggiunge un cliente all’anagrafica contabile
+ */
+export const getCreateAdminFinanceClientUrl = () => {
+  return `/api/admin/finance/clients`;
+};
+
+export const createAdminFinanceClient = async (
+  financeClientInput: FinanceClientInput,
+  options?: RequestInit,
+): Promise<AdminFinanceClient> => {
+  return customFetch<AdminFinanceClient>(getCreateAdminFinanceClientUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeClientInput),
+  });
+};
+
+export const getCreateAdminFinanceClientMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceClient>>,
+    TError,
+    { data: BodyType<FinanceClientInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createAdminFinanceClient>>,
+  TError,
+  { data: BodyType<FinanceClientInput> },
+  TContext
+> => {
+  const mutationKey = ["createAdminFinanceClient"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createAdminFinanceClient>>,
+    { data: BodyType<FinanceClientInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createAdminFinanceClient(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateAdminFinanceClientMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createAdminFinanceClient>>
+>;
+export type CreateAdminFinanceClientMutationBody = BodyType<FinanceClientInput>;
+export type CreateAdminFinanceClientMutationError = ErrorType<void>;
+
+/**
+ * @summary Aggiunge un cliente all’anagrafica contabile
+ */
+export const useCreateAdminFinanceClient = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceClient>>,
+    TError,
+    { data: BodyType<FinanceClientInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createAdminFinanceClient>>,
+  TError,
+  { data: BodyType<FinanceClientInput> },
+  TContext
+> => {
+  return useMutation(getCreateAdminFinanceClientMutationOptions(options));
+};
+
+export const getUpdateAdminFinanceClientUrl = (id: string) => {
+  return `/api/admin/finance/clients/${id}`;
+};
+
+export const updateAdminFinanceClient = async (
+  id: string,
+  financeClientUpdate: FinanceClientUpdate,
+  options?: RequestInit,
+): Promise<AdminFinanceClient> => {
+  return customFetch<AdminFinanceClient>(getUpdateAdminFinanceClientUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeClientUpdate),
+  });
+};
+
+export const getUpdateAdminFinanceClientMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceClient>>,
+    TError,
+    { id: string; data: BodyType<FinanceClientUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateAdminFinanceClient>>,
+  TError,
+  { id: string; data: BodyType<FinanceClientUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateAdminFinanceClient"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateAdminFinanceClient>>,
+    { id: string; data: BodyType<FinanceClientUpdate> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateAdminFinanceClient(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateAdminFinanceClientMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateAdminFinanceClient>>
+>;
+export type UpdateAdminFinanceClientMutationBody =
+  BodyType<FinanceClientUpdate>;
+export type UpdateAdminFinanceClientMutationError = ErrorType<void>;
+
+export const useUpdateAdminFinanceClient = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceClient>>,
+    TError,
+    { id: string; data: BodyType<FinanceClientUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateAdminFinanceClient>>,
+  TError,
+  { id: string; data: BodyType<FinanceClientUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateAdminFinanceClientMutationOptions(options));
+};
 
 /**
  * @summary Registra un nuovo lavoro

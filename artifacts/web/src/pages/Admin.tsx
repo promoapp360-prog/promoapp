@@ -7,6 +7,8 @@ import type {
   AdminReview,
   AdminSession,
   AdminSiteControlRequest,
+  FinanceClientInput,
+  FinanceClientUpdate,
   FinanceEntryInput,
   FinanceEntryUpdate,
   FinanceProjectInput,
@@ -198,6 +200,8 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
           loading={loading}
           busy={!!busy}
           onMonth={setFinanceMonth}
+          onCreateClient={(input: FinanceClientInput) => mutateFinance("/finance/clients", "POST", input)}
+          onUpdateClient={(id: string, input: FinanceClientUpdate) => mutateFinance(`/finance/clients/${encodeURIComponent(id)}`, "PATCH", input)}
           onCreateProject={(input: FinanceProjectInput) => mutateFinance("/finance/projects", "POST", input)}
           onUpdateProject={(id: string, input: FinanceProjectUpdate) => mutateFinance(`/finance/projects/${encodeURIComponent(id)}`, "PATCH", input)}
           onCreateEntry={(input: FinanceEntryInput) => mutateFinance("/finance/entries", "POST", input)}
