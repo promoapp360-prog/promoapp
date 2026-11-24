@@ -36,6 +36,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
   const [showPassword, setShowPassword] = useState(false);
   const [loginBusy, setLoginBusy] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [tab, setTab] = useState<AdminTab>(initialTab);
   const [days, setDays] = useState(30);
   const [overview, setOverview] = useState<AdminOverview>();
@@ -51,7 +52,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
 
   function reset() {
     requestId.current++;
-    clearAdminSession(); setAuthenticated(false); setPassword("");
+    clearAdminSession(); setAuthenticated(false); setPassword(""); setNotice("");
     setOverview(undefined); setContacts([]); setReviews([]); setSiteControls([]); setFinance(undefined); setUpdated(""); setLoading(false);
   }
   function report(err: unknown) {
@@ -67,7 +68,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
     return () => { active = false; };
   }, []);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (): Promise<boolean> => {
     const id = ++requestId.current;
     setLoading(true);
     try {
@@ -77,12 +78,16 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
         adminApi<AdminSiteControlRequest[]>("/controlli"),
         tab === "finance" ? adminApi<AdminFinanceData>(`/finance?month=${financeMonth}`) : Promise.resolve(undefined),
       ]);
-      if (id !== requestId.current) return;
+      if (id !== requestId.current) return false;
       setOverview(summary); setContacts(received); setReviews(submitted); setSiteControls(controls);
       if (financeData) setFinance(financeData);
       setError("");
       setUpdated(new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
-    } catch (err) { if (id === requestId.current) report(err); }
+      return true;
+    } catch (err) {
+      if (id === requestId.current) report(err);
+      return false;
+    }
     finally { if (id === requestId.current) setLoading(false); }
   }, [days, financeMonth, tab]);
   useEffect(() => { setTab(initialTab); }, [initialTab]);
@@ -116,10 +121,19 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
   }
   async function mutateFinance(path: string, method: string, body?: unknown): Promise<boolean> {
     if (busy) return false;
-    setBusy(path); setError("");
+    setBusy(path); setError(""); setNotice("");
     try {
       await adminApi(path, { method, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
-      await load();
+      const refreshed = await load();
+      const subject = path.includes("/clients")
+        ? "Cliente"
+        : path.includes("/projects")
+          ? "Lavoro"
+          : "Movimento";
+      const action = method === "DELETE" ? "eliminato" : "salvato";
+      setNotice(refreshed
+        ? `${subject} ${action}: elenco aggiornato dal server.`
+        : `${subject} ${action} dal server, ma l’elenco non si è aggiornato. Premi “Aggiorna” per verificare.`);
       return true;
     } catch (err) {
       report(err);
@@ -187,6 +201,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
           <button onClick={() => void load()} disabled={loading || !!busy} className="text-indigo-700 font-semibold disabled:opacity-40">{loading ? "Aggiornamento…" : "Aggiorna"}</button>
         </div>
         {error && <p role="alert" className="bg-red-50 text-red-700 border border-red-200 rounded-xl p-4 mb-5">{error}</p>}
+        {notice && <p role="status" className="bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl p-4 mb-5">{notice}</p>}
         {loading && !overview && <p role="status" className="py-10 text-center text-slate-500">Caricamento del pannello…</p>}
         {overview && (tab === "overview" || tab === "visits") && <AdminOverviewPanel data={overview} days={days} onDays={setDays} visitsOnly={tab === "visits"} />}
         {tab === "contacts" && <AdminContactsPanel contacts={contacts} busy={!!busy} onState={(id, stato) => mutate(`/contacts/${encodeURIComponent(id)}`, "PATCH", { stato })} />}
