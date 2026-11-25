@@ -49,7 +49,11 @@ async function getCredentials(): Promise<{ publishableKey: string; secretKey: st
     signal: AbortSignal.timeout(10_000),
   });
 
-  const data = await response.json();
+  const data = await response.json() as {
+    items?: Array<{
+      settings?: { publishable?: string; secret?: string };
+    }>;
+  };
   const settings = data.items?.[0]?.settings;
 
   if (!settings?.publishable || !settings?.secret) {
@@ -59,8 +63,8 @@ async function getCredentials(): Promise<{ publishableKey: string; secretKey: st
   }
 
   return {
-    publishableKey: settings.publishable as string,
-    secretKey: settings.secret as string,
+    publishableKey: settings.publishable,
+    secretKey: settings.secret,
   };
 }
 

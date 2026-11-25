@@ -13,9 +13,12 @@ const PIANI: Record<string, { nome: string; prezzoBase: number; mensile: number 
   sitoistituzionale: { nome: "Sito Web Istituzionale", prezzoBase: 39900, mensile: 0 },
 };
 
-router.post("/checkout/validate-code", async (req, res) => {
+router.post("/checkout/validate-code", async (req, res): Promise<void> => {
   const { code } = req.body as { code: string };
-  if (!code?.trim()) return res.status(400).json({ error: "Codice mancante" });
+  if (!code?.trim()) {
+    res.status(400).json({ error: "Codice mancante" });
+    return;
+  }
 
   const [discount] = await db
     .select()
@@ -23,13 +26,16 @@ router.post("/checkout/validate-code", async (req, res) => {
     .where(eq(discountCodesTable.code, code.trim().toUpperCase()));
 
   if (!discount || !discount.active) {
-    return res.status(404).json({ error: "Codice sconto non valido o scaduto" });
+    res.status(404).json({ error: "Codice sconto non valido o scaduto" });
+    return;
   }
   if (discount.maxUses !== null && discount.usedCount >= discount.maxUses) {
-    return res.status(400).json({ error: "Codice sconto esaurito" });
+    res.status(400).json({ error: "Codice sconto esaurito" });
+    return;
   }
   if (discount.expiresAt && new Date() > discount.expiresAt) {
-    return res.status(400).json({ error: "Codice sconto scaduto" });
+    res.status(400).json({ error: "Codice sconto scaduto" });
+    return;
   }
 
   res.json({
@@ -39,7 +45,7 @@ router.post("/checkout/validate-code", async (req, res) => {
   });
 });
 
-router.post("/checkout/bonifico", async (req, res) => {
+router.post("/checkout/bonifico", async (req, res): Promise<void> => {
   const { piano, discountCode, customerEmail, customerName } = req.body as {
     piano: string;
     discountCode?: string;
@@ -48,7 +54,10 @@ router.post("/checkout/bonifico", async (req, res) => {
   };
 
   const pianoDati = PIANI[piano];
-  if (!pianoDati) return res.status(400).json({ error: "Piano non valido" });
+  if (!pianoDati) {
+    res.status(400).json({ error: "Piano non valido" });
+    return;
+  }
 
   let importo = pianoDati.prezzoBase;
   let discountApplied = 0;
