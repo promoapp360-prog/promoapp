@@ -3,6 +3,12 @@ name: Perimetro del pannello admin
 description: Ambito approvato del nuovo admin e dati da conservare durante le sostituzioni.
 ---
 
+Il lato gestionale interno e il lato sito pubblico sono due cose completamente separate.
+
+**Why:** l’utente ha ribadito esplicitamente questa separazione dopo una proposta di consolidamento degli archivi.
+
+**How to apply:** non unificare automaticamente clienti, lavori o pagamenti del sito con quelli del gestionale interno; non interpretare i record storici del sito come record mancanti della contabilità. Qualsiasi collegamento o importazione tra i due ambiti richiede una richiesta esplicita.
+
 L’utente ha richiesto un unico pannello admin con statistiche, recensioni, contatti ricevuti e numero di visite. Ha confermato di sostituire il vecchio admin conservando i dati e i servizi del sito pubblico.
 
 **Why:** l’utente riteneva che ci fossero «troppe back end» e ha chiesto di eliminare il vecchio admin, non il sito pubblico né il database.
