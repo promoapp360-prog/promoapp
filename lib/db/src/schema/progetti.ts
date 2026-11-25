@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
 
 export const clientiTable = pgTable("clienti", {
   id: text("id").primaryKey(),
@@ -7,6 +7,8 @@ export const clientiTable = pgTable("clienti", {
   email: text("email").notNull().default(""),
   telefono: text("telefono").notNull().default(""),
   note: text("note"),
+  companyName: text("company_name"),
+  financeDetails: jsonb("finance_details").$type<Record<string, unknown>>().notNull().default({}),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

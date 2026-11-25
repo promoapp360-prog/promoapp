@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { FinanceEntryDetails } from "./financeEntryDetails";
 import type { FinanceEntryUpdateCategory } from "./financeEntryUpdateCategory";
 
 export interface FinanceEntryUpdate {
@@ -21,4 +22,8 @@ export interface FinanceEntryUpdate {
   amountCents?: number;
   dueDate?: Date;
   repeatMonthly?: boolean;
+  paid?: boolean;
+  /** @nullable */
+  projectId?: string | null;
+  details?: FinanceEntryDetails;
 }

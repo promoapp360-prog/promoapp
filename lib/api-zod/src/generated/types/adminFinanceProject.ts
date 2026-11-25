@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AdminFinanceProjectPaymentType } from "./adminFinanceProjectPaymentType";
+import type { FinanceProjectDetails } from "./financeProjectDetails";
 
 export interface AdminFinanceProject {
   id: string;
@@ -38,4 +39,5 @@ export interface AdminFinanceProject {
   receivedCents: number;
   /** @minimum 0 */
   outstandingCents: number;
+  details?: FinanceProjectDetails;
 }

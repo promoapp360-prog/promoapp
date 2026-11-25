@@ -1,584 +1,315 @@
 import { randomUUID } from "node:crypto";
 import { pool } from "@workspace/db";
+import type { PoolClient } from "pg";
 import type {
-  AdminFinanceClient,
-  AdminFinanceData,
-  AdminFinanceEntry,
-  AdminFinanceProject,
-  FinanceClientInput,
-  FinanceClientUpdate,
-  FinanceEntryInput,
-  FinanceEntryUpdate,
-  FinanceProjectInput,
-  FinanceProjectUpdate,
+  AdminFinanceClient, AdminFinanceData, AdminFinanceEntry, AdminFinanceProject,
+  FinanceClientInput, FinanceClientUpdate, FinanceEntryInput, FinanceEntryUpdate,
+  FinanceProjectInput, FinanceProjectUpdate, FinanceRecurringInput, FinanceWorkspace,
 } from "@workspace/api-zod";
+import { projectBalance, eligibleIncome, verifiedCash, todayRome } from "./finance-calculations";
+import { ObjectStorageService } from "./objectStorage";
 
-let schemaReady: Promise<void> | undefined;
-
-function clientIdentityKey(name: string, companyName?: string | null): string {
-  const normalize = (value: string) => value.trim().normalize("NFKC").toLocaleLowerCase("it-IT");
-  return JSON.stringify([normalize(name), normalize(companyName ?? "")]);
+// Schema is managed by Drizzle / the platform's development and Publish flows.
+// In particular, reads never execute DDL, link people by name or create movements.
+export async function ensureFinanceSchema() {
+  await pool.query("SELECT customer_id,details FROM admin_finance_projects LIMIT 0");
 }
-
-async function linkLegacyProjectsToClients(): Promise<void> {
-  const { rows } = await pool.query<{ clientName: string }>(`
-    SELECT DISTINCT trim(client_name) AS "clientName"
-    FROM admin_finance_projects
-    WHERE client_id IS NULL AND trim(client_name) <> ''
-  `);
-  for (const { clientName } of rows) {
-    const id = randomUUID();
-    const identityKey = clientIdentityKey(clientName);
-    await pool.query(`
-      INSERT INTO admin_finance_clients (id, identity_key, name)
-      VALUES ($1,$2,$3)
-      ON CONFLICT (identity_key) DO NOTHING
-    `, [id, identityKey, clientName]);
-    await pool.query(`
-      UPDATE admin_finance_projects
-      SET client_id=(SELECT id FROM admin_finance_clients WHERE identity_key=$1)
-      WHERE client_id IS NULL AND lower(trim(client_name))=lower(trim($2))
-    `, [identityKey, clientName]);
-  }
-}
-
-export function ensureFinanceSchema() {
-  if (!schemaReady) {
-    schemaReady = pool.query(`
-      CREATE TABLE IF NOT EXISTS admin_finance_clients (
-        id text PRIMARY KEY,
-        identity_key text NOT NULL UNIQUE,
-        name text NOT NULL,
-        company_name text,
-        email text,
-        phone text,
-        notes text NOT NULL DEFAULT '',
-        created_at timestamptz NOT NULL DEFAULT now()
-      );
-      CREATE TABLE IF NOT EXISTS admin_finance_projects (
-        id text PRIMARY KEY,
-        client_id text REFERENCES admin_finance_clients(id) ON DELETE RESTRICT,
-        client_name text NOT NULL,
-        name text NOT NULL,
-        total_amount_cents integer NOT NULL CHECK (total_amount_cents >= 0),
-        payment_type text NOT NULL DEFAULT 'single',
-        deposit_amount_cents integer,
-        installment_count smallint,
-        notes text NOT NULL DEFAULT '',
-        active boolean NOT NULL DEFAULT true,
-        created_at timestamptz NOT NULL DEFAULT now()
-      );
-      ALTER TABLE admin_finance_projects
-        ADD COLUMN IF NOT EXISTS client_id text REFERENCES admin_finance_clients(id) ON DELETE RESTRICT;
-      ALTER TABLE admin_finance_projects
-        ADD COLUMN IF NOT EXISTS payment_type text NOT NULL DEFAULT 'single';
-      ALTER TABLE admin_finance_projects
-        ADD COLUMN IF NOT EXISTS deposit_amount_cents integer;
-      ALTER TABLE admin_finance_projects
-        ADD COLUMN IF NOT EXISTS installment_count smallint;
-      DO $$
-      BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='admin_finance_projects_payment_type_check' AND conrelid='admin_finance_projects'::regclass) THEN
-          ALTER TABLE admin_finance_projects ADD CONSTRAINT admin_finance_projects_payment_type_check
-            CHECK (payment_type IN ('single', 'advance', 'installments'));
-        END IF;
-        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='admin_finance_projects_payment_details_v2_check' AND conrelid='admin_finance_projects'::regclass) THEN
-          ALTER TABLE admin_finance_projects ADD CONSTRAINT admin_finance_projects_payment_details_v2_check
-            CHECK (
-              (payment_type='single' AND deposit_amount_cents IS NULL AND installment_count IS NULL) OR
-              (payment_type='advance' AND deposit_amount_cents IS NOT NULL AND deposit_amount_cents > 0 AND deposit_amount_cents <= total_amount_cents AND installment_count IS NULL) OR
-              (payment_type='installments' AND deposit_amount_cents IS NULL AND (installment_count IS NULL OR installment_count BETWEEN 2 AND 60))
-            );
-        END IF;
-      END $$;
-      ALTER TABLE admin_finance_projects
-        DROP CONSTRAINT IF EXISTS admin_finance_projects_payment_details_check;
-      CREATE TABLE IF NOT EXISTS admin_finance_entries (
-        id text PRIMARY KEY,
-        project_id text REFERENCES admin_finance_projects(id) ON DELETE SET NULL,
-        direction text NOT NULL CHECK (direction IN ('income', 'expense')),
-        category text NOT NULL CHECK (category IN ('deposit', 'balance', 'monthly_fee', 'facebook', 'replit', 'other')),
-        description text NOT NULL,
-        amount_cents integer NOT NULL CHECK (amount_cents > 0),
-        due_date date NOT NULL,
-        paid_at timestamptz,
-        repeat_monthly boolean NOT NULL DEFAULT false,
-        series_id text,
-        series_day smallint,
-        created_at timestamptz NOT NULL DEFAULT now(),
-        CHECK (
-          (repeat_monthly = false AND series_day IS NULL) OR
-          (repeat_monthly = true AND series_id IS NOT NULL AND series_day IS NOT NULL AND series_day BETWEEN 1 AND 31)
-        ),
-        UNIQUE (series_id, due_date)
-      );
-      CREATE INDEX IF NOT EXISTS admin_finance_entries_due_idx ON admin_finance_entries(due_date, paid_at);
-      CREATE INDEX IF NOT EXISTS admin_finance_entries_project_idx ON admin_finance_entries(project_id);
-      `).then(linkLegacyProjectsToClients).catch((error) => {
-      schemaReady = undefined;
-      throw error;
-    });
-  }
-  return schemaReady;
-}
-
-type ProjectRow = AdminFinanceProject;
-type EntryRow = Omit<AdminFinanceEntry, "dueDate"> & { dueDate: string | Date };
-
-const projectColumns = `
-  p.id, p.client_id AS "clientId", COALESCE(c.name, p.client_name) AS "clientName", p.name,
-  p.total_amount_cents AS "totalAmountCents", p.notes, p.active,
-  p.payment_type AS "paymentType", p.deposit_amount_cents AS "depositAmountCents",
-  p.installment_count AS "installmentCount",
-  p.created_at AS "createdAt",
-  COALESCE(SUM(e.amount_cents) FILTER (WHERE e.direction='income' AND e.paid_at IS NOT NULL), 0)::int AS "receivedCents",
-  COALESCE(SUM(e.amount_cents) FILTER (WHERE e.direction='income' AND e.paid_at IS NULL), 0)::int AS "outstandingCents"
-`;
-
-const entryColumns = `
-  e.id, e.project_id AS "projectId", p.name AS "projectName", COALESCE(c.name, p.client_name) AS "clientName",
-  e.direction, e.category, e.description, e.amount_cents AS "amountCents",
-  e.due_date AS "dueDate", e.paid_at AS "paidAt", e.repeat_monthly AS "repeatMonthly",
-  e.created_at AS "createdAt"
-`;
-
-const clientColumns = `
-  id, name, company_name AS "companyName", email, phone, notes, created_at AS "createdAt"
-`;
-
-function validPaymentTerms(
-  paymentType: AdminFinanceProject["paymentType"],
-  totalAmountCents: number,
-  depositAmountCents: number | null,
-  installmentCount: number | null,
-): boolean {
-  if (paymentType === "single") return depositAmountCents === null && installmentCount === null;
-  if (paymentType === "advance") {
-    return depositAmountCents !== null && depositAmountCents > 0 &&
-      depositAmountCents <= totalAmountCents && installmentCount === null;
-  }
-  return depositAmountCents === null &&
-    (installmentCount === null || (installmentCount >= 2 && installmentCount <= 60));
-}
-
-function cleanOptional(value: string | null | undefined): string | null {
-  return value?.trim() || null;
-}
-function calendarDate(value: string | Date): string {
-  return value instanceof Date ? value.toISOString().slice(0, 10) : String(value).slice(0, 10);
-}
-
-function romeToday(): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Rome",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
-  const part = (name: string) => parts.find((item) => item.type === name)?.value ?? "";
-  return `${part("year")}-${part("month")}-${part("day")}`;
-}
-
-function romeMonth(value: Date): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Rome",
-    year: "numeric",
-    month: "2-digit",
-  }).formatToParts(value);
-  const part = (name: string) => parts.find((item) => item.type === name)?.value ?? "";
-  return `${part("year")}-${part("month")}`;
-}
-
-function categoryMatchesDirection(direction: "income" | "expense", category: AdminFinanceEntry["category"]): boolean {
-  return direction === "income"
-    ? ["deposit", "balance", "monthly_fee", "other"].includes(category)
-    : ["facebook", "replit", "other"].includes(category);
-}
-
-export function nextMonthlyDate(current: string, anchorDay: number): string {
+const clientColumns = `id, trim(concat_ws(' ',nome,NULLIF(cognome,''))) AS name,
+ company_name AS "companyName", NULLIF(email,'') AS email, NULLIF(telefono,'') AS phone,
+ COALESCE(note,'') AS notes, finance_details AS details, created_at AS "createdAt"`;
+const projectColumns = `p.id,p.customer_id AS "clientId",
+ COALESCE(c.company_name,NULLIF(trim(concat_ws(' ',c.nome,c.cognome)),''),p.client_name) AS "clientName",
+ p.name,p.total_amount_cents AS "totalAmountCents",p.payment_type AS "paymentType",
+ p.deposit_amount_cents AS "depositAmountCents",p.installment_count AS "installmentCount",
+ p.notes,p.active,p.created_at AS "createdAt",
+ p.details || jsonb_build_object('legacyProjectId',p.legacy_project_id) AS details`;
+const entryColumns = `e.id,e.project_id AS "projectId",p.name AS "projectName",
+ COALESCE(c.company_name,c.nome,p.client_name) AS "clientName",e.direction,e.category,e.description,
+ e.amount_cents AS "amountCents",e.due_date::text AS "dueDate",e.paid_at AS "paidAt",
+ e.repeat_monthly AS "repeatMonthly",e.created_at AS "createdAt",
+ e.details || jsonb_build_object('recurringId',e.recurring_id,'accontoId',e.acconto_id) AS details`;
+const clean = (v: string | null | undefined) => v?.trim() || null;
+export const calendarDate=(v:Date|string)=>v instanceof Date?v.toISOString().slice(0,10):v.slice(0,10);
+export const validCalendarDate=(v:string)=>/^\d{4}-\d{2}-\d{2}$/.test(v)&&Number.isFinite(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v;
+export const categoryMatchesDirection = (direction: string, category: string) =>
+  (direction === "income" ? ["deposit", "balance", "monthly_fee", "other"] :
+    ["facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"]).includes(category);
+export function nextMonthlyDate(current: string, anchorDay: number, interval = 1): string {
   const [year, month] = current.split("-").map(Number);
-  const nextMonth = new Date(Date.UTC(year, month, 1));
-  const nextYear = nextMonth.getUTCFullYear();
-  const nextMonthIndex = nextMonth.getUTCMonth();
-  const lastDay = new Date(Date.UTC(nextYear, nextMonthIndex + 1, 0)).getUTCDate();
-  const day = String(Math.min(anchorDay, lastDay)).padStart(2, "0");
-  return `${nextYear}-${String(nextMonthIndex + 1).padStart(2, "0")}-${day}`;
+  const d = new Date(Date.UTC(year, month - 1 + interval, 1));
+  const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(Math.min(anchorDay, last)).padStart(2, "0")}`;
 }
-
-function nextMonthCutoff(): string {
-  const today = romeToday();
-  const [year, month] = today.split("-").map(Number);
-  const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-  const cutoff = new Date(Date.UTC(year, month, lastDay));
-  return cutoff.toISOString().slice(0, 10);
+export async function financeTransaction<T>(work: (q: PoolClient) => Promise<T>): Promise<T> {
+  const q = await pool.connect();
+  try { await q.query("BEGIN"); const result = await work(q); await q.query("COMMIT"); return result; }
+  catch (error) { await q.query("ROLLBACK"); throw error; }
+  finally { q.release(); }
 }
-
-async function ensureRecurringEntries(): Promise<void> {
-  const { rows } = await pool.query<{
-    seriesId: string;
-    id: string;
-    projectId: string | null;
-    direction: "income" | "expense";
-    category: AdminFinanceEntry["category"];
-    description: string;
-    amountCents: number;
-    dueDate: string;
-    repeatMonthly: boolean;
-    seriesDay: number | null;
-  }>(`
-    SELECT DISTINCT ON (series_id)
-      series_id AS "seriesId", id, project_id AS "projectId", direction, category,
-      description, amount_cents AS "amountCents", due_date AS "dueDate",
-      repeat_monthly AS "repeatMonthly", series_day AS "seriesDay"
-    FROM admin_finance_entries
-    WHERE series_id IS NOT NULL
-    ORDER BY series_id, due_date DESC
-  `);
-  const cutoff = nextMonthCutoff();
-
-  for (const series of rows) {
-    if (!series.repeatMonthly || !series.seriesDay) continue;
-    let dueDate = calendarDate(series.dueDate);
-    for (let generated = 0; generated < 1200; generated++) {
-      const nextDate = nextMonthlyDate(dueDate, series.seriesDay);
-      if (nextDate > cutoff) break;
-      await pool.query(`
-        INSERT INTO admin_finance_entries (
-          id, project_id, direction, category, description, amount_cents,
-          due_date, repeat_monthly, series_id, series_day
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,true,$8,$9)
-        ON CONFLICT (series_id, due_date) DO NOTHING
-      `, [
-        randomUUID(), series.projectId, series.direction, series.category,
-        series.description, series.amountCents, nextDate, series.seriesId, series.seriesDay,
-      ]);
-      dueDate = nextDate;
-    }
+export async function financeAudit(q: PoolClient, type: string, id: string, before: unknown, after: unknown, reason: string) {
+  await q.query(`INSERT INTO admin_finance_audit(id,entity_type,entity_id,actor,reason,before,after)
+    VALUES($1,$2,$3,'amministratore',$4,$5,$6)`,
+  [randomUUID(), type, id, reason, before == null ? null : JSON.stringify(before), after == null ? null : JSON.stringify(after)]);
+}
+function invalid(message: string): never { throw Object.assign(new Error(message), { status: 400 }); }
+async function verifyClientDetails(q: PoolClient, details: FinanceClientInput["details"], id: string) {
+  if(details?.acquisitionDate&&!validCalendarDate(details.acquisitionDate))invalid("Data acquisizione non valida.");
+  for (const [key, table] of [["leadId", "commercial_leads"], ["requestId", "richieste_gestionale"]] as const) {
+    if (!details?.[key]) continue;
+    if (!(await q.query(`SELECT id FROM ${table} WHERE id=$1`, [details[key]])).rowCount) invalid("Il contatto storico selezionato non esiste.");
+    if ((await q.query(`SELECT id FROM clienti WHERE id<>$1 AND finance_details->>$2=$3`, [id, key, details[key]])).rowCount) invalid("Contatto già collegato a un altro cliente.");
   }
 }
-
-async function findProject(id: string): Promise<ProjectRow | undefined> {
-  await ensureFinanceSchema();
-  const { rows } = await pool.query<ProjectRow>(`
-    SELECT ${projectColumns}
-    FROM admin_finance_projects p
-    LEFT JOIN admin_finance_clients c ON c.id=p.client_id
-    LEFT JOIN admin_finance_entries e ON e.project_id=p.id
-    WHERE p.id=$1
-    GROUP BY p.id, c.id
-  `, [id]);
-  return rows[0];
+async function getClient(id: string) {
+  return (await pool.query<AdminFinanceClient>(`SELECT ${clientColumns} FROM clienti WHERE id=$1`, [id])).rows[0];
 }
-
-async function findClient(id: string): Promise<AdminFinanceClient | undefined> {
-  await ensureFinanceSchema();
-  const { rows } = await pool.query<AdminFinanceClient>(`
-    SELECT ${clientColumns}
-    FROM admin_finance_clients
-    WHERE id=$1
-  `, [id]);
-  return rows[0];
-}
-
-async function findEntry(id: string): Promise<AdminFinanceEntry | undefined> {
-  await ensureFinanceSchema();
-  const { rows } = await pool.query<EntryRow>(`
-    SELECT ${entryColumns}
-    FROM admin_finance_entries e
+async function allEntries() {
+  return (await pool.query<AdminFinanceEntry>(`SELECT ${entryColumns} FROM admin_finance_entries e
     LEFT JOIN admin_finance_projects p ON p.id=e.project_id
-    LEFT JOIN admin_finance_clients c ON c.id=p.client_id
-    WHERE e.id=$1
-  `, [id]);
-  const entry = rows[0];
-  return entry ? { ...entry, dueDate: new Date(`${calendarDate(entry.dueDate)}T00:00:00.000Z`) } : undefined;
+    LEFT JOIN clienti c ON c.id=COALESCE(p.customer_id,(e.details->>'clientId'))
+    ORDER BY e.due_date DESC,e.created_at DESC`)).rows.map(e => ({ ...e, dueDate: new Date(`${String(e.dueDate).slice(0,10)}T00:00:00Z`) }));
 }
-
+async function allProjects(entries: AdminFinanceEntry[]) {
+  const result = await pool.query<AdminFinanceProject>(`SELECT ${projectColumns}
+    FROM admin_finance_projects p LEFT JOIN clienti c ON c.id=p.customer_id ORDER BY p.created_at DESC`);
+  // Existing public works are visible immediately, without importing or rewriting them.
+  const legacy = await pool.query<{ id: string; clientId: string | null; clientName: string; name: string; notes: string; createdAt: Date }>(`
+    SELECT p.id,p.cliente_id AS "clientId",COALESCE(c.company_name,c.nome,'Da associare') AS "clientName",
+    p.nome AS name,p.descrizione AS notes,p.created_at AS "createdAt"
+    FROM progetti_lavori p LEFT JOIN clienti c ON c.id=p.cliente_id
+    WHERE NOT EXISTS(SELECT 1 FROM admin_finance_projects f WHERE f.legacy_project_id=p.id OR f.id=p.id)`);
+  const projects: AdminFinanceProject[] = [...result.rows, ...legacy.rows.map(p => ({
+    ...p, totalAmountCents: 0, paymentType: "single" as const, depositAmountCents: null,
+    installmentCount: null, active: true, receivedCents: 0, outstandingCents: 0,
+    details: { legacyProjectId: p.id, amountKnown: false, agreementConfirmed: false, creditReview: true },
+  }))];
+  return projects.map(p => ({ ...p, ...projectBalance(p, entries) }));
+}
+async function saveProject(id: string, input: FinanceProjectInput | FinanceProjectUpdate, creating: boolean) {
+  return financeTransaction(async q => {
+    const before = (await q.query(`SELECT * FROM admin_finance_projects WHERE id=$1 FOR UPDATE`, [id])).rows[0];
+    const legacy = !before ? (await q.query(`SELECT * FROM progetti_lavori WHERE id=$1`, [id])).rows[0] : null;
+    if(creating&&before) invalid("Il lavoro storico ha già una scheda economica: modifica quella esistente.");
+    if (!creating && !before && !legacy) return undefined;
+    const clientId = input.clientId ?? before?.customer_id ?? legacy?.cliente_id;
+    if (!clientId || !(await q.query("SELECT id FROM clienti WHERE id=$1", [clientId])).rowCount) return undefined;
+    const details = { creditReview:true, ...(before?.details ?? {}), ...input.details };
+    if(details.confirmedDate&&!validCalendarDate(details.confirmedDate)) invalid("Data accordo non valida.");
+    const legacyId = input.details?.legacyProjectId ?? before?.legacy_project_id ?? legacy?.id ?? null;
+    if(input.details?.legacyProjectId!==undefined && (
+      (before?.legacy_project_id && input.details.legacyProjectId!==before.legacy_project_id) ||
+      (legacy && input.details.legacyProjectId!==legacy.id)
+    ))invalid("Il collegamento al lavoro storico è conservato per preservarne l’identità. Modifica i dati economici senza sostituirlo.");
+    if (legacyId) {
+      const historical = (await q.query("SELECT id,cliente_id FROM progetti_lavori WHERE id=$1", [legacyId])).rows[0];
+      if (!historical || (historical.cliente_id && historical.cliente_id !== clientId)) invalid("Il lavoro storico appartiene a un altro cliente.");
+      if ((await q.query("SELECT id FROM admin_finance_projects WHERE legacy_project_id=$1 AND id<>$2", [legacyId,id])).rowCount) invalid("Lavoro storico già collegato.");
+    }
+    if (details.agreementConfirmed && (details.commercialState !== "confirmed" || !details.amountKnown || !details.confirmedDate)) invalid("Per confermare servono stato confermato, importo noto e data dell’accordo.");
+    if (!details.agreementConfirmed) details.creditReview = true;
+    if (details.confirmedResidualCents!=null && !details.reconciliationNotes?.trim()) invalid("Per un residuo confermato separatamente servono note di riconciliazione.");
+    const total = input.totalAmountCents ?? before?.total_amount_cents ?? 0;
+    const paymentType = input.paymentType ?? before?.payment_type ?? "single";
+    const deposit = input.depositAmountCents === undefined ? before?.deposit_amount_cents ?? null : input.depositAmountCents;
+    const installments = input.installmentCount === undefined ? before?.installment_count ?? null : input.installmentCount;
+    if (paymentType === "advance" && (!deposit || deposit > total || installments !== null)) invalid("Acconto non valido.");
+    if (paymentType === "single" && (deposit !== null || installments !== null)) invalid("Modalità di pagamento non valida.");
+    if (paymentType === "installments" && deposit !== null) invalid("Indicare le singole rate nei movimenti.");
+    await q.query(`INSERT INTO admin_finance_projects
+      (id,customer_id,legacy_project_id,client_name,name,total_amount_cents,payment_type,deposit_amount_cents,installment_count,notes,active,details)
+      VALUES($1,$2,$3,'',$4,$5,$6,$7,$8,$9,$10,$11)
+      ON CONFLICT(id) DO UPDATE SET customer_id=$2,legacy_project_id=$3,name=$4,total_amount_cents=$5,
+      payment_type=$6,deposit_amount_cents=$7,installment_count=$8,notes=$9,active=$10,details=$11`,
+    [id,clientId,legacyId,input.name?.trim() ?? before?.name ?? legacy?.nome,total,paymentType,deposit,installments,
+      input.notes ?? before?.notes ?? legacy?.descrizione ?? "",("active" in input ? input.active : undefined) ?? before?.active ?? true,JSON.stringify(details)]);
+    await financeAudit(q,"project",id,before,{ ...input, details },"Aggiornamento accordo e stato lavoro");
+    return id;
+  });
+}
+async function saveEntry(id: string, input: FinanceEntryInput | FinanceEntryUpdate, creating: boolean) {
+  return financeTransaction(async q => {
+    const before = (await q.query(`SELECT * FROM admin_finance_entries WHERE id=$1 FOR UPDATE`, [id])).rows[0];
+    if (!creating && !before) return undefined;
+    if (before?.details?.cancelled && input.details?.cancelled!==false) invalid("Per correggere un movimento annullato usa il ripristino esplicito.");
+    const direction = "direction" in input ? input.direction : before.direction;
+    const category = input.category ?? before.category;
+    if (!categoryMatchesDirection(direction, category)) invalid("Categoria non compatibile.");
+    if (input.repeatMonthly) invalid("Gestisci la ricorrenza nel modulo canoni e costi, non duplicare i movimenti.");
+    const details = { ...(before?.details ?? {}), ...input.details };
+    if (input.details?.cancelled) invalid("Usa Annulla movimento per conservare la traccia.");
+    if (input.details?.recurringId !== undefined && input.details.recurringId !== (before?.recurring_id ?? null)) invalid("Il collegamento alla ricorrenza è gestito dal sistema.");
+    const projectId = input.projectId === undefined ? before?.project_id ?? null : input.projectId;
+    if (projectId) {
+      const p=(await q.query("SELECT customer_id FROM admin_finance_projects WHERE id=$1",[projectId])).rows[0];
+      if(!p)invalid("Salva prima i dati economici del lavoro.");
+      if(details.clientId&&details.clientId!==p.customer_id)invalid("Il cliente del movimento non coincide con quello del lavoro.");
+    }
+    if (details.clientId && !(await q.query("SELECT id FROM clienti WHERE id=$1", [details.clientId])).rowCount) invalid("Cliente non valido.");
+    let amount = input.amountCents ?? before?.amount_cents;
+    if(details.paidDate&&!validCalendarDate(details.paidDate)) invalid("Data di pagamento non valida.");
+    const effectivePaid=input.paid ?? Boolean(before?.paid_at);
+    if(effectivePaid && details.paidDate && details.paidDate>todayRome()) invalid("Un pagamento futuro non è un incasso effettivamente ricevuto.");
+    if(input.paid===true && !details.paidDate && !before?.paid_at && !details.accontoId) invalid("Indica la data effettiva del pagamento.");
+    let paidAt = input.paid === undefined ? before?.paid_at ?? null : input.paid ? details.paidDate?`${details.paidDate}T12:00:00+01:00`:before?.paid_at??null : null;
+    if (input.details?.paidDate && (input.paid ?? Boolean(before?.paid_at))) paidAt = `${details.paidDate}T12:00:00+01:00`;
+    const accontoId = before?.acconto_id ?? details.accontoId ?? null;
+    if(before?.acconto_id && input.details?.accontoId!==undefined && input.details.accontoId!==before.acconto_id)invalid("Il riferimento al pagamento originale non può essere sostituito: correggi il lavoro collegato o annulla il movimento.");
+    if (accontoId) {
+      const payment = (await q.query("SELECT importo_centesimi,paid_at,stato FROM acconti WHERE id=$1", [accontoId])).rows[0];
+      if (!payment || payment.stato !== "pagato" || !payment.paid_at || direction !== "income") invalid("Acconto non pagato o senza data effettiva: da verificare.");
+      if (amount !== payment.importo_centesimi || input.paid === false) invalid("Gli importi del pagamento storico non si sovrascrivono: annulla il collegamento e riconcilia.");
+      amount = payment.importo_centesimi; paidAt = payment.paid_at;
+      details.amountConfirmed = true; details.reconciliation = "reconciled";
+    }
+    if(paidAt && calendarDate(new Date(paidAt))>todayRome())invalid("Un pagamento futuro non è un incasso effettivamente ricevuto.");
+    if (details.currency === "USD" && !details.originalCents) invalid("Inserisci l’importo originale in USD.");
+    if (details.reconciliation === "reconciled" && (!paidAt || !details.amountConfirmed)) invalid("Riconciliare solo pagamenti effettivi con importo confermato.");
+    if (details.documentPath && !/^\/objects\/uploads\/[a-f0-9-]{36}$/.test(details.documentPath)) invalid("Documento non valido.");
+    if(details.documentPath && details.documentPath!==before?.details?.documentPath) {
+      const file=await new ObjectStorageService().getObjectEntityFile(details.documentPath);
+      const [metadata]=await file.getMetadata();
+      if(Number(metadata.size)>10485760 || !["application/pdf","image/jpeg","image/png","image/webp","text/csv"].includes(metadata.contentType??""))invalid("Documento non consentito o superiore a 10 MB.");
+    }
+    await q.query(`INSERT INTO admin_finance_entries
+      (id,project_id,direction,category,description,amount_cents,due_date,paid_at,details,acconto_id)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      ON CONFLICT(id) DO UPDATE SET project_id=$2,category=$4,description=$5,amount_cents=$6,due_date=$7,paid_at=$8,details=$9,acconto_id=$10`,
+    [id,projectId,direction,category,input.description?.trim() ?? before?.description,amount,
+      calendarDate(input.dueDate ?? before?.due_date),paidAt,JSON.stringify(details),accontoId]);
+    await financeAudit(q,"entry",id,before,{ ...input, details, paidAt },before?.details?.cancelled?"Ripristino esplicito movimento":"Registrazione / rettifica movimento");
+    return id;
+  });
+}
 export const adminFinanceData = {
   async list(month: string): Promise<AdminFinanceData> {
-    await ensureFinanceSchema();
-    await ensureRecurringEntries();
-    const [clientResult, projectResult, entryResult] = await Promise.all([
-      pool.query<AdminFinanceClient>(`
-        SELECT ${clientColumns}
-        FROM admin_finance_clients
-        ORDER BY lower(name), lower(COALESCE(company_name, '')), created_at
-      `),
-      pool.query<ProjectRow>(`
-        SELECT ${projectColumns}
-        FROM admin_finance_projects p
-        LEFT JOIN admin_finance_clients c ON c.id=p.client_id
-        LEFT JOIN admin_finance_entries e ON e.project_id=p.id
-        GROUP BY p.id, c.id
-        ORDER BY p.active DESC, p.created_at DESC
-      `),
-      pool.query<EntryRow>(`
-        SELECT ${entryColumns}
-        FROM admin_finance_entries e
-        LEFT JOIN admin_finance_projects p ON p.id=e.project_id
-        LEFT JOIN admin_finance_clients c ON c.id=p.client_id
-        ORDER BY (e.paid_at IS NULL) DESC, e.due_date ASC, e.created_at DESC
-      `),
-    ]);
-    const entries: AdminFinanceEntry[] = entryResult.rows.map((entry) => ({
-      ...entry,
-      dueDate: new Date(`${calendarDate(entry.dueDate)}T00:00:00.000Z`),
-    }));
-    const receivedCents = entries
-      .filter((entry) => entry.direction === "income" && entry.paidAt && romeMonth(new Date(entry.paidAt)) === month)
-      .reduce((sum, entry) => sum + entry.amountCents, 0);
-    const expensesCents = entries
-      .filter((entry) => entry.direction === "expense" && entry.paidAt && romeMonth(new Date(entry.paidAt)) === month)
-      .reduce((sum, entry) => sum + entry.amountCents, 0);
-    const today = romeToday();
-    const outstandingCents = entries
-      .filter((entry) => entry.direction === "income" && !entry.paidAt)
-      .reduce((sum, entry) => sum + entry.amountCents, 0);
-    const overdueIncomeCents = entries
-      .filter((entry) => entry.direction === "income" && !entry.paidAt && calendarDate(entry.dueDate) < today)
-      .reduce((sum, entry) => sum + entry.amountCents, 0);
-    const unpaidExpensesCents = entries
-      .filter((entry) => entry.direction === "expense" && !entry.paidAt)
-      .reduce((sum, entry) => sum + entry.amountCents, 0);
-
-    return {
-      summary: {
-        month,
-        receivedCents,
-        expensesCents,
-        balanceCents: receivedCents - expensesCents,
-        outstandingCents,
-        overdueIncomeCents,
-        unpaidExpensesCents,
-      },
-      clients: clientResult.rows,
-      projects: projectResult.rows,
-      entries,
-    };
+    const [clients, entries] = await Promise.all([pool.query<AdminFinanceClient>(`SELECT ${clientColumns} FROM clienti ORDER BY lower(nome)`),allEntries()]);
+    const projects = await allProjects(entries);
+    const inMonth = (e: AdminFinanceEntry) => e.paidAt && new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit"}).format(new Date(e.paidAt)) === month;
+    const sum = (list: AdminFinanceEntry[]) => list.reduce((s,e)=>s+e.amountCents,0);
+    const receivedCents = sum(entries.filter(e=>e.direction==="income" && verifiedCash(e) && inMonth(e)));
+    const expensesCents = sum(entries.filter(e=>e.direction==="expense" && verifiedCash(e) && inMonth(e)));
+    return { clients: clients.rows, projects, entries, summary: {
+      month,receivedCents,expensesCents,balanceCents:receivedCents-expensesCents,
+      outstandingCents: projects.reduce((s,p)=>s+p.outstandingCents,0) + sum(entries.filter(e=>e.direction==="income" && e.category==="monthly_fee" && !e.paidAt && eligibleIncome(e,projects))),
+      overdueIncomeCents: projects.reduce((s,p)=>s+Math.min(p.outstandingCents,sum(entries.filter(e=>e.projectId===p.id&&!e.details?.recurringId&&!e.paidAt&&e.dueDate.toISOString().slice(0,10)<todayRome()&&eligibleIncome(e,projects)))),0)
+        + sum(entries.filter(e=>e.details?.recurringId&&e.direction==="income"&&!e.paidAt&&!e.details.cancelled&&e.dueDate.toISOString().slice(0,10)<todayRome()&&e.details.amountConfirmed)),
+      unpaidExpensesCents: sum(entries.filter(e=>e.direction==="expense" && !e.paidAt && e.details?.amountConfirmed && !e.details?.cancelled)),
+    } };
   },
-
-  async createClient(input: FinanceClientInput): Promise<AdminFinanceClient | null> {
-    await ensureFinanceSchema();
-    const name = input.name.trim();
-    const companyName = cleanOptional(input.companyName);
-    const identityKey = clientIdentityKey(name, companyName);
-    const { rows } = await pool.query<{ id: string }>(`
-      INSERT INTO admin_finance_clients (id, identity_key, name, company_name, email, phone, notes)
-      VALUES ($1,$2,$3,$4,$5,$6,$7)
-      ON CONFLICT (identity_key) DO NOTHING
-      RETURNING id
-    `, [
-      randomUUID(), identityKey, name, companyName,
-      cleanOptional(input.email), cleanOptional(input.phone), input.notes?.trim() ?? "",
-    ]);
-    return rows[0] ? (await findClient(rows[0].id)) ?? null : null;
-  },
-
-  async updateClient(id: string, input: FinanceClientUpdate): Promise<AdminFinanceClient | undefined | null> {
-    await ensureFinanceSchema();
-    const current = await findClient(id);
-    if (!current) return;
-    const name = input.name === undefined ? current.name : input.name.trim();
-    const companyName = input.companyName === undefined ? current.companyName : cleanOptional(input.companyName);
-    const email = input.email === undefined ? current.email : cleanOptional(input.email);
-    const phone = input.phone === undefined ? current.phone : cleanOptional(input.phone);
-    const notes = input.notes === undefined ? current.notes : input.notes.trim();
-    const identityKey = clientIdentityKey(name, companyName);
-    try {
-      await pool.query(`
-        UPDATE admin_finance_clients
-        SET identity_key=$1, name=$2, company_name=$3, email=$4, phone=$5, notes=$6
-        WHERE id=$7
-      `, [identityKey, name, companyName, email, phone, notes, id]);
-    } catch (error) {
-      if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") return null;
-      throw error;
-    }
-    return findClient(id);
-  },
-
-  async createProject(input: FinanceProjectInput): Promise<AdminFinanceProject | undefined> {
-    await ensureFinanceSchema();
-    const { rows: clients } = await pool.query<{ id: string; name: string }>(
-      "SELECT id, name FROM admin_finance_clients WHERE id=$1",
-      [input.clientId],
-    );
-    const client = clients[0];
-    if (!client) return;
+  async createClient(input: FinanceClientInput) {
     const id = randomUUID();
-    await pool.query(`
-      INSERT INTO admin_finance_projects (
-        id, client_id, client_name, name, total_amount_cents, payment_type,
-        deposit_amount_cents, installment_count, notes
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-    `, [
-      id, client.id, client.name, input.name.trim(), input.totalAmountCents,
-      input.paymentType, input.depositAmountCents ?? null, input.installmentCount ?? null,
-      input.notes?.trim() ?? "",
-    ]);
-    return findProject(id);
+    const duplicate = await financeTransaction(async q=>{
+      await q.query("SELECT pg_advisory_xact_lock(7861401)");
+      if ((await q.query(`SELECT id FROM clienti WHERE lower(trim(concat_ws(' ',nome,NULLIF(cognome,''))))=lower(trim($1)) AND lower(COALESCE(company_name,''))=lower($2)`,[input.name,clean(input.companyName)??""])).rowCount) return true;
+      await verifyClientDetails(q,input.details,id);
+      await q.query(`INSERT INTO clienti(id,nome,company_name,email,telefono,note,finance_details) VALUES($1,$2,$3,$4,$5,$6,$7)`,
+        [id,input.name.trim(),clean(input.companyName),clean(input.email)??"",clean(input.phone)??"",input.notes??"",JSON.stringify(input.details??{})]);
+      await financeAudit(q,"client",id,null,input,"Cliente creato nell’anagrafica esistente"); return false;
+    });
+    return duplicate ? null : getClient(id);
   },
-
-  async updateProject(id: string, input: FinanceProjectUpdate): Promise<AdminFinanceProject | undefined | null> {
-    await ensureFinanceSchema();
-    const current = await findProject(id);
-    if (!current) return;
-    const totalAmountCents = input.totalAmountCents ?? current.totalAmountCents;
-    const paymentType = input.paymentType ?? current.paymentType;
-    const depositAmountCents = input.depositAmountCents === undefined ? current.depositAmountCents : input.depositAmountCents;
-    const installmentCount = input.installmentCount === undefined ? current.installmentCount : input.installmentCount;
-    if (!validPaymentTerms(paymentType, totalAmountCents, depositAmountCents, installmentCount)) return null;
-
-    const fields: { key: keyof FinanceProjectUpdate; column: string; value: unknown }[] = [
-      { key: "name", column: "name", value: input.name?.trim() },
-      { key: "totalAmountCents", column: "total_amount_cents", value: input.totalAmountCents },
-      { key: "paymentType", column: "payment_type", value: input.paymentType },
-      { key: "depositAmountCents", column: "deposit_amount_cents", value: input.depositAmountCents },
-      { key: "installmentCount", column: "installment_count", value: input.installmentCount },
-      { key: "notes", column: "notes", value: input.notes?.trim() },
-      { key: "active", column: "active", value: input.active },
-    ];
-    const updates = fields.filter((field) => input[field.key] !== undefined);
-    if (input.clientId !== undefined) {
-      const { rows: clients } = await pool.query<{ id: string; name: string }>(
-        "SELECT id, name FROM admin_finance_clients WHERE id=$1",
-        [input.clientId],
-      );
-      if (!clients[0]) return null;
-      updates.push(
-        { key: "clientId", column: "client_id", value: clients[0].id },
-        { key: "clientId", column: "client_name", value: clients[0].name },
-      );
-    }
-    if (!updates.length) return current;
-    const values = updates.map((field) => field.value);
-    values.push(id);
-    await pool.query(
-      `UPDATE admin_finance_projects SET ${updates.map((field, index) => `${field.column}=$${index + 1}`).join(", ")} WHERE id=$${values.length}`,
-      values,
-    );
-    return findProject(id);
+  async updateClient(id: string, input: FinanceClientUpdate) {
+    const saved = await financeTransaction(async q=>{
+      await q.query("SELECT pg_advisory_xact_lock(7861401)");
+      const current = (await q.query("SELECT * FROM clienti WHERE id=$1 FOR UPDATE",[id])).rows[0]; if (!current) return false;
+      const nextName=input.name?.trim()??[current.nome,current.cognome].filter(Boolean).join(" ");
+      const nextCompany=input.companyName===undefined?current.company_name:clean(input.companyName);
+      if((await q.query(`SELECT id FROM clienti WHERE id<>$1 AND lower(trim(concat_ws(' ',nome,NULLIF(cognome,''))))=lower($2)
+        AND lower(COALESCE(company_name,''))=lower($3)`,[id,nextName,nextCompany??""])).rowCount)invalid("Esiste già un cliente con lo stesso nome e la stessa azienda.");
+      const details = { ...current.finance_details,...input.details }; await verifyClientDetails(q,details,id);
+      await q.query(`UPDATE clienti SET nome=$2,cognome=$3,company_name=$4,email=$5,telefono=$6,note=$7,finance_details=$8 WHERE id=$1`,
+        [id,input.name?.trim()??current.nome,input.name===undefined?current.cognome:"",input.companyName===undefined?current.company_name:clean(input.companyName),
+          input.email===undefined?current.email:clean(input.email)??"",input.phone===undefined?current.telefono:clean(input.phone)??"",input.notes??current.note,JSON.stringify(details)]);
+      await financeAudit(q,"client",id,current,input,"Aggiornamento cliente / collegamenti espliciti"); return true;
+    }); return saved?getClient(id):undefined;
   },
-
-  async createEntry(input: FinanceEntryInput): Promise<AdminFinanceEntry | undefined> {
-    await ensureFinanceSchema();
-    const id = randomUUID();
-    const dueDate = calendarDate(input.dueDate);
-    const repeatMonthly = input.repeatMonthly ?? false;
-    if (input.projectId) {
-      const project = await pool.query("SELECT id FROM admin_finance_projects WHERE id=$1", [input.projectId]);
-      if (!project.rows.length) return;
-    }
-    await pool.query(`
-      INSERT INTO admin_finance_entries (
-        id, project_id, direction, category, description, amount_cents,
-        due_date, paid_at, repeat_monthly, series_id, series_day
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-    `, [
-      id, input.projectId ?? null, input.direction, input.category, input.description.trim(),
-      input.amountCents, dueDate, input.paid ? new Date() : null, repeatMonthly,
-      repeatMonthly ? id : null, repeatMonthly ? Number(dueDate.slice(-2)) : null,
-    ]);
-    await ensureRecurringEntries();
-    return findEntry(id);
+  async createProject(input: FinanceProjectInput) {
+    const id = await saveProject(input.details?.legacyProjectId ?? randomUUID(), input, true);
+    return id ? (await allProjects(await allEntries())).find(p=>p.id===id) : undefined;
   },
-
-  async updateEntry(id: string, input: FinanceEntryUpdate): Promise<AdminFinanceEntry | undefined | null> {
-    await ensureFinanceSchema();
-    const entry = await findEntry(id);
-    if (!entry) return;
-    if (input.category && !categoryMatchesDirection(entry.direction, input.category)) return null;
-    const fields: { key: keyof FinanceEntryUpdate; column: string; value: unknown }[] = [
-      { key: "category", column: "category", value: input.category },
-      { key: "description", column: "description", value: input.description?.trim() },
-      { key: "amountCents", column: "amount_cents", value: input.amountCents },
-      { key: "dueDate", column: "due_date", value: input.dueDate ? calendarDate(input.dueDate) : undefined },
-      { key: "repeatMonthly", column: "repeat_monthly", value: input.repeatMonthly },
-    ];
-    const updates = fields.filter((field) => field.key !== "repeatMonthly" && input[field.key] !== undefined);
-    if (!updates.length && input.repeatMonthly === undefined) return entry;
-    const client = await pool.connect();
-    try {
-      await client.query("BEGIN");
-      const values = updates.map((field) => field.value);
-      values.push(id);
-      const changed = await client.query<{ id: string; seriesId: string | null; dueDate: string }>(updates.length
-        ? `
-          UPDATE admin_finance_entries
-          SET ${updates.map((field, index) => `${field.column}=$${index + 1}`).join(", ")}
-          WHERE id=$${values.length}
-          RETURNING id, series_id AS "seriesId", due_date AS "dueDate"
-        `
-        : `SELECT id, series_id AS "seriesId", due_date AS "dueDate" FROM admin_finance_entries WHERE id=$1`,
-      updates.length ? values : [id]);
-      if (!changed.rows[0]) {
-        await client.query("ROLLBACK");
-        return;
-      }
-      const current = changed.rows[0];
-      if (input.repeatMonthly === true) {
-        await client.query(`
-          UPDATE admin_finance_entries
-          SET repeat_monthly=true,
-              series_id=COALESCE(series_id,id),
-              series_day=COALESCE(series_day, EXTRACT(DAY FROM due_date)::smallint)
-          WHERE id=$1
-        `, [id]);
-      } else if (input.repeatMonthly === false) {
-        if (current.seriesId) {
-          await client.query(`
-            UPDATE admin_finance_entries
-            SET repeat_monthly=false, series_day=NULL
-            WHERE series_id=$1 AND due_date >= $2
-          `, [current.seriesId, calendarDate(current.dueDate)]);
-        } else {
-          await client.query("UPDATE admin_finance_entries SET repeat_monthly=false, series_day=NULL WHERE id=$1", [id]);
-        }
-      }
-      await client.query("COMMIT");
-    } catch (error) {
-      await client.query("ROLLBACK");
-      throw error;
-    } finally {
-      client.release();
-    }
-    return findEntry(id);
+  async updateProject(id: string, input: FinanceProjectUpdate) {
+    const saved=await saveProject(id,input,false);
+    return saved?(await allProjects(await allEntries())).find(p=>p.id===id):undefined;
   },
-
-  async markEntryPaid(id: string): Promise<AdminFinanceEntry | undefined> {
-    await ensureFinanceSchema();
-    await pool.query("UPDATE admin_finance_entries SET paid_at=COALESCE(paid_at,now()) WHERE id=$1", [id]);
-    await ensureRecurringEntries();
-    return findEntry(id);
+  async createEntry(input: FinanceEntryInput) {
+    const id=await saveEntry(randomUUID(),input,true); return (await allEntries()).find(e=>e.id===id);
   },
-
-  async deleteEntry(id: string): Promise<boolean> {
-    await ensureFinanceSchema();
-    const client = await pool.connect();
-    try {
-      await client.query("BEGIN");
-      const removed = await client.query<{ seriesId: string | null; dueDate: string }>(`
-        DELETE FROM admin_finance_entries
-        WHERE id=$1 AND paid_at IS NULL
-        RETURNING series_id AS "seriesId", due_date AS "dueDate"
-      `, [id]);
-      if (!removed.rows[0]) {
-        await client.query("ROLLBACK");
-        return false;
-      }
-      const { seriesId, dueDate } = removed.rows[0];
-      if (seriesId) {
-        await client.query(`
-          DELETE FROM admin_finance_entries
-          WHERE series_id=$1 AND due_date >= $2 AND paid_at IS NULL
-        `, [seriesId, calendarDate(dueDate)]);
-      }
-      await client.query("COMMIT");
-      return true;
-    } catch (error) {
-      await client.query("ROLLBACK");
-      throw error;
-    } finally {
-      client.release();
-    }
+  async updateEntry(id: string, input: FinanceEntryUpdate) {
+    const saved=await saveEntry(id,input,false); return saved?(await allEntries()).find(e=>e.id===id):undefined;
+  },
+  async markEntryPaid(id: string) {
+    const current=(await allEntries()).find(e=>e.id===id); if(!current) return undefined;
+    // Preserve the actual date explicitly chosen in the editor; this action cannot invent one.
+    if (!current.details?.paidDate || !current.details.amountConfirmed) invalid("Modifica il movimento e indica data effettiva e importo confermato.");
+    return this.updateEntry(id,{paid:true});
+  },
+  async deleteEntry(id: string) {
+    return financeTransaction(async q=>{
+      const before=(await q.query("SELECT * FROM admin_finance_entries WHERE id=$1 FOR UPDATE",[id])).rows[0];
+      if(!before || before.details?.cancelled) return false;
+      await q.query(`UPDATE admin_finance_entries SET details=details || '{"cancelled":true}'::jsonb,repeat_monthly=false,series_day=NULL WHERE id=$1`,[id]);
+      await financeAudit(q,"entry",id,before,{cancelled:true},"Movimento annullato; originale conservato"); return true;
+    });
   },
 };
+
+export async function financeWorkspace(): Promise<FinanceWorkspace> {
+  const [recurring, history, legacyProjects, legacyPayments, sources, previous] = await Promise.all([
+    pool.query(`SELECT id,project_id AS "projectId",client_id AS "clientId",direction,category,description,amount_cents AS "amountCents",
+      start_date::text AS "startDate",next_date::text AS "nextDate",interval_months AS "intervalMonths",state FROM admin_finance_recurring ORDER BY description`),
+    pool.query(`SELECT id,entity_type AS "entityType",entity_id AS "entityId",actor,reason,before,after,created_at AS "createdAt" FROM admin_finance_audit ORDER BY created_at DESC LIMIT 200`),
+    pool.query(`SELECT p.id,p.nome AS name,p.cliente_id AS "clientId",p.acconto_versato AS "advanceEuro",
+      COALESCE(jsonb_agg(jsonb_build_object('description',v.descrizione,'euro',v.importo) ORDER BY v.ordine) FILTER(WHERE v.id IS NOT NULL),'[]') AS items
+      FROM progetti_lavori p LEFT JOIN voci_progetto v ON v.progetto_id=p.id GROUP BY p.id ORDER BY p.nome`),
+    pool.query(`SELECT a.id,COALESCE(NULLIF(a.ragione_sociale,''),a.nome||' '||a.cognome) AS name,a.progetto AS description,
+      a.importo_centesimi AS "amountCents",a.stato AS state,a.paid_at AS "paidAt",
+      EXISTS(SELECT 1 FROM admin_finance_entries e WHERE e.acconto_id=a.id) AS linked FROM acconti a ORDER BY a.created_at DESC`),
+    pool.query(`SELECT id,nome_attivita AS name,'lead' AS kind FROM commercial_leads
+      UNION ALL SELECT id,COALESCE(NULLIF(ragione_sociale,''),nome||' '||cognome),'request' FROM richieste_gestionale`),
+    pool.query("SELECT count(*)::int AS count FROM admin_finance_clients"),
+  ]);
+  return { recurring:recurring.rows,history:history.rows,legacyProjects:legacyProjects.rows,legacyPayments:legacyPayments.rows,sources:sources.rows,
+    warnings:[...(previous.rows[0].count ? ["Anagrafiche della precedente contabilità da collegare manualmente: non sono state accorpate."]:[]),
+      "Acconti storici in euro nelle schede lavoro: non sommati agli incassi. Verificare origine, data e possibili sovrapposizioni.",
+      "Storico rettifiche: ultime 200 variazioni; l’esportazione include lo storico completo."] };
+}
+export async function saveRecurring(input: FinanceRecurringInput) {
+  if((input.startDate&&!validCalendarDate(input.startDate))||(input.nextDate&&!validCalendarDate(input.nextDate))) invalid("Date della ricorrenza non valide.");
+  if(!categoryMatchesDirection(input.direction,input.category)) invalid("Categoria ricorrenza non valida.");
+  if(input.state==="active" && (!input.startDate || !input.nextDate || input.nextDate<input.startDate)) invalid("Decorrenza e prossima scadenza obbligatorie per un servizio attivo.");
+  return financeTransaction(async q=>{
+    const id=input.id??randomUUID();
+    const before=(await q.query("SELECT * FROM admin_finance_recurring WHERE id=$1 FOR UPDATE",[id])).rows[0];
+    if(input.id && !before) invalid("Ricorrenza non trovata.");
+    if(input.projectId) {
+      const p=(await q.query("SELECT customer_id FROM admin_finance_projects WHERE id=$1",[input.projectId])).rows[0];
+      if(!p)invalid("Salva prima il lavoro.");
+      if(input.clientId&&p.customer_id!==input.clientId)invalid("Il cliente non coincide con quello del lavoro.");
+    }
+    if(input.clientId && !(await q.query("SELECT id FROM clienti WHERE id=$1",[input.clientId])).rowCount) invalid("Cliente non valido.");
+    if(input.direction==="income" && !input.projectId && !input.clientId) invalid("Collega il servizio al cliente.");
+    await q.query(`INSERT INTO admin_finance_recurring(id,project_id,client_id,direction,category,description,amount_cents,start_date,next_date,interval_months,anchor_day,state)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT(id) DO UPDATE SET project_id=$2,client_id=$3,direction=$4,category=$5,
+      description=$6,amount_cents=$7,start_date=$8,next_date=$9,interval_months=$10,anchor_day=$11,state=$12`,
+    [id,input.projectId??null,input.clientId??null,input.direction,input.category,input.description,input.amountCents,input.startDate??null,input.nextDate??null,input.intervalMonths,
+      before?.anchor_day??(input.startDate?Number(input.startDate.slice(-2)):null),input.state]);
+    await financeAudit(q,"recurring",id,before,input,"Aggiornamento canone / costo ricorrente"); return {id};
+  });
+}
+export async function generateRecurring(id: string, expectedDate: string) {
+  if(!validCalendarDate(expectedDate)) invalid("Scadenza non valida.");
+  return financeTransaction(async q=>{
+    const r=(await q.query("SELECT *,next_date::text AS next,start_date::text AS start FROM admin_finance_recurring WHERE id=$1 FOR UPDATE",[id])).rows[0];
+    if(!r || r.state!=="active" || !r.next || !r.start || r.next<r.start) invalid("Solo servizi attivi con decorrenza e scadenza definite.");
+    const existing=(await q.query("SELECT id FROM admin_finance_entries WHERE recurring_id=$1 AND due_date=$2",[id,expectedDate])).rows[0];
+    if(existing)return {id:existing.id};
+    if(r.next!==expectedDate) invalid("La prossima scadenza è cambiata. Ricarica i dati prima di generarla.");
+    const entryId=randomUUID();
+    await q.query(`INSERT INTO admin_finance_entries(id,project_id,direction,category,description,amount_cents,due_date,recurring_id,details)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT(recurring_id,due_date) DO NOTHING`,
+    [entryId,r.project_id,r.direction,r.category,r.description,r.amount_cents,r.next,id,JSON.stringify({amountConfirmed:true,clientId:r.client_id,currency:"EUR",reconciliation:"unverified"})]);
+    const next=nextMonthlyDate(r.next,r.anchor_day??Number(r.start.slice(-2)),r.interval_months);
+    await q.query("UPDATE admin_finance_recurring SET next_date=$2 WHERE id=$1",[id,next]);
+    await financeAudit(q,"recurring",id,r,{generatedDate:r.next,nextDate:next},"Creata scadenza non pagata; nessun incasso presunto"); return {id:entryId};
+  });
+}

@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { FinanceProjectDetails } from "./financeProjectDetails";
 import type { FinanceProjectInputPaymentType } from "./financeProjectInputPaymentType";
 
 export interface FinanceProjectInput {
@@ -34,4 +35,5 @@ export interface FinanceProjectInput {
   installmentCount?: number | null;
   /** @maxLength 4000 */
   notes?: string;
+  details?: FinanceProjectDetails;
 }

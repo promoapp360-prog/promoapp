@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import type {
   FinanceEntryUpdate,
   FinanceProjectInput,
   FinanceProjectUpdate,
+  FinanceClientDetails, FinanceProjectDetails, FinanceEntryDetails, FinanceWorkspace,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ClientDetailsFields, ProjectDetailsFields, EntryDetailsFields } from "./FinanceDetailsFields";
+import { categoryLabels } from "./finance-ui";
 
 const clientSchema = z.object({
   name: z.string().trim().min(1, "Inserisci il nome del cliente.").max(160),
@@ -63,7 +66,7 @@ type ProjectFormValues = z.infer<typeof projectSchema>;
 const entrySchema = z.object({
   projectId: z.string(),
   direction: z.enum(["income", "expense"]),
-  category: z.enum(["deposit", "balance", "monthly_fee", "facebook", "replit", "other"]),
+  category: z.enum(["deposit", "balance", "monthly_fee", "facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"]),
   description: z.string().trim().max(240),
   amountCents: z.number().int().min(1, "Inserisci un importo maggiore di zero.").max(2_147_483_647),
   dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Seleziona una data valida."),
@@ -71,7 +74,7 @@ const entrySchema = z.object({
   repeatMonthly: z.boolean(),
 }).superRefine((values, context) => {
   const incomeCategories = ["deposit", "balance", "monthly_fee", "other"];
-  const expenseCategories = ["facebook", "replit", "other"];
+  const expenseCategories = ["facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"];
   if (values.direction === "income" && !incomeCategories.includes(values.category)) {
     context.addIssue({ code: "custom", path: ["category"], message: "Scegli una voce di incasso." });
   }
@@ -88,18 +91,9 @@ const incomeCategories = [
   ["other", "Altro incasso"],
 ] as const;
 const expenseCategories = [
-  ["facebook", "Facebook"],
-  ["replit", "Replit"],
-  ["other", "Altra spesa"],
+  ...Object.entries(categoryLabels).filter(([key])=>!["deposit","balance","monthly_fee"].includes(key)),
 ] as const;
-const categoryDescriptions: Record<EntryFormValues["category"], string> = {
-  deposit: "Acconto",
-  balance: "Saldo",
-  monthly_fee: "Canone mensile",
-  facebook: "Facebook",
-  replit: "Replit",
-  other: "Altro",
-};
+const categoryDescriptions = categoryLabels;
 
 function todayForInput() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -122,13 +116,17 @@ export function FinanceClientForm({
   onCreate,
   onUpdate,
   onCancel,
+  workspace,
 }: {
   initial?: AdminFinanceClient;
   busy: boolean;
   onCreate: (input: FinanceClientInput) => Promise<boolean>;
   onUpdate: (id: string, input: FinanceClientUpdate) => Promise<boolean>;
   onCancel: () => void;
+  workspace?: FinanceWorkspace;
 }) {
+  const [details,setDetails]=useState<FinanceClientDetails>(initial?.details??{});
+  useEffect(()=>{setDetails(initial?.details??{});},[initial?.id,JSON.stringify(initial?.details)]);
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
     defaultValues: { name: "", companyName: "", email: "", phone: "", notes: "" },
@@ -155,6 +153,7 @@ export function FinanceClientForm({
             email: values.email.trim() || null,
             phone: values.phone.trim() || null,
             notes: values.notes,
+            details: {...details,aliases:details.aliases?.map(v=>v.trim()).filter(Boolean)},
           };
           const saved = initial
             ? await onUpdate(initial.id, input)
@@ -199,6 +198,7 @@ export function FinanceClientForm({
             <FormMessage />
           </FormItem>
         )} />
+        <ClientDetailsFields value={details} onChange={setDetails} workspace={workspace}/>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
           <Button type="submit" disabled={busy} data-testid="button-save-finance-client">
             {busy ? "Salvataggio…" : initial ? "Salva cliente" : "Aggiungi cliente"}
@@ -216,13 +216,17 @@ export function FinanceProjectForm({
   busy,
   onSave,
   onCancel,
+  workspace,
 }: {
   clients: AdminFinanceClient[];
   initial?: AdminFinanceProject;
   busy: boolean;
   onSave: (input: FinanceProjectInput | FinanceProjectUpdate, id?: string) => Promise<boolean>;
   onCancel: () => void;
+  workspace?: FinanceWorkspace;
 }) {
+  const [details,setDetails]=useState<FinanceProjectDetails>({creditReview:true,...initial?.details});
+  useEffect(()=>{setDetails({creditReview:true,...initial?.details});},[initial?.id,JSON.stringify(initial?.details)]);
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -271,6 +275,7 @@ export function FinanceProjectForm({
             depositAmountCents: values.depositAmountCents,
             installmentCount: values.installmentCount,
             notes: values.notes,
+            details,
           }, initial?.id);
           if (saved) onCancel();
         })}
@@ -357,7 +362,7 @@ export function FinanceProjectForm({
         )}
         <p className="text-xs text-slate-500 sm:col-span-2">
           {form.watch("paymentType") === "installments"
-            ? "Il numero di rate è facoltativo. Registra importi e scadenze nei movimenti per aggiornare il residuo del cliente e il totale."
+            ? "Il numero di rate è facoltativo. Il residuo contrattuale non dipende dal numero di rate o scadenze inserite."
             : "Qui registri l’accordo; le singole scadenze e gli incassi si aggiungono separatamente nei movimenti."}
         </p>
         <FormField control={form.control} name="name" render={({ field }) => (
@@ -376,8 +381,9 @@ export function FinanceProjectForm({
                 min="0"
                 max="21474836.47"
                 step="0.01"
-                value={Number(field.value ?? 0) / 100}
-                onChange={(event) => field.onChange(Math.round(Number(event.target.value || 0) * 100))}
+                value={details.amountKnown ? Number(field.value ?? 0) / 100 : ""}
+                placeholder="Da definire"
+                onChange={(event) => {field.onChange(Math.round(Number(event.target.value || 0) * 100));setDetails({...details,amountKnown:event.target.value!==""});}}
                 data-testid="input-finance-total"
               />
             </FormControl>
@@ -391,6 +397,7 @@ export function FinanceProjectForm({
             <FormMessage />
           </FormItem>
         )} />
+        <ProjectDetailsFields value={details} onChange={setDetails} workspace={workspace} lockedLegacyId={initial?.details?.legacyProjectId}/>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
           <Button type="submit" disabled={busy} data-testid="button-save-finance-project">
             {busy ? "Salvataggio…" : initial ? "Salva modifiche" : "Aggiungi lavoro"}
@@ -409,6 +416,8 @@ export function FinanceEntryForm({
   onCreate,
   onUpdate,
   onCancel,
+  workspace,
+  clients,
 }: {
   projects: AdminFinanceProject[];
   initial?: AdminFinanceEntry;
@@ -416,7 +425,12 @@ export function FinanceEntryForm({
   onCreate: (input: FinanceEntryInput) => Promise<boolean>;
   onUpdate: (id: string, input: FinanceEntryUpdate) => Promise<boolean>;
   onCancel: () => void;
+  workspace?: FinanceWorkspace;
+  clients?: AdminFinanceClient[];
 }) {
+  const [uploading,setUploading]=useState(false);
+  const [details,setDetails]=useState<FinanceEntryDetails>(initial?.details??{paidDate:todayForInput()});
+  useEffect(()=>{setDetails(initial?.details??{paidDate:todayForInput()});},[initial?.id,JSON.stringify(initial?.details)]);
   const form = useForm<EntryFormValues>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
@@ -468,9 +482,10 @@ export function FinanceEntryForm({
             amountCents: values.amountCents,
             dueDate: values.dueDate,
             repeatMonthly: values.repeatMonthly,
+            details,
           };
           const saved = initial
-            ? await onUpdate(initial.id, common)
+            ? await onUpdate(initial.id, {...common,paid:values.paid,projectId:values.projectId||null})
             : await onCreate({
                 ...common,
                 projectId: values.projectId || null,
@@ -482,9 +497,9 @@ export function FinanceEntryForm({
         className="grid gap-4 sm:grid-cols-2"
         data-testid="form-finance-entry"
       >
-        {!initial && (
+        {(
           <>
-            <FormField control={form.control} name="direction" render={({ field }) => (
+            {!initial&&<FormField control={form.control} name="direction" render={({ field }) => (
               <FormItem>
                 <FormLabel>Tipo movimento</FormLabel>
                 <FormControl>
@@ -505,7 +520,7 @@ export function FinanceEntryForm({
                 </FormControl>
                 <FormMessage />
               </FormItem>
-            )} />
+            )} />}
             <FormField control={form.control} name="projectId" render={({ field }) => (
               <FormItem>
                 <FormLabel>Lavoro collegato (facoltativo)</FormLabel>
@@ -572,27 +587,10 @@ export function FinanceEntryForm({
             <FormMessage />
           </FormItem>
         )} />
-        {!initial && (
-          <FormField control={form.control} name="paid" render={({ field }) => (
-            <FormItem className="flex items-center gap-3 self-end rounded-xl border border-slate-200 p-3">
-              <FormControl><input type="checkbox" checked={field.value} onChange={field.onChange} data-testid="checkbox-finance-paid" /></FormControl>
-              <FormLabel className="!mt-0">{form.watch("direction") === "income" ? "Già incassato" : "Già pagata"}</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )} />
-        )}
-        <FormField control={form.control} name="repeatMonthly" render={({ field }) => (
-          <FormItem className="flex items-start gap-3 rounded-xl border border-slate-200 p-3 sm:col-span-2">
-            <FormControl><input type="checkbox" checked={field.value} onChange={field.onChange} data-testid="checkbox-finance-monthly" /></FormControl>
-            <div>
-              <FormLabel className="!mt-0">Ripeti ogni mese</FormLabel>
-              <p className="mt-1 text-xs text-slate-500">Crea automaticamente la prossima scadenza mensile dopo questa.</p>
-              <FormMessage />
-            </div>
-          </FormItem>
-        )} />
+        <EntryDetailsFields value={details} onChange={setDetails} paid={form.watch("paid")} onPaid={v=>form.setValue("paid",v)} workspace={workspace} clients={clients} onUploadStateChange={setUploading}/>
+        <p className="text-xs text-slate-500 sm:col-span-2">Per i canoni usa “Canoni e costi ricorrenti”: le scadenze non sono incassi. Solo pagamenti riconciliati e importi confermati entrano nel bilancio.</p>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
-          <Button type="submit" disabled={busy} data-testid="button-save-finance-entry">
+          <Button type="submit" disabled={busy||uploading} data-testid="button-save-finance-entry">
             {busy ? "Salvataggio…" : initial ? "Salva modifiche" : "Aggiungi movimento"}
           </Button>
           <Button type="button" variant="outline" disabled={busy} onClick={onCancel}>Annulla</Button>

@@ -25,3 +25,4 @@ export * from "./recensioni";
 export * from "./leads";
 export * from "./site-control-requests";
 export * from "./site-visits";
+export * from "./admin-finance";

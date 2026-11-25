@@ -7,6 +7,7 @@
  */
 import type { AdminFinanceEntryCategory } from "./adminFinanceEntryCategory";
 import type { AdminFinanceEntryDirection } from "./adminFinanceEntryDirection";
+import type { FinanceEntryDetails } from "./financeEntryDetails";
 
 export interface AdminFinanceEntry {
   id: string;
@@ -29,4 +30,5 @@ export interface AdminFinanceEntry {
   paidAt: Date | null;
   repeatMonthly: boolean;
   createdAt: Date;
+  details?: FinanceEntryDetails;
 }

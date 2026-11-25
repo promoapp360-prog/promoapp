@@ -106,6 +106,397 @@ export interface AdminOverview {
   pages: VisitedPage[];
 }
 
+export type FinanceTransactionRowCurrency =
+  (typeof FinanceTransactionRowCurrency)[keyof typeof FinanceTransactionRowCurrency];
+
+export const FinanceTransactionRowCurrency = {
+  EUR: "EUR",
+  USD: "USD",
+} as const;
+
+export interface FinanceTransactionRow {
+  /** @maxLength 200 */
+  reference: string;
+  /**
+   * @maxLength 30
+   * @nullable
+   */
+  date: string | null;
+  /** @maxLength 160 */
+  supplier: string;
+  /** @maxLength 240 */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   * @nullable
+   */
+  originalCents: number | null;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   * @nullable
+   */
+  euroCents: number | null;
+  currency: FinanceTransactionRowCurrency;
+}
+
+export interface FinanceTransactionPreviewInput {
+  /**
+   * @minItems 1
+   * @maxItems 500
+   */
+  rows: FinanceTransactionRow[];
+}
+
+export type FinanceDocumentInputContentType =
+  (typeof FinanceDocumentInputContentType)[keyof typeof FinanceDocumentInputContentType];
+
+export const FinanceDocumentInputContentType = {
+  "application/pdf": "application/pdf",
+  "image/jpeg": "image/jpeg",
+  "image/png": "image/png",
+  "image/webp": "image/webp",
+  "text/csv": "text/csv",
+} as const;
+
+export interface FinanceDocumentInput {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  name: string;
+  /**
+   * @minimum 1
+   * @maximum 10485760
+   */
+  size: number;
+  contentType: FinanceDocumentInputContentType;
+}
+
+export interface FinanceDocumentUpload {
+  uploadURL: string;
+  objectPath: string;
+}
+
+export interface FinanceRecurringGenerationInput {
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  dueDate: string;
+}
+
+export type FinanceRecurringInputDirection =
+  (typeof FinanceRecurringInputDirection)[keyof typeof FinanceRecurringInputDirection];
+
+export const FinanceRecurringInputDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export type FinanceRecurringInputState =
+  (typeof FinanceRecurringInputState)[keyof typeof FinanceRecurringInputState];
+
+export const FinanceRecurringInputState = {
+  active: "active",
+  potential: "potential",
+  suspended: "suspended",
+} as const;
+
+export interface FinanceRecurringInput {
+  id?: string;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  clientId?: string | null;
+  direction: FinanceRecurringInputDirection;
+  /** @maxLength 60 */
+  category: string;
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate?: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  nextDate?: string | null;
+  /**
+   * @minimum 1
+   * @maximum 12
+   */
+  intervalMonths: number;
+  state: FinanceRecurringInputState;
+}
+
+/**
+ * @nullable
+ */
+export type FinanceHistoryBefore = { [key: string]: unknown } | null;
+
+/**
+ * @nullable
+ */
+export type FinanceHistoryAfter = { [key: string]: unknown } | null;
+
+export interface FinanceHistory {
+  id: string;
+  entityType: string;
+  entityId: string;
+  actor: string;
+  reason: string;
+  /** @nullable */
+  before?: FinanceHistoryBefore;
+  /** @nullable */
+  after?: FinanceHistoryAfter;
+  createdAt: string;
+}
+
+export interface FinanceLegacyItem {
+  description?: string;
+  /** @nullable */
+  euro?: number | null;
+}
+
+export interface FinanceLegacyProject {
+  id: string;
+  name: string;
+  /** @nullable */
+  clientId: string | null;
+  advanceEuro: number;
+  items: FinanceLegacyItem[];
+}
+
+export interface FinanceLegacyPayment {
+  id: string;
+  name: string;
+  description: string;
+  amountCents: number;
+  state: string;
+  /** @nullable */
+  paidAt: string | null;
+  linked: boolean;
+}
+
+export type FinanceSourceKind =
+  (typeof FinanceSourceKind)[keyof typeof FinanceSourceKind];
+
+export const FinanceSourceKind = {
+  lead: "lead",
+  request: "request",
+} as const;
+
+export interface FinanceSource {
+  id: string;
+  name: string;
+  kind: FinanceSourceKind;
+}
+
+export interface FinanceWorkspace {
+  recurring: FinanceRecurringInput[];
+  history: FinanceHistory[];
+  legacyProjects: FinanceLegacyProject[];
+  legacyPayments: FinanceLegacyPayment[];
+  sources: FinanceSource[];
+  warnings: string[];
+}
+
+export interface FinanceReminder {
+  text: string;
+}
+
+export type FinanceImportRowAction =
+  (typeof FinanceImportRowAction)[keyof typeof FinanceImportRowAction];
+
+export const FinanceImportRowAction = {
+  create: "create",
+  update: "update",
+  unchanged: "unchanged",
+  review: "review",
+} as const;
+
+export type FinanceImportRowProposed = { [key: string]: unknown };
+
+export interface FinanceImportRow {
+  key: string;
+  name: string;
+  action: FinanceImportRowAction;
+  /** @nullable */
+  matchedClientId?: string | null;
+  aliases: string[];
+  anomalies: string[];
+  proposed?: FinanceImportRowProposed;
+}
+
+export interface FinanceImportPreview {
+  blocked: boolean;
+  rows: FinanceImportRow[];
+  warnings: string[];
+}
+
+export interface FinanceClientDetails {
+  /** @maxItems 30 */
+  aliases?: string[];
+  /** @maxLength 160 */
+  acquisitionSource?: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  acquisitionDate?: string | null;
+  /**
+   * @maxLength 100
+   * @nullable
+   */
+  leadId?: string | null;
+  /**
+   * @maxLength 100
+   * @nullable
+   */
+  requestId?: string | null;
+}
+
+export type FinanceProjectDetailsCommercialState =
+  (typeof FinanceProjectDetailsCommercialState)[keyof typeof FinanceProjectDetailsCommercialState];
+
+export const FinanceProjectDetailsCommercialState = {
+  contact: "contact",
+  demo: "demo",
+  quote: "quote",
+  confirmed: "confirmed",
+} as const;
+
+export type FinanceProjectDetailsOperationalState =
+  (typeof FinanceProjectDetailsOperationalState)[keyof typeof FinanceProjectDetailsOperationalState];
+
+export const FinanceProjectDetailsOperationalState = {
+  not_started: "not_started",
+  working: "working",
+  delivered: "delivered",
+} as const;
+
+export interface FinanceProjectDetails {
+  commercialState?: FinanceProjectDetailsCommercialState;
+  operationalState?: FinanceProjectDetailsOperationalState;
+  agreementConfirmed?: boolean;
+  amountKnown?: boolean;
+  creditReview?: boolean;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  confirmedDate?: string | null;
+  /** @maxLength 160 */
+  service?: string;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  extraCents?: number;
+  /** @nullable */
+  legacyProjectId?: string | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  reportedReceivedCents?: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  confirmedResidualCents?: number | null;
+  /** @maxLength 4000 */
+  reconciliationNotes?: string;
+}
+
+export type FinanceEntryDetailsCurrency =
+  (typeof FinanceEntryDetailsCurrency)[keyof typeof FinanceEntryDetailsCurrency];
+
+export const FinanceEntryDetailsCurrency = {
+  EUR: "EUR",
+  USD: "USD",
+} as const;
+
+export type FinanceEntryDetailsReconciliation =
+  (typeof FinanceEntryDetailsReconciliation)[keyof typeof FinanceEntryDetailsReconciliation];
+
+export const FinanceEntryDetailsReconciliation = {
+  unverified: "unverified",
+  reconciled: "reconciled",
+  reported: "reported",
+} as const;
+
+export type FinanceEntryDetailsClassification =
+  (typeof FinanceEntryDetailsClassification)[keyof typeof FinanceEntryDetailsClassification];
+
+export const FinanceEntryDetailsClassification = {
+  commercial: "commercial",
+  prototype: "prototype",
+  research_review: "research_review",
+  hosting: "hosting",
+  maintenance: "maintenance",
+  training: "training",
+  other: "other",
+} as const;
+
+export interface FinanceEntryDetails {
+  /** @maxLength 160 */
+  supplier?: string;
+  currency?: FinanceEntryDetailsCurrency;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   * @nullable
+   */
+  originalCents?: number | null;
+  /**
+   * @maximum 1000
+   * @exclusiveMinimum 0
+   * @nullable
+   */
+  exchangeRate?: number | null;
+  amountConfirmed?: boolean;
+  reconciliation?: FinanceEntryDetailsReconciliation;
+  /** @maxLength 100 */
+  method?: string;
+  /** @maxLength 4000 */
+  notes?: string;
+  classification?: FinanceEntryDetailsClassification;
+  /**
+   * @maxLength 500
+   * @nullable
+   */
+  documentPath?: string | null;
+  /** @maxLength 100 */
+  installment?: string;
+  /** @maxLength 200 */
+  externalReference?: string;
+  acquisitionCost?: boolean;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  paidDate?: string | null;
+  /** @nullable */
+  clientId?: string | null;
+  /** @nullable */
+  recurringId?: string | null;
+  /** @nullable */
+  accontoId?: string | null;
+  cancelled?: boolean;
+}
+
 export type AdminFinanceProjectPaymentType =
   (typeof AdminFinanceProjectPaymentType)[keyof typeof AdminFinanceProjectPaymentType];
 
@@ -146,6 +537,7 @@ export interface AdminFinanceProject {
   receivedCents: number;
   /** @minimum 0 */
   outstandingCents: number;
+  details?: FinanceProjectDetails;
 }
 
 export type AdminFinanceEntryDirection =
@@ -164,7 +556,17 @@ export const AdminFinanceEntryCategory = {
   balance: "balance",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
+  google: "google",
   replit: "replit",
+  canva: "canva",
+  hosting: "hosting",
+  domains: "domains",
+  software: "software",
+  administration: "administration",
+  accountant: "accountant",
+  consulting: "consulting",
+  equipment: "equipment",
+  research: "research",
   other: "other",
 } as const;
 
@@ -189,6 +591,7 @@ export interface AdminFinanceEntry {
   paidAt: string | null;
   repeatMonthly: boolean;
   createdAt: string;
+  details?: FinanceEntryDetails;
 }
 
 export interface AdminFinanceSummary {
@@ -213,6 +616,7 @@ export interface AdminFinanceClient {
   phone: string | null;
   notes: string;
   createdAt: string;
+  details?: FinanceClientDetails;
 }
 
 export interface AdminFinanceData {
@@ -245,6 +649,7 @@ export interface FinanceClientInput {
   phone?: string | null;
   /** @maxLength 4000 */
   notes?: string;
+  details?: FinanceClientDetails;
 }
 
 export interface FinanceClientUpdate {
@@ -270,6 +675,7 @@ export interface FinanceClientUpdate {
   phone?: string | null;
   /** @maxLength 4000 */
   notes?: string;
+  details?: FinanceClientDetails;
 }
 
 export type FinanceProjectInputPaymentType =
@@ -308,6 +714,7 @@ export interface FinanceProjectInput {
   installmentCount?: number | null;
   /** @maxLength 4000 */
   notes?: string;
+  details?: FinanceProjectDetails;
 }
 
 export type FinanceProjectUpdatePaymentType =
@@ -347,6 +754,7 @@ export interface FinanceProjectUpdate {
   /** @maxLength 4000 */
   notes?: string;
   active?: boolean;
+  details?: FinanceProjectDetails;
 }
 
 export type FinanceEntryInputDirection =
@@ -365,7 +773,17 @@ export const FinanceEntryInputCategory = {
   balance: "balance",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
+  google: "google",
   replit: "replit",
+  canva: "canva",
+  hosting: "hosting",
+  domains: "domains",
+  software: "software",
+  administration: "administration",
+  accountant: "accountant",
+  consulting: "consulting",
+  equipment: "equipment",
+  research: "research",
   other: "other",
 } as const;
 
@@ -387,6 +805,7 @@ export interface FinanceEntryInput {
   dueDate: string;
   paid?: boolean;
   repeatMonthly?: boolean;
+  details?: FinanceEntryDetails;
 }
 
 export type FinanceEntryUpdateCategory =
@@ -397,7 +816,17 @@ export const FinanceEntryUpdateCategory = {
   balance: "balance",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
+  google: "google",
   replit: "replit",
+  canva: "canva",
+  hosting: "hosting",
+  domains: "domains",
+  software: "software",
+  administration: "administration",
+  accountant: "accountant",
+  consulting: "consulting",
+  equipment: "equipment",
+  research: "research",
   other: "other",
 } as const;
 
@@ -415,6 +844,10 @@ export interface FinanceEntryUpdate {
   amountCents?: number;
   dueDate?: string;
   repeatMonthly?: boolean;
+  paid?: boolean;
+  /** @nullable */
+  projectId?: string | null;
+  details?: FinanceEntryDetails;
 }
 
 export interface TrackingConfig {
@@ -666,6 +1099,18 @@ export const GetAdminOverviewDays = {
 export type ListAdminSiteControlRequestsParams = {
   status?: SiteControlRequestStatus;
 };
+
+export type ExportFinanceParams = {
+  format?: ExportFinanceFormat;
+};
+
+export type ExportFinanceFormat =
+  (typeof ExportFinanceFormat)[keyof typeof ExportFinanceFormat];
+
+export const ExportFinanceFormat = {
+  csv: "csv",
+  xlsx: "xlsx",
+} as const;
 
 export type GetAdminFinanceParams = {
   /**

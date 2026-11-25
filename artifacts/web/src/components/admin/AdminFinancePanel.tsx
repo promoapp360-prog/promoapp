@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   AdminFinanceClient,
   AdminFinanceData,
@@ -10,20 +10,17 @@ import type {
   FinanceEntryUpdate,
   FinanceProjectInput,
   FinanceProjectUpdate,
+  FinanceWorkspace, FinanceReminder,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FinanceClientForm, FinanceEntryForm, FinanceProjectForm } from "./AdminFinanceForms";
+import FinanceDashboard from "./FinanceDashboard";
+import FinanceOperations from "./FinanceOperations";
+import { adminApi } from "@/lib/admin-api";
+import { categoryLabels, cash, confirmed } from "./finance-ui";
 
 const currency = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" });
-const categoryLabels: Record<AdminFinanceEntry["category"], string> = {
-  deposit: "Acconto",
-  balance: "Saldo",
-  monthly_fee: "Canone mensile",
-  facebook: "Facebook",
-  replit: "Replit",
-  other: "Altro",
-};
 
 function money(cents: number) {
   return currency.format(cents / 100);
@@ -74,8 +71,11 @@ function FinanceMovementCard({
   onEdit: (entry: AdminFinanceEntry) => void;
   onDelete: (id: string) => Promise<boolean>;
 }) {
+  const [reminder,setReminder]=useState("");
+  const [reminderError,setReminderError]=useState("");
   const overdue = !entry.paidAt && dateOnly(entry.dueDate) < today;
   const paid = Boolean(entry.paidAt);
+  const cancelled=entry.details?.cancelled;
   return (
     <article className={`rounded-xl border p-4 ${overdue ? "border-amber-300 bg-amber-50/40" : "border-slate-200"}`} data-testid={`row-finance-entry-${entry.id}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -86,6 +86,8 @@ function FinanceMovementCard({
             </span>
             <span className="text-xs text-slate-500">{categoryLabels[entry.category]}</span>
             {entry.repeatMonthly && <span className="text-xs text-indigo-600">Mensile</span>}
+            {cancelled&&<strong className="text-xs text-rose-700">Annullato · conservato nello storico</strong>}
+            {!cancelled&&<span className="text-xs text-slate-500">{cash(entry)?"Pagamento verificato":entry.paidAt?"Pagamento da riconciliare":entry.details?.amountConfirmed?"Impegno confermato":"Importo da verificare / stima"}</span>}
           </div>
           {entry.description.trim().toLocaleLowerCase("it-IT") !== categoryLabels[entry.category].toLocaleLowerCase("it-IT") && (
             <h5 className="mt-2 break-words text-sm font-semibold">{entry.description}</h5>
@@ -93,7 +95,9 @@ function FinanceMovementCard({
           <p className="mt-1 text-xs text-slate-500">
             {paid ? "Registrato" : "Scadenza"} {displayDate(entry.dueDate)}
           </p>
-          {overdue && <p className="mt-1 text-xs font-semibold text-amber-800">Scaduto · promemoria da verificare</p>}
+          {overdue && !cancelled && <p className="mt-1 text-xs font-semibold text-amber-800">Data superata · verificare prima di sollecitare</p>}
+          {entry.details?.supplier&&<p className="mt-1 text-xs text-slate-500">{entry.details.supplier} · {entry.details.method}</p>}
+          {entry.details?.currency==="USD"&&<p className="mt-1 text-xs text-slate-500">{((entry.details.originalCents??0)/100).toFixed(2)} USD · cambio {entry.details.exchangeRate??"non indicato"} · euro confermati non ricalcolati</p>}
           {paid && entry.paidAt && <p className="mt-1 text-xs text-emerald-700">Pagato/incassato il {new Date(entry.paidAt).toLocaleDateString("it-IT")}</p>}
         </div>
         <p className={`shrink-0 font-bold ${entry.direction === "income" ? "text-emerald-700" : "text-rose-700"}`}>
@@ -101,18 +105,18 @@ function FinanceMovementCard({
         </p>
       </div>
       <div className="mt-3 flex flex-wrap gap-3">
-        {!paid && (
+        {!paid && !cancelled && (
           <button
             type="button"
             disabled={busy}
-            onClick={() => void onMarkPaid(entry.id)}
+            onClick={() => entry.details?.paidDate && entry.details.amountConfirmed ? void onMarkPaid(entry.id) : onEdit(entry)}
             className="text-xs font-semibold text-emerald-700 disabled:opacity-50"
             data-testid={`button-mark-finance-paid-${entry.id}`}
           >
             {entry.direction === "income" ? "Segna incassato" : "Segna pagato"}
           </button>
         )}
-        <button
+        {!cancelled&&<button
           type="button"
           disabled={busy}
           onClick={() => onEdit(entry)}
@@ -120,23 +124,29 @@ function FinanceMovementCard({
           data-testid={`button-edit-finance-entry-${entry.id}`}
         >
           Modifica
-        </button>
-        {!paid && (
+        </button>}
+        {cancelled&&<button type="button" disabled={busy} className="text-xs font-semibold text-indigo-700" onClick={()=>onEdit({...entry,details:{...entry.details,cancelled:false}})}>Ripristina e correggi movimento</button>}
+        {!cancelled && (
           <button
             type="button"
             disabled={busy}
             onClick={() => {
-              if (window.confirm("Eliminare questa scadenza non ancora pagata? Le registrazioni già pagate non vengono eliminate.")) {
+              if (window.confirm("Annullare questo movimento? L’originale e la rettifica resteranno nello storico; i totali saranno aggiornati. Nessun pagamento bancario verrà modificato.")) {
                 void onDelete(entry.id);
               }
             }}
             className="text-xs text-rose-700 disabled:opacity-50"
             data-testid={`button-delete-finance-entry-${entry.id}`}
           >
-            Elimina scadenza
+            Annulla movimento
           </button>
         )}
+        {!paid&&!cancelled&&entry.direction==="income"&&<button type="button" disabled={busy} className="text-xs font-semibold text-indigo-700" onClick={async()=>{
+          setReminderError("");try{setReminder((await adminApi<FinanceReminder>(`/finance/reminders/${entry.id}`)).text);}catch(err){setReminderError(err instanceof Error?err.message:"Credito da verificare.");}
+        }}>Prepara sollecito manuale</button>}
       </div>
+      {reminderError&&<p role="alert" className="mt-2 text-xs text-amber-800">{reminderError}</p>}
+      {reminder&&<div className="mt-3"><p className="text-xs text-slate-500">Bozza da controllare. Nessun invio eseguito.</p><textarea aria-label="Bozza sollecito" className="mt-1 w-full rounded-lg border p-2 text-xs" rows={5} value={reminder} onChange={e=>setReminder(e.target.value)}/></div>}
     </article>
   );
 }
@@ -155,6 +165,7 @@ export default function AdminFinancePanel({
   onUpdateEntry,
   onMarkPaid,
   onDeleteEntry,
+  onRefresh,
 }: {
   data?: AdminFinanceData;
   month: string;
@@ -169,7 +180,15 @@ export default function AdminFinancePanel({
   onUpdateEntry: (id: string, input: FinanceEntryUpdate) => Promise<boolean>;
   onMarkPaid: (id: string) => Promise<boolean>;
   onDeleteEntry: (id: string) => Promise<boolean>;
+  onRefresh: () => Promise<boolean>;
 }) {
+  const [workspace,setWorkspace]=useState<FinanceWorkspace>();
+  const [workspaceError,setWorkspaceError]=useState("");
+  const loadWorkspace=useCallback(async()=>{
+    try{setWorkspace(await adminApi<FinanceWorkspace>("/finance/workspace"));setWorkspaceError("");}
+    catch(err){setWorkspaceError(err instanceof Error?err.message:"Storico non disponibile.");}
+  },[]);
+  useEffect(()=>{void loadWorkspace();},[data,loadWorkspace]);
   const [projectEditor, setProjectEditor] = useState<AdminFinanceProject | "new" | null>(null);
   const [clientEditor, setClientEditor] = useState<AdminFinanceClient | "new" | null>(null);
   const [entryEditor, setEntryEditor] = useState<AdminFinanceEntry | "new" | null>(null);
@@ -183,19 +202,7 @@ export default function AdminFinancePanel({
     if (filter === "income" || filter === "expense") return entry.direction === filter;
     return true;
   }), [data?.entries, filter, month]);
-  const totalBalance = useMemo(() => {
-    const entries = data?.entries ?? [];
-    return {
-      soldCents: (data?.projects ?? []).reduce((sum, project) => sum + project.totalAmountCents, 0),
-      spentCents: entries.filter((entry) => entry.direction === "expense" && entry.paidAt)
-        .reduce((sum, entry) => sum + entry.amountCents, 0),
-      receivedCents: entries.filter((entry) => entry.direction === "income" && entry.paidAt)
-        .reduce((sum, entry) => sum + entry.amountCents, 0),
-      outstandingCents: entries.filter((entry) => entry.direction === "income" && !entry.paidAt)
-        .reduce((sum, entry) => sum + entry.amountCents, 0),
-    };
-  }, [data?.entries, data?.projects]);
-  const standaloneEntries = visibleEntries.filter((entry) => !entry.projectId);
+  const standaloneEntries = visibleEntries.filter((entry) => !entry.projectId && !entry.details?.clientId);
   const projectsWithoutClient = data?.projects.filter((project) => !project.clientId) ?? [];
   const outstandingByClient = useMemo(() => {
     const totals = new Map<string, number>();
@@ -222,12 +229,20 @@ export default function AdminFinancePanel({
             {project.clientId === null && <p className="text-xs text-slate-500">Cliente non associato · {project.clientName}</p>}
             {!project.active && <p className="mt-1 text-xs text-slate-500">Archiviato</p>}
           </div>
-          <p className="shrink-0 text-sm font-bold">{money(project.totalAmountCents)}</p>
+          <p className="shrink-0 text-sm font-bold">{project.details?.amountKnown?money(project.totalAmountCents+(project.details.extraCents??0)):"Importo da definire"}</p>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
           <p className="text-slate-500">Incassato <strong className="text-emerald-700">{money(project.receivedCents)}</strong></p>
           <p className="text-slate-500">Da incassare <strong className="text-amber-700">{money(project.outstandingCents)}</strong></p>
         </div>
+        <p className="mt-2 text-xs text-slate-500">Commerciale: {{contact:"Contatto",demo:"Demo",quote:"Preventivo",confirmed:"Confermato"}[project.details?.commercialState??"contact"]} · Operativo: {{not_started:"Non iniziato",working:"In lavorazione",delivered:"Consegnato"}[project.details?.operationalState??"not_started"]}</p>
+        {!confirmed(project)&&<p className="mt-1 text-xs text-amber-800">Non è una vendita confermata né un credito esigibile.</p>}
+        {project.details?.creditReview&&<p className="mt-1 text-xs text-amber-800">Residuo da verificare · solleciti bloccati</p>}
+        {project.details?.reportedReceivedCents!=null&&<p className="mt-2 text-xs text-amber-800">Incassato comunicato: {money(project.details.reportedReceivedCents)} · differenza rispetto ai pagamenti verificati: {money(project.details.reportedReceivedCents-project.receivedCents)}. Non è un movimento bancario.</p>}
+        {project.details?.reconciliationNotes&&<p className="mt-1 whitespace-pre-wrap text-xs text-slate-500">{project.details.reconciliationNotes}</p>}
+        {project.details?.amountKnown&&confirmed(project)&&<p className="mt-2 text-xs text-slate-500">Extra inclusi: {money(project.details.extraCents??0)} · costi diretti pagati: {money(allProjectEntries.filter(e=>e.direction==="expense"&&cash(e)).reduce((s,e)=>s+e.amountCents,0))} · margine diretto: {money(project.totalAmountCents+(project.details.extraCents??0)-allProjectEntries.filter(e=>e.direction==="expense"&&cash(e)).reduce((s,e)=>s+e.amountCents,0))}</p>}
+        {workspace?.legacyProjects.filter(p=>p.id===project.details?.legacyProjectId).map(p=><details key={p.id} className="mt-3 rounded-lg bg-amber-50 p-3 text-xs"><summary className="cursor-pointer font-semibold">Dati originali del lavoro pubblico, senza sovrascrittura</summary><p className="mt-2">Acconto nella vecchia scheda: {money(p.advanceEuro*100)} · escluso dagli incassi finché non riconciliato.</p>{p.items.map((v,i)=><p key={i}>{v.description}: {v.euro===null?"Importo non noto":money((v.euro??0)*100)}</p>)}</details>)}
+        {workspace?.recurring.filter(r=>r.projectId===project.id).map(r=><p key={r.id} className="mt-2 text-xs text-indigo-700">Canone collegato: {r.description} · {money(r.amountCents)} / {r.intervalMonths} mesi · {r.state}</p>)}
         <p className="mt-3 text-xs font-medium text-slate-600" data-testid={`text-finance-payment-plan-${project.id}`}>
           {project.paymentType === "single"
             ? "Unica soluzione"
@@ -282,7 +297,7 @@ export default function AdminFinancePanel({
     <section aria-label="Contabilità e bilancio lavori" className="space-y-6" data-testid="panel-admin-finance">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold">Contabilità lavori</h2>
+          <h2 className="text-xl font-bold">Controllo Economico</h2>
           <p className="mt-1 max-w-2xl text-sm text-slate-500">
             Prospetto gestionale interno: segna incassi, importi da riscuotere e spese. Non è un documento fiscale.
           </p>
@@ -299,43 +314,8 @@ export default function AdminFinancePanel({
         </label>
       </div>
 
-      <section aria-label="Bilancio complessivo" className="space-y-3">
-        <h3 className="font-semibold">Bilancio complessivo</h3>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            ["Venduto", totalBalance.soldCents, "text-indigo-700", "Somma degli importi concordati"],
-            ["Speso", totalBalance.spentCents, "text-rose-700", "Spese registrate come pagate"],
-            ["Incassato", totalBalance.receivedCents, "text-emerald-700", "Entrate già incassate"],
-            ["Da incassare", totalBalance.outstandingCents, "text-amber-700", "Entrate ancora aperte"],
-          ].map(([label, cents, color, description]) => (
-            <article key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-5">
-              <p className="text-sm text-slate-500">{label}</p>
-              <p className={`mt-2 text-2xl font-bold ${color}`} data-testid={`finance-total-${String(label).toLowerCase().replaceAll(" ", "-")}`}>
-                {money(Number(cents))}
-              </p>
-              <p className="mt-1 text-xs text-slate-400">{description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section aria-label="Riepilogo del mese" className="space-y-3">
-        <h3 className="font-semibold">Riepilogo del mese</h3>
-        <div className="grid gap-3 sm:grid-cols-3">
-        {[
-          ["Incassato nel mese", summary?.receivedCents ?? 0, "text-emerald-700"],
-          ["Spese pagate nel mese", summary?.expensesCents ?? 0, "text-rose-700"],
-          ["Saldo del mese", summary?.balanceCents ?? 0, (summary?.balanceCents ?? 0) < 0 ? "text-rose-700" : "text-indigo-700"],
-        ].map(([label, cents, color]) => (
-          <article key={String(label)} className="rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-sm text-slate-500">{label}</p>
-            <p className={`mt-2 text-2xl font-bold ${color}`} data-testid={`finance-summary-${String(label).toLowerCase().replaceAll(" ", "-")}`}>
-              {money(Number(cents))}
-            </p>
-          </article>
-        ))}
-        </div>
-      </section>
+      <FinanceDashboard data={data} workspace={workspace} month={month}/>
+      {workspaceError&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{workspaceError}</p>}
 
       {summary && summary.overdueIncomeCents > 0 && (
         <div role="status" className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950" data-testid="finance-overdue-reminder">
@@ -362,6 +342,7 @@ export default function AdminFinancePanel({
               onCreate={onCreateClient}
               onUpdate={onUpdateClient}
               onCancel={() => setClientEditor(null)}
+              workspace={workspace}
             />
           </div>
         )}
@@ -420,6 +401,7 @@ export default function AdminFinancePanel({
                 busy={busy}
                 onSave={saveProject}
                 onCancel={() => setProjectEditor(null)}
+                workspace={workspace}
               />
             </div>
           )}
@@ -454,7 +436,7 @@ export default function AdminFinancePanel({
             <div className="space-y-3">
               {(data?.clients ?? []).map((client) => {
                 const clientProjects = (data?.projects ?? []).filter((project) => project.clientId === client.id);
-                const received = clientProjects.reduce((sum, project) => sum + project.receivedCents, 0);
+                const received = (data?.entries??[]).filter(e=>e.direction==="income"&&cash(e)&&(clientProjects.some(p=>p.id===e.projectId)||e.details?.clientId===client.id)).reduce((sum,e)=>sum+e.amountCents,0);
                 return (
                   <details key={client.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white" data-testid={`ledger-client-${client.id}`}>
                     <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-4 p-4 hover:bg-slate-50">
@@ -486,6 +468,7 @@ export default function AdminFinancePanel({
                       ) : (
                         <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">Nessun lavoro registrato per questo cliente.</p>
                       )}
+                      {visibleEntries.filter(e=>!e.projectId&&e.details?.clientId===client.id).map(entry=><FinanceMovementCard key={entry.id} entry={entry} today={today} busy={busy} onMarkPaid={onMarkPaid} onEdit={setEntryEditor} onDelete={onDeleteEntry}/>)}
                     </div>
                   </details>
                 );
@@ -519,11 +502,13 @@ export default function AdminFinancePanel({
               <p className="mb-3 text-xs text-slate-500">Collegando il movimento a un lavoro, verrà mostrato nella contabilità del relativo cliente.</p>
               <FinanceEntryForm
                 projects={data?.projects ?? []}
+                clients={data?.clients??[]}
                 initial={entryEditor === "new" ? undefined : entryEditor}
                 busy={busy}
                 onCreate={onCreateEntry}
                 onUpdate={onUpdateEntry}
                 onCancel={() => setEntryEditor(null)}
+                workspace={workspace}
               />
             </div>
           )}
@@ -553,6 +538,7 @@ export default function AdminFinancePanel({
           )}
         </section>
       </div>
+      <FinanceOperations data={data} workspace={workspace} onRefresh={async()=>{await onRefresh();await loadWorkspace();}}/>
     </section>
   );
 }

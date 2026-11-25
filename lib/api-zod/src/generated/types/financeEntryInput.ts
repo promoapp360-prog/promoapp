@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { FinanceEntryDetails } from "./financeEntryDetails";
 import type { FinanceEntryInputCategory } from "./financeEntryInputCategory";
 import type { FinanceEntryInputDirection } from "./financeEntryInputDirection";
 
@@ -26,4 +27,5 @@ export interface FinanceEntryInput {
   dueDate: Date;
   paid?: boolean;
   repeatMonthly?: boolean;
+  details?: FinanceEntryDetails;
 }

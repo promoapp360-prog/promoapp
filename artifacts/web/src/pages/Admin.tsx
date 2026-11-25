@@ -130,7 +130,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
         : path.includes("/projects")
           ? "Lavoro"
           : "Movimento";
-      const action = method === "DELETE" ? "eliminato" : "salvato";
+      const action = method === "DELETE" ? "annullato e conservato nello storico" : "salvato";
       setNotice(refreshed
         ? `${subject} ${action}: elenco aggiornato dal server.`
         : `${subject} ${action} dal server, ma l’elenco non si è aggiornato. Premi “Aggiorna” per verificare.`);
@@ -188,7 +188,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
           </div>
         </header>
         <nav aria-label="Sezioni admin" className="flex flex-wrap gap-2 mb-6">
-          {([["overview", "Statistiche"], ["contacts", "Contatti ricevuti"], ["reviews", "Recensioni"], ["visits", "Visite"], ["controls", "Controlli gratuiti"], ["finance", "Contabilità"]] as const).map(([value, label]) =>
+          {([["overview", "Statistiche"], ["contacts", "Contatti ricevuti"], ["reviews", "Recensioni"], ["visits", "Visite"], ["controls", "Controlli gratuiti"], ["finance", "Controllo Economico"]] as const).map(([value, label]) =>
             <button key={value} aria-current={tab === value ? "page" : undefined} onClick={() => {
               setTab(value);
               setLocation(value === "controls" ? "/admin/controlli" : value === "finance" ? "/admin?tab=finance" : "/admin");
@@ -223,6 +223,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
           onUpdateEntry={(id: string, input: FinanceEntryUpdate) => mutateFinance(`/finance/entries/${encodeURIComponent(id)}`, "PATCH", input)}
           onMarkPaid={(id: string) => mutateFinance(`/finance/entries/${encodeURIComponent(id)}/paid`, "POST")}
           onDeleteEntry={(id: string) => mutateFinance(`/finance/entries/${encodeURIComponent(id)}`, "DELETE")}
+          onRefresh={load}
         />}
       </div>
     </main>

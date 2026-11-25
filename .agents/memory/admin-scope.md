@@ -13,7 +13,7 @@ L’utente ha richiesto un unico pannello admin con statistiche, recensioni, con
 
 **Why:** l’utente riteneva che ci fossero «troppe back end» e ha chiesto di eliminare il vecchio admin, non il sito pubblico né il database.
 
-**How to apply:** non reintrodurre le vecchie sezioni amministrative di progetti, clienti, acconti, sconti e gestionali senza una nuova richiesta. Conservare i relativi dati e i percorsi pubblici dei clienti. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.
+**How to apply:** non reintrodurre le vecchie sezioni amministrative separate senza una nuova richiesta. Il successivo ampliamento approvato del Controllo Economico deve stare nello stesso pannello, riutilizzando l’anagrafica storica e preservando dati e accessi pubblici. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.
 
 L’utente ha chiesto di contare specificamente gli accessi a `https://promoapp.it/sitiweb`, senza trattino, separatamente dalle visite dell’intero sito.
 
@@ -21,11 +21,11 @@ L’utente ha chiesto di contare specificamente gli accessi a `https://promoapp.
 
 **How to apply:** preservare la distinzione fra `/sitiweb` e `/siti-web` quando si cambiano routing o indirizzi canonici; un redirect che fa registrare soltanto la destinazione cancellerebbe la distinzione richiesta. Non sommare altri percorsi al contatore dedicato senza una nuova richiesta.
 
-Nel bilancio lavori, la modalità “a rate” è selezionabile anche senza conoscere il numero delle rate. I movimenti d’incasso aperti vanno riepilogati per cliente e nel totale generale.
+Nel bilancio lavori, la modalità “a rate” è selezionabile anche senza conoscere il numero delle rate. Il successivo piano approvato di controllo economico richiede che il credito contrattuale non dipenda dall’inserimento delle scadenze.
 
-**Why:** l’utente ha chiarito che il conteggio delle rate è facoltativo e che gli interessa monitorare il residuo da incassare.
+**Why:** l’utente vuole monitorare il residuo effettivo anche senza un piano rate completo, distinguendolo da canoni, proposte commerciali e importi da verificare.
 
-**How to apply:** non rendere obbligatorio il numero di rate; usa i movimenti ancora non incassati per il residuo per cliente e mantieni il totale complessivo.
+**How to apply:** non rendere obbligatorio il numero di rate; riepiloga il residuo dell’accordo confermato per cliente senza sommare nuovamente le scadenze. Gli incassi comunicati ma non documentati restano distinti dalle transazioni riconciliate. L’approvazione del piano non autorizza l’importazione definitiva dei riepiloghi.
 
 Nelle schede dei lavori, mostrare prima il nome della persona o della società cliente e poi il nome del lavoro.
 

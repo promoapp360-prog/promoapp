@@ -7,3 +7,4 @@
 - [Perimetro admin](admin-scope.md) — unico pannello per statistiche, recensioni, contatti e visite; conservare dati e servizi pubblici, senza ripristinare le vecchie sezioni.
 - [Sincronizzazione GitHub](sincronizzazione-github.md) — prima dei lavori controllare gli aggiornamenti remoti; dopo le modifiche al progetto sincronizzarle col repository PromoApp.
 - [Push schema di sviluppo](push-schema-sviluppo.md) — limitare le aggiunte Drizzle alle tabelle previste quando il database contiene tabelle non modellate.
+- [Archiviazione privata](private-storage-compatibility.md) — dopo aggiornamenti del client, verificare lettura riservata e collegamento oltre al caricamento firmato.

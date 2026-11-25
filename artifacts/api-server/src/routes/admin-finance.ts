@@ -16,6 +16,7 @@ import {
 } from "@workspace/api-zod";
 import type { FinanceEntryInput } from "@workspace/api-zod";
 import { adminFinanceData } from "../lib/admin-finance-data";
+import { createFinanceToolsRouter } from "./admin-finance-tools";
 
 type FinanceData = typeof adminFinanceData;
 const FinanceProjectResponse = GetAdminFinanceResponse.shape.projects.element;
@@ -25,7 +26,7 @@ const FinanceClientResponse = GetAdminFinanceResponse.shape.clients.element;
 function categoryMatchesDirection(direction: FinanceEntryInput["direction"], category: FinanceEntryInput["category"]) {
   return direction === "income"
     ? ["deposit", "balance", "monthly_fee", "other"].includes(category)
-    : ["facebook", "replit", "other"].includes(category);
+    : ["facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"].includes(category);
 }
 
 function paymentTermsMatch(
@@ -45,6 +46,7 @@ function paymentTermsMatch(
 
 export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
   const router = Router();
+  router.use(createFinanceToolsRouter());
 
   router.get("/admin/finance", async (req, res): Promise<void> => {
     const parsed = GetAdminFinanceQueryParams.safeParse(req.query);
@@ -90,6 +92,7 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
       ...(body.data.email === undefined ? {} : { email: body.data.email?.trim() || null }),
       ...(body.data.phone === undefined ? {} : { phone: body.data.phone?.trim() || null }),
       ...(body.data.notes === undefined ? {} : { notes: body.data.notes.trim() }),
+      ...(body.data.details === undefined ? {} : { details: body.data.details }),
     };
     const client = await data.updateClient(params.data.id, update);
     if (client === null) {
@@ -196,7 +199,7 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
       return;
     }
     if (!await data.deleteEntry(params.data.id)) {
-      res.status(404).json({ message: "Movimento non trovato o già pagato." });
+      res.status(404).json({ message: "Movimento non trovato o già annullato." });
       return;
     }
     res.status(204).end();
@@ -204,6 +207,15 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
 
   router.use("/admin/finance", (err: unknown, req: import("express").Request, res: import("express").Response, _next: import("express").NextFunction) => {
     req.log?.error({ err }, "Errore contabilità admin");
+    if (err instanceof Error && "status" in err && err.status === 400) {
+      res.status(400).json({ message: err.message }); return;
+    }
+    if(typeof err==="object"&&err!==null&&"code" in err&&err.code==="23505") {
+      res.status(409).json({message:"Questo cliente, lavoro o pagamento risulta già collegato. Modifica il record esistente senza duplicarlo."});return;
+    }
+    if(err instanceof Error&&err.name==="ObjectNotFoundError") {
+      res.status(404).json({message:"Documento non trovato. Ricaricalo prima di salvare."});return;
+    }
     res.status(500).json({ message: "Dati contabili non disponibili. Riprova tra poco." });
   });
   return router;

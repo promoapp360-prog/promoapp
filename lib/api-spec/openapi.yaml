@@ -157,6 +157,104 @@ paths:
               schema: { $ref: "#/components/schemas/AdminSiteControlRequest" }
         "400": { description: Stato non valido }
         "404": { description: Richiesta non trovata }
+  /admin/finance/workspace:
+    get:
+      operationId: getFinanceWorkspace
+      responses:
+        "200":
+          description: Collegamenti storici, ricorrenze e rettifiche
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceWorkspace" }
+  /admin/finance/recurring:
+    post:
+      operationId: saveFinanceRecurring
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceRecurringInput" }
+      responses:
+        "200": { description: Ricorrenza salvata }
+  /admin/finance/recurring/{id}/generate:
+    post:
+      operationId: generateFinanceRecurring
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceRecurringGenerationInput" }
+      responses:
+        "200": { description: Prossima scadenza creata una sola volta }
+  /admin/finance/reminders/{id}:
+    get:
+      operationId: getFinanceReminder
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Bozza manuale, nessun invio automatico
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceReminder" }
+        "409": { description: Credito non confermato o non scaduto }
+  /admin/finance/import-transactions/preview:
+    post:
+      operationId: previewFinanceTransactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceTransactionPreviewInput" }
+      responses:
+        "200":
+          description: Confronto non modificante di transazioni reali
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceImportPreview" }
+  /admin/finance/import-preview:
+    get:
+      operationId: getFinanceImportPreview
+      responses:
+        "200":
+          description: Anteprima non modificante
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceImportPreview" }
+    post:
+      operationId: confirmFinanceImport
+      responses:
+        "423": { description: Importazione definitiva bloccata in attesa di autorizzazione separata }
+  /admin/finance/export:
+    get:
+      operationId: exportFinance
+      parameters:
+        - { name: format, in: query, schema: { type: string, enum: [csv, xlsx], default: csv } }
+      responses:
+        "200": { description: Esportazione riservata di dati e rettifiche }
+  /admin/finance/documents:
+    post:
+      operationId: requestFinanceDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceDocumentInput" }
+      responses:
+        "200":
+          description: Caricamento diretto riservato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceDocumentUpload" }
+  /admin/finance/documents/{id}:
+    get:
+      operationId: downloadFinanceDocument
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Documento riservato }
   /admin/finance:
     get:
       operationId: getAdminFinance
@@ -477,6 +575,176 @@ components:
         trackingStartedAt: { type: ["string", "null"], format: date-time }
         daily: { type: array, items: { $ref: "#/components/schemas/VisitDay" } }
         pages: { type: array, items: { $ref: "#/components/schemas/VisitedPage" } }
+    FinanceTransactionPreviewInput:
+      type: object
+      required: [rows]
+      properties:
+        rows: { type: array, minItems: 1, maxItems: 500, items: { $ref: "#/components/schemas/FinanceTransactionRow" } }
+    FinanceTransactionRow:
+      type: object
+      required: [reference, date, supplier, description, originalCents, euroCents, currency]
+      properties:
+        reference: { type: string, maxLength: 200 }
+        date: { type: ["string", "null"], maxLength: 30 }
+        supplier: { type: string, maxLength: 160 }
+        description: { type: string, maxLength: 240 }
+        originalCents: { type: ["integer", "null"], minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        euroCents: { type: ["integer", "null"], minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        currency: { type: string, enum: [EUR, USD] }
+    FinanceDocumentInput:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        size: { type: integer, minimum: 1, maximum: 10485760, multipleOf: 1 }
+        contentType: { type: string, enum: [application/pdf, image/jpeg, image/png, image/webp, text/csv] }
+    FinanceDocumentUpload:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL: { type: string }
+        objectPath: { type: string }
+    FinanceRecurringGenerationInput:
+      type: object
+      required: [dueDate]
+      properties:
+        dueDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+    FinanceRecurringInput:
+      type: object
+      required: [direction, category, description, amountCents, state, intervalMonths]
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        clientId: { type: ["string", "null"], format: uuid }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, maxLength: 60 }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        nextDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        intervalMonths: { type: integer, minimum: 1, maximum: 12, multipleOf: 1 }
+        state: { type: string, enum: [active, potential, suspended] }
+    FinanceHistory:
+      type: object
+      required: [id, entityType, entityId, actor, reason, createdAt]
+      properties:
+        id: { type: string }
+        entityType: { type: string }
+        entityId: { type: string }
+        actor: { type: string }
+        reason: { type: string }
+        before: { type: ["object", "null"], additionalProperties: true }
+        after: { type: ["object", "null"], additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+    FinanceLegacyProject:
+      type: object
+      required: [id, name, clientId, advanceEuro, items]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        clientId: { type: ["string", "null"] }
+        advanceEuro: { type: integer }
+        items: { type: array, items: { $ref: "#/components/schemas/FinanceLegacyItem" } }
+    FinanceLegacyItem:
+      type: object
+      properties:
+        description: { type: string }
+        euro: { type: ["integer", "null"] }
+    FinanceLegacyPayment:
+      type: object
+      required: [id, name, description, amountCents, state, paidAt, linked]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        amountCents: { type: integer }
+        state: { type: string }
+        paidAt: { type: ["string", "null"], format: date-time }
+        linked: { type: boolean }
+    FinanceSource:
+      type: object
+      required: [id, name, kind]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        kind: { type: string, enum: [lead, request] }
+    FinanceWorkspace:
+      type: object
+      required: [recurring, history, legacyProjects, legacyPayments, sources, warnings]
+      properties:
+        recurring: { type: array, items: { $ref: "#/components/schemas/FinanceRecurringInput" } }
+        history: { type: array, items: { $ref: "#/components/schemas/FinanceHistory" } }
+        legacyProjects: { type: array, items: { $ref: "#/components/schemas/FinanceLegacyProject" } }
+        legacyPayments: { type: array, items: { $ref: "#/components/schemas/FinanceLegacyPayment" } }
+        sources: { type: array, items: { $ref: "#/components/schemas/FinanceSource" } }
+        warnings: { type: array, items: { type: string } }
+    FinanceReminder:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string }
+    FinanceImportRow:
+      type: object
+      required: [key, name, action, aliases, anomalies]
+      properties:
+        key: { type: string }
+        name: { type: string }
+        action: { type: string, enum: [create, update, unchanged, review] }
+        matchedClientId: { type: ["string", "null"] }
+        aliases: { type: array, items: { type: string } }
+        anomalies: { type: array, items: { type: string } }
+        proposed: { type: object, additionalProperties: true }
+    FinanceImportPreview:
+      type: object
+      required: [blocked, rows, warnings]
+      properties:
+        blocked: { type: boolean }
+        rows: { type: array, items: { $ref: "#/components/schemas/FinanceImportRow" } }
+        warnings: { type: array, items: { type: string } }
+    FinanceClientDetails:
+      type: object
+      properties:
+        aliases: { type: array, maxItems: 30, items: { type: string, maxLength: 160 } }
+        acquisitionSource: { type: string, maxLength: 160 }
+        acquisitionDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        leadId: { type: ["string", "null"], maxLength: 100 }
+        requestId: { type: ["string", "null"], maxLength: 100 }
+    FinanceProjectDetails:
+      type: object
+      properties:
+        commercialState: { type: string, enum: [contact, demo, quote, confirmed] }
+        operationalState: { type: string, enum: [not_started, working, delivered] }
+        agreementConfirmed: { type: boolean }
+        amountKnown: { type: boolean }
+        creditReview: { type: boolean }
+        confirmedDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        service: { type: string, maxLength: 160 }
+        extraCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        legacyProjectId: { type: ["string", "null"], format: uuid }
+        reportedReceivedCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        confirmedResidualCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        reconciliationNotes: { type: string, maxLength: 4000 }
+    FinanceEntryDetails:
+      type: object
+      properties:
+        supplier: { type: string, maxLength: 160 }
+        currency: { type: string, enum: [EUR, USD] }
+        originalCents: { type: ["integer", "null"], minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        exchangeRate: { type: ["number", "null"], exclusiveMinimum: 0, maximum: 1000 }
+        amountConfirmed: { type: boolean }
+        reconciliation: { type: string, enum: [unverified, reconciled, reported] }
+        method: { type: string, maxLength: 100 }
+        notes: { type: string, maxLength: 4000 }
+        classification: { type: string, enum: [commercial, prototype, research_review, hosting, maintenance, training, other] }
+        documentPath: { type: ["string", "null"], maxLength: 500 }
+        installment: { type: string, maxLength: 100 }
+        externalReference: { type: string, maxLength: 200 }
+        acquisitionCost: { type: boolean }
+        paidDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        clientId: { type: ["string", "null"], format: uuid }
+        recurringId: { type: ["string", "null"], format: uuid }
+        accontoId: { type: ["string", "null"], format: uuid }
+        cancelled: { type: boolean }
     AdminFinanceProject:
       type: object
       required: [id, clientId, clientName, name, totalAmountCents, paymentType, depositAmountCents, installmentCount, notes, active, createdAt, receivedCents, outstandingCents]
@@ -494,6 +762,7 @@ components:
         createdAt: { type: string, format: date-time }
         receivedCents: { type: integer, minimum: 0, multipleOf: 1 }
         outstandingCents: { type: integer, minimum: 0, multipleOf: 1 }
+        details: { $ref: "#/components/schemas/FinanceProjectDetails" }
     AdminFinanceEntry:
       type: object
       required: [id, projectId, projectName, clientName, direction, category, description, amountCents, dueDate, paidAt, repeatMonthly, createdAt]
@@ -503,13 +772,14 @@ components:
         projectName: { type: ["string", "null"] }
         clientName: { type: ["string", "null"] }
         direction: { type: string, enum: [income, expense] }
-        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
         description: { type: string }
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         dueDate: { type: string, format: date }
         paidAt: { type: ["string", "null"], format: date-time }
         repeatMonthly: { type: boolean }
         createdAt: { type: string, format: date-time }
+        details: { $ref: "#/components/schemas/FinanceEntryDetails" }
     AdminFinanceSummary:
       type: object
       required: [month, receivedCents, expensesCents, balanceCents, outstandingCents, overdueIncomeCents, unpaidExpensesCents]
@@ -540,6 +810,7 @@ components:
         phone: { type: ["string", "null"] }
         notes: { type: string }
         createdAt: { type: string, format: date-time }
+        details: { $ref: "#/components/schemas/FinanceClientDetails" }
     FinanceClientInput:
       type: object
       required: [name]
@@ -549,6 +820,7 @@ components:
         email: { type: ["string", "null"], format: email, maxLength: 254 }
         phone: { type: ["string", "null"], maxLength: 60 }
         notes: { type: string, maxLength: 4000 }
+        details: { $ref: "#/components/schemas/FinanceClientDetails" }
     FinanceClientUpdate:
       type: object
       properties:
@@ -557,6 +829,7 @@ components:
         email: { type: ["string", "null"], format: email, maxLength: 254 }
         phone: { type: ["string", "null"], maxLength: 60 }
         notes: { type: string, maxLength: 4000 }
+        details: { $ref: "#/components/schemas/FinanceClientDetails" }
     FinanceProjectInput:
       type: object
       required: [clientId, name, totalAmountCents, paymentType]
@@ -568,6 +841,7 @@ components:
         depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
         notes: { type: string, maxLength: 4000 }
+        details: { $ref: "#/components/schemas/FinanceProjectDetails" }
     FinanceProjectUpdate:
       type: object
       properties:
@@ -579,26 +853,31 @@ components:
         installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
         notes: { type: string, maxLength: 4000 }
         active: { type: boolean }
+        details: { $ref: "#/components/schemas/FinanceProjectDetails" }
     FinanceEntryInput:
       type: object
       required: [direction, category, description, amountCents, dueDate]
       properties:
         projectId: { type: ["string", "null"], format: uuid }
         direction: { type: string, enum: [income, expense] }
-        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
         description: { type: string, minLength: 1, maxLength: 240 }
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         dueDate: { type: string, format: date }
         paid: { type: boolean, default: false }
         repeatMonthly: { type: boolean, default: false }
+        details: { $ref: "#/components/schemas/FinanceEntryDetails" }
     FinanceEntryUpdate:
       type: object
       properties:
-        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, replit, other] }
+        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
         description: { type: string, minLength: 1, maxLength: 240 }
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         dueDate: { type: string, format: date }
         repeatMonthly: { type: boolean }
+        paid: { type: boolean }
+        projectId: { type: ["string", "null"], format: uuid }
+        details: { $ref: "#/components/schemas/FinanceEntryDetails" }
     TrackingConfig:
       type: object
       properties:

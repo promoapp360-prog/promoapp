@@ -5,6 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { FinanceClientDetails } from "./financeClientDetails";
 
 export interface FinanceClientUpdate {
   /**
@@ -29,4 +30,5 @@ export interface FinanceClientUpdate {
   phone?: string | null;
   /** @maxLength 4000 */
   notes?: string;
+  details?: FinanceClientDetails;
 }
