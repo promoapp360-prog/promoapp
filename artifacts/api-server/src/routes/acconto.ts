@@ -17,19 +17,31 @@ function getDomain(): string {
 }
 
 // ===== PAYPAL ACCONTO =====
-router.post("/acconto/paypal/create", async (req, res) => {
+router.post("/acconto/paypal/create", async (req, res): Promise<void> => {
   const {
     progetto, tipo, nome, cognome, email, telefono,
     indirizzo, cap, citta, provincia, codiceFiscale,
     ragioneSociale, piva, sdi, pec, importoEuro, importoTotaleEuro,
   } = req.body as Record<string, string>;
 
-  if (!progetto?.trim()) return res.status(400).json({ error: "Descrizione progetto obbligatoria" });
-  if (!nome?.trim() || !cognome?.trim() || !email?.trim() || !telefono?.trim()) return res.status(400).json({ error: "Dati cliente incompleti" });
-  if (!indirizzo?.trim() || !cap?.trim() || !citta?.trim()) return res.status(400).json({ error: "Indirizzo obbligatorio" });
+  if (!progetto?.trim()) {
+    res.status(400).json({ error: "Descrizione progetto obbligatoria" });
+    return;
+  }
+  if (!nome?.trim() || !cognome?.trim() || !email?.trim() || !telefono?.trim()) {
+    res.status(400).json({ error: "Dati cliente incompleti" });
+    return;
+  }
+  if (!indirizzo?.trim() || !cap?.trim() || !citta?.trim()) {
+    res.status(400).json({ error: "Indirizzo obbligatorio" });
+    return;
+  }
 
   const centesimi = Math.round(parseFloat(importoEuro) * 100);
-  if (!centesimi || centesimi < 100) return res.status(400).json({ error: "Importo minimo 1€" });
+  if (!centesimi || centesimi < 100) {
+    res.status(400).json({ error: "Importo minimo 1€" });
+    return;
+  }
 
   const totaleCentesimi = importoTotaleEuro ? Math.round(parseFloat(importoTotaleEuro) * 100) : null;
   const id = randomUUID();
@@ -58,14 +70,23 @@ router.post("/acconto/paypal/create", async (req, res) => {
   }
 });
 
-router.post("/acconto/paypal/confirm", async (req, res) => {
+router.post("/acconto/paypal/confirm", async (req, res): Promise<void> => {
   const { accontoId, orderId } = req.body as { accontoId: string; orderId: string };
-  if (!accontoId || !orderId) return res.status(400).json({ error: "Dati mancanti" });
+  if (!accontoId || !orderId) {
+    res.status(400).json({ error: "Dati mancanti" });
+    return;
+  }
 
   try {
     const [acconto] = await db.select().from(accontiTable).where(eq(accontiTable.id, accontoId));
-    if (!acconto) return res.status(404).json({ error: "Acconto non trovato" });
-    if (acconto.stato === "pagato") return res.json({ ok: true, already: true });
+    if (!acconto) {
+      res.status(404).json({ error: "Acconto non trovato" });
+      return;
+    }
+    if (acconto.stato === "pagato") {
+      res.json({ ok: true, already: true });
+      return;
+    }
 
     const now = new Date();
     await db.update(accontiTable).set({ stato: "pagato", paidAt: now, stripePaymentIntentId: `paypal_${orderId}` }).where(eq(accontiTable.id, accontoId));
@@ -112,19 +133,31 @@ router.post("/acconto/paypal/confirm", async (req, res) => {
 });
 
 // ===== STRIPE ACCONTO =====
-router.post("/acconto/stripe/create-session", async (req, res) => {
+router.post("/acconto/stripe/create-session", async (req, res): Promise<void> => {
   const {
     progetto, tipo, nome, cognome, email, telefono,
     indirizzo, cap, citta, provincia, codiceFiscale,
     ragioneSociale, piva, sdi, pec, importoEuro, importoTotaleEuro,
   } = req.body as Record<string, string>;
 
-  if (!progetto?.trim()) return res.status(400).json({ error: "Descrizione progetto obbligatoria" });
-  if (!nome?.trim() || !cognome?.trim() || !email?.trim() || !telefono?.trim()) return res.status(400).json({ error: "Dati cliente incompleti" });
-  if (!indirizzo?.trim() || !cap?.trim() || !citta?.trim()) return res.status(400).json({ error: "Indirizzo obbligatorio" });
+  if (!progetto?.trim()) {
+    res.status(400).json({ error: "Descrizione progetto obbligatoria" });
+    return;
+  }
+  if (!nome?.trim() || !cognome?.trim() || !email?.trim() || !telefono?.trim()) {
+    res.status(400).json({ error: "Dati cliente incompleti" });
+    return;
+  }
+  if (!indirizzo?.trim() || !cap?.trim() || !citta?.trim()) {
+    res.status(400).json({ error: "Indirizzo obbligatorio" });
+    return;
+  }
 
   const centesimi = Math.round(parseFloat(importoEuro) * 100);
-  if (!centesimi || centesimi < 100) return res.status(400).json({ error: "Importo minimo 1€" });
+  if (!centesimi || centesimi < 100) {
+    res.status(400).json({ error: "Importo minimo 1€" });
+    return;
+  }
 
   const totaleCentesimi = importoTotaleEuro ? Math.round(parseFloat(importoTotaleEuro) * 100) : null;
   const id = randomUUID();
@@ -179,15 +212,24 @@ router.post("/acconto/stripe/create-session", async (req, res) => {
 });
 
 // ===== PAYPAL SALDO =====
-router.post("/acconto/saldo/paypal/create", async (req, res) => {
+router.post("/acconto/saldo/paypal/create", async (req, res): Promise<void> => {
   const { progettoRef, importoEuro } = req.body as Record<string, string>;
-  if (!progettoRef || !importoEuro) return res.status(400).json({ error: "Dati mancanti" });
+  if (!progettoRef || !importoEuro) {
+    res.status(400).json({ error: "Dati mancanti" });
+    return;
+  }
 
   const centesimi = Math.round(parseFloat(importoEuro) * 100);
-  if (!centesimi || centesimi < 100) return res.status(400).json({ error: "Importo minimo 1€" });
+  if (!centesimi || centesimi < 100) {
+    res.status(400).json({ error: "Importo minimo 1€" });
+    return;
+  }
 
   const [originale] = await db.select().from(accontiTable).where(eq(accontiTable.id, progettoRef));
-  if (!originale) return res.status(404).json({ error: "Progetto non trovato" });
+  if (!originale) {
+    res.status(404).json({ error: "Progetto non trovato" });
+    return;
+  }
 
   const pagamenti = await db.select().from(accontiTable).where(
     sql`(${accontiTable.id} = ${progettoRef} OR ${accontiTable.progettoRef} = ${progettoRef}) AND ${accontiTable.stato} = 'pagato'`
@@ -195,7 +237,10 @@ router.post("/acconto/saldo/paypal/create", async (req, res) => {
   const totaleVersato = pagamenti.reduce((s, p) => s + p.importoCentesimi, 0);
   const saldoRimanente = (originale.importoTotaleCentesimi ?? 0) - totaleVersato;
 
-  if (centesimi > saldoRimanente + 1) return res.status(400).json({ error: `Il saldo rimanente è ${(saldoRimanente / 100).toFixed(2)}€` });
+  if (centesimi > saldoRimanente + 1) {
+    res.status(400).json({ error: `Il saldo rimanente è ${(saldoRimanente / 100).toFixed(2)}€` });
+    return;
+  }
 
   const id = randomUUID();
   try {
@@ -219,14 +264,23 @@ router.post("/acconto/saldo/paypal/create", async (req, res) => {
   }
 });
 
-router.post("/acconto/paypal/saldo/confirm", async (req, res) => {
+router.post("/acconto/paypal/saldo/confirm", async (req, res): Promise<void> => {
   const { accontoId, orderId } = req.body as { accontoId: string; orderId: string };
-  if (!accontoId || !orderId) return res.status(400).json({ error: "Dati mancanti" });
+  if (!accontoId || !orderId) {
+    res.status(400).json({ error: "Dati mancanti" });
+    return;
+  }
 
   try {
     const [acconto] = await db.select().from(accontiTable).where(eq(accontiTable.id, accontoId));
-    if (!acconto) return res.status(404).json({ error: "Acconto non trovato" });
-    if (acconto.stato === "pagato") return res.json({ ok: true, already: true });
+    if (!acconto) {
+      res.status(404).json({ error: "Acconto non trovato" });
+      return;
+    }
+    if (acconto.stato === "pagato") {
+      res.json({ ok: true, already: true });
+      return;
+    }
 
     const now = new Date();
     await db.update(accontiTable).set({ stato: "pagato", paidAt: now, stripePaymentIntentId: `paypal_${orderId}` }).where(eq(accontiTable.id, accontoId));
@@ -277,15 +331,24 @@ router.post("/acconto/paypal/saldo/confirm", async (req, res) => {
 });
 
 // ===== STRIPE SALDO =====
-router.post("/acconto/saldo/stripe/create-session", async (req, res) => {
+router.post("/acconto/saldo/stripe/create-session", async (req, res): Promise<void> => {
   const { progettoRef, importoEuro } = req.body as Record<string, string>;
-  if (!progettoRef || !importoEuro) return res.status(400).json({ error: "Dati mancanti" });
+  if (!progettoRef || !importoEuro) {
+    res.status(400).json({ error: "Dati mancanti" });
+    return;
+  }
 
   const centesimi = Math.round(parseFloat(importoEuro) * 100);
-  if (!centesimi || centesimi < 100) return res.status(400).json({ error: "Importo minimo 1€" });
+  if (!centesimi || centesimi < 100) {
+    res.status(400).json({ error: "Importo minimo 1€" });
+    return;
+  }
 
   const [originale] = await db.select().from(accontiTable).where(eq(accontiTable.id, progettoRef));
-  if (!originale) return res.status(404).json({ error: "Progetto non trovato" });
+  if (!originale) {
+    res.status(404).json({ error: "Progetto non trovato" });
+    return;
+  }
 
   const pagamenti = await db.select().from(accontiTable).where(
     sql`(${accontiTable.id} = ${progettoRef} OR ${accontiTable.progettoRef} = ${progettoRef}) AND ${accontiTable.stato} = 'pagato'`
@@ -293,7 +356,10 @@ router.post("/acconto/saldo/stripe/create-session", async (req, res) => {
   const totaleVersato = pagamenti.reduce((s, p) => s + p.importoCentesimi, 0);
   const saldoRimanente = (originale.importoTotaleCentesimi ?? 0) - totaleVersato;
 
-  if (centesimi > saldoRimanente + 1) return res.status(400).json({ error: `Il saldo rimanente è ${(saldoRimanente / 100).toFixed(2)}€` });
+  if (centesimi > saldoRimanente + 1) {
+    res.status(400).json({ error: `Il saldo rimanente è ${(saldoRimanente / 100).toFixed(2)}€` });
+    return;
+  }
 
   const id = randomUUID();
 
@@ -344,9 +410,12 @@ router.post("/acconto/saldo/stripe/create-session", async (req, res) => {
 });
 
 // ===== CERCA PROGETTO (per saldo) =====
-router.get("/acconto/cerca-progetto", async (req, res) => {
+router.get("/acconto/cerca-progetto", async (req, res): Promise<void> => {
   const { email } = req.query as { email: string };
-  if (!email?.trim()) return res.status(400).json({ error: "Email obbligatoria" });
+  if (!email?.trim()) {
+    res.status(400).json({ error: "Email obbligatoria" });
+    return;
+  }
 
   const tutti = await db.select().from(accontiTable).where(
     sql`LOWER(${accontiTable.email}) = LOWER(${email.trim()}) AND ${accontiTable.progettoRef} IS NULL`
