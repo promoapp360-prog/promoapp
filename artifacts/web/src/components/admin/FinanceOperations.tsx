@@ -4,7 +4,6 @@ import { adminApi } from "@/lib/admin-api";
 import { appPath } from "@/lib/marketing";
 import { Button } from "@/components/ui/button";
 import { FinanceField } from "./FinanceDetailsFields";
-import FinanceDevelopmentTransfer from "./FinanceDevelopmentTransfer";
 import { categoryLabels, fieldClass, money, cash, iso } from "./finance-ui";
 
 export default function FinanceOperations({data,workspace,onRefresh}:{data?:AdminFinanceData;workspace?:FinanceWorkspace;onRefresh:()=>Promise<void>}) {
@@ -36,7 +35,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
         <FinanceField label="Decorrenza"><input type="date" className={fieldClass} value={editor.startDate??""} onChange={e=>set({startDate:e.target.value||null})}/></FinanceField>
         <FinanceField label="Prossima scadenza"><input type="date" className={fieldClass} value={editor.nextDate??""} onChange={e=>set({nextDate:e.target.value||null})}/></FinanceField>
         <FinanceField label="Stato"><select className={fieldClass} value={editor.state} onChange={e=>set({state:e.target.value as FinanceRecurringInput["state"]})}><option value="potential">Potenziale, non accettato</option><option value="active">Attivo, accordo confermato</option><option value="suspended">Sospeso</option></select></FinanceField>
-        {editor.direction==="expense"&&<FinanceField label="Categoria"><select className={fieldClass} value={editor.category} onChange={e=>set({category:e.target.value})}>{Object.entries(categoryLabels).filter(([k])=>!["deposit","balance","monthly_fee"].includes(k)).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></FinanceField>}
+        {editor.direction==="expense"&&<FinanceField label="Categoria"><select className={fieldClass} value={editor.category} onChange={e=>set({category:e.target.value})}>{Object.entries(categoryLabels).filter(([k])=>!["deposit","balance","installment","monthly_fee"].includes(k)).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></FinanceField>}
         <div className="flex gap-2 sm:col-span-2"><Button disabled={busy}>Salva ricorrenza</Button><Button type="button" variant="outline" onClick={()=>setEditor(null)}>Annulla</Button></div>
       </form>}
       <div className="grid gap-3 lg:grid-cols-2">{workspace?.recurring.map(r=><article key={r.id} className="rounded-xl border p-4">
@@ -59,6 +58,5 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
       if(!response.ok)throw new Error("Esportazione non riuscita. Verifica la sessione e riprova.");
       const url=URL.createObjectURL(await response.blob());const link=document.createElement("a");link.href=url;link.download=`promoapp-controllo-economico.${format}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
     })}>Esporta tutto {format==="csv"?"CSV":"Excel"}</Button>)}</div>
-    <FinanceDevelopmentTransfer onComplete={async()=>{await onRefresh();setNotice("Trasferimento completato; contabilità aggiornata.");}}/>
   </section>;
 }

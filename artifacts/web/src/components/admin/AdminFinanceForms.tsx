@@ -66,7 +66,7 @@ type ProjectFormValues = z.infer<typeof projectSchema>;
 const entrySchema = z.object({
   projectId: z.string(),
   direction: z.enum(["income", "expense"]),
-  category: z.enum(["deposit", "balance", "monthly_fee", "facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"]),
+  category: z.enum(["deposit", "balance", "installment", "monthly_fee", "facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"]),
   description: z.string().trim().max(240),
   amountCents: z.number().int().min(1, "Inserisci un importo maggiore di zero.").max(2_147_483_647),
   dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Seleziona una data valida."),
@@ -86,12 +86,13 @@ type EntryFormValues = z.infer<typeof entrySchema>;
 
 const incomeCategories = [
   ["deposit", "Acconto"],
+  ["installment", "Rata"],
   ["balance", "Saldo"],
   ["monthly_fee", "Canone mensile"],
   ["other", "Altro incasso"],
 ] as const;
 const expenseCategories = [
-  ...Object.entries(categoryLabels).filter(([key])=>!["deposit","balance","monthly_fee"].includes(key)),
+  ...Object.entries(categoryLabels).filter(([key])=>!["deposit","balance","installment","monthly_fee"].includes(key)),
 ] as const;
 const categoryDescriptions = categoryLabels;
 
@@ -198,7 +199,12 @@ export function FinanceClientForm({
             <FormMessage />
           </FormItem>
         )} />
-        <ClientDetailsFields value={details} onChange={setDetails} workspace={workspace}/>
+        <details className="sm:col-span-2">
+          <summary className="cursor-pointer text-sm font-semibold text-slate-700">Altri dati del cliente (facoltativi)</summary>
+          <div className="mt-3 rounded-xl bg-slate-50 p-3">
+            <ClientDetailsFields value={details} onChange={setDetails} workspace={workspace}/>
+          </div>
+        </details>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
           <Button type="submit" disabled={busy} data-testid="button-save-finance-client">
             {busy ? "Salvataggio…" : initial ? "Salva cliente" : "Aggiungi cliente"}
@@ -397,7 +403,13 @@ export function FinanceProjectForm({
             <FormMessage />
           </FormItem>
         )} />
-        <ProjectDetailsFields value={details} onChange={setDetails}/>
+        <details className="sm:col-span-2">
+          <summary className="cursor-pointer text-sm font-semibold text-slate-700">Stato del lavoro e verifiche economiche</summary>
+          <p className="mt-1 text-xs text-slate-500">Apri solo per preventivi non confermati, costi extra o residui da verificare.</p>
+          <div className="mt-3 rounded-xl bg-slate-50 p-3">
+            <ProjectDetailsFields value={details} onChange={setDetails}/>
+          </div>
+        </details>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
           <Button type="submit" disabled={busy} data-testid="button-save-finance-project">
             {busy ? "Salvataggio…" : initial ? "Salva modifiche" : "Aggiungi lavoro"}

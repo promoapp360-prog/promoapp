@@ -872,6 +872,7 @@ export type AdminFinanceEntryCategory =
 export const AdminFinanceEntryCategory = {
   deposit: "deposit",
   balance: "balance",
+  installment: "installment",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
   google: "google",
@@ -1089,6 +1090,7 @@ export type FinanceEntryInputCategory =
 export const FinanceEntryInputCategory = {
   deposit: "deposit",
   balance: "balance",
+  installment: "installment",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
   google: "google",
@@ -1132,6 +1134,7 @@ export type FinanceEntryUpdateCategory =
 export const FinanceEntryUpdateCategory = {
   deposit: "deposit",
   balance: "balance",
+  installment: "installment",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
   google: "google",

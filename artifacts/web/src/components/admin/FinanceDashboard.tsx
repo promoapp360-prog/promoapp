@@ -4,7 +4,7 @@ import type { AdminFinanceData, FinanceWorkspace } from "@workspace/api-client-r
 import { cash, confirmed, fieldClass, iso, money, categoryLabels } from "./finance-ui";
 import { FinanceField } from "./FinanceDetailsFields";
 
-export default function FinanceDashboard({data,workspace,month}:{data?:AdminFinanceData;workspace?:FinanceWorkspace;month:string}) {
+export default function FinanceDashboard({data,workspace,month,onOpenSection}:{data?:AdminFinanceData;workspace?:FinanceWorkspace;month:string;onOpenSection:(section:"clients"|"suppliers"|"receipts")=>void}) {
   const [period,setPeriod]=useState("month"),[client,setClient]=useState(""),[project,setProject]=useState(""),[category,setCategory]=useState("");
   const [customFrom,setCustomFrom]=useState(""),[customTo,setCustomTo]=useState("");
   const [compareFrom,setCompareFrom]=useState(""),[compareTo,setCompareTo]=useState("");
@@ -17,6 +17,7 @@ export default function FinanceDashboard({data,workspace,month}:{data?:AdminFina
   const entries=(data?.entries??[]).filter(e=>(!client||projects.some(p=>p.id===e.projectId)||e.details?.clientId===client)&&(!project||e.projectId===project)&&(!category||e.category===category));
   const inRange=(value:string,a:string,b:string)=>!!a&&!!b&&value>=a&&value<=b;
   const day=(value:Date|string)=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(value));
+  const displayDate=(value:Date|string)=>new Date(`${iso(value)}T00:00:00Z`).toLocaleDateString("it-IT",{timeZone:"UTC"});
   const metrics=(a:string,b:string)=>{
     const paid=entries.filter(e=>cash(e)&&e.paidAt&&inRange(day(e.paidAt),a,b));
     const sum=(direction:string)=>paid.filter(e=>e.direction===direction).reduce((s,e)=>s+e.amountCents,0);
@@ -69,7 +70,29 @@ export default function FinanceDashboard({data,workspace,month}:{data?:AdminFina
   const soldTotal=allProjects.filter(confirmed).reduce((sum,p)=>sum+p.totalAmountCents+(p.details?.extraCents??0),0);
   const receivedTotal=allEntries.filter(e=>e.direction==="income"&&cash(e)).reduce((sum,e)=>sum+e.amountCents,0);
   const spentTotal=allEntries.filter(e=>e.direction==="expense"&&cash(e)).reduce((sum,e)=>sum+e.amountCents,0);
+  const reportedHistoricalReceived=allProjects.reduce((sum,p)=>sum+(p.details?.reportedReceivedCents??0),0);
   const monthlySold=allEntries.filter(e=>e.direction==="income"&&(e.category==="monthly_fee"||e.details?.recurringId)&&!e.details?.cancelled&&e.details?.amountConfirmed).reduce((sum,e)=>sum+e.amountCents,0);
+  const clientForEntry=(entry:typeof allEntries[number])=>entry.details?.clientId??allProjects.find(p=>p.id===entry.projectId)?.clientId??null;
+  const eligibleDueIncome=(entry:typeof allEntries[number])=>{
+    if(entry.direction!=="income"||entry.paidAt||entry.details?.cancelled||!entry.details?.amountConfirmed)return false;
+    if(entry.details?.recurringId||entry.category==="monthly_fee")return true;
+    if(!entry.projectId)return Boolean(entry.details?.clientId);
+    const project=allProjects.find(p=>p.id===entry.projectId);
+    return Boolean(project&&confirmed(project)&&!project.details?.creditReview&&project.outstandingCents>0);
+  };
+  const openItems=allEntries.filter(entry=>entry.direction==="expense"
+    ? !entry.paidAt&&!entry.details?.cancelled&&entry.details?.amountConfirmed
+    : eligibleDueIncome(entry))
+    .sort((a,b)=>iso(a.dueDate).localeCompare(iso(b.dueDate)));
+  const clientReceivables=(data?.clients??[]).map(customer=>{
+    const customerProjects=allProjects.filter(p=>p.clientId===customer.id);
+    const workBalance=customerProjects.reduce((sum,p)=>sum+p.outstandingCents,0);
+    const separateBalance=allEntries.filter(entry=>eligibleDueIncome(entry)&&clientForEntry(entry)===customer.id&&
+      (!entry.projectId||entry.category==="monthly_fee"||entry.details?.recurringId))
+      .reduce((sum,entry)=>sum+entry.amountCents,0);
+    return {id:customer.id,name:customer.companyName||customer.name,amount:workBalance+separateBalance,workCount:customerProjects.length};
+  }).filter(customer=>customer.amount>0).sort((a,b)=>b.amount-a.amount);
+  const today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const allTimeTiles=[
     ["Venduto complessivo",soldTotal+monthlySold,"Accordi confermati + canoni generati"],
     ["Incassato complessivo",receivedTotal,"Pagamenti effettivi registrati"],
@@ -81,7 +104,43 @@ export default function FinanceDashboard({data,workspace,month}:{data?:AdminFina
   return <section aria-label="Dashboard controllo economico" className="space-y-5">
     <div><h3 className="text-lg font-bold">Bilancio PromoApp</h3><p className="mt-1 text-sm text-slate-500">Totali complessivi del gestionale, indipendenti dal mese e dai filtri sottostanti.</p></div>
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{allTimeTiles.map(([label,value,help],index)=><article key={label} className="rounded-2xl border border-indigo-100 bg-white p-5" data-testid={`finance-total-${index}`}><h4 className="text-sm font-semibold text-slate-600">{label}</h4><p className="mt-2 text-2xl font-bold text-indigo-800">{data?money(value):"…"}</p><p className="mt-2 text-xs text-slate-500">{help}</p></article>)}</div>
+    {reportedHistoricalReceived>0&&<aside className="rounded-xl border border-amber-200 bg-amber-50 p-4" data-testid="finance-historical-receipts">
+      <p className="font-semibold text-amber-950">Incassi storici comunicati: {money(reportedHistoricalReceived)}</p>
+      <p className="mt-1 text-xs text-amber-900">Sono riportati nelle schede dei lavori, ma non nei movimenti verificati: non vengono sommati all’incassato o al saldo di cassa finché non li registri o riconcili.</p>
+    </aside>}
     <p className="text-xs text-slate-500">I canoni futuri non ancora generati non sono vendite o crediti. Importi da verificare e proposte restano esclusi; i pagamenti non riconciliati sono segnalati nei movimenti.</p>
+    <div className="grid gap-4 xl:grid-cols-2">
+      <section className="rounded-2xl border bg-white p-5" aria-label="Scadenze da controllare">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div><h3 className="font-bold">Scadenze da controllare</h3><p className="mt-1 text-xs text-slate-500">Rate, canoni e spese registrati, ordinati per data.</p></div>
+          <button type="button" onClick={()=>onOpenSection("receipts")} className="text-sm font-semibold text-indigo-700 hover:underline" data-testid="button-open-finance-due">Apri incassi e rate</button>
+        </div>
+        {openItems.length?<ul className="mt-4 divide-y divide-slate-100">
+          {openItems.slice(0,8).map(entry=>{
+            const overdue=iso(entry.dueDate)<today;
+            const customer=entry.clientName||clientForEntry(entry)&&data?.clients.find(c=>c.id===clientForEntry(entry))?.companyName||clientForEntry(entry)&&data?.clients.find(c=>c.id===clientForEntry(entry))?.name;
+            const title=entry.direction==="income"?(customer||"Incasso cliente"):(entry.details?.supplier||"Spesa generale");
+            return <li key={entry.id} className="flex flex-wrap items-center justify-between gap-3 py-3" data-testid={`finance-due-item-${entry.id}`}>
+              <div className="min-w-0"><p className="truncate text-sm font-semibold">{title}</p><p className="text-xs text-slate-500">{entry.projectName?`${entry.projectName} · `:""}{entry.direction==="income"?categoryLabels[entry.category]:entry.details?.supplier||categoryLabels[entry.category]} · <span className={overdue?"font-semibold text-rose-700":"text-slate-500"}>{overdue?"Scaduta il":"Scade il"} {displayDate(entry.dueDate)}</span></p></div>
+              <div className="flex items-center gap-3"><strong className={entry.direction==="income"?"text-emerald-700":"text-rose-700"}>{money(entry.amountCents)}</strong><button type="button" onClick={()=>onOpenSection(entry.direction==="income"?"receipts":"suppliers")} className="text-xs font-semibold text-indigo-700 hover:underline">{entry.direction==="income"?"Apri incasso":"Apri spesa"}</button></div>
+            </li>;
+          })}
+        </ul>:<p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Non risultano scadenze registrate da controllare.</p>}
+        {openItems.length>8&&<p className="mt-2 text-xs text-slate-500">Mostrate le prime 8 di {openItems.length} scadenze.</p>}
+      </section>
+      <section className="rounded-2xl border bg-white p-5" aria-label="Crediti da incassare per cliente">
+        <div><h3 className="font-bold">Da incassare per cliente</h3><p className="mt-1 text-xs text-slate-500">Residui lavori e scadenze canoni, senza sommare due volte le rate.</p></div>
+        {clientReceivables.length?<ul className="mt-4 divide-y divide-slate-100">
+          {clientReceivables.slice(0,8).map(customer=><li key={customer.id} className="flex items-center justify-between gap-3 py-3" data-testid={`finance-client-receivable-${customer.id}`}>
+            <div><p className="text-sm font-semibold">{customer.name}</p><p className="text-xs text-slate-500">{customer.workCount} {customer.workCount===1?"lavoro":"lavori"}</p></div><strong className="text-amber-700">{money(customer.amount)}</strong>
+          </li>)}
+        </ul>:<p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Nessun credito confermato da incassare.</p>}
+        {clientReceivables.length>8&&<p className="mt-2 text-xs text-slate-500">Mostrati i primi 8 di {clientReceivables.length} clienti.</p>}
+      </section>
+    </div>
+    <details className="rounded-2xl border bg-white p-5" data-testid="details-finance-advanced-analysis">
+      <summary className="cursor-pointer font-semibold">Analisi per periodo e grafici (facoltativi)</summary>
+      <div className="mt-5 space-y-5">
     <h3 className="text-lg font-bold">Analisi per periodo</h3>
     <div className="grid gap-3 rounded-2xl border bg-white p-4 sm:grid-cols-3 xl:grid-cols-5">
       <FinanceField label="Periodo"><select className={fieldClass} value={period} onChange={e=>setPeriod(e.target.value)}><option value="month">Mese selezionato</option><option value="quarter">Trimestre</option><option value="year">Anno</option><option value="custom">Personalizzato</option></select></FinanceField>
@@ -123,5 +182,7 @@ export default function FinanceDashboard({data,workspace,month}:{data?:AdminFina
         <XAxis type="number"/><YAxis type="category" dataKey="name" width={125} tick={{fontSize:10}}/><Tooltip formatter={(v:number)=>money(v*100)}/><Bar dataKey="Euro" fill="#61A9BD"/>
       </BarChart></ResponsiveContainer></div></div>:<p className="py-6 text-sm text-slate-500">Nessun incasso riconciliato nel periodo.</p>}
     </div>)}</div>
+      </div>
+    </details>
   </section>;
 }

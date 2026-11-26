@@ -45,29 +45,32 @@ export function EntryDetailsFields({value,onChange,paid,onPaid,workspace,clients
   const latest=useRef(value);latest.current=value;
   const set=(v:Partial<FinanceEntryDetails>)=>onChange({...latest.current,...v});
   return <div className="grid gap-4 rounded-xl border border-slate-200 p-3 sm:col-span-2 sm:grid-cols-2">
-    <FinanceField label="Cliente diretto, se il movimento non ha un lavoro"><select className={fieldClass} value={value.clientId??""} onChange={e=>set({clientId:e.target.value||null})}><option value="">Nessuno / derivato dal lavoro</option>{clients?.map(c=><option key={c.id} value={c.id}>{c.companyName||c.name}</option>)}</select></FinanceField>
+    <FinanceField label="Cliente (se il movimento non è collegato a un lavoro)"><select className={fieldClass} value={value.clientId??""} onChange={e=>set({clientId:e.target.value||null})}><option value="">Nessuno / derivato dal lavoro</option>{clients?.map(c=><option key={c.id} value={c.id}>{c.companyName||c.name}</option>)}</select></FinanceField>
     <FinanceField label="Fornitore registrato"><select className={fieldClass} value={value.supplierId??""} onChange={e=>{const supplier=workspace?.suppliers.find(s=>s.id===e.target.value);set({supplierId:supplier?.id??null,supplier:supplier?.name??""});}}><option value="">Nessuno / inserimento libero</option>{workspace?.suppliers.filter(s=>s.active||s.id===value.supplierId).map(s=><option key={s.id} value={s.id}>{s.name}{s.active?"":" (archiviato)"}</option>)}</select></FinanceField>
     {!value.supplierId&&<FinanceField label="Fornitore / ordinante non registrato"><input className={fieldClass} value={value.supplier??""} onChange={e=>set({supplier:e.target.value})}/></FinanceField>}
-    <FinanceField label="Metodo di pagamento"><input className={fieldClass} value={value.method??""} placeholder="Bonifico, carta, contanti…" onChange={e=>set({method:e.target.value})}/></FinanceField>
+    <FinanceField label="Metodo (facoltativo)"><input className={fieldClass} value={value.method??""} placeholder="Bonifico, carta, contanti…" onChange={e=>set({method:e.target.value})}/></FinanceField>
+    <Check label="Pagamento già avvenuto" checked={paid} onChange={onPaid}/>
+    <FinanceField label="Data effettiva di incasso o pagamento"><input className={fieldClass} type="date" value={value.paidDate??""} onChange={e=>set({paidDate:e.target.value||null})}/></FinanceField>
+    <Check label="Importo confermato, non stimato" checked={value.amountConfirmed} onChange={v=>set({amountConfirmed:v})}/>
+    <details className="sm:col-span-2">
+      <summary className="cursor-pointer text-sm font-semibold text-slate-700">Altri dettagli facoltativi</summary>
+      <div className="mt-3 grid gap-4 rounded-xl bg-slate-50 p-3 sm:grid-cols-2">
     <FinanceField label="Valuta originale"><select className={fieldClass} value={value.currency??"EUR"} onChange={e=>set({currency:e.target.value as "EUR"|"USD"})}><option>EUR</option><option>USD</option></select></FinanceField>
     <FinanceField label="Importo originale in valuta"><input type="number" min=".01" step=".01" className={fieldClass} value={value.originalCents==null?"":value.originalCents/100} onChange={e=>set({originalCents:e.target.value?Math.round(Number(e.target.value)*100):null})}/></FinanceField>
     <FinanceField label="Cambio indicativo USD → EUR"><input type="number" min=".000001" step=".000001" className={fieldClass} value={value.exchangeRate??""} onChange={e=>set({exchangeRate:e.target.value?Number(e.target.value):null})}/></FinanceField>
     <p className="self-end text-xs text-slate-500">L’importo euro inserito sopra è quello effettivo: non cambia automaticamente quando modifichi il cambio.</p>
-    <Check label="Importo euro confermato, non stimato" checked={value.amountConfirmed} onChange={v=>set({amountConfirmed:v})}/>
-    <Check label="Pagamento effettivamente avvenuto" checked={paid} onChange={onPaid}/>
-    <FinanceField label="Data effettiva del pagamento"><input className={fieldClass} type="date" value={value.paidDate??""} onChange={e=>set({paidDate:e.target.value||null})}/></FinanceField>
     <FinanceField label="Riconciliazione"><select className={fieldClass} value={value.reconciliation??"unverified"} onChange={e=>set({reconciliation:e.target.value as FinanceEntryDetails["reconciliation"]})}>
       <option value="unverified">Da verificare</option><option value="reported">Comunicata, non riconciliata</option><option value="reconciled">Verificata / riconciliata</option>
     </select></FinanceField>
     <FinanceField label="Rata / riferimento facoltativo"><input className={fieldClass} value={value.installment??""} onChange={e=>set({installment:e.target.value})}/></FinanceField>
-    <FinanceField label="Riferimento univoco transazione / estratto"><input className={fieldClass} value={value.externalReference??""} onChange={e=>set({externalReference:e.target.value})}/></FinanceField>
-    <FinanceField label="Classificazione gestionale"><select className={fieldClass} value={value.classification??"other"} onChange={e=>set({classification:e.target.value as FinanceEntryDetails["classification"]})}>
+    <FinanceField label="Riferimento transazione / estratto"><input className={fieldClass} value={value.externalReference??""} onChange={e=>set({externalReference:e.target.value})}/></FinanceField>
+    <FinanceField label="Classificazione interna"><select className={fieldClass} value={value.classification??"other"} onChange={e=>set({classification:e.target.value as FinanceEntryDetails["classification"]})}>
       <option value="commercial">Sviluppo commerciale</option><option value="prototype">Sperimentazione e prototipazione</option><option value="research_review">R&S da valutare</option><option value="hosting">Hosting ordinario</option><option value="maintenance">Manutenzione</option><option value="training">Formazione e test</option><option value="other">Altro</option>
     </select></FinanceField>
-    <Check label="Pubblicità attribuita espressamente all’acquisizione del cliente" checked={value.acquisitionCost} onChange={v=>set({acquisitionCost:v})}/>
+    <Check label="Pubblicità attribuita all’acquisizione di questo cliente" checked={value.acquisitionCost} onChange={v=>set({acquisitionCost:v})}/>
     <p className="self-end text-xs text-slate-500">La classificazione R&S non certifica alcuna ammissibilità fiscale.</p>
     <FinanceField label="Note"><textarea className={fieldClass} value={value.notes??""} onChange={e=>set({notes:e.target.value})}/></FinanceField>
-    <FinanceField label={uploading?"Caricamento…":"Documento riservato, massimo 10 MB"}>
+    <FinanceField label={uploading?"Caricamento…":"Documento, massimo 10 MB"}>
       <input type="file" disabled={uploading} accept=".pdf,.jpg,.jpeg,.png,.webp,.csv" className="max-w-full text-xs" onChange={async e=>{
         const file=e.target.files?.[0];if(!file)return;
         setError("");setUploading(true);onUploadStateChange(true);
@@ -83,5 +86,7 @@ export function EntryDetailsFields({value,onChange,paid,onPaid,workspace,clients
       {value.documentPath && <><a className="block text-indigo-700 underline" href={appPath(`/api/admin/finance/documents/${value.documentPath.split("/").pop()}`)} target="_blank" rel="noreferrer">Apri allegato</a><button type="button" onClick={()=>set({documentPath:null})}>Rimuovi collegamento</button></>}
       {error&&<p role="alert" className="text-rose-700">{error}</p>}
     </FinanceField>
+      </div>
+    </details>
   </div>;
 }

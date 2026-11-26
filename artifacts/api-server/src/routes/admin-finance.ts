@@ -31,7 +31,7 @@ const FinanceSupplierResponse = UpdateAdminFinanceSupplierResponse;
 
 function categoryMatchesDirection(direction: FinanceEntryInput["direction"], category: FinanceEntryInput["category"]) {
   return direction === "income"
-    ? ["deposit", "balance", "monthly_fee", "other"].includes(category)
+    ? ["deposit", "balance", "installment", "monthly_fee", "other"].includes(category)
     : ["facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"].includes(category);
 }
 

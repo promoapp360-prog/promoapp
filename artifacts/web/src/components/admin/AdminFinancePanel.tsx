@@ -18,6 +18,7 @@ import { FinanceClientForm, FinanceEntryForm, FinanceProjectForm } from "./Admin
 import FinanceDashboard from "./FinanceDashboard";
 import FinanceOperations from "./FinanceOperations";
 import FinanceSuppliers from "./FinanceSuppliers";
+import FinanceDevelopmentTransfer from "./FinanceDevelopmentTransfer";
 import { adminApi } from "@/lib/admin-api";
 import { categoryLabels, cash, confirmed } from "./finance-ui";
 
@@ -197,6 +198,12 @@ export default function AdminFinancePanel({
   const [section, setSection] = useState<"balance" | "clients" | "suppliers" | "receipts">("balance");
   const [filter, setFilter] = useState<"all" | "open" | "income" | "expense">("all");
   const summary = data?.summary;
+  const financeEmpty = Boolean(data && workspace &&
+    data.clients.length === 0 &&
+    data.projects.length === 0 &&
+    data.entries.length === 0 &&
+    workspace.recurring.length === 0 &&
+    workspace.suppliers.length === 0);
   const today = todayInRome();
   const visibleEntries = useMemo(() => (data?.entries ?? []).filter((entry) => {
     const inSelectedMonth = !entry.paidAt || monthInRome(entry.paidAt) === month;
@@ -333,7 +340,11 @@ export default function AdminFinancePanel({
         <h3 className="mb-3 font-bold">{entryEditor==="new"?"Registra incasso, rata, scadenza o spesa":"Modifica movimento"}</h3>
         <FinanceEntryForm projects={data?.projects??[]} clients={data?.clients??[]} initial={entryEditor==="new"?undefined:entryEditor} busy={busy} onCreate={onCreateEntry} onUpdate={onUpdateEntry} onCancel={()=>setEntryEditor(null)} workspace={workspace}/>
       </section>}
-      {section==="balance"&&<FinanceDashboard data={data} workspace={workspace} month={month}/>}
+      {section==="balance"&&financeEmpty&&<FinanceDevelopmentTransfer onComplete={async()=>{
+        await onRefresh();
+        await loadWorkspace();
+      }}/>}
+      {section==="balance"&&<FinanceDashboard data={data} workspace={workspace} month={month} onOpenSection={next=>setSection(next)}/>}
       {section==="suppliers"&&<FinanceSuppliers suppliers={workspace?.suppliers??[]} entries={data?.entries??[]} onRefresh={loadWorkspace}/>}
       {workspaceError&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{workspaceError}</p>}
 

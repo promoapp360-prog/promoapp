@@ -7,7 +7,7 @@ import { pool } from "@workspace/db";
 import { createAdminAuthorization } from "../src/middlewares/adminAuthorization";
 import { createAdminFinanceRouter } from "../src/routes/admin-finance";
 import lavoriRouter from "../src/routes/lavori";
-import { nextMonthlyDate } from "../src/lib/admin-finance-data";
+import { categoryMatchesDirection, nextMonthlyDate } from "../src/lib/admin-finance-data";
 import { todayRome } from "../src/lib/finance-calculations";
 import { CreateAdminFinanceEntryBody, UpdateAdminFinanceEntryBody, CreateAdminFinanceProjectBody } from "@workspace/api-zod";
 import { ObjectStorageService } from "../src/lib/objectStorage";
@@ -24,6 +24,9 @@ test("moneta intera, patch parziali e calendario delle ricorrenze",()=>{
   const patch=UpdateAdminFinanceEntryBody.parse({details:{notes:"Rettifica nota"}});
   assert.deepEqual(patch.details,{notes:"Rettifica nota"});
   assert.equal(CreateAdminFinanceEntryBody.safeParse({...base,details:{originalCents:1.5}}).success,false);
+  assert.equal(CreateAdminFinanceEntryBody.safeParse({direction:"income",category:"installment",description:"Rata",amountCents:100,dueDate:"2026-11-25"}).success,true);
+  assert.equal(categoryMatchesDirection("income","installment"),true);
+  assert.equal(categoryMatchesDirection("expense","installment"),false);
   assert.equal(CreateAdminFinanceProjectBody.safeParse({clientId:randomUUID(),name:"test",totalAmountCents:100,paymentType:"installments",installmentCount:null}).success,true);
 });
 

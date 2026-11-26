@@ -12,6 +12,7 @@ export type FinanceEntryInputCategory =
 export const FinanceEntryInputCategory = {
   deposit: "deposit",
   balance: "balance",
+  installment: "installment",
   monthly_fee: "monthly_fee",
   facebook: "facebook",
   google: "google",

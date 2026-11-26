@@ -33,7 +33,7 @@ const clean = (v: string | null | undefined) => v?.trim() || null;
 export const calendarDate=(v:Date|string)=>v instanceof Date?v.toISOString().slice(0,10):v.slice(0,10);
 export const validCalendarDate=(v:string)=>/^\d{4}-\d{2}-\d{2}$/.test(v)&&Number.isFinite(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v;
 export const categoryMatchesDirection = (direction: string, category: string) =>
-  (direction === "income" ? ["deposit", "balance", "monthly_fee", "other"] :
+  (direction === "income" ? ["deposit", "balance", "installment", "monthly_fee", "other"] :
     ["facebook", "google", "replit", "canva", "hosting", "domains", "software", "administration", "accountant", "consulting", "equipment", "research", "other"]).includes(category);
 export function nextMonthlyDate(current: string, anchorDay: number, interval = 1): string {
   const [year, month] = current.split("-").map(Number);

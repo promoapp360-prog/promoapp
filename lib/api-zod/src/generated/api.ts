@@ -995,6 +995,7 @@ export const GetAdminFinanceResponse = zod.object({
       category: zod.enum([
         "deposit",
         "balance",
+        "installment",
         "monthly_fee",
         "facebook",
         "google",
@@ -1736,6 +1737,7 @@ export const CreateAdminFinanceEntryBody = zod.object({
   category: zod.enum([
     "deposit",
     "balance",
+    "installment",
     "monthly_fee",
     "facebook",
     "google",
@@ -1867,6 +1869,7 @@ export const UpdateAdminFinanceEntryBody = zod.object({
     .enum([
       "deposit",
       "balance",
+      "installment",
       "monthly_fee",
       "facebook",
       "google",
@@ -1998,6 +2001,7 @@ export const UpdateAdminFinanceEntryResponse = zod.object({
   category: zod.enum([
     "deposit",
     "balance",
+    "installment",
     "monthly_fee",
     "facebook",
     "google",
@@ -2132,6 +2136,7 @@ export const MarkAdminFinanceEntryPaidResponse = zod.object({
   category: zod.enum([
     "deposit",
     "balance",
+    "installment",
     "monthly_fee",
     "facebook",
     "google",

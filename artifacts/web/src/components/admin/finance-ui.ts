@@ -1,6 +1,6 @@
 import type { AdminFinanceEntry, AdminFinanceProject } from "@workspace/api-client-react";
 export const categoryLabels: Record<AdminFinanceEntry["category"],string> = {
-  deposit:"Acconto",balance:"Saldo",monthly_fee:"Canone",facebook:"Facebook / Instagram Ads",google:"Google Ads",
+  deposit:"Acconto",balance:"Saldo",installment:"Rata",monthly_fee:"Canone",facebook:"Facebook / Instagram Ads",google:"Google Ads",
   replit:"Replit",canva:"Canva",hosting:"Hosting e database",domains:"Domini internet",software:"Software e abbonamenti",
   administration:"Spese amministrative",accountant:"Commercialista",consulting:"Consulenze",equipment:"Attrezzature e tecnologia",research:"Ricerca e sviluppo",other:"Altro",
 };

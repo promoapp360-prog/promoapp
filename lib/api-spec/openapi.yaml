@@ -937,7 +937,7 @@ components:
         projectName: { type: ["string", "null"] }
         clientName: { type: ["string", "null"] }
         direction: { type: string, enum: [income, expense] }
-        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
+        category: { type: string, enum: [deposit, balance, installment, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
         description: { type: string }
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         dueDate: { type: string, format: date }
@@ -1025,7 +1025,7 @@ components:
       properties:
         projectId: { type: ["string", "null"], format: uuid }
         direction: { type: string, enum: [income, expense] }
-        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
+        category: { type: string, enum: [deposit, balance, installment, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
         description: { type: string, minLength: 1, maxLength: 240 }
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         dueDate: { type: string, format: date }
@@ -1035,7 +1035,7 @@ components:
     FinanceEntryUpdate:
       type: object
       properties:
-        category: { type: string, enum: [deposit, balance, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
+        category: { type: string, enum: [deposit, balance, installment, monthly_fee, facebook, google, replit, canva, hosting, domains, software, administration, accountant, consulting, equipment, research, other] }
         description: { type: string, minLength: 1, maxLength: 240 }
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         dueDate: { type: string, format: date }
