@@ -8,6 +8,7 @@ import type {
   AdminFinanceData,
   AdminFinanceEntry,
   AdminFinanceProject,
+  AdminFinanceSupplier, FinanceSupplierInput, FinanceSupplierUpdate,
   FinanceClientInput,
   FinanceClientUpdate,
   FinanceEntryInput,
@@ -26,7 +27,18 @@ function makeRepository() {
   const clients: AdminFinanceClient[] = [];
   const projects: AdminFinanceProject[] = [];
   const entries: AdminFinanceEntry[] = [];
+  const suppliers: AdminFinanceSupplier[] = [];
   const data = {
+    async listSuppliers() { return [...suppliers]; },
+    async createSupplier(input: FinanceSupplierInput): Promise<AdminFinanceSupplier | null> {
+      if(suppliers.some(s=>s.name.toLowerCase()===input.name.toLowerCase()))return null;
+      const supplier: AdminFinanceSupplier={...input,id:randomUUID(),email:input.email??null,website:input.website??null,notes:input.notes??"",active:true,createdAt:new Date()};
+      suppliers.push(supplier);return supplier;
+    },
+    async updateSupplier(id:string,input:FinanceSupplierUpdate):Promise<AdminFinanceSupplier|null|undefined>{
+      const supplier=suppliers.find(s=>s.id===id);if(!supplier)return undefined;
+      Object.assign(supplier,input);return supplier;
+    },
     async list(month: string): Promise<AdminFinanceData> {
       const monthPaid = (entry: AdminFinanceEntry) => entry.paidAt &&
         new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome", year: "numeric", month: "2-digit" })

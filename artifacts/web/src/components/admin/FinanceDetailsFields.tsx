@@ -16,15 +16,10 @@ export function ClientDetailsFields({value,onChange,workspace}:{value:FinanceCli
     <FinanceField label="Alias confermati, uno per riga"><textarea className={fieldClass} value={(value.aliases??[]).join("\n")} onChange={e=>set({aliases:e.target.value.split("\n")})}/></FinanceField>
     <FinanceField label="Provenienza acquisizione nota"><input className={fieldClass} placeholder="Vuoto = sconosciuta" value={value.acquisitionSource??""} onChange={e=>set({acquisitionSource:e.target.value})}/></FinanceField>
     <FinanceField label="Data acquisizione effettiva, se nota"><input type="date" className={fieldClass} value={value.acquisitionDate??""} onChange={e=>set({acquisitionDate:e.target.value||null})}/></FinanceField>
-    {(["lead","request"] as const).map(kind=><FinanceField key={kind} label={kind==="lead"?"Contatto commerciale storico":"Richiesta gestionale storica"}>
-      <select className={fieldClass} value={(kind==="lead"?value.leadId:value.requestId)??""} onChange={e=>set(kind==="lead"?{leadId:e.target.value||null}:{requestId:e.target.value||null})}>
-        <option value="">Nessun collegamento</option>{workspace?.sources.filter(s=>s.kind===kind).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-      </select>
-    </FinanceField>)}
     <p className="text-xs text-slate-500 sm:col-span-2">Collega solo identità verificate. Un alias non accorpa o cancella altre anagrafiche.</p>
   </div>;
 }
-export function ProjectDetailsFields({value,onChange,workspace,lockedLegacyId}:{value:FinanceProjectDetails;onChange:(v:FinanceProjectDetails)=>void;workspace?:FinanceWorkspace;lockedLegacyId?:string|null}) {
+export function ProjectDetailsFields({value,onChange}:{value:FinanceProjectDetails;onChange:(v:FinanceProjectDetails)=>void}) {
   const set=(v:Partial<FinanceProjectDetails>)=>onChange({...value,...v});
   return <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
     <FinanceField label="Stato commerciale"><select className={fieldClass} value={value.commercialState??"contact"} onChange={e=>set({commercialState:e.target.value as FinanceProjectDetails["commercialState"],...(e.target.value!=="confirmed"?{agreementConfirmed:false,creditReview:true}:{})})}>
@@ -36,10 +31,6 @@ export function ProjectDetailsFields({value,onChange,workspace,lockedLegacyId}:{
     <FinanceField label="Servizio"><input className={fieldClass} value={value.service??""} onChange={e=>set({service:e.target.value})}/></FinanceField>
     <FinanceField label="Data accordo confermato"><input type="date" className={fieldClass} value={value.confirmedDate??""} onChange={e=>set({confirmedDate:e.target.value||null})}/></FinanceField>
     <FinanceField label="Extra concordati (€), oltre al prezzo base"><input type="number" min="0" step=".01" className={fieldClass} value={(value.extraCents??0)/100} onChange={e=>set({extraCents:Math.round(Number(e.target.value)*100)})}/></FinanceField>
-    <FinanceField label="Lavoro pubblico storico collegato"><select disabled={!!lockedLegacyId} className={fieldClass} value={value.legacyProjectId??""} onChange={e=>set({legacyProjectId:e.target.value||null})}>
-      <option value="">Nessuno</option>{workspace?.legacyProjects.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
-    </select></FinanceField>
-    {lockedLegacyId&&<p className="text-xs text-slate-500 sm:col-span-2">Il collegamento storico resta stabile per preservare identificativo e accesso pubblico. Puoi modificare accordo, importi e stati senza sostituirlo.</p>}
     <Check label="Importo noto, non una vendita a zero" checked={value.amountKnown} onChange={v=>set({amountKnown:v,...(!v?{agreementConfirmed:false,creditReview:true}:{})})}/>
     <Check label="Accordo definitivamente confermato" checked={value.agreementConfirmed} onChange={v=>set({agreementConfirmed:v})}/>
     <Check label="Residuo da verificare: escludi dai crediti e dai solleciti" checked={value.creditReview??true} onChange={v=>set({creditReview:v})}/>
@@ -55,7 +46,8 @@ export function EntryDetailsFields({value,onChange,paid,onPaid,workspace,clients
   const set=(v:Partial<FinanceEntryDetails>)=>onChange({...latest.current,...v});
   return <div className="grid gap-4 rounded-xl border border-slate-200 p-3 sm:col-span-2 sm:grid-cols-2">
     <FinanceField label="Cliente diretto, se il movimento non ha un lavoro"><select className={fieldClass} value={value.clientId??""} onChange={e=>set({clientId:e.target.value||null})}><option value="">Nessuno / derivato dal lavoro</option>{clients?.map(c=><option key={c.id} value={c.id}>{c.companyName||c.name}</option>)}</select></FinanceField>
-    <FinanceField label="Fornitore / ordinante"><input className={fieldClass} value={value.supplier??""} onChange={e=>set({supplier:e.target.value})}/></FinanceField>
+    <FinanceField label="Fornitore registrato"><select className={fieldClass} value={value.supplierId??""} onChange={e=>{const supplier=workspace?.suppliers.find(s=>s.id===e.target.value);set({supplierId:supplier?.id??null,supplier:supplier?.name??""});}}><option value="">Nessuno / inserimento libero</option>{workspace?.suppliers.filter(s=>s.active||s.id===value.supplierId).map(s=><option key={s.id} value={s.id}>{s.name}{s.active?"":" (archiviato)"}</option>)}</select></FinanceField>
+    {!value.supplierId&&<FinanceField label="Fornitore / ordinante non registrato"><input className={fieldClass} value={value.supplier??""} onChange={e=>set({supplier:e.target.value})}/></FinanceField>}
     <FinanceField label="Metodo di pagamento"><input className={fieldClass} value={value.method??""} placeholder="Bonifico, carta, contanti…" onChange={e=>set({method:e.target.value})}/></FinanceField>
     <FinanceField label="Valuta originale"><select className={fieldClass} value={value.currency??"EUR"} onChange={e=>set({currency:e.target.value as "EUR"|"USD"})}><option>EUR</option><option>USD</option></select></FinanceField>
     <FinanceField label="Importo originale in valuta"><input type="number" min=".01" step=".01" className={fieldClass} value={value.originalCents==null?"":value.originalCents/100} onChange={e=>set({originalCents:e.target.value?Math.round(Number(e.target.value)*100):null})}/></FinanceField>
@@ -69,9 +61,6 @@ export function EntryDetailsFields({value,onChange,paid,onPaid,workspace,clients
     </select></FinanceField>
     <FinanceField label="Rata / riferimento facoltativo"><input className={fieldClass} value={value.installment??""} onChange={e=>set({installment:e.target.value})}/></FinanceField>
     <FinanceField label="Riferimento univoco transazione / estratto"><input className={fieldClass} value={value.externalReference??""} onChange={e=>set({externalReference:e.target.value})}/></FinanceField>
-    <FinanceField label="Pagamento storico da collegare, senza duplicarlo"><select className={fieldClass} value={value.accontoId??""} onChange={e=>set({accontoId:e.target.value||null})}>
-      <option value="">Movimento autonomo</option>{workspace?.legacyPayments.filter(p=>!p.linked || p.id===value.accontoId).map(p=><option key={p.id} value={p.id}>{p.name} · {(p.amountCents/100).toFixed(2)} € · {p.state}</option>)}
-    </select></FinanceField>
     <FinanceField label="Classificazione gestionale"><select className={fieldClass} value={value.classification??"other"} onChange={e=>set({classification:e.target.value as FinanceEntryDetails["classification"]})}>
       <option value="commercial">Sviluppo commerciale</option><option value="prototype">Sperimentazione e prototipazione</option><option value="research_review">R&S da valutare</option><option value="hosting">Hosting ordinario</option><option value="maintenance">Manutenzione</option><option value="training">Formazione e test</option><option value="other">Altro</option>
     </select></FinanceField>

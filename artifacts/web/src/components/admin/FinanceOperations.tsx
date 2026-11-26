@@ -1,15 +1,14 @@
 import { useState } from "react";
-import type { AdminFinanceData, FinanceWorkspace, FinanceRecurringInput, FinanceImportPreview } from "@workspace/api-client-react";
+import type { AdminFinanceData, FinanceWorkspace, FinanceRecurringInput } from "@workspace/api-client-react";
 import { adminApi } from "@/lib/admin-api";
 import { appPath } from "@/lib/marketing";
 import { Button } from "@/components/ui/button";
 import { FinanceField } from "./FinanceDetailsFields";
 import { categoryLabels, fieldClass, money, cash, iso } from "./finance-ui";
-import FinanceTransactionPreview from "./FinanceTransactionPreview";
 
 export default function FinanceOperations({data,workspace,onRefresh}:{data?:AdminFinanceData;workspace?:FinanceWorkspace;onRefresh:()=>Promise<void>}) {
   const [editor,setEditor]=useState<FinanceRecurringInput|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState("");
-  const [preview,setPreview]=useState<FinanceImportPreview>(),[notice,setNotice]=useState("");
+  const [notice,setNotice]=useState("");
   const fresh=():FinanceRecurringInput=>({direction:"income",category:"monthly_fee",description:"",amountCents:0,intervalMonths:1,state:"potential",startDate:null,nextDate:null});
   const act=async (work:()=>Promise<unknown>)=>{
     setError("");setBusy(true);setNotice("");
@@ -18,7 +17,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
     finally{setBusy(false);}
   };
   const set=(patch:Partial<FinanceRecurringInput>)=>setEditor(editor?{...editor,...patch}:null);
-  return <section className="space-y-5" aria-label="Ricorrenze, riconciliazione e importazione">
+  return <section className="space-y-5" aria-label="Canoni, storico ed esportazione">
     {error&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{error}</p>}
     {notice&&<p role="status" className="text-sm text-emerald-800">{notice}</p>}
     <section className="rounded-2xl border bg-white p-5">
@@ -48,27 +47,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
         </div>
         <details><summary className="cursor-pointer text-xs font-semibold">Storico delle mensilità</summary><ul className="mt-2 space-y-1 text-xs">{data?.entries.filter(e=>e.details?.recurringId===r.id).map(e=><li key={e.id}>{iso(e.dueDate)} · {money(e.amountCents)} · {e.details?.cancelled?"Annullato":cash(e)?"Pagato e riconciliato":e.paidAt?"Pagamento da verificare":"Non pagato"}</li>)}</ul></details>
       </article>)}</div>
-      {!workspace?.recurring.length&&<p className="py-3 text-sm text-slate-500">Nessun canone registrato. Quelli del documento restano nell’anteprima, non sono importati.</p>}
-    </section>
-    <details className="rounded-2xl border bg-white p-5"><summary className="cursor-pointer font-bold">Riconciliazione dello storico</summary>
-      <div className="mt-4 space-y-3 text-sm">
-        {workspace?.warnings.map(w=><p key={w} className="rounded-xl bg-amber-50 p-3 text-xs text-amber-900">{w}</p>)}
-        <h4 className="font-semibold">Registrazioni acconti originali, senza copie automatiche</h4>
-        {workspace?.legacyPayments.map(p=><article key={p.id} className="rounded-xl border p-3"><strong>{p.name}</strong><p>{p.description} · {money(p.amountCents)}</p><p className="text-xs text-slate-500">{p.state} · {p.paidAt?new Date(p.paidAt).toLocaleDateString("it-IT"):"Data pagamento assente"} · {p.linked?"Già collegato: nessuna seconda registrazione":"Da verificare e collegare nel modulo movimento"}</p></article>)}
-        <p className="text-xs text-slate-500">Per collegare un pagamento verificato: nuovo movimento, seleziona il pagamento storico e il lavoro. L’importo deve coincidere; un vincolo impedisce il secondo collegamento. I record non pagati o senza data sono esclusi.</p>
-      </div>
-    </details>
-    <section className="rounded-2xl border bg-white p-5">
-      <h3 className="font-bold">Anteprima importazione documento</h3><p className="mt-2 text-sm text-slate-500">Solo confronto. Nessuna transazione, data o fusione viene inventata. Importazione finale bloccata fino alla tua approvazione separata.</p>
-      <Button variant="outline" className="mt-3" disabled={busy} onClick={()=>void act(async()=>setPreview(await adminApi<FinanceImportPreview>("/finance/import-preview")))}>Ricalcola anteprima senza importare</Button>
-      <FinanceTransactionPreview/>
-      {preview&&<div className="mt-4 space-y-3">{preview.warnings.map(w=><p key={w} className="text-xs text-amber-900">{w}</p>)}
-        {preview.rows.map(r=><details key={r.key} className="rounded-xl border p-3"><summary className="cursor-pointer text-sm font-semibold">{r.name} · {{create:"Da creare",update:"Da aggiornare",unchanged:"Invariato",review:"Da verificare"}[r.action]}</summary>
-          {!!r.aliases.length&&<p className="mt-2 text-xs">Alias del documento: {r.aliases.join(" / ")}</p>}<ul className="my-2 list-disc space-y-1 pl-4 text-xs text-amber-800">{r.anomalies.map(a=><li key={a}>{a}</li>)}</ul>
-          <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-slate-50 p-3 text-[11px]">{JSON.stringify(r.proposed,null,2)}</pre>
-        </details>)}
-        <Button disabled title="Serve una nuova autorizzazione esplicita dopo la verifica del dettaglio">Importazione definitiva bloccata</Button>
-      </div>}
+      {!workspace?.recurring.length&&<p className="py-3 text-sm text-slate-500">Nessun canone registrato. Aggiungi un servizio mensile per cliente o una spesa ricorrente.</p>}
     </section>
     <details className="rounded-2xl border bg-white p-5"><summary className="cursor-pointer font-bold">Storico delle variazioni e annullamenti</summary><div className="mt-3 space-y-2">
       {workspace?.history.map(h=><details className="rounded-xl border p-3 text-xs" key={h.id}><summary className="cursor-pointer">{new Date(h.createdAt).toLocaleString("it-IT")} · {h.reason} · {h.actor}</summary><p className="mt-2 break-all">Riferimento: {h.entityId}</p><div className="grid gap-2 sm:grid-cols-2"><pre className="overflow-auto whitespace-pre-wrap break-words bg-slate-50 p-2">Prima: {JSON.stringify(h.before,null,2)}</pre><pre className="overflow-auto whitespace-pre-wrap break-words bg-slate-50 p-2">Dopo: {JSON.stringify(h.after,null,2)}</pre></div></details>)}

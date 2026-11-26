@@ -273,36 +273,25 @@ export const GetFinanceWorkspaceResponse = zod.object({
       createdAt: zod.coerce.date(),
     }),
   ),
-  legacyProjects: zod.array(
+  suppliers: zod.array(
     zod.object({
-      id: zod.string(),
+      id: zod.string().uuid(),
       name: zod.string(),
-      clientId: zod.string().nullable(),
-      advanceEuro: zod.number(),
-      items: zod.array(
-        zod.object({
-          description: zod.string().optional(),
-          euro: zod.number().nullish(),
-        }),
-      ),
-    }),
-  ),
-  legacyPayments: zod.array(
-    zod.object({
-      id: zod.string(),
-      name: zod.string(),
-      description: zod.string(),
-      amountCents: zod.number(),
-      state: zod.string(),
-      paidAt: zod.coerce.date().nullable(),
-      linked: zod.boolean(),
-    }),
-  ),
-  sources: zod.array(
-    zod.object({
-      id: zod.string(),
-      name: zod.string(),
-      kind: zod.enum(["lead", "request"]),
+      category: zod.enum([
+        "advertising",
+        "hosting",
+        "software",
+        "domains",
+        "professional",
+        "administration",
+        "equipment",
+        "other",
+      ]),
+      email: zod.string().email().nullable(),
+      website: zod.string().nullable(),
+      notes: zod.string(),
+      active: zod.boolean(),
+      createdAt: zod.coerce.date(),
     }),
   ),
   warnings: zod.array(zod.string()),
@@ -528,10 +517,6 @@ export const getAdminFinanceResponseClientsItemDetailsAcquisitionSourceMax = 160
 
 export const getAdminFinanceResponseClientsItemDetailsAcquisitionDateRegExp =
   new RegExp("^\\d{4}-\\d{2}-\\d{2}$");
-export const getAdminFinanceResponseClientsItemDetailsLeadIdMax = 100;
-
-export const getAdminFinanceResponseClientsItemDetailsRequestIdMax = 100;
-
 export const getAdminFinanceResponseProjectsItemTotalAmountCentsMin = 0;
 export const getAdminFinanceResponseProjectsItemTotalAmountCentsMax = 2147483647;
 export const getAdminFinanceResponseProjectsItemTotalAmountCentsMultipleOf = 1;
@@ -643,14 +628,6 @@ export const GetAdminFinanceResponse = zod.object({
               getAdminFinanceResponseClientsItemDetailsAcquisitionDateRegExp,
             )
             .nullish(),
-          leadId: zod
-            .string()
-            .max(getAdminFinanceResponseClientsItemDetailsLeadIdMax)
-            .nullish(),
-          requestId: zod
-            .string()
-            .max(getAdminFinanceResponseClientsItemDetailsRequestIdMax)
-            .nullish(),
         })
         .optional(),
     }),
@@ -727,7 +704,6 @@ export const GetAdminFinanceResponse = zod.object({
               getAdminFinanceResponseProjectsItemDetailsExtraCentsMultipleOf,
             )
             .optional(),
-          legacyProjectId: zod.string().uuid().nullish(),
           reportedReceivedCents: zod
             .number()
             .min(
@@ -860,8 +836,8 @@ export const GetAdminFinanceResponse = zod.object({
             .regex(getAdminFinanceResponseEntriesItemDetailsPaidDateRegExp)
             .nullish(),
           clientId: zod.string().uuid().nullish(),
+          supplierId: zod.string().uuid().nullish(),
           recurringId: zod.string().uuid().nullish(),
-          accontoId: zod.string().uuid().nullish(),
           cancelled: zod.boolean().optional(),
         })
         .optional(),
@@ -890,9 +866,6 @@ export const createAdminFinanceClientBodyDetailsAcquisitionSourceMax = 160;
 
 export const createAdminFinanceClientBodyDetailsAcquisitionDateRegExp =
   new RegExp("^\\d{4}-\\d{2}-\\d{2}$");
-export const createAdminFinanceClientBodyDetailsLeadIdMax = 100;
-
-export const createAdminFinanceClientBodyDetailsRequestIdMax = 100;
 
 export const CreateAdminFinanceClientBody = zod.object({
   name: zod.string().min(1).max(createAdminFinanceClientBodyNameMax),
@@ -923,14 +896,6 @@ export const CreateAdminFinanceClientBody = zod.object({
         .string()
         .regex(createAdminFinanceClientBodyDetailsAcquisitionDateRegExp)
         .nullish(),
-      leadId: zod
-        .string()
-        .max(createAdminFinanceClientBodyDetailsLeadIdMax)
-        .nullish(),
-      requestId: zod
-        .string()
-        .max(createAdminFinanceClientBodyDetailsRequestIdMax)
-        .nullish(),
     })
     .optional(),
 });
@@ -957,9 +922,6 @@ export const updateAdminFinanceClientBodyDetailsAcquisitionSourceMax = 160;
 
 export const updateAdminFinanceClientBodyDetailsAcquisitionDateRegExp =
   new RegExp("^\\d{4}-\\d{2}-\\d{2}$");
-export const updateAdminFinanceClientBodyDetailsLeadIdMax = 100;
-
-export const updateAdminFinanceClientBodyDetailsRequestIdMax = 100;
 
 export const UpdateAdminFinanceClientBody = zod.object({
   name: zod.string().min(1).max(updateAdminFinanceClientBodyNameMax).optional(),
@@ -990,14 +952,6 @@ export const UpdateAdminFinanceClientBody = zod.object({
         .string()
         .regex(updateAdminFinanceClientBodyDetailsAcquisitionDateRegExp)
         .nullish(),
-      leadId: zod
-        .string()
-        .max(updateAdminFinanceClientBodyDetailsLeadIdMax)
-        .nullish(),
-      requestId: zod
-        .string()
-        .max(updateAdminFinanceClientBodyDetailsRequestIdMax)
-        .nullish(),
     })
     .optional(),
 });
@@ -1010,9 +964,6 @@ export const updateAdminFinanceClientResponseDetailsAcquisitionSourceMax = 160;
 
 export const updateAdminFinanceClientResponseDetailsAcquisitionDateRegExp =
   new RegExp("^\\d{4}-\\d{2}-\\d{2}$");
-export const updateAdminFinanceClientResponseDetailsLeadIdMax = 100;
-
-export const updateAdminFinanceClientResponseDetailsRequestIdMax = 100;
 
 export const UpdateAdminFinanceClientResponse = zod.object({
   id: zod.string().uuid(),
@@ -1040,16 +991,120 @@ export const UpdateAdminFinanceClientResponse = zod.object({
         .string()
         .regex(updateAdminFinanceClientResponseDetailsAcquisitionDateRegExp)
         .nullish(),
-      leadId: zod
-        .string()
-        .max(updateAdminFinanceClientResponseDetailsLeadIdMax)
-        .nullish(),
-      requestId: zod
-        .string()
-        .max(updateAdminFinanceClientResponseDetailsRequestIdMax)
-        .nullish(),
     })
     .optional(),
+});
+
+export const ListAdminFinanceSuppliersResponseItem = zod.object({
+  id: zod.string().uuid(),
+  name: zod.string(),
+  category: zod.enum([
+    "advertising",
+    "hosting",
+    "software",
+    "domains",
+    "professional",
+    "administration",
+    "equipment",
+    "other",
+  ]),
+  email: zod.string().email().nullable(),
+  website: zod.string().nullable(),
+  notes: zod.string(),
+  active: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+export const ListAdminFinanceSuppliersResponse = zod.array(
+  ListAdminFinanceSuppliersResponseItem,
+);
+
+export const createAdminFinanceSupplierBodyNameMax = 160;
+
+export const createAdminFinanceSupplierBodyEmailMax = 254;
+
+export const createAdminFinanceSupplierBodyWebsiteMax = 2048;
+
+export const createAdminFinanceSupplierBodyNotesMax = 4000;
+
+export const CreateAdminFinanceSupplierBody = zod.object({
+  name: zod.string().min(1).max(createAdminFinanceSupplierBodyNameMax),
+  category: zod.enum([
+    "advertising",
+    "hosting",
+    "software",
+    "domains",
+    "professional",
+    "administration",
+    "equipment",
+    "other",
+  ]),
+  email: zod
+    .string()
+    .email()
+    .max(createAdminFinanceSupplierBodyEmailMax)
+    .nullish(),
+  website: zod.string().max(createAdminFinanceSupplierBodyWebsiteMax).nullish(),
+  notes: zod.string().max(createAdminFinanceSupplierBodyNotesMax).optional(),
+});
+
+export const UpdateAdminFinanceSupplierParams = zod.object({
+  id: zod.coerce.string().uuid(),
+});
+
+export const updateAdminFinanceSupplierBodyNameMax = 160;
+
+export const updateAdminFinanceSupplierBodyEmailMax = 254;
+
+export const updateAdminFinanceSupplierBodyWebsiteMax = 2048;
+
+export const updateAdminFinanceSupplierBodyNotesMax = 4000;
+
+export const UpdateAdminFinanceSupplierBody = zod.object({
+  name: zod
+    .string()
+    .min(1)
+    .max(updateAdminFinanceSupplierBodyNameMax)
+    .optional(),
+  category: zod
+    .enum([
+      "advertising",
+      "hosting",
+      "software",
+      "domains",
+      "professional",
+      "administration",
+      "equipment",
+      "other",
+    ])
+    .optional(),
+  email: zod
+    .string()
+    .email()
+    .max(updateAdminFinanceSupplierBodyEmailMax)
+    .nullish(),
+  website: zod.string().max(updateAdminFinanceSupplierBodyWebsiteMax).nullish(),
+  notes: zod.string().max(updateAdminFinanceSupplierBodyNotesMax).optional(),
+  active: zod.boolean().optional(),
+});
+
+export const UpdateAdminFinanceSupplierResponse = zod.object({
+  id: zod.string().uuid(),
+  name: zod.string(),
+  category: zod.enum([
+    "advertising",
+    "hosting",
+    "software",
+    "domains",
+    "professional",
+    "administration",
+    "equipment",
+    "other",
+  ]),
+  email: zod.string().email().nullable(),
+  website: zod.string().nullable(),
+  notes: zod.string(),
+  active: zod.boolean(),
+  createdAt: zod.coerce.date(),
 });
 
 /**
@@ -1136,7 +1191,6 @@ export const CreateAdminFinanceProjectBody = zod.object({
         .max(createAdminFinanceProjectBodyDetailsExtraCentsMax)
         .multipleOf(createAdminFinanceProjectBodyDetailsExtraCentsMultipleOf)
         .optional(),
-      legacyProjectId: zod.string().uuid().nullish(),
       reportedReceivedCents: zod
         .number()
         .min(createAdminFinanceProjectBodyDetailsReportedReceivedCentsMin)
@@ -1252,7 +1306,6 @@ export const UpdateAdminFinanceProjectBody = zod.object({
         .max(updateAdminFinanceProjectBodyDetailsExtraCentsMax)
         .multipleOf(updateAdminFinanceProjectBodyDetailsExtraCentsMultipleOf)
         .optional(),
-      legacyProjectId: zod.string().uuid().nullish(),
       reportedReceivedCents: zod
         .number()
         .min(updateAdminFinanceProjectBodyDetailsReportedReceivedCentsMin)
@@ -1374,7 +1427,6 @@ export const UpdateAdminFinanceProjectResponse = zod.object({
           updateAdminFinanceProjectResponseDetailsExtraCentsMultipleOf,
         )
         .optional(),
-      legacyProjectId: zod.string().uuid().nullish(),
       reportedReceivedCents: zod
         .number()
         .min(updateAdminFinanceProjectResponseDetailsReportedReceivedCentsMin)
@@ -1525,8 +1577,8 @@ export const CreateAdminFinanceEntryBody = zod.object({
         .regex(createAdminFinanceEntryBodyDetailsPaidDateRegExp)
         .nullish(),
       clientId: zod.string().uuid().nullish(),
+      supplierId: zod.string().uuid().nullish(),
       recurringId: zod.string().uuid().nullish(),
-      accontoId: zod.string().uuid().nullish(),
       cancelled: zod.boolean().optional(),
     })
     .optional(),
@@ -1658,8 +1710,8 @@ export const UpdateAdminFinanceEntryBody = zod.object({
         .regex(updateAdminFinanceEntryBodyDetailsPaidDateRegExp)
         .nullish(),
       clientId: zod.string().uuid().nullish(),
+      supplierId: zod.string().uuid().nullish(),
       recurringId: zod.string().uuid().nullish(),
-      accontoId: zod.string().uuid().nullish(),
       cancelled: zod.boolean().optional(),
     })
     .optional(),
@@ -1785,8 +1837,8 @@ export const UpdateAdminFinanceEntryResponse = zod.object({
         .regex(updateAdminFinanceEntryResponseDetailsPaidDateRegExp)
         .nullish(),
       clientId: zod.string().uuid().nullish(),
+      supplierId: zod.string().uuid().nullish(),
       recurringId: zod.string().uuid().nullish(),
-      accontoId: zod.string().uuid().nullish(),
       cancelled: zod.boolean().optional(),
     })
     .optional(),
@@ -1919,8 +1971,8 @@ export const MarkAdminFinanceEntryPaidResponse = zod.object({
         .regex(markAdminFinanceEntryPaidResponseDetailsPaidDateRegExp)
         .nullish(),
       clientId: zod.string().uuid().nullish(),
+      supplierId: zod.string().uuid().nullish(),
       recurringId: zod.string().uuid().nullish(),
-      accontoId: zod.string().uuid().nullish(),
       cancelled: zod.boolean().optional(),
     })
     .optional(),

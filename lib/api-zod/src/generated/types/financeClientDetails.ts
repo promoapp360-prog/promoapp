@@ -16,14 +16,4 @@ export interface FinanceClientDetails {
    * @pattern ^\d{4}-\d{2}-\d{2}$
    */
   acquisitionDate?: string | null;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
-  leadId?: string | null;
-  /**
-   * @maxLength 100
-   * @nullable
-   */
-  requestId?: string | null;
 }

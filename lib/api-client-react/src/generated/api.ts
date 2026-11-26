@@ -23,6 +23,7 @@ import type {
   AdminFinanceData,
   AdminFinanceEntry,
   AdminFinanceProject,
+  AdminFinanceSupplier,
   AdminOverview,
   AdminReview,
   AdminSession,
@@ -43,6 +44,8 @@ import type {
   FinanceRecurringGenerationInput,
   FinanceRecurringInput,
   FinanceReminder,
+  FinanceSupplierInput,
+  FinanceSupplierUpdate,
   FinanceTransactionPreviewInput,
   FinanceWorkspace,
   GetAdminFinanceParams,
@@ -1996,6 +1999,244 @@ export const useUpdateAdminFinanceClient = <
   TContext
 > => {
   return useMutation(getUpdateAdminFinanceClientMutationOptions(options));
+};
+
+export const getListAdminFinanceSuppliersUrl = () => {
+  return `/api/admin/finance/suppliers`;
+};
+
+export const listAdminFinanceSuppliers = async (
+  options?: RequestInit,
+): Promise<AdminFinanceSupplier[]> => {
+  return customFetch<AdminFinanceSupplier[]>(
+    getListAdminFinanceSuppliersUrl(),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getListAdminFinanceSuppliersQueryKey = () => {
+  return [`/api/admin/finance/suppliers`] as const;
+};
+
+export const getListAdminFinanceSuppliersQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAdminFinanceSuppliers>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminFinanceSuppliers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListAdminFinanceSuppliersQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listAdminFinanceSuppliers>>
+  > = ({ signal }) => listAdminFinanceSuppliers({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminFinanceSuppliers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListAdminFinanceSuppliersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listAdminFinanceSuppliers>>
+>;
+export type ListAdminFinanceSuppliersQueryError = ErrorType<unknown>;
+
+export function useListAdminFinanceSuppliers<
+  TData = Awaited<ReturnType<typeof listAdminFinanceSuppliers>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminFinanceSuppliers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListAdminFinanceSuppliersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getCreateAdminFinanceSupplierUrl = () => {
+  return `/api/admin/finance/suppliers`;
+};
+
+export const createAdminFinanceSupplier = async (
+  financeSupplierInput: FinanceSupplierInput,
+  options?: RequestInit,
+): Promise<AdminFinanceSupplier> => {
+  return customFetch<AdminFinanceSupplier>(getCreateAdminFinanceSupplierUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeSupplierInput),
+  });
+};
+
+export const getCreateAdminFinanceSupplierMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceSupplier>>,
+    TError,
+    { data: BodyType<FinanceSupplierInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createAdminFinanceSupplier>>,
+  TError,
+  { data: BodyType<FinanceSupplierInput> },
+  TContext
+> => {
+  const mutationKey = ["createAdminFinanceSupplier"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createAdminFinanceSupplier>>,
+    { data: BodyType<FinanceSupplierInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createAdminFinanceSupplier(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateAdminFinanceSupplierMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createAdminFinanceSupplier>>
+>;
+export type CreateAdminFinanceSupplierMutationBody =
+  BodyType<FinanceSupplierInput>;
+export type CreateAdminFinanceSupplierMutationError = ErrorType<void>;
+
+export const useCreateAdminFinanceSupplier = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createAdminFinanceSupplier>>,
+    TError,
+    { data: BodyType<FinanceSupplierInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createAdminFinanceSupplier>>,
+  TError,
+  { data: BodyType<FinanceSupplierInput> },
+  TContext
+> => {
+  return useMutation(getCreateAdminFinanceSupplierMutationOptions(options));
+};
+
+export const getUpdateAdminFinanceSupplierUrl = (id: string) => {
+  return `/api/admin/finance/suppliers/${id}`;
+};
+
+export const updateAdminFinanceSupplier = async (
+  id: string,
+  financeSupplierUpdate: FinanceSupplierUpdate,
+  options?: RequestInit,
+): Promise<AdminFinanceSupplier> => {
+  return customFetch<AdminFinanceSupplier>(
+    getUpdateAdminFinanceSupplierUrl(id),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(financeSupplierUpdate),
+    },
+  );
+};
+
+export const getUpdateAdminFinanceSupplierMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceSupplier>>,
+    TError,
+    { id: string; data: BodyType<FinanceSupplierUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateAdminFinanceSupplier>>,
+  TError,
+  { id: string; data: BodyType<FinanceSupplierUpdate> },
+  TContext
+> => {
+  const mutationKey = ["updateAdminFinanceSupplier"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateAdminFinanceSupplier>>,
+    { id: string; data: BodyType<FinanceSupplierUpdate> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateAdminFinanceSupplier(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateAdminFinanceSupplierMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateAdminFinanceSupplier>>
+>;
+export type UpdateAdminFinanceSupplierMutationBody =
+  BodyType<FinanceSupplierUpdate>;
+export type UpdateAdminFinanceSupplierMutationError = ErrorType<void>;
+
+export const useUpdateAdminFinanceSupplier = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminFinanceSupplier>>,
+    TError,
+    { id: string; data: BodyType<FinanceSupplierUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateAdminFinanceSupplier>>,
+  TError,
+  { id: string; data: BodyType<FinanceSupplierUpdate> },
+  TContext
+> => {
+  return useMutation(getUpdateAdminFinanceSupplierMutationOptions(options));
 };
 
 /**

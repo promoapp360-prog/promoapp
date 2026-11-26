@@ -17,7 +17,6 @@ import {
   UpdateAdminFinanceSupplierBody,
   UpdateAdminFinanceSupplierParams,
   ListAdminFinanceSuppliersResponse,
-  CreateAdminFinanceSupplierResponse,
   UpdateAdminFinanceSupplierResponse,
 } from "@workspace/api-zod";
 import type { FinanceEntryInput, FinanceSupplierInput } from "@workspace/api-zod";
@@ -28,7 +27,7 @@ type FinanceData = typeof adminFinanceData;
 const FinanceProjectResponse = GetAdminFinanceResponse.shape.projects.element;
 const FinanceEntryResponse = GetAdminFinanceResponse.shape.entries.element;
 const FinanceClientResponse = GetAdminFinanceResponse.shape.clients.element;
-const FinanceSupplierResponse = CreateAdminFinanceSupplierResponse;
+const FinanceSupplierResponse = UpdateAdminFinanceSupplierResponse;
 
 function categoryMatchesDirection(direction: FinanceEntryInput["direction"], category: FinanceEntryInput["category"]) {
   return direction === "income"

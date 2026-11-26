@@ -51,7 +51,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   const legacyId=randomUUID(),accontoId=randomUUID();
   try{
     await t.test("tutte le risorse economiche richiedono accesso e protezione CSRF",async()=>{
-      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/import-preview","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`]){
+      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`]){
         assert.equal((await request(path,"GET",undefined,false)).status,401);
       }
       const login=await request("/admin/login","POST",{password},false);
@@ -128,45 +128,48 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       assert.equal(changed.amountCents,239144);assert.equal(changed.details.originalCents,263597);assert.equal(changed.details.currency,"USD");
       assert.equal((await request("/admin/finance/entries","POST",{direction:"expense",category:"replit",description:prefix,amountCents:239144,dueDate:today,paid:false,details:{externalReference:prefix}})).status,409);
     });
-    await t.test("il lavoro storico mantiene identificativo, voci e accesso pubblico",async()=>{
-      await pool.query(`INSERT INTO progetti_lavori(id,cliente_id,nome,password,acconto_versato) VALUES($1,$2,$3,$4,40)`,[legacyId,customer.id,prefix,password]);
+    await t.test("il sito conserva accessi e dati, esclusi dall’anagrafica e dai lavori gestionali",async()=>{
+      const publicClientId=randomUUID();
+      await pool.query(`INSERT INTO clienti(id,nome,cognome,email) VALUES($1,$2,'','test@example.invalid')`,[publicClientId,prefix]);
+      await pool.query(`INSERT INTO progetti_lavori(id,cliente_id,nome,password,acconto_versato) VALUES($1,$2,$3,$4,40)`,[legacyId,publicClientId,prefix,password]);
       await pool.query(`INSERT INTO voci_progetto(id,progetto_id,descrizione,importo) VALUES($1,$2,$3,400)`,[randomUUID(),legacyId,prefix]);
       const original=await json("/lavori/sblocca","POST",{password});
-      await json(`/admin/finance/projects/${legacyId}`,"PATCH",{clientId:customer.id,name:prefix,totalAmountCents:40000,paymentType:"single",details:{legacyProjectId:legacyId,amountKnown:true}});
+      await json(`/admin/finance/projects/${project.id}`,"PATCH",{notes:"Aggiornamento solo interno"});
       const updated=await json("/lavori/sblocca","POST",{password});
       assert.deepEqual(updated,original);
-      const rows=(await json(`/admin/finance?month=${month}`)).projects.filter((p:any)=>p.details?.legacyProjectId===legacyId);
-      assert.equal(rows.length,1);assert.equal(rows[0].id,legacyId);assert.equal(rows[0].receivedCents,0);
-      assert.equal((await request(`/admin/finance/projects/${legacyId}`,"PATCH",{details:{legacyProjectId:null}})).status,400);
+      const data=await json(`/admin/finance?month=${month}`);
+      assert.equal(data.projects.some((p:any)=>p.id===legacyId),false);
+      assert.equal(data.clients.some((c:any)=>c.id===publicClientId),false);
+      assert.equal((await request(`/admin/finance/projects/${legacyId}`,"PATCH",{name:prefix})).status,404);
+      assert.equal((await request("/admin/finance/projects","POST",{clientId:publicClientId,name:prefix,totalAmountCents:10000,paymentType:"single"})).status,404);
     });
-    await t.test("un pagamento storico può essere collegato una sola volta",async()=>{
+    await t.test("gli acconti del sito non entrano nei movimenti interni",async()=>{
       await pool.query(`INSERT INTO acconti(id,progetto,nome,cognome,email,telefono,indirizzo,cap,citta,importo_centesimi,stato,paid_at) VALUES($1,$2,'Test','','test@example.invalid','','','','',5000,'pagato',$3)`,[accontoId,prefix,new Date(`${today}T12:00:00Z`)]);
-      const body={direction:"income",category:"deposit",projectId:project.id,description:prefix,amountCents:5000,dueDate:today,paid:true,details:{accontoId}};
-      await json("/admin/finance/entries","POST",body);
-      assert.equal((await request("/admin/finance/entries","POST",body)).status,409);
+      const data=await json(`/admin/finance?month=${month}`);
+      assert.equal(data.entries.some((e:any)=>e.details?.accontoId===accontoId),false);
+      const workspace=await json("/admin/finance/workspace");
+      assert.equal("legacyPayments" in workspace,false);
+      assert.equal("legacyProjects" in workspace,false);
+      assert.equal("sources" in workspace,false);
       assert.equal((await pool.query("SELECT count(*)::int AS count FROM acconti WHERE id=$1",[accontoId])).rows[0].count,1);
     });
-    await t.test("il collegamento storico via PATCH persiste e impedisce un secondo incasso dello stesso pagamento",async()=>{
-      const patchAccontoId=randomUUID();
-      await pool.query(`INSERT INTO acconti(id,progetto,nome,cognome,email,telefono,indirizzo,cap,citta,importo_centesimi,stato,paid_at) VALUES($1,$2,'Test','','test@example.invalid','','','','',7000,'pagato',$3)`,[patchAccontoId,prefix,new Date(`${today}T12:00:00Z`)]);
-      const base={direction:"income",category:"deposit",projectId:project.id,description:prefix,amountCents:7000,dueDate:today,paid:true,details:{paidDate:today,amountConfirmed:true,reconciliation:"reported"}};
-      {
-        const existing=await json("/admin/finance/entries","POST",base);
-        await json(`/admin/finance/entries/${existing.id}`,"PATCH",{details:{accontoId:patchAccontoId}});
-        const reloaded=(await json(`/admin/finance?month=${month}`)).entries.find((e:any)=>e.id===existing.id);
-        assert.equal(reloaded.details.accontoId,patchAccontoId);
-        assert.equal(reloaded.details.reconciliation,"reconciled");
-        assert.equal((await pool.query("SELECT acconto_id FROM admin_finance_entries WHERE id=$1",[existing.id])).rows[0].acconto_id,patchAccontoId);
-        const workspace=await json("/admin/finance/workspace");
-        assert.equal(workspace.legacyPayments.find((p:any)=>p.id===patchAccontoId).linked,true);
-        const another=await json("/admin/finance/entries","POST",base);
-        const before=(await json(`/admin/finance?month=${month}`)).projects.find((p:any)=>p.id===project.id).receivedCents;
-        assert.equal((await request(`/admin/finance/entries/${another.id}`,"PATCH",{details:{accontoId:patchAccontoId}})).status,409);
-        assert.equal((await request("/admin/finance/entries","POST",{...base,details:{accontoId:patchAccontoId}})).status,409);
-        const after=await json(`/admin/finance?month=${month}`);
-        assert.equal(after.projects.find((p:any)=>p.id===project.id).receivedCents,before);
-        assert.equal(after.entries.filter((e:any)=>e.details?.accontoId===patchAccontoId).length,1);
-      }
+    await t.test("fornitori persistenti, spese collegate e archiviazione senza cancellazioni",async()=>{
+      const supplier=await json("/admin/finance/suppliers","POST",{name:prefix,category:"software",notes:"Fornitore sintetico"});
+      assert.equal((await request("/admin/finance/suppliers","POST",{name:prefix.toUpperCase(),category:"software"})).status,409);
+      const expense=await json("/admin/finance/entries","POST",{direction:"expense",category:"replit",description:prefix,amountCents:2500,dueDate:today,paid:true,details:{supplierId:supplier.id,paidDate:today,amountConfirmed:true,reconciliation:"reconciled"}});
+      const workspace=await json("/admin/finance/workspace");
+      assert.equal(workspace.suppliers.find((s:any)=>s.id===supplier.id).category,"software");
+      const reloaded=(await json(`/admin/finance?month=${month}`)).entries.find((e:any)=>e.id===expense.id);
+      assert.equal(reloaded.details.supplierId,supplier.id);
+      assert.equal(reloaded.details.supplier,prefix);
+      const monthData=await json(`/admin/finance?month=${month}`);
+      const cashExpenses=monthData.entries.filter((e:any)=>e.direction==="expense"&&e.paidAt&&!e.details?.cancelled&&e.details?.amountConfirmed&&e.details?.reconciliation==="reconciled"&&new Date(e.paidAt).toISOString().slice(0,7)===month);
+      assert.equal(monthData.summary.expensesCents,cashExpenses.reduce((sum:number,e:any)=>sum+e.amountCents,0));
+      assert.equal(monthData.summary.balanceCents,monthData.summary.receivedCents-monthData.summary.expensesCents);
+      await json(`/admin/finance/suppliers/${supplier.id}`,"PATCH",{active:false});
+      assert.equal((await json("/admin/finance/suppliers")).find((s:any)=>s.id===supplier.id).active,false);
+      assert.equal((await json(`/admin/finance?month=${month}`)).entries.find((e:any)=>e.id===expense.id).amountCents,2500);
+      assert.equal((await request("/admin/finance/entries","POST",{direction:"expense",category:"replit",description:prefix,amountCents:100,dueDate:today,details:{supplierId:supplier.id}})).status,400);
     });
     await t.test("anteprime ripetibili non scrivono dati né trasformano stime in pagamenti",async()=>{
       const count=async()=>(await pool.query("SELECT (SELECT count(*) FROM clienti)::int AS clients,(SELECT count(*) FROM admin_finance_entries)::int AS entries,(SELECT count(*) FROM admin_finance_audit)::int AS audit")).rows[0];
@@ -185,7 +188,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
     await t.test("CSV ed Excel includono movimenti, canoni e rettifiche",async()=>{
       const csv=await request("/admin/finance/export?format=csv");
       assert.equal(csv.status,200);const text=await csv.text();
-      assert.ok(text.includes(prefix));assert.ok(text.includes("Rettifiche"));assert.ok(text.includes("Ricorrenze"));
+      assert.ok(text.includes(prefix));assert.ok(text.includes("Rettifiche"));assert.ok(text.includes("Ricorrenze"));assert.ok(text.includes("Fornitori"));
       const xlsx=await request("/admin/finance/export?format=xlsx");
       assert.equal(xlsx.status,200);
       assert.equal(Buffer.from(await xlsx.arrayBuffer()).subarray(0,2).toString(),"PK");
@@ -213,15 +216,18 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const p=(await q.query("SELECT id FROM admin_finance_projects WHERE name=$1",[prefix])).rows.map(r=>r.id);
       const e=(await q.query("SELECT id FROM admin_finance_entries WHERE description=$1",[prefix])).rows.map(r=>r.id);
       const r=(await q.query("SELECT id FROM admin_finance_recurring WHERE description=$1",[prefix])).rows.map(r=>r.id);
-      const c=(await q.query("SELECT id FROM clienti WHERE nome=$1",[prefix])).rows.map(r=>r.id);
-      await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...e,...r,...c]]);
+      const c=(await q.query("SELECT id FROM admin_finance_clients WHERE name=$1",[prefix])).rows.map(r=>r.id);
+      const s=(await q.query("SELECT id FROM admin_finance_suppliers WHERE name=$1",[prefix])).rows.map(r=>r.id);
+      await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...e,...r,...c,...s]]);
       await q.query("DELETE FROM admin_finance_entries WHERE id=ANY($1::text[])",[e]);
       await q.query("DELETE FROM admin_finance_recurring WHERE id=ANY($1::text[])",[r]);
       await q.query("DELETE FROM admin_finance_projects WHERE id=ANY($1::text[])",[p]);
       await q.query("DELETE FROM voci_progetto WHERE progetto_id=$1",[legacyId]);
       await q.query("DELETE FROM progetti_lavori WHERE id=$1",[legacyId]);
       await q.query("DELETE FROM acconti WHERE progetto=$1",[prefix]);
-      await q.query("DELETE FROM clienti WHERE id=ANY($1::text[])",[c]);
+      await q.query("DELETE FROM admin_finance_clients WHERE id=ANY($1::text[])",[c]);
+      await q.query("DELETE FROM admin_finance_suppliers WHERE id=ANY($1::text[])",[s]);
+      await q.query("DELETE FROM clienti WHERE nome=$1",[prefix]);
       await q.query("COMMIT");
     }catch(err){await q.query("ROLLBACK");throw err;}
     finally{q.release();server.closeAllConnections();server.close();await pool.end();}

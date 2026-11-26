@@ -72,7 +72,7 @@ export function createFinanceToolsRouter() {
       res.status(409).json({message:"Sollecito bloccato: credito non confermato, annullato, già pagato o non scaduto."});return;
     }
     const p=data.projects.find(p=>p.id===e.projectId);
-    const amount=e.details?.recurringId?e.amountCents:Math.min(e.amountCents,p?.outstandingCents??0);
+    const amount=e.details?.recurringId||e.category==="monthly_fee"||!e.projectId?e.amountCents:Math.min(e.amountCents,p?.outstandingCents??0);
     res.json({text:`Buongiorno, vi ricordiamo la scadenza del ${e.dueDate.toLocaleDateString("it-IT",{timeZone:"UTC"})} per ${e.description}: ${new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(amount/100)} ancora da riscuotere. Se avete già pagato, vi chiediamo di inviarci il riferimento per la riconciliazione. Grazie, PromoApp.`});
   });
   router.get("/admin/finance/export",async (req,res):Promise<void>=>{
@@ -82,6 +82,7 @@ export function createFinanceToolsRouter() {
       pool.query(`SELECT entity_type,entity_id,actor,reason,before,after,created_at FROM admin_finance_audit ORDER BY created_at`)]);
     const sheets: Record<string,Record<string,unknown>[]> = {
       Clienti: data.clients.map(c=>({...c,details:JSON.stringify(c.details)})),
+      Fornitori: workspace.suppliers.map(s=>({...s})),
       Lavori: data.projects.map(p=>({...p,details:JSON.stringify(p.details)})),
       Movimenti: data.entries.map(e=>({...e,dueDate:e.dueDate.toISOString().slice(0,10),details:JSON.stringify(e.details)})),
       Ricorrenze: workspace.recurring.map(r=>({...r})),

@@ -225,8 +225,8 @@ export function FinanceProjectForm({
   onCancel: () => void;
   workspace?: FinanceWorkspace;
 }) {
-  const [details,setDetails]=useState<FinanceProjectDetails>({creditReview:true,...initial?.details});
-  useEffect(()=>{setDetails({creditReview:true,...initial?.details});},[initial?.id,JSON.stringify(initial?.details)]);
+  const [details,setDetails]=useState<FinanceProjectDetails>(initial?.details??{commercialState:"confirmed",agreementConfirmed:true,creditReview:false,confirmedDate:todayForInput()});
+  useEffect(()=>{setDetails(initial?.details??{commercialState:"confirmed",agreementConfirmed:true,creditReview:false,confirmedDate:todayForInput()});},[initial?.id,JSON.stringify(initial?.details)]);
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -397,7 +397,7 @@ export function FinanceProjectForm({
             <FormMessage />
           </FormItem>
         )} />
-        <ProjectDetailsFields value={details} onChange={setDetails} workspace={workspace} lockedLegacyId={initial?.details?.legacyProjectId}/>
+        <ProjectDetailsFields value={details} onChange={setDetails}/>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
           <Button type="submit" disabled={busy} data-testid="button-save-finance-project">
             {busy ? "Salvataggio…" : initial ? "Salva modifiche" : "Aggiungi lavoro"}
@@ -429,8 +429,8 @@ export function FinanceEntryForm({
   clients?: AdminFinanceClient[];
 }) {
   const [uploading,setUploading]=useState(false);
-  const [details,setDetails]=useState<FinanceEntryDetails>(initial?.details??{paidDate:todayForInput()});
-  useEffect(()=>{setDetails(initial?.details??{paidDate:todayForInput()});},[initial?.id,JSON.stringify(initial?.details)]);
+  const [details,setDetails]=useState<FinanceEntryDetails>(initial?.details??{paidDate:todayForInput(),amountConfirmed:true,reconciliation:"reconciled"});
+  useEffect(()=>{setDetails(initial?.details??{paidDate:todayForInput(),amountConfirmed:true,reconciliation:"reconciled"});},[initial?.id,JSON.stringify(initial?.details)]);
   const form = useForm<EntryFormValues>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
@@ -511,6 +511,7 @@ export function FinanceEntryForm({
                       field.onChange(direction);
                       form.setValue("category", direction === "income" ? "deposit" : "facebook");
                       form.setValue("paid", direction === "income");
+                      setDetails(current=>({...current,amountConfirmed:true,reconciliation:direction==="income"?"reconciled":"unverified",paidDate:direction==="income"?todayForInput():null}));
                     }}
                     data-testid="select-finance-direction"
                   >
@@ -587,7 +588,7 @@ export function FinanceEntryForm({
             <FormMessage />
           </FormItem>
         )} />
-        <EntryDetailsFields value={details} onChange={setDetails} paid={form.watch("paid")} onPaid={v=>form.setValue("paid",v)} workspace={workspace} clients={clients} onUploadStateChange={setUploading}/>
+        <EntryDetailsFields value={details} onChange={setDetails} paid={form.watch("paid")} onPaid={v=>{form.setValue("paid",v);setDetails(current=>({...current,paidDate:v?(current.paidDate||todayForInput()):null,reconciliation:v&&current.amountConfirmed?"reconciled":"unverified"}));}} workspace={workspace} clients={clients} onUploadStateChange={setUploading}/>
         <p className="text-xs text-slate-500 sm:col-span-2">Per i canoni usa “Canoni e costi ricorrenti”: le scadenze non sono incassi. Solo pagamenti riconciliati e importi confermati entrano nel bilancio.</p>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
           <Button type="submit" disabled={busy||uploading} data-testid="button-save-finance-entry">

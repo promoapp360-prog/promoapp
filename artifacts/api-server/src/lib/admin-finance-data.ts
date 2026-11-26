@@ -128,7 +128,7 @@ async function saveEntry(id: string, input: FinanceEntryInput | FinanceEntryUpda
     if(details.paidDate&&!validCalendarDate(details.paidDate)) invalid("Data di pagamento non valida.");
     const effectivePaid=input.paid ?? Boolean(before?.paid_at);
     if(effectivePaid && details.paidDate && details.paidDate>todayRome()) invalid("Un pagamento futuro non è un incasso effettivamente ricevuto.");
-    if(input.paid===true && !details.paidDate && !before?.paid_at && !details.accontoId) invalid("Indica la data effettiva del pagamento.");
+    if(input.paid===true && !details.paidDate && !before?.paid_at) invalid("Indica la data effettiva del pagamento.");
     let paidAt = input.paid === undefined ? before?.paid_at ?? null : input.paid ? details.paidDate?`${details.paidDate}T12:00:00+01:00`:before?.paid_at??null : null;
     if (input.details?.paidDate && (input.paid ?? Boolean(before?.paid_at))) paidAt = `${details.paidDate}T12:00:00+01:00`;
     if(paidAt && calendarDate(new Date(paidAt))>todayRome())invalid("Un pagamento futuro non è un incasso effettivamente ricevuto.");
@@ -161,11 +161,12 @@ export const adminFinanceData = {
     const sum = (list: AdminFinanceEntry[]) => list.reduce((s,e)=>s+e.amountCents,0);
     const receivedCents = sum(entries.filter(e=>e.direction==="income" && verifiedCash(e) && inMonth(e)));
     const expensesCents = sum(entries.filter(e=>e.direction==="expense" && verifiedCash(e) && inMonth(e)));
+    const separateReceivables=entries.filter(e=>!e.paidAt && eligibleIncome(e,projects) && (!e.projectId||e.category==="monthly_fee"||e.details?.recurringId));
     return { clients: clients.rows, projects, entries, summary: {
       month,receivedCents,expensesCents,balanceCents:receivedCents-expensesCents,
-      outstandingCents: projects.reduce((s,p)=>s+p.outstandingCents,0) + sum(entries.filter(e=>e.direction==="income" && e.category==="monthly_fee" && !e.paidAt && eligibleIncome(e,projects))),
-      overdueIncomeCents: projects.reduce((s,p)=>s+Math.min(p.outstandingCents,sum(entries.filter(e=>e.projectId===p.id&&!e.details?.recurringId&&!e.paidAt&&e.dueDate.toISOString().slice(0,10)<todayRome()&&eligibleIncome(e,projects)))),0)
-        + sum(entries.filter(e=>e.details?.recurringId&&e.direction==="income"&&!e.paidAt&&!e.details.cancelled&&e.dueDate.toISOString().slice(0,10)<todayRome()&&e.details.amountConfirmed)),
+      outstandingCents: projects.reduce((s,p)=>s+p.outstandingCents,0) + sum(separateReceivables),
+      overdueIncomeCents: projects.reduce((s,p)=>s+Math.min(p.outstandingCents,sum(entries.filter(e=>e.projectId===p.id&&e.category!=="monthly_fee"&&!e.details?.recurringId&&!e.paidAt&&e.dueDate.toISOString().slice(0,10)<todayRome()&&eligibleIncome(e,projects)))),0)
+        + sum(separateReceivables.filter(e=>e.dueDate.toISOString().slice(0,10)<todayRome())),
       unpaidExpensesCents: sum(entries.filter(e=>e.direction==="expense" && !e.paidAt && e.details?.amountConfirmed && !e.details?.cancelled)),
     } };
   },
@@ -229,7 +230,7 @@ export const adminFinanceData = {
     });
   },
   async createProject(input: FinanceProjectInput) {
-    const id = await saveProject(input.details?.legacyProjectId ?? randomUUID(), input, true);
+    const id = await saveProject(randomUUID(), input, true);
     return id ? (await allProjects(await allEntries())).find(p=>p.id===id) : undefined;
   },
   async updateProject(id: string, input: FinanceProjectUpdate) {

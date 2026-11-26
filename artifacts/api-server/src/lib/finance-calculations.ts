@@ -13,7 +13,8 @@ export function projectBalance(p: AdminFinanceProject, entries: AdminFinanceEntr
 }
 export function eligibleIncome(e: AdminFinanceEntry, projects: AdminFinanceProject[]): boolean {
   if(e.direction!=="income" || e.details?.cancelled || !e.details?.amountConfirmed) return false;
-  if(e.details?.recurringId) return true; // Only generated from explicitly active agreements.
+  if(e.details?.recurringId || e.category==="monthly_fee") return true;
+  if(!e.projectId) return Boolean(e.details?.clientId);
   const p=projects.find(p=>p.id===e.projectId);
   return Boolean(p && confirmedProject(p) && !p.details?.creditReview && p.outstandingCents>0);
 }

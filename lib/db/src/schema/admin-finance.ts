@@ -6,6 +6,7 @@ export const adminFinanceClientsTable = pgTable("admin_finance_clients", {
   id: text("id").primaryKey(),
   identityKey: text("identity_key").notNull().unique(),
   name: text("name").notNull(), companyName: text("company_name"), email: text("email"), phone: text("phone"),
+  details: jsonb("details").$type<Record<string, unknown>>().notNull().default({}),
   notes: text("notes").notNull().default(""), createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 export const adminFinanceProjectsTable = pgTable("admin_finance_projects", {

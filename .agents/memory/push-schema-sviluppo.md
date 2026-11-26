@@ -7,4 +7,4 @@ Quando si aggiunge una tabella al database di sviluppo, limitare il push alla ta
 
 **Why:** il database di sviluppo contiene `app_settings`, non inclusa nello schema Drizzle; un push non filtrato l’ha proposta come candidata al rename della nuova tabella.
 
-**How to apply:** usare `drizzle-kit push` con schema e `tablesFilter` limitati alla nuova tabella. Non approvare un rename di `app_settings` per risolvere un’aggiunta di schema.
+**How to apply:** usare `drizzle-kit push` con schema e `tablesFilter` limitati alle stesse tabelle. Il filtro da solo limita l’introspezione, non i modelli da creare: con lo schema completo può tentare di ricreare tabelle già presenti. Usare una configurazione dedicata, perché la CLI non accetta `--config` insieme a questi flag. Non approvare un rename di `app_settings` per risolvere un’aggiunta di schema.

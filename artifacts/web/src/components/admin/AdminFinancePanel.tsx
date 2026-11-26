@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { FinanceClientForm, FinanceEntryForm, FinanceProjectForm } from "./AdminFinanceForms";
 import FinanceDashboard from "./FinanceDashboard";
 import FinanceOperations from "./FinanceOperations";
+import FinanceSuppliers from "./FinanceSuppliers";
 import { adminApi } from "@/lib/admin-api";
 import { categoryLabels, cash, confirmed } from "./finance-ui";
 
@@ -89,6 +90,7 @@ function FinanceMovementCard({
             {cancelled&&<strong className="text-xs text-rose-700">Annullato · conservato nello storico</strong>}
             {!cancelled&&<span className="text-xs text-slate-500">{cash(entry)?"Pagamento verificato":entry.paidAt?"Pagamento da riconciliare":entry.details?.amountConfirmed?"Impegno confermato":"Importo da verificare / stima"}</span>}
           </div>
+          {entry.clientName&&<p className="mt-2 text-xs font-semibold text-indigo-700">{entry.clientName}{entry.projectName?` · ${entry.projectName}`:""}</p>}
           {entry.description.trim().toLocaleLowerCase("it-IT") !== categoryLabels[entry.category].toLocaleLowerCase("it-IT") && (
             <h5 className="mt-2 break-words text-sm font-semibold">{entry.description}</h5>
           )}
@@ -192,6 +194,7 @@ export default function AdminFinancePanel({
   const [projectEditor, setProjectEditor] = useState<AdminFinanceProject | "new" | null>(null);
   const [clientEditor, setClientEditor] = useState<AdminFinanceClient | "new" | null>(null);
   const [entryEditor, setEntryEditor] = useState<AdminFinanceEntry | "new" | null>(null);
+  const [section, setSection] = useState<"balance" | "clients" | "suppliers" | "receipts">("balance");
   const [filter, setFilter] = useState<"all" | "open" | "income" | "expense">("all");
   const summary = data?.summary;
   const today = todayInRome();
@@ -202,7 +205,7 @@ export default function AdminFinancePanel({
     if (filter === "income" || filter === "expense") return entry.direction === filter;
     return true;
   }), [data?.entries, filter, month]);
-  const standaloneEntries = visibleEntries.filter((entry) => !entry.projectId && !entry.details?.clientId);
+  const standaloneEntries = visibleEntries.filter((entry) => section === "suppliers" ? entry.direction === "expense" : entry.direction === "income");
   const projectsWithoutClient = data?.projects.filter((project) => !project.clientId) ?? [];
   const outstandingByClient = useMemo(() => {
     const totals = new Map<string, number>();
@@ -211,8 +214,13 @@ export default function AdminFinancePanel({
         totals.set(project.clientId, (totals.get(project.clientId) ?? 0) + project.outstandingCents);
       }
     }
+    for(const entry of data?.entries??[]){
+      if(entry.direction!=="income"||entry.paidAt||entry.details?.cancelled||!entry.details?.amountConfirmed||(entry.projectId&&!entry.details?.recurringId&&entry.category!=="monthly_fee"))continue;
+      const clientId=(data?.projects??[]).find(p=>p.id===entry.projectId)?.clientId??entry.details?.clientId;
+      if(clientId)totals.set(clientId,(totals.get(clientId)??0)+entry.amountCents);
+    }
     return totals;
-  }, [data?.projects]);
+  }, [data?.projects,data?.entries]);
 
   const saveProject = (input: FinanceProjectInput | FinanceProjectUpdate, id?: string) =>
     id ? onUpdateProject(id, input as FinanceProjectUpdate) : onCreateProject(input as FinanceProjectInput);
@@ -224,7 +232,7 @@ export default function AdminFinancePanel({
       <article key={project.id} className={`rounded-xl border p-4 ${project.active ? "border-slate-200" : "border-dashed border-slate-300 bg-slate-50 opacity-75"}`} data-testid={`card-finance-project-${project.id}`}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Lavoro</p>
+            <p className="text-xs font-semibold text-indigo-600">{project.clientName}</p>
             <h5 className="break-words font-semibold">{project.name}</h5>
             {project.clientId === null && <p className="text-xs text-slate-500">Cliente non associato · {project.clientName}</p>}
             {!project.active && <p className="mt-1 text-xs text-slate-500">Archiviato</p>}
@@ -241,7 +249,6 @@ export default function AdminFinancePanel({
         {project.details?.reportedReceivedCents!=null&&<p className="mt-2 text-xs text-amber-800">Incassato comunicato: {money(project.details.reportedReceivedCents)} · differenza rispetto ai pagamenti verificati: {money(project.details.reportedReceivedCents-project.receivedCents)}. Non è un movimento bancario.</p>}
         {project.details?.reconciliationNotes&&<p className="mt-1 whitespace-pre-wrap text-xs text-slate-500">{project.details.reconciliationNotes}</p>}
         {project.details?.amountKnown&&confirmed(project)&&<p className="mt-2 text-xs text-slate-500">Extra inclusi: {money(project.details.extraCents??0)} · costi diretti pagati: {money(allProjectEntries.filter(e=>e.direction==="expense"&&cash(e)).reduce((s,e)=>s+e.amountCents,0))} · margine diretto: {money(project.totalAmountCents+(project.details.extraCents??0)-allProjectEntries.filter(e=>e.direction==="expense"&&cash(e)).reduce((s,e)=>s+e.amountCents,0))}</p>}
-        {workspace?.legacyProjects.filter(p=>p.id===project.details?.legacyProjectId).map(p=><details key={p.id} className="mt-3 rounded-lg bg-amber-50 p-3 text-xs"><summary className="cursor-pointer font-semibold">Dati originali del lavoro pubblico, senza sovrascrittura</summary><p className="mt-2">Acconto nella vecchia scheda: {money(p.advanceEuro*100)} · escluso dagli incassi finché non riconciliato.</p>{p.items.map((v,i)=><p key={i}>{v.description}: {v.euro===null?"Importo non noto":money((v.euro??0)*100)}</p>)}</details>)}
         {workspace?.recurring.filter(r=>r.projectId===project.id).map(r=><p key={r.id} className="mt-2 text-xs text-indigo-700">Canone collegato: {r.description} · {money(r.amountCents)} / {r.intervalMonths} mesi · {r.state}</p>)}
         <p className="mt-3 text-xs font-medium text-slate-600" data-testid={`text-finance-payment-plan-${project.id}`}>
           {project.paymentType === "single"
@@ -297,9 +304,9 @@ export default function AdminFinancePanel({
     <section aria-label="Contabilità e bilancio lavori" className="space-y-6" data-testid="panel-admin-finance">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold">Controllo Economico</h2>
+          <h2 className="text-xl font-bold">Gestionale PromoApp · Controllo economico</h2>
           <p className="mt-1 max-w-2xl text-sm text-slate-500">
-            Prospetto gestionale interno: segna incassi, importi da riscuotere e spese. Non è un documento fiscale.
+            Bilancio interno dell’agenzia, separato dai dati del sito pubblico. Clienti, lavori, fornitori, incassi e spese. Non è un documento fiscale.
           </p>
         </div>
         <label className="flex items-center gap-2 text-sm font-semibold text-slate-600">
@@ -314,7 +321,20 @@ export default function AdminFinancePanel({
         </label>
       </div>
 
-      <FinanceDashboard data={data} workspace={workspace} month={month}/>
+      <nav aria-label="Sezioni del gestionale" className="flex flex-wrap gap-2">
+        {([["balance","Bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi e canoni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
+      </nav>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" disabled={busy} onClick={()=>{setSection("clients");setClientEditor("new");}}>Aggiungi cliente</Button>
+        <Button size="sm" variant="outline" disabled={busy||!data?.clients.length} onClick={()=>{setSection("clients");setProjectEditor("new");}}>Aggiungi lavoro</Button>
+        <Button size="sm" disabled={busy} onClick={()=>setEntryEditor("new")} data-testid="button-new-finance-entry">Registra incasso / spesa</Button>
+      </div>
+      {entryEditor && <section className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+        <h3 className="mb-3 font-bold">{entryEditor==="new"?"Registra incasso, rata, scadenza o spesa":"Modifica movimento"}</h3>
+        <FinanceEntryForm projects={data?.projects??[]} clients={data?.clients??[]} initial={entryEditor==="new"?undefined:entryEditor} busy={busy} onCreate={onCreateEntry} onUpdate={onUpdateEntry} onCancel={()=>setEntryEditor(null)} workspace={workspace}/>
+      </section>}
+      {section==="balance"&&<FinanceDashboard data={data} workspace={workspace} month={month}/>}
+      {section==="suppliers"&&<FinanceSuppliers suppliers={workspace?.suppliers??[]} entries={data?.entries??[]} onRefresh={loadWorkspace}/>}
       {workspaceError&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{workspaceError}</p>}
 
       {summary && summary.overdueIncomeCents > 0 && (
@@ -323,7 +343,7 @@ export default function AdminFinancePanel({
         </div>
       )}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Anagrafica clienti">
+      <section hidden={section!=="clients"} className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Anagrafica clienti">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-bold">Anagrafica clienti</h3>
@@ -367,7 +387,7 @@ export default function AdminFinancePanel({
                 {client.phone && <p className="mt-1 text-xs text-slate-600">{client.phone}</p>}
                 {client.notes && <p className="mt-2 whitespace-pre-wrap break-words text-xs text-slate-500">{client.notes}</p>}
                 <p className="mt-3 flex justify-between gap-3 border-t border-slate-100 pt-3 text-xs">
-                  <span className="text-slate-500">Da incassare sui lavori</span>
+                  <span className="text-slate-500">Da incassare · lavori e canoni</span>
                   <strong className="text-amber-700" data-testid={`text-finance-client-outstanding-${client.id}`}>
                     {money(outstandingByClient.get(client.id) ?? 0)}
                   </strong>
@@ -379,7 +399,7 @@ export default function AdminFinancePanel({
       </section>
 
       <div className="space-y-5">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Contabilità per cliente">
+        <section hidden={section!=="clients"} className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Contabilità per cliente">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="font-bold">Contabilità per cliente</h3>
@@ -483,43 +503,24 @@ export default function AdminFinancePanel({
           )}
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Movimenti generali">
+        <section hidden={section!=="suppliers"&&section!=="receipts"} className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Elenco movimenti">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold">Movimenti generali</h3>
+              <h3 className="font-bold">{section==="suppliers"?"Spese e pagamenti ai fornitori":"Incassi e scadenze dei clienti"}</h3>
               <p className="mt-1 text-xs text-slate-500">
-                Qui trovi solo incassi e spese non collegati a un lavoro. I movimenti dei lavori sono dentro il cliente.
+                Pagamenti del mese selezionato e tutte le scadenze aperte. Le voci collegate sono consultabili anche dentro il rispettivo cliente.
               </p>
             </div>
-            <Button size="sm" onClick={() => setEntryEditor("new")} disabled={busy} data-testid="button-new-finance-entry">
+            <Button size="sm" onClick={() => setEntryEditor("new")} disabled={busy}>
               Nuovo movimento
             </Button>
           </div>
-
-          {entryEditor && (
-            <div className="mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
-              <h4 className="mb-3 font-semibold">{entryEditor === "new" ? "Registra una scadenza o una spesa" : "Modifica movimento"}</h4>
-              <p className="mb-3 text-xs text-slate-500">Collegando il movimento a un lavoro, verrà mostrato nella contabilità del relativo cliente.</p>
-              <FinanceEntryForm
-                projects={data?.projects ?? []}
-                clients={data?.clients??[]}
-                initial={entryEditor === "new" ? undefined : entryEditor}
-                busy={busy}
-                onCreate={onCreateEntry}
-                onUpdate={onUpdateEntry}
-                onCancel={() => setEntryEditor(null)}
-                workspace={workspace}
-              />
-            </div>
-          )}
 
           {loading && !data ? (
             <p role="status" className="py-6 text-center text-sm text-slate-500">Caricamento contabilità…</p>
           ) : !standaloneEntries.length ? (
             <div className="rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
-              {data?.entries.length
-                ? "Non ci sono movimenti generali da mostrare; le voci collegate ai lavori sono nei rispettivi clienti."
-                : "Nessun movimento generale registrato."}
+              Nessun movimento da mostrare per il mese selezionato e nessuna scadenza aperta.
             </div>
           ) : (
             <div className="space-y-3">
@@ -538,7 +539,7 @@ export default function AdminFinancePanel({
           )}
         </section>
       </div>
-      <FinanceOperations data={data} workspace={workspace} onRefresh={async()=>{await onRefresh();await loadWorkspace();}}/>
+      {section==="receipts"&&<FinanceOperations data={data} workspace={workspace} onRefresh={async()=>{await onRefresh();await loadWorkspace();}}/>}
     </section>
   );
 }

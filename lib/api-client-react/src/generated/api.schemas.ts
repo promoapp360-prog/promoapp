@@ -301,12 +301,37 @@ export interface FinanceSource {
   kind: FinanceSourceKind;
 }
 
+export type AdminFinanceSupplierCategory =
+  (typeof AdminFinanceSupplierCategory)[keyof typeof AdminFinanceSupplierCategory];
+
+export const AdminFinanceSupplierCategory = {
+  advertising: "advertising",
+  hosting: "hosting",
+  software: "software",
+  domains: "domains",
+  professional: "professional",
+  administration: "administration",
+  equipment: "equipment",
+  other: "other",
+} as const;
+
+export interface AdminFinanceSupplier {
+  id: string;
+  name: string;
+  category: AdminFinanceSupplierCategory;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  website: string | null;
+  notes: string;
+  active: boolean;
+  createdAt: string;
+}
+
 export interface FinanceWorkspace {
   recurring: FinanceRecurringInput[];
   history: FinanceHistory[];
-  legacyProjects: FinanceLegacyProject[];
-  legacyPayments: FinanceLegacyPayment[];
-  sources: FinanceSource[];
+  suppliers: AdminFinanceSupplier[];
   warnings: string[];
 }
 
@@ -353,16 +378,77 @@ export interface FinanceClientDetails {
    * @pattern ^\d{4}-\d{2}-\d{2}$
    */
   acquisitionDate?: string | null;
+}
+
+export type FinanceSupplierInputCategory =
+  (typeof FinanceSupplierInputCategory)[keyof typeof FinanceSupplierInputCategory];
+
+export const FinanceSupplierInputCategory = {
+  advertising: "advertising",
+  hosting: "hosting",
+  software: "software",
+  domains: "domains",
+  professional: "professional",
+  administration: "administration",
+  equipment: "equipment",
+  other: "other",
+} as const;
+
+export interface FinanceSupplierInput {
   /**
-   * @maxLength 100
+   * @minLength 1
+   * @maxLength 160
+   */
+  name: string;
+  category: FinanceSupplierInputCategory;
+  /**
+   * @maxLength 254
    * @nullable
    */
-  leadId?: string | null;
+  email?: string | null;
   /**
-   * @maxLength 100
+   * @maxLength 2048
    * @nullable
    */
-  requestId?: string | null;
+  website?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+}
+
+export type FinanceSupplierUpdateCategory =
+  (typeof FinanceSupplierUpdateCategory)[keyof typeof FinanceSupplierUpdateCategory];
+
+export const FinanceSupplierUpdateCategory = {
+  advertising: "advertising",
+  hosting: "hosting",
+  software: "software",
+  domains: "domains",
+  professional: "professional",
+  administration: "administration",
+  equipment: "equipment",
+  other: "other",
+} as const;
+
+export interface FinanceSupplierUpdate {
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name?: string;
+  category?: FinanceSupplierUpdateCategory;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email?: string | null;
+  /**
+   * @maxLength 2048
+   * @nullable
+   */
+  website?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+  active?: boolean;
 }
 
 export type FinanceProjectDetailsCommercialState =
@@ -402,8 +488,6 @@ export interface FinanceProjectDetails {
    * @maximum 2147483647
    */
   extraCents?: number;
-  /** @nullable */
-  legacyProjectId?: string | null;
   /**
    * @minimum 0
    * @maximum 2147483647
@@ -491,9 +575,9 @@ export interface FinanceEntryDetails {
   /** @nullable */
   clientId?: string | null;
   /** @nullable */
-  recurringId?: string | null;
+  supplierId?: string | null;
   /** @nullable */
-  accontoId?: string | null;
+  recurringId?: string | null;
   cancelled?: boolean;
 }
 

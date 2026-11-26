@@ -64,7 +64,25 @@ export default function FinanceDashboard({data,workspace,month}:{data?:AdminFina
     ["Da pagare nel periodo",entries.filter(e=>e.direction==="expense"&&!e.paidAt&&!e.details?.cancelled&&e.details?.amountConfirmed&&inRange(iso(e.dueDate),from,to)).reduce((s,e)=>s+e.amountCents,0),null],
     ["Canoni maturati non incassati",entries.filter(e=>e.direction==="income"&&e.details?.recurringId&&!e.paidAt&&!e.details?.cancelled&&iso(e.dueDate)<=new Date().toISOString().slice(0,10)).reduce((s,e)=>s+e.amountCents,0),null],
   ] as const;
+  const allProjects=data?.projects??[];
+  const allEntries=data?.entries??[];
+  const soldTotal=allProjects.filter(confirmed).reduce((sum,p)=>sum+p.totalAmountCents+(p.details?.extraCents??0),0);
+  const receivedTotal=allEntries.filter(e=>e.direction==="income"&&cash(e)).reduce((sum,e)=>sum+e.amountCents,0);
+  const spentTotal=allEntries.filter(e=>e.direction==="expense"&&cash(e)).reduce((sum,e)=>sum+e.amountCents,0);
+  const monthlySold=allEntries.filter(e=>e.direction==="income"&&(e.category==="monthly_fee"||e.details?.recurringId)&&!e.details?.cancelled&&e.details?.amountConfirmed).reduce((sum,e)=>sum+e.amountCents,0);
+  const allTimeTiles=[
+    ["Venduto complessivo",soldTotal+monthlySold,"Accordi confermati + canoni generati"],
+    ["Incassato complessivo",receivedTotal,"Pagamenti effettivi registrati"],
+    ["Da incassare",data?.summary.outstandingCents??0,"Residui lavori + scadenze canoni, senza doppioni"],
+    ["Speso complessivo",spentTotal,"Spese effettivamente pagate"],
+    ["Saldo di cassa",receivedTotal-spentTotal,"Incassato meno speso"],
+    ["Margine gestionale",soldTotal+monthlySold-spentTotal,"Venduto meno spese pagate; non utile fiscale"],
+  ] as const;
   return <section aria-label="Dashboard controllo economico" className="space-y-5">
+    <div><h3 className="text-lg font-bold">Bilancio PromoApp</h3><p className="mt-1 text-sm text-slate-500">Totali complessivi del gestionale, indipendenti dal mese e dai filtri sottostanti.</p></div>
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{allTimeTiles.map(([label,value,help],index)=><article key={label} className="rounded-2xl border border-indigo-100 bg-white p-5" data-testid={`finance-total-${index}`}><h4 className="text-sm font-semibold text-slate-600">{label}</h4><p className="mt-2 text-2xl font-bold text-indigo-800">{data?money(value):"…"}</p><p className="mt-2 text-xs text-slate-500">{help}</p></article>)}</div>
+    <p className="text-xs text-slate-500">I canoni futuri non ancora generati non sono vendite o crediti. Importi da verificare e proposte restano esclusi; i pagamenti non riconciliati sono segnalati nei movimenti.</p>
+    <h3 className="text-lg font-bold">Analisi per periodo</h3>
     <div className="grid gap-3 rounded-2xl border bg-white p-4 sm:grid-cols-3 xl:grid-cols-5">
       <FinanceField label="Periodo"><select className={fieldClass} value={period} onChange={e=>setPeriod(e.target.value)}><option value="month">Mese selezionato</option><option value="quarter">Trimestre</option><option value="year">Anno</option><option value="custom">Personalizzato</option></select></FinanceField>
       <FinanceField label="Cliente"><select className={fieldClass} value={client} onChange={e=>{setClient(e.target.value);setProject("");}}><option value="">Tutti</option>{data?.clients.map(c=><option key={c.id} value={c.id}>{c.companyName||c.name}</option>)}</select></FinanceField>

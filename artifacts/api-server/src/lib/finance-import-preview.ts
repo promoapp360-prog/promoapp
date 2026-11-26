@@ -36,11 +36,9 @@ export function buildFinanceImportPreview(data: AdminFinanceData, workspace: Fin
       (p.details?.extraCents??0)===("extra" in row?row.extra:0) &&
       p.details?.operationalState===(row.state==="delivered"?"delivered":row.state==="working"?"working":"not_started") &&
       (row.state!=="demo"||p.details?.commercialState==="demo")));
-    const possible=workspace.legacyProjects.filter(p=>normalize(p.name).split(" ").some(word=>word.length>3 && normalize(row.name).includes(word)));
     return {key:row.key,name:row.name,aliases:[...row.aliases],matchedClientId:matched?.id??null,
-      action:matches.length>1?"review":matched?(same?"unchanged":"update"):possible.length?"review":"create",
-      anomalies:[...row.issues,...(matches.length>1?["Più anagrafiche corrispondenti: scelta manuale obbligatoria."]:[]),
-        ...possible.map(p=>`Possibile lavoro storico: ${p.name}; verificare manualmente identità e record di prova.`)],
+      action:matches.length>1?"review":matched?(same?"unchanged":"update"):"create",
+      anomalies:[...row.issues,...(matches.length>1?["Più anagrafiche corrispondenti: scelta manuale obbligatoria."]:[])],
       proposed:{...row,unit:"centesimi EUR salvo importi USD",financialTransactions:[]},
     };
   });

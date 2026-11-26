@@ -26,8 +26,6 @@ export interface FinanceProjectDetails {
    * @maximum 2147483647
    */
   extraCents?: number;
-  /** @nullable */
-  legacyProjectId?: string | null;
   /**
    * @minimum 0
    * @maximum 2147483647

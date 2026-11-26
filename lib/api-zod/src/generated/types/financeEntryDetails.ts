@@ -50,8 +50,8 @@ export interface FinanceEntryDetails {
   /** @nullable */
   clientId?: string | null;
   /** @nullable */
-  recurringId?: string | null;
+  supplierId?: string | null;
   /** @nullable */
-  accontoId?: string | null;
+  recurringId?: string | null;
   cancelled?: boolean;
 }

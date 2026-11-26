@@ -5,17 +5,13 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AdminFinanceSupplier } from "./adminFinanceSupplier";
 import type { FinanceHistory } from "./financeHistory";
-import type { FinanceLegacyPayment } from "./financeLegacyPayment";
-import type { FinanceLegacyProject } from "./financeLegacyProject";
 import type { FinanceRecurringInput } from "./financeRecurringInput";
-import type { FinanceSource } from "./financeSource";
 
 export interface FinanceWorkspace {
   recurring: FinanceRecurringInput[];
   history: FinanceHistory[];
-  legacyProjects: FinanceLegacyProject[];
-  legacyPayments: FinanceLegacyPayment[];
-  sources: FinanceSource[];
+  suppliers: AdminFinanceSupplier[];
   warnings: string[];
 }
