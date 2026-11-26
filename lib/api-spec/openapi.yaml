@@ -307,6 +307,48 @@ paths:
         "400": { description: Dati cliente non validi }
         "404": { description: Cliente non trovato }
         "409": { description: Esiste già un cliente con questi dati }
+  /admin/finance/suppliers:
+    get:
+      operationId: listAdminFinanceSuppliers
+      responses:
+        "200":
+          description: Elenco fornitori del gestionale PromoApp
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AdminFinanceSupplier" }
+    post:
+      operationId: createAdminFinanceSupplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceSupplierInput" }
+      responses:
+        "201":
+          description: Fornitore registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceSupplier" }
+        "409": { description: Fornitore già presente }
+  /admin/finance/suppliers/{id}:
+    patch:
+      operationId: updateAdminFinanceSupplier
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceSupplierUpdate" }
+      responses:
+        "200":
+          description: Fornitore aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminFinanceSupplier" }
+        "404": { description: Fornitore non trovato }
   /admin/finance/projects:
     post:
       operationId: createAdminFinanceProject
@@ -670,13 +712,11 @@ components:
         kind: { type: string, enum: [lead, request] }
     FinanceWorkspace:
       type: object
-      required: [recurring, history, legacyProjects, legacyPayments, sources, warnings]
+      required: [recurring, history, suppliers, warnings]
       properties:
         recurring: { type: array, items: { $ref: "#/components/schemas/FinanceRecurringInput" } }
         history: { type: array, items: { $ref: "#/components/schemas/FinanceHistory" } }
-        legacyProjects: { type: array, items: { $ref: "#/components/schemas/FinanceLegacyProject" } }
-        legacyPayments: { type: array, items: { $ref: "#/components/schemas/FinanceLegacyPayment" } }
-        sources: { type: array, items: { $ref: "#/components/schemas/FinanceSource" } }
+        suppliers: { type: array, items: { $ref: "#/components/schemas/AdminFinanceSupplier" } }
         warnings: { type: array, items: { type: string } }
     FinanceReminder:
       type: object
@@ -707,8 +747,36 @@ components:
         aliases: { type: array, maxItems: 30, items: { type: string, maxLength: 160 } }
         acquisitionSource: { type: string, maxLength: 160 }
         acquisitionDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
-        leadId: { type: ["string", "null"], maxLength: 100 }
-        requestId: { type: ["string", "null"], maxLength: 100 }
+    FinanceSupplierInput:
+      type: object
+      required: [name, category]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 160 }
+        category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        email: { type: ["string", "null"], format: email, maxLength: 254 }
+        website: { type: ["string", "null"], maxLength: 2048 }
+        notes: { type: string, maxLength: 4000 }
+    FinanceSupplierUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 160 }
+        category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        email: { type: ["string", "null"], format: email, maxLength: 254 }
+        website: { type: ["string", "null"], maxLength: 2048 }
+        notes: { type: string, maxLength: 4000 }
+        active: { type: boolean }
+    AdminFinanceSupplier:
+      type: object
+      required: [id, name, category, email, website, notes, active, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        email: { type: ["string", "null"], format: email }
+        website: { type: ["string", "null"] }
+        notes: { type: string }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
     FinanceProjectDetails:
       type: object
       properties:
@@ -720,7 +788,6 @@ components:
         confirmedDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
         service: { type: string, maxLength: 160 }
         extraCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
-        legacyProjectId: { type: ["string", "null"], format: uuid }
         reportedReceivedCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         confirmedResidualCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         reconciliationNotes: { type: string, maxLength: 4000 }
@@ -742,8 +809,8 @@ components:
         acquisitionCost: { type: boolean }
         paidDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
         clientId: { type: ["string", "null"], format: uuid }
+        supplierId: { type: ["string", "null"], format: uuid }
         recurringId: { type: ["string", "null"], format: uuid }
-        accontoId: { type: ["string", "null"], format: uuid }
         cancelled: { type: boolean }
     AdminFinanceProject:
       type: object

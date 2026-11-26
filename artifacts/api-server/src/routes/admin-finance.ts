@@ -3,6 +3,7 @@ import {
   CreateAdminFinanceClientBody,
   CreateAdminFinanceEntryBody,
   CreateAdminFinanceProjectBody,
+  CreateAdminFinanceSupplierBody,
   DeleteAdminFinanceEntryParams,
   GetAdminFinanceQueryParams,
   GetAdminFinanceResponse,
@@ -13,8 +14,13 @@ import {
   UpdateAdminFinanceEntryParams,
   UpdateAdminFinanceProjectBody,
   UpdateAdminFinanceProjectParams,
+  UpdateAdminFinanceSupplierBody,
+  UpdateAdminFinanceSupplierParams,
+  ListAdminFinanceSuppliersResponse,
+  CreateAdminFinanceSupplierResponse,
+  UpdateAdminFinanceSupplierResponse,
 } from "@workspace/api-zod";
-import type { FinanceEntryInput } from "@workspace/api-zod";
+import type { FinanceEntryInput, FinanceSupplierInput } from "@workspace/api-zod";
 import { adminFinanceData } from "../lib/admin-finance-data";
 import { createFinanceToolsRouter } from "./admin-finance-tools";
 
@@ -22,6 +28,7 @@ type FinanceData = typeof adminFinanceData;
 const FinanceProjectResponse = GetAdminFinanceResponse.shape.projects.element;
 const FinanceEntryResponse = GetAdminFinanceResponse.shape.entries.element;
 const FinanceClientResponse = GetAdminFinanceResponse.shape.clients.element;
+const FinanceSupplierResponse = CreateAdminFinanceSupplierResponse;
 
 function categoryMatchesDirection(direction: FinanceEntryInput["direction"], category: FinanceEntryInput["category"]) {
   return direction === "income"
@@ -104,6 +111,33 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
       return;
     }
     res.json(FinanceClientResponse.parse(client));
+  });
+
+  router.get("/admin/finance/suppliers", async (_req,res):Promise<void> => {
+    res.json(ListAdminFinanceSuppliersResponse.parse(await data.listSuppliers()));
+  });
+
+  router.post("/admin/finance/suppliers", async (req,res):Promise<void> => {
+    const parsed=CreateAdminFinanceSupplierBody.safeParse(req.body);
+    if(!parsed.success||!parsed.data.name.trim()){
+      res.status(400).json({message:"Inserisci il nome del fornitore."});return;
+    }
+    const supplier=await data.createSupplier({...parsed.data,name:parsed.data.name.trim()} as FinanceSupplierInput);
+    if(!supplier){res.status(409).json({message:"Esiste già un fornitore con questo nome."});return;}
+    res.status(201).json(FinanceSupplierResponse.parse(supplier));
+  });
+
+  router.patch("/admin/finance/suppliers/:id", async (req,res):Promise<void> => {
+    const params=UpdateAdminFinanceSupplierParams.safeParse(req.params);
+    const body=UpdateAdminFinanceSupplierBody.safeParse(req.body);
+    if(!params.success||!body.success||!Object.keys(body.data??{}).length||
+      (body.data.name!==undefined&&!body.data.name.trim())){
+      res.status(400).json({message:"Controlla i dati del fornitore."});return;
+    }
+    const supplier=await data.updateSupplier(params.data.id,body.data);
+    if(supplier===null){res.status(409).json({message:"Esiste già un fornitore con questo nome."});return;}
+    if(!supplier){res.status(404).json({message:"Fornitore non trovato."});return;}
+    res.json(UpdateAdminFinanceSupplierResponse.parse(supplier));
   });
 
   router.post("/admin/finance/projects", async (req, res): Promise<void> => {

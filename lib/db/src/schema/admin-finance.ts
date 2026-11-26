@@ -1,11 +1,7 @@
 import { pgTable, text, integer, smallint, boolean, timestamp, date, jsonb, uniqueIndex, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
-import { clientiTable, progettiLavoriTable } from "./progetti";
-import { accontiTable } from "./acconti";
 
-// Retained for compatibility with the empty, pre-existing finance schema.
-// All new customer operations use clienti, never this former parallel registry.
 export const adminFinanceClientsTable = pgTable("admin_finance_clients", {
   id: text("id").primaryKey(),
   identityKey: text("identity_key").notNull().unique(),
@@ -15,8 +11,9 @@ export const adminFinanceClientsTable = pgTable("admin_finance_clients", {
 export const adminFinanceProjectsTable = pgTable("admin_finance_projects", {
   id: text("id").primaryKey(),
   clientId: text("client_id").references(() => adminFinanceClientsTable.id),
-  customerId: text("customer_id").references(() => clientiTable.id),
-  legacyProjectId: text("legacy_project_id").references(() => progettiLavoriTable.id),
+  // Retained as inert legacy values; the internal ledger never reads or writes site IDs.
+  customerId: text("customer_id"),
+  legacyProjectId: text("legacy_project_id"),
   clientName: text("client_name").notNull().default(""),
   name: text("name").notNull(),
   totalAmountCents: integer("total_amount_cents").notNull().default(0),
@@ -31,7 +28,7 @@ export const adminFinanceProjectsTable = pgTable("admin_finance_projects", {
 export const adminFinanceRecurringTable = pgTable("admin_finance_recurring", {
   id: text("id").primaryKey(),
   projectId: text("project_id").references(() => adminFinanceProjectsTable.id),
-  clientId: text("client_id").references(() => clientiTable.id),
+  clientId: text("client_id").references(() => adminFinanceClientsTable.id),
   direction: text("direction").notNull(),
   category: text("category").notNull(),
   description: text("description").notNull(),
@@ -55,7 +52,8 @@ export const adminFinanceEntriesTable = pgTable("admin_finance_entries", {
   repeatMonthly: boolean("repeat_monthly").notNull().default(false),
   seriesId: text("series_id"), seriesDay: smallint("series_day"),
   recurringId: text("recurring_id").references(() => adminFinanceRecurringTable.id),
-  accontoId: text("acconto_id").references(() => accontiTable.id),
+  // Inert compatibility value; site-side payments are never imported into the ledger.
+  accontoId: text("acconto_id"),
   details: jsonb("details").$type<Record<string, unknown>>().notNull().default({}),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
@@ -64,6 +62,18 @@ export const adminFinanceEntriesTable = pgTable("admin_finance_entries", {
   uniqueIndex("finance_acconto_idx").on(t.accontoId),
   uniqueIndex("finance_external_reference_idx").on(sql`(${t.details}->>'externalReference')`).where(sql`NULLIF(${t.details}->>'externalReference','') IS NOT NULL`),
   index("finance_due_idx").on(t.dueDate),
+]);
+export const adminFinanceSuppliersTable = pgTable("admin_finance_suppliers", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull().default("other"),
+  email: text("email"),
+  website: text("website"),
+  notes: text("notes").notNull().default(""),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, t => [
+  uniqueIndex("admin_finance_suppliers_name_idx").on(sql`lower(trim(${t.name}))`),
 ]);
 export const adminFinanceAuditTable = pgTable("admin_finance_audit", {
   id: text("id").primaryKey(), entityType: text("entity_type").notNull(),
@@ -74,6 +84,8 @@ export const adminFinanceAuditTable = pgTable("admin_finance_audit", {
 export const insertFinanceProjectSchema = createInsertSchema(adminFinanceProjectsTable);
 export const insertFinanceEntrySchema = createInsertSchema(adminFinanceEntriesTable);
 export const insertFinanceRecurringSchema = createInsertSchema(adminFinanceRecurringTable);
+export const insertFinanceSupplierSchema = createInsertSchema(adminFinanceSuppliersTable);
 export type FinanceProjectRecord = typeof adminFinanceProjectsTable.$inferSelect;
 export type FinanceEntryRecord = typeof adminFinanceEntriesTable.$inferSelect;
 export type FinanceRecurringRecord = typeof adminFinanceRecurringTable.$inferSelect;
+export type FinanceSupplierRecord = typeof adminFinanceSuppliersTable.$inferSelect;

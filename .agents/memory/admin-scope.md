@@ -7,13 +7,13 @@ Il lato gestionale interno e il lato sito pubblico sono due cose completamente s
 
 **Why:** l’utente ha ribadito esplicitamente questa separazione dopo una proposta di consolidamento degli archivi.
 
-**How to apply:** non unificare automaticamente clienti, lavori o pagamenti del sito con quelli del gestionale interno; non interpretare i record storici del sito come record mancanti della contabilità. Qualsiasi collegamento o importazione tra i due ambiti richiede una richiesta esplicita.
+**How to apply:** mantenere anagrafiche, lavori, pagamenti, contatti e dati contabili del gestionale separati dalle tabelle del sito pubblico. Non mostrare nel gestionale i record del sito e non collegarli o importarli; qualsiasi trasferimento tra i due ambiti richiede una richiesta esplicita.
 
-L’utente ha richiesto un unico pannello admin con statistiche, recensioni, contatti ricevuti e numero di visite. Ha confermato di sostituire il vecchio admin conservando i dati e i servizi del sito pubblico.
+L’utente ha richiesto un unico pannello admin per le statistiche, le recensioni, i contatti ricevuti e le visite del sito. La contabilità PromoApp deve restare funzionalmente separata dal sito e dal suo archivio.
 
 **Why:** l’utente riteneva che ci fossero «troppe back end» e ha chiesto di eliminare il vecchio admin, non il sito pubblico né il database.
 
-**How to apply:** non reintrodurre le vecchie sezioni amministrative separate senza una nuova richiesta. Il successivo ampliamento approvato del Controllo Economico deve stare nello stesso pannello, riutilizzando l’anagrafica storica e preservando dati e accessi pubblici. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.
+**How to apply:** non reintrodurre le vecchie sezioni amministrative separate senza una nuova richiesta. La sezione Controllo Economico può stare nello stesso pannello admin, ma deve usare solo anagrafiche e movimenti del gestionale; preservare dati e accessi pubblici senza riutilizzarli come dati contabili. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.
 
 L’utente ha chiesto di contare specificamente gli accessi a `https://promoapp.it/sitiweb`, senza trattino, separatamente dalle visite dell’intero sito.
 
