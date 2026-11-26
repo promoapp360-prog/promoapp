@@ -4,7 +4,8 @@ import type { PoolClient } from "pg";
 import type {
   AdminFinanceClient, AdminFinanceData, AdminFinanceEntry, AdminFinanceProject,
   AdminFinanceSupplier, FinanceClientInput, FinanceClientUpdate, FinanceEntryInput, FinanceEntryUpdate,
-  FinanceProjectInput, FinanceProjectUpdate, FinanceRecurringInput, FinanceSupplierInput, FinanceSupplierUpdate, FinanceWorkspace,
+  FinanceDevelopmentTransferInput, FinanceProjectInput, FinanceProjectUpdate, FinanceRecurringInput,
+  FinanceSupplierInput, FinanceSupplierUpdate, FinanceWorkspace,
 } from "@workspace/api-zod";
 import { projectBalance, eligibleIncome, verifiedCash, todayRome } from "./finance-calculations";
 import { ObjectStorageService } from "./objectStorage";
@@ -50,6 +51,86 @@ export async function financeAudit(q: PoolClient, type: string, id: string, befo
   await q.query(`INSERT INTO admin_finance_audit(id,entity_type,entity_id,actor,reason,before,after)
     VALUES($1,$2,$3,'amministratore',$4,$5,$6)`,
   [randomUUID(), type, id, reason, before == null ? null : JSON.stringify(before), after == null ? null : JSON.stringify(after)]);
+}
+export async function importDevelopmentFinance(input: FinanceDevelopmentTransferInput) {
+  return financeTransaction(async q => {
+    await q.query("SELECT pg_advisory_xact_lock(7861401)");
+    await q.query(`LOCK TABLE admin_finance_clients,admin_finance_projects,admin_finance_entries,
+      admin_finance_recurring,admin_finance_suppliers IN SHARE ROW EXCLUSIVE MODE`);
+    const counts = (await q.query<{ clients: number; projects: number; entries: number; recurring: number; suppliers: number }>(
+      `SELECT
+        (SELECT count(*)::int FROM admin_finance_clients) AS clients,
+        (SELECT count(*)::int FROM admin_finance_projects) AS projects,
+        (SELECT count(*)::int FROM admin_finance_entries) AS entries,
+        (SELECT count(*)::int FROM admin_finance_recurring) AS recurring,
+        (SELECT count(*)::int FROM admin_finance_suppliers) AS suppliers`,
+    )).rows[0];
+    if (!counts || Object.values(counts).some(count => count > 0)) return null;
+
+    const clientIds = new Set(input.clients.map(client => client.id));
+    const projectIds = new Set(input.projects.map(project => project.id));
+    const unique = (values: string[]) => new Set(values).size === values.length;
+    if (
+      !unique(input.clients.map(client => client.id)) ||
+      !unique(input.clients.map(client => client.identityKey)) ||
+      !unique(input.projects.map(project => project.id)) ||
+      !unique(input.recurring.map(item => item.id)) ||
+      !unique(input.suppliers.map(supplier => supplier.id)) ||
+      input.projects.some(project => !clientIds.has(project.clientId)) ||
+      input.recurring.some(item =>
+        (item.clientId != null && !clientIds.has(item.clientId)) ||
+        (item.projectId != null && !projectIds.has(item.projectId)) ||
+        (item.projectId != null && item.clientId != null &&
+          input.projects.find(project => project.id === item.projectId)?.clientId !== item.clientId),
+      )
+    ) {
+      throw Object.assign(new Error("Il file contiene identificativi o collegamenti incoerenti."), { status: 400 });
+    }
+
+    for (const client of input.clients) {
+      await q.query(
+        `INSERT INTO admin_finance_clients(id,identity_key,name,company_name,email,phone,notes,details,created_at)
+         VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [client.id,client.identityKey,client.name,client.companyName,client.email,client.phone,client.notes,JSON.stringify(client.details),client.createdAt],
+      );
+      await financeAudit(q,"client",client.id,null,client,"Trasferimento autorizzato dal database di sviluppo");
+    }
+    for (const project of input.projects) {
+      await q.query(
+        `INSERT INTO admin_finance_projects(id,client_id,client_name,name,total_amount_cents,payment_type,deposit_amount_cents,installment_count,notes,active,details,created_at)
+         VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+        [project.id,project.clientId,project.clientName,project.name,project.totalAmountCents,project.paymentType,
+          project.depositAmountCents,project.installmentCount,project.notes,project.active,JSON.stringify(project.details),project.createdAt],
+      );
+      await financeAudit(q,"project",project.id,null,project,"Trasferimento autorizzato dal database di sviluppo");
+    }
+    for (const item of input.recurring) {
+      await q.query(
+        `INSERT INTO admin_finance_recurring(id,project_id,client_id,direction,category,description,amount_cents,start_date,next_date,interval_months,anchor_day,state,created_at)
+         VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+        [item.id,item.projectId,item.clientId,item.direction,item.category,item.description,item.amountCents,
+          item.startDate,item.nextDate,item.intervalMonths,item.anchorDay,item.state,item.createdAt],
+      );
+      await financeAudit(q,"recurring",item.id,null,item,"Trasferimento autorizzato dal database di sviluppo");
+    }
+    for (const supplier of input.suppliers) {
+      await q.query(
+        `INSERT INTO admin_finance_suppliers(id,name,category,email,website,notes,active,created_at)
+         VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+        [supplier.id,supplier.name,supplier.category,supplier.email,supplier.website,supplier.notes,supplier.active,supplier.createdAt],
+      );
+      await financeAudit(q,"supplier",supplier.id,null,supplier,"Trasferimento autorizzato dal database di sviluppo");
+    }
+    return {
+      imported: {
+        clients: input.clients.length,
+        projects: input.projects.length,
+        recurring: input.recurring.length,
+        suppliers: input.suppliers.length,
+      },
+      entries: 0 as const,
+    };
+  });
 }
 function invalid(message: string): never { throw Object.assign(new Error(message), { status: 400 }); }
 async function verifyClientDetails(q: PoolClient, details: FinanceClientInput["details"], id: string) {

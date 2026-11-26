@@ -238,6 +238,240 @@ export interface FinanceRecurringInput {
   state: FinanceRecurringInputState;
 }
 
+export type FinanceDevelopmentTransferClientDetails = {
+  [key: string]: unknown;
+};
+
+export interface FinanceDevelopmentTransferClient {
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 500
+   */
+  identityKey: string;
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name: string;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  companyName: string | null;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email: string | null;
+  /**
+   * @maxLength 60
+   * @nullable
+   */
+  phone: string | null;
+  /** @maxLength 4000 */
+  notes: string;
+  details: FinanceDevelopmentTransferClientDetails;
+  /** @pattern ^\d{4}-\d{2}-\d{2}T */
+  createdAt: string;
+}
+
+export type FinanceDevelopmentTransferProjectPaymentType =
+  (typeof FinanceDevelopmentTransferProjectPaymentType)[keyof typeof FinanceDevelopmentTransferProjectPaymentType];
+
+export const FinanceDevelopmentTransferProjectPaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
+export type FinanceDevelopmentTransferProjectDetails = {
+  [key: string]: unknown;
+};
+
+export interface FinanceDevelopmentTransferProject {
+  id: string;
+  clientId: string;
+  /** @maxLength 160 */
+  clientName: string;
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name: string;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  totalAmountCents: number;
+  paymentType: FinanceDevelopmentTransferProjectPaymentType;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount: number | null;
+  /** @maxLength 4000 */
+  notes: string;
+  active: boolean;
+  details: FinanceDevelopmentTransferProjectDetails;
+  /** @pattern ^\d{4}-\d{2}-\d{2}T */
+  createdAt: string;
+}
+
+export type FinanceDevelopmentTransferRecurringDirection =
+  (typeof FinanceDevelopmentTransferRecurringDirection)[keyof typeof FinanceDevelopmentTransferRecurringDirection];
+
+export const FinanceDevelopmentTransferRecurringDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export type FinanceDevelopmentTransferRecurringState =
+  (typeof FinanceDevelopmentTransferRecurringState)[keyof typeof FinanceDevelopmentTransferRecurringState];
+
+export const FinanceDevelopmentTransferRecurringState = {
+  active: "active",
+  potential: "potential",
+  suspended: "suspended",
+} as const;
+
+export interface FinanceDevelopmentTransferRecurring {
+  id: string;
+  /** @nullable */
+  projectId: string | null;
+  /** @nullable */
+  clientId: string | null;
+  direction: FinanceDevelopmentTransferRecurringDirection;
+  /** @maxLength 60 */
+  category: string;
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  nextDate: string | null;
+  /**
+   * @minimum 1
+   * @maximum 12
+   */
+  intervalMonths: number;
+  /**
+   * @minimum 1
+   * @maximum 31
+   * @nullable
+   */
+  anchorDay: number | null;
+  state: FinanceDevelopmentTransferRecurringState;
+  /** @pattern ^\d{4}-\d{2}-\d{2}T */
+  createdAt: string;
+}
+
+export type FinanceDevelopmentTransferSupplierCategory =
+  (typeof FinanceDevelopmentTransferSupplierCategory)[keyof typeof FinanceDevelopmentTransferSupplierCategory];
+
+export const FinanceDevelopmentTransferSupplierCategory = {
+  advertising: "advertising",
+  hosting: "hosting",
+  software: "software",
+  domains: "domains",
+  professional: "professional",
+  administration: "administration",
+  equipment: "equipment",
+  other: "other",
+} as const;
+
+export interface FinanceDevelopmentTransferSupplier {
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  name: string;
+  category: FinanceDevelopmentTransferSupplierCategory;
+  /**
+   * @maxLength 254
+   * @nullable
+   */
+  email: string | null;
+  /**
+   * @maxLength 2048
+   * @nullable
+   */
+  website: string | null;
+  /** @maxLength 4000 */
+  notes: string;
+  active: boolean;
+  /** @pattern ^\d{4}-\d{2}-\d{2}T */
+  createdAt: string;
+}
+
+export type FinanceDevelopmentTransferInputTransferId =
+  (typeof FinanceDevelopmentTransferInputTransferId)[keyof typeof FinanceDevelopmentTransferInputTransferId];
+
+export const FinanceDevelopmentTransferInputTransferId = {
+  "promoapp-dev-finance-2026-11": "promoapp-dev-finance-2026-11",
+} as const;
+
+export type FinanceDevelopmentTransferInputSourceEnvironment =
+  (typeof FinanceDevelopmentTransferInputSourceEnvironment)[keyof typeof FinanceDevelopmentTransferInputSourceEnvironment];
+
+export const FinanceDevelopmentTransferInputSourceEnvironment = {
+  development: "development",
+} as const;
+
+export interface FinanceDevelopmentTransferInput {
+  transferId: FinanceDevelopmentTransferInputTransferId;
+  sourceEnvironment: FinanceDevelopmentTransferInputSourceEnvironment;
+  /** @maxItems 1000 */
+  clients: FinanceDevelopmentTransferClient[];
+  /** @maxItems 5000 */
+  projects: FinanceDevelopmentTransferProject[];
+  /** @maxItems 5000 */
+  recurring: FinanceDevelopmentTransferRecurring[];
+  /** @maxItems 1000 */
+  suppliers: FinanceDevelopmentTransferSupplier[];
+}
+
+export type FinanceDevelopmentTransferResultImported = {
+  clients: number;
+  projects: number;
+  recurring: number;
+  suppliers: number;
+};
+
+export type FinanceDevelopmentTransferResultEntries =
+  (typeof FinanceDevelopmentTransferResultEntries)[keyof typeof FinanceDevelopmentTransferResultEntries];
+
+export const FinanceDevelopmentTransferResultEntries = {
+  NUMBER_0: 0,
+} as const;
+
+export interface FinanceDevelopmentTransferResult {
+  imported: FinanceDevelopmentTransferResultImported;
+  entries: FinanceDevelopmentTransferResultEntries;
+}
+
 /**
  * @nullable
  */

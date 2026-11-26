@@ -6,9 +6,12 @@ import {
   SaveFinanceRecurringBody, GenerateFinanceRecurringParams, GenerateFinanceRecurringBody, GetFinanceReminderParams,
   RequestFinanceDocumentBody, DownloadFinanceDocumentParams,
   PreviewFinanceTransactionsBody,
+  TransferDevelopmentFinanceBody,
 } from "@workspace/api-zod";
 import { pool } from "@workspace/db";
-import { adminFinanceData, financeWorkspace, saveRecurring, generateRecurring, validCalendarDate } from "../lib/admin-finance-data";
+import {
+  adminFinanceData, financeWorkspace, saveRecurring, generateRecurring, importDevelopmentFinance, validCalendarDate,
+} from "../lib/admin-finance-data";
 import { eligibleIncome, todayRome } from "../lib/finance-calculations";
 import { buildFinanceImportPreview } from "../lib/finance-import-preview";
 import { ObjectStorageService } from "../lib/objectStorage";
@@ -41,6 +44,19 @@ export function createFinanceToolsRouter() {
         proposed:{...r,matchedEntryIds:matches.map(e=>e.id),financialTransactions:"Transazione reale proposta, non importata"}} as const;
     });
     res.json(GetFinanceImportPreviewResponse.parse({blocked:true,rows,warnings:["Nessuna scrittura eseguita. Gli importi euro devono essere quelli realmente addebitati.","Il confronto non autorizza importazione definitiva, conversioni presunte o generazione di pagamenti dai totali."]}));
+  });
+  router.post("/admin/finance/development-transfer",async(req,res):Promise<void>=>{
+    const body=TransferDevelopmentFinanceBody.safeParse(req.body);
+    if(!body.success){
+      res.status(400).json({message:"File di trasferimento non valido: ricarica il file generato dall’archivio di sviluppo."});
+      return;
+    }
+    const imported=await importDevelopmentFinance(body.data);
+    if(!imported){
+      res.status(409).json({message:"Il database contiene già dati contabili. Nessuna voce è stata modificata o duplicata."});
+      return;
+    }
+    res.status(201).json(imported);
   });
   router.get("/admin/finance/workspace",async (_req,res):Promise<void>=>{
     res.json(GetFinanceWorkspaceResponse.parse(await financeWorkspace()));

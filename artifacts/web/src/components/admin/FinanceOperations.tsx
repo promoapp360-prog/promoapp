@@ -4,6 +4,7 @@ import { adminApi } from "@/lib/admin-api";
 import { appPath } from "@/lib/marketing";
 import { Button } from "@/components/ui/button";
 import { FinanceField } from "./FinanceDetailsFields";
+import FinanceDevelopmentTransfer from "./FinanceDevelopmentTransfer";
 import { categoryLabels, fieldClass, money, cash, iso } from "./finance-ui";
 
 export default function FinanceOperations({data,workspace,onRefresh}:{data?:AdminFinanceData;workspace?:FinanceWorkspace;onRefresh:()=>Promise<void>}) {
@@ -58,5 +59,6 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
       if(!response.ok)throw new Error("Esportazione non riuscita. Verifica la sessione e riprova.");
       const url=URL.createObjectURL(await response.blob());const link=document.createElement("a");link.href=url;link.download=`promoapp-controllo-economico.${format}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
     })}>Esporta tutto {format==="csv"?"CSV":"Excel"}</Button>)}</div>
+    <FinanceDevelopmentTransfer onComplete={async()=>{await onRefresh();setNotice("Trasferimento completato; contabilità aggiornata.");}}/>
   </section>;
 }

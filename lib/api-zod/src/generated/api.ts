@@ -431,6 +431,253 @@ export const PreviewFinanceTransactionsResponse = zod.object({
   warnings: zod.array(zod.string()),
 });
 
+/**
+ * @summary Trasferisce dati contabili solo in un archivio ancora vuoto
+ */
+export const transferDevelopmentFinanceBodyClientsItemIdentityKeyMax = 500;
+
+export const transferDevelopmentFinanceBodyClientsItemNameMax = 160;
+
+export const transferDevelopmentFinanceBodyClientsItemCompanyNameMax = 160;
+
+export const transferDevelopmentFinanceBodyClientsItemEmailMax = 254;
+
+export const transferDevelopmentFinanceBodyClientsItemPhoneMax = 60;
+
+export const transferDevelopmentFinanceBodyClientsItemNotesMax = 4000;
+
+export const transferDevelopmentFinanceBodyClientsItemCreatedAtRegExp =
+  new RegExp("^\\d{4}-\\d{2}-\\d{2}T");
+export const transferDevelopmentFinanceBodyClientsMax = 1000;
+
+export const transferDevelopmentFinanceBodyProjectsItemClientNameMax = 160;
+
+export const transferDevelopmentFinanceBodyProjectsItemNameMax = 160;
+
+export const transferDevelopmentFinanceBodyProjectsItemTotalAmountCentsMin = 0;
+export const transferDevelopmentFinanceBodyProjectsItemTotalAmountCentsMax = 2147483647;
+export const transferDevelopmentFinanceBodyProjectsItemTotalAmountCentsMultipleOf = 1;
+
+export const transferDevelopmentFinanceBodyProjectsItemDepositAmountCentsMin = 0;
+export const transferDevelopmentFinanceBodyProjectsItemDepositAmountCentsMax = 2147483647;
+export const transferDevelopmentFinanceBodyProjectsItemDepositAmountCentsMultipleOf = 1;
+
+export const transferDevelopmentFinanceBodyProjectsItemInstallmentCountMin = 2;
+export const transferDevelopmentFinanceBodyProjectsItemInstallmentCountMax = 60;
+export const transferDevelopmentFinanceBodyProjectsItemInstallmentCountMultipleOf = 1;
+
+export const transferDevelopmentFinanceBodyProjectsItemNotesMax = 4000;
+
+export const transferDevelopmentFinanceBodyProjectsItemCreatedAtRegExp =
+  new RegExp("^\\d{4}-\\d{2}-\\d{2}T");
+export const transferDevelopmentFinanceBodyProjectsMax = 5000;
+
+export const transferDevelopmentFinanceBodyRecurringItemCategoryMax = 60;
+
+export const transferDevelopmentFinanceBodyRecurringItemDescriptionMax = 240;
+
+export const transferDevelopmentFinanceBodyRecurringItemAmountCentsMax = 2147483647;
+export const transferDevelopmentFinanceBodyRecurringItemAmountCentsMultipleOf = 1;
+
+export const transferDevelopmentFinanceBodyRecurringItemStartDateRegExp =
+  new RegExp("^\\d{4}-\\d{2}-\\d{2}$");
+export const transferDevelopmentFinanceBodyRecurringItemNextDateRegExp =
+  new RegExp("^\\d{4}-\\d{2}-\\d{2}$");
+export const transferDevelopmentFinanceBodyRecurringItemIntervalMonthsMax = 12;
+export const transferDevelopmentFinanceBodyRecurringItemIntervalMonthsMultipleOf = 1;
+
+export const transferDevelopmentFinanceBodyRecurringItemAnchorDayMax = 31;
+export const transferDevelopmentFinanceBodyRecurringItemAnchorDayMultipleOf = 1;
+
+export const transferDevelopmentFinanceBodyRecurringItemCreatedAtRegExp =
+  new RegExp("^\\d{4}-\\d{2}-\\d{2}T");
+export const transferDevelopmentFinanceBodyRecurringMax = 5000;
+
+export const transferDevelopmentFinanceBodySuppliersItemNameMax = 160;
+
+export const transferDevelopmentFinanceBodySuppliersItemEmailMax = 254;
+
+export const transferDevelopmentFinanceBodySuppliersItemWebsiteMax = 2048;
+
+export const transferDevelopmentFinanceBodySuppliersItemNotesMax = 4000;
+
+export const transferDevelopmentFinanceBodySuppliersItemCreatedAtRegExp =
+  new RegExp("^\\d{4}-\\d{2}-\\d{2}T");
+export const transferDevelopmentFinanceBodySuppliersMax = 1000;
+
+export const TransferDevelopmentFinanceBody = zod.object({
+  transferId: zod.enum(["promoapp-dev-finance-2026-11"]),
+  sourceEnvironment: zod.enum(["development"]),
+  clients: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid(),
+        identityKey: zod
+          .string()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyClientsItemIdentityKeyMax),
+        name: zod
+          .string()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyClientsItemNameMax),
+        companyName: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyClientsItemCompanyNameMax)
+          .nullable(),
+        email: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyClientsItemEmailMax)
+          .nullable(),
+        phone: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyClientsItemPhoneMax)
+          .nullable(),
+        notes: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyClientsItemNotesMax),
+        details: zod.record(zod.string(), zod.unknown()),
+        createdAt: zod
+          .string()
+          .regex(transferDevelopmentFinanceBodyClientsItemCreatedAtRegExp),
+      }),
+    )
+    .max(transferDevelopmentFinanceBodyClientsMax),
+  projects: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid(),
+        clientId: zod.string().uuid(),
+        clientName: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyProjectsItemClientNameMax),
+        name: zod
+          .string()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyProjectsItemNameMax),
+        totalAmountCents: zod
+          .number()
+          .min(transferDevelopmentFinanceBodyProjectsItemTotalAmountCentsMin)
+          .max(transferDevelopmentFinanceBodyProjectsItemTotalAmountCentsMax)
+          .multipleOf(
+            transferDevelopmentFinanceBodyProjectsItemTotalAmountCentsMultipleOf,
+          ),
+        paymentType: zod.enum(["single", "advance", "installments"]),
+        depositAmountCents: zod
+          .number()
+          .min(transferDevelopmentFinanceBodyProjectsItemDepositAmountCentsMin)
+          .max(transferDevelopmentFinanceBodyProjectsItemDepositAmountCentsMax)
+          .multipleOf(
+            transferDevelopmentFinanceBodyProjectsItemDepositAmountCentsMultipleOf,
+          )
+          .nullable(),
+        installmentCount: zod
+          .number()
+          .min(transferDevelopmentFinanceBodyProjectsItemInstallmentCountMin)
+          .max(transferDevelopmentFinanceBodyProjectsItemInstallmentCountMax)
+          .multipleOf(
+            transferDevelopmentFinanceBodyProjectsItemInstallmentCountMultipleOf,
+          )
+          .nullable(),
+        notes: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyProjectsItemNotesMax),
+        active: zod.boolean(),
+        details: zod.record(zod.string(), zod.unknown()),
+        createdAt: zod
+          .string()
+          .regex(transferDevelopmentFinanceBodyProjectsItemCreatedAtRegExp),
+      }),
+    )
+    .max(transferDevelopmentFinanceBodyProjectsMax),
+  recurring: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid(),
+        projectId: zod.string().uuid().nullable(),
+        clientId: zod.string().uuid().nullable(),
+        direction: zod.enum(["income", "expense"]),
+        category: zod
+          .string()
+          .max(transferDevelopmentFinanceBodyRecurringItemCategoryMax),
+        description: zod
+          .string()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyRecurringItemDescriptionMax),
+        amountCents: zod
+          .number()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyRecurringItemAmountCentsMax)
+          .multipleOf(
+            transferDevelopmentFinanceBodyRecurringItemAmountCentsMultipleOf,
+          ),
+        startDate: zod
+          .string()
+          .regex(transferDevelopmentFinanceBodyRecurringItemStartDateRegExp)
+          .nullable(),
+        nextDate: zod
+          .string()
+          .regex(transferDevelopmentFinanceBodyRecurringItemNextDateRegExp)
+          .nullable(),
+        intervalMonths: zod
+          .number()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyRecurringItemIntervalMonthsMax)
+          .multipleOf(
+            transferDevelopmentFinanceBodyRecurringItemIntervalMonthsMultipleOf,
+          ),
+        anchorDay: zod
+          .number()
+          .min(1)
+          .max(transferDevelopmentFinanceBodyRecurringItemAnchorDayMax)
+          .multipleOf(
+            transferDevelopmentFinanceBodyRecurringItemAnchorDayMultipleOf,
+          )
+          .nullable(),
+        state: zod.enum(["active", "potential", "suspended"]),
+        createdAt: zod
+          .string()
+          .regex(transferDevelopmentFinanceBodyRecurringItemCreatedAtRegExp),
+      }),
+    )
+    .max(transferDevelopmentFinanceBodyRecurringMax),
+  suppliers: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid(),
+        name: zod
+          .string()
+          .min(1)
+          .max(transferDevelopmentFinanceBodySuppliersItemNameMax),
+        category: zod.enum([
+          "advertising",
+          "hosting",
+          "software",
+          "domains",
+          "professional",
+          "administration",
+          "equipment",
+          "other",
+        ]),
+        email: zod
+          .string()
+          .max(transferDevelopmentFinanceBodySuppliersItemEmailMax)
+          .nullable(),
+        website: zod
+          .string()
+          .max(transferDevelopmentFinanceBodySuppliersItemWebsiteMax)
+          .nullable(),
+        notes: zod
+          .string()
+          .max(transferDevelopmentFinanceBodySuppliersItemNotesMax),
+        active: zod.boolean(),
+        createdAt: zod
+          .string()
+          .regex(transferDevelopmentFinanceBodySuppliersItemCreatedAtRegExp),
+      }),
+    )
+    .max(transferDevelopmentFinanceBodySuppliersMax),
+});
+
 export const GetFinanceImportPreviewResponse = zod.object({
   blocked: zod.boolean(),
   rows: zod.array(

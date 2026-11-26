@@ -214,6 +214,23 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/FinanceImportPreview" }
+  /admin/finance/development-transfer:
+    post:
+      operationId: transferDevelopmentFinance
+      summary: Trasferisce dati contabili solo in un archivio ancora vuoto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceDevelopmentTransferInput" }
+      responses:
+        "201":
+          description: Dati contabili trasferiti senza transazioni inventate
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceDevelopmentTransferResult" }
+        "400": { description: Archivio di trasferimento non valido }
+        "409": { description: Il database contiene già dati contabili }
   /admin/finance/import-preview:
     get:
       operationId: getFinanceImportPreview
@@ -666,6 +683,87 @@ components:
         nextDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
         intervalMonths: { type: integer, minimum: 1, maximum: 12, multipleOf: 1 }
         state: { type: string, enum: [active, potential, suspended] }
+    FinanceDevelopmentTransferClient:
+      type: object
+      required: [id, identityKey, name, companyName, email, phone, notes, details, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        identityKey: { type: string, minLength: 1, maxLength: 500 }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        companyName: { type: ["string", "null"], maxLength: 160 }
+        email: { type: ["string", "null"], maxLength: 254 }
+        phone: { type: ["string", "null"], maxLength: 60 }
+        notes: { type: string, maxLength: 4000 }
+        details: { type: object, additionalProperties: true }
+        createdAt: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}T" }
+    FinanceDevelopmentTransferProject:
+      type: object
+      required: [id, clientId, clientName, name, totalAmountCents, paymentType, depositAmountCents, installmentCount, notes, active, details, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: string, format: uuid }
+        clientName: { type: string, maxLength: 160 }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        totalAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        notes: { type: string, maxLength: 4000 }
+        active: { type: boolean }
+        details: { type: object, additionalProperties: true }
+        createdAt: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}T" }
+    FinanceDevelopmentTransferRecurring:
+      type: object
+      required: [id, projectId, clientId, direction, category, description, amountCents, startDate, nextDate, intervalMonths, anchorDay, state, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        clientId: { type: ["string", "null"], format: uuid }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, maxLength: 60 }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        nextDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        intervalMonths: { type: integer, minimum: 1, maximum: 12, multipleOf: 1 }
+        anchorDay: { type: ["integer", "null"], minimum: 1, maximum: 31, multipleOf: 1 }
+        state: { type: string, enum: [active, potential, suspended] }
+        createdAt: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}T" }
+    FinanceDevelopmentTransferSupplier:
+      type: object
+      required: [id, name, category, email, website, notes, active, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 160 }
+        category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        email: { type: ["string", "null"], maxLength: 254 }
+        website: { type: ["string", "null"], maxLength: 2048 }
+        notes: { type: string, maxLength: 4000 }
+        active: { type: boolean }
+        createdAt: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}T" }
+    FinanceDevelopmentTransferInput:
+      type: object
+      required: [transferId, sourceEnvironment, clients, projects, recurring, suppliers]
+      properties:
+        transferId: { type: string, enum: [promoapp-dev-finance-2026-11] }
+        sourceEnvironment: { type: string, enum: [development] }
+        clients: { type: array, maxItems: 1000, items: { $ref: "#/components/schemas/FinanceDevelopmentTransferClient" } }
+        projects: { type: array, maxItems: 5000, items: { $ref: "#/components/schemas/FinanceDevelopmentTransferProject" } }
+        recurring: { type: array, maxItems: 5000, items: { $ref: "#/components/schemas/FinanceDevelopmentTransferRecurring" } }
+        suppliers: { type: array, maxItems: 1000, items: { $ref: "#/components/schemas/FinanceDevelopmentTransferSupplier" } }
+    FinanceDevelopmentTransferResult:
+      type: object
+      required: [imported, entries]
+      properties:
+        imported:
+          type: object
+          required: [clients, projects, recurring, suppliers]
+          properties:
+            clients: { type: integer }
+            projects: { type: integer }
+            recurring: { type: integer }
+            suppliers: { type: integer }
+        entries: { type: integer, enum: [0] }
     FinanceHistory:
       type: object
       required: [id, entityType, entityId, actor, reason, createdAt]

@@ -34,6 +34,8 @@ import type {
   ExportFinanceParams,
   FinanceClientInput,
   FinanceClientUpdate,
+  FinanceDevelopmentTransferInput,
+  FinanceDevelopmentTransferResult,
   FinanceDocumentInput,
   FinanceDocumentUpload,
   FinanceEntryInput,
@@ -1344,6 +1346,96 @@ export const usePreviewFinanceTransactions = <
   TContext
 > => {
   return useMutation(getPreviewFinanceTransactionsMutationOptions(options));
+};
+
+/**
+ * @summary Trasferisce dati contabili solo in un archivio ancora vuoto
+ */
+export const getTransferDevelopmentFinanceUrl = () => {
+  return `/api/admin/finance/development-transfer`;
+};
+
+export const transferDevelopmentFinance = async (
+  financeDevelopmentTransferInput: FinanceDevelopmentTransferInput,
+  options?: RequestInit,
+): Promise<FinanceDevelopmentTransferResult> => {
+  return customFetch<FinanceDevelopmentTransferResult>(
+    getTransferDevelopmentFinanceUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(financeDevelopmentTransferInput),
+    },
+  );
+};
+
+export const getTransferDevelopmentFinanceMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof transferDevelopmentFinance>>,
+    TError,
+    { data: BodyType<FinanceDevelopmentTransferInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof transferDevelopmentFinance>>,
+  TError,
+  { data: BodyType<FinanceDevelopmentTransferInput> },
+  TContext
+> => {
+  const mutationKey = ["transferDevelopmentFinance"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof transferDevelopmentFinance>>,
+    { data: BodyType<FinanceDevelopmentTransferInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return transferDevelopmentFinance(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type TransferDevelopmentFinanceMutationResult = NonNullable<
+  Awaited<ReturnType<typeof transferDevelopmentFinance>>
+>;
+export type TransferDevelopmentFinanceMutationBody =
+  BodyType<FinanceDevelopmentTransferInput>;
+export type TransferDevelopmentFinanceMutationError = ErrorType<void>;
+
+/**
+ * @summary Trasferisce dati contabili solo in un archivio ancora vuoto
+ */
+export const useTransferDevelopmentFinance = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof transferDevelopmentFinance>>,
+    TError,
+    { data: BodyType<FinanceDevelopmentTransferInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof transferDevelopmentFinance>>,
+  TError,
+  { data: BodyType<FinanceDevelopmentTransferInput> },
+  TContext
+> => {
+  return useMutation(getTransferDevelopmentFinanceMutationOptions(options));
 };
 
 export const getGetFinanceImportPreviewUrl = () => {

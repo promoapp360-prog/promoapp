@@ -51,7 +51,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   const legacyId=randomUUID(),accontoId=randomUUID();
   try{
     await t.test("tutte le risorse economiche richiedono accesso e protezione CSRF",async()=>{
-      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`]){
+      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/development-transfer","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`]){
         assert.equal((await request(path,"GET",undefined,false)).status,401);
       }
       const login=await request("/admin/login","POST",{password},false);
@@ -60,6 +60,28 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       assert.equal(rejected.status,403);
     });
     const customer=await json("/admin/finance/clients","POST",{name:prefix,details:{aliases:[`${prefix}-alias`],acquisitionSource:"Facebook",acquisitionDate:today}});
+    await t.test("il trasferimento richiede file valido e non sovrascrive un archivio popolato",async()=>{
+      const before=(await pool.query(`SELECT
+        (SELECT count(*)::int FROM admin_finance_clients) AS clients,
+        (SELECT count(*)::int FROM admin_finance_projects) AS projects,
+        (SELECT count(*)::int FROM admin_finance_entries) AS entries,
+        (SELECT count(*)::int FROM admin_finance_recurring) AS recurring,
+        (SELECT count(*)::int FROM admin_finance_suppliers) AS suppliers`)).rows[0];
+      assert.equal((await request("/admin/finance/development-transfer","POST",{transferId:"wrong"})).status,400);
+      const response=await request("/admin/finance/development-transfer","POST",{
+        transferId:"promoapp-dev-finance-2026-11",sourceEnvironment:"development",
+        clients:[],projects:[],recurring:[],suppliers:[],
+      });
+      if(Object.values(before as Record<string,number>).some(count=>count>0)) assert.equal(response.status,409);
+      else assert.equal(response.status,201);
+      const after=(await pool.query(`SELECT
+        (SELECT count(*)::int FROM admin_finance_clients) AS clients,
+        (SELECT count(*)::int FROM admin_finance_projects) AS projects,
+        (SELECT count(*)::int FROM admin_finance_entries) AS entries,
+        (SELECT count(*)::int FROM admin_finance_recurring) AS recurring,
+        (SELECT count(*)::int FROM admin_finance_suppliers) AS suppliers`)).rows[0];
+      assert.deepEqual(after,before);
+    });
     const project=await json("/admin/finance/projects","POST",{clientId:customer.id,name:prefix,totalAmountCents:100000,paymentType:"installments",installmentCount:null});
     const paid=await json("/admin/finance/entries","POST",{direction:"income",category:"deposit",projectId:project.id,description:prefix,amountCents:20000,dueDate:today,paid:true,details:{amountConfirmed:true,reconciliation:"reconciled",paidDate:today,method:"Bonifico"}});
     await t.test("nessun credito da demo o importi sconosciuti; residuo senza rate",async()=>{

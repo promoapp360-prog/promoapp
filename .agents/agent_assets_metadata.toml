@@ -189,3 +189,17 @@ mtime_ms = 1791446583419
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/5511fa65-6f2a-4449-85ed-76244cc8f690/28433c2c-922c-482c-b768-60e3f0596ec7"
 storage_version_token = "1791446776982223"
 content_type = "text/html"
+
+[[outputs]]
+id = "ra4LGtobKIwN0ENd3CqyK"
+uri = "file://generated-artifacts/promoapp-finance-transfer.json"
+type = "unspecified"
+title = "File per trasferire la contabilità PromoApp"
+description = "Contiene 17 clienti, 18 schede lavoro e 4 canoni dal database di sviluppo. Non contiene movimenti di incasso inventati."
+logical_id = "fbc580fc-c64b-40cb-b95c-03ab052e0fbc"
+content_hash = "sha256:5e207f0bbeb190ebe3fd400d21f19db902c483776eea44cff60b2b426a709c8f"
+size = 29355
+mtime_ms = 1795724323841
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/fbc580fc-c64b-40cb-b95c-03ab052e0fbc/812a3675-a344-44f4-9887-a872edb9ae05"
+storage_version_token = "1795724546103251"
+content_type = "application/octet-stream"
