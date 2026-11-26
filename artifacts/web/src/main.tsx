@@ -48,7 +48,10 @@ function Routes() {
       <Route path="/grazie" component={ThankYou} />
       <Route path="/gestione-contatti">{() => <Redirect to="/admin" replace />}</Route>
       <Route path="/admin/controlli">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin initialTab="controls" /></Suspense>}</Route>
-      <Route path="/admin">{() => <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin initialTab={new URLSearchParams(window.location.search).get("tab") === "finance" ? "finance" : "overview"} /></Suspense>}</Route>
+      <Route path="/gestionale">{() => <Suspense fallback={<p>Caricamento gestionale…</p>}><Admin initialTab="finance" /></Suspense>}</Route>
+      <Route path="/admin">{() => new URLSearchParams(window.location.search).get("tab") === "finance"
+        ? <Redirect to="/gestionale" replace />
+        : <Suspense fallback={<p>Caricamento area riservata…</p>}><Admin initialTab="overview" /></Suspense>}</Route>
       {/* Homepage esistente conservata e aggiornata, con il suo modulo recensioni. */}
       <Route path="/" component={Preventivo} />
       <Route component={NotFound} />

@@ -13,7 +13,13 @@ L’utente ha richiesto un unico pannello admin per le statistiche, le recension
 
 **Why:** l’utente riteneva che ci fossero «troppe back end» e ha chiesto di eliminare il vecchio admin, non il sito pubblico né il database.
 
-**How to apply:** non reintrodurre le vecchie sezioni amministrative separate senza una nuova richiesta. La sezione Controllo Economico può stare nello stesso pannello admin, ma deve usare solo anagrafiche e movimenti del gestionale; preservare dati e accessi pubblici senza riutilizzarli come dati contabili. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.
+**How to apply:** mantenere il pannello del sito e il Gestionale PromoApp come aree con navigazione e accessi distinguibili. Il gestionale usa solo anagrafiche e movimenti interni; non collegare o importare dati del sito. Non presentare i vecchi contatori specifici di Gestionale360 come visite dell’intero sito né inventare dati storici.
+
+L’utente ha chiarito che il lato gestionale e il lato sito sono due cose completamente separate e ha chiesto un gestionale PromoApp ordinato per clienti, fornitori, lavori, pagamenti, rate, canoni, incassi e spese.
+
+**Why:** la vecchia schermata “Controllo Economico” non rendeva chiaro dove trovare il gestionale né il suo scopo operativo.
+
+**How to apply:** dare al gestionale una pagina e un ingresso riconoscibili, distinti dal pannello del sito. Nel bilancio mostrare almeno venduto, incassato, da incassare, speso e margine; raggruppare lavori e movimenti per cliente e mantenere separati canoni e rate.
 
 L’utente ha chiesto di contare specificamente gli accessi a `https://promoapp.it/sitiweb`, senza trattino, separatamente dalle visite dell’intero sito.
 

@@ -30,6 +30,7 @@ function currentMonth() {
 }
 export default function Admin({ initialTab = "overview" }: { initialTab?: AdminTab }) {
   const [, setLocation] = useLocation();
+  const financeOnly = initialTab === "finance";
   const [checking, setChecking] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -72,6 +73,14 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
     const id = ++requestId.current;
     setLoading(true);
     try {
+      if (financeOnly) {
+        const financeData = await adminApi<AdminFinanceData>(`/finance?month=${financeMonth}`);
+        if (id !== requestId.current) return false;
+        setFinance(financeData);
+        setError("");
+        setUpdated(new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }));
+        return true;
+      }
       const [summary, received, submitted, controls, financeData] = await Promise.all([
         adminApi<AdminOverview>(`/overview?days=${days}`),
         adminApi<AdminContact[]>("/contacts"), adminApi<AdminReview[]>("/reviews"),
@@ -89,7 +98,7 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
       return false;
     }
     finally { if (id === requestId.current) setLoading(false); }
-  }, [days, financeMonth, tab]);
+  }, [days, financeMonth, financeOnly, tab]);
   useEffect(() => { setTab(initialTab); }, [initialTab]);
   useEffect(() => {
     if (!authenticated) return;
@@ -155,8 +164,10 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-5 py-20" style={{ fontFamily: "Poppins, sans-serif" }}>
       <section className="w-full max-w-md rounded-3xl bg-white p-7 sm:p-9 shadow-xl">
         <span className="text-xs font-bold uppercase tracking-widest text-indigo-600">PromoApp · Area riservata</span>
-        <h1 className="text-3xl font-bold text-slate-900 mt-3">Il tuo pannello</h1>
-        <p className="text-sm text-slate-500 mt-3 mb-7">Statistiche, recensioni, contatti e visite. Un unico accesso.</p>
+        <h1 className="text-3xl font-bold text-slate-900 mt-3">{financeOnly ? "Gestionale PromoApp" : "Pannello del sito"}</h1>
+        <p className="text-sm text-slate-500 mt-3 mb-7">{financeOnly
+          ? "Clienti, lavori, incassi, rate, canoni, fornitori e spese."
+          : "Statistiche, recensioni, contatti e visite del sito pubblico."}</p>
         <form onSubmit={login} className="space-y-4">
           <input type="text" autoComplete="username" value="admin" readOnly className="sr-only" tabIndex={-1} aria-label="Utente admin" />
           <label htmlFor="admin-password" className="block text-sm font-semibold text-slate-700">Password amministratore</label>
@@ -181,21 +192,24 @@ export default function Admin({ initialTab = "overview" }: { initialTab?: AdminT
     <main className="min-h-screen bg-slate-50 text-slate-900 px-4 py-6 sm:px-8 sm:py-10" style={{ fontFamily: "Poppins, sans-serif" }}>
       <div className="max-w-6xl mx-auto">
         <header className="flex flex-wrap justify-between items-center gap-4 mb-7">
-          <div><p className="text-xs font-bold uppercase tracking-widest text-indigo-600">PromoApp</p><h1 className="text-2xl sm:text-3xl font-bold mt-1">Pannello amministratore</h1></div>
+          <div><p className="text-xs font-bold uppercase tracking-widest text-indigo-600">PromoApp</p><h1 className="text-2xl sm:text-3xl font-bold mt-1">{financeOnly ? "Gestionale PromoApp" : "Pannello del sito"}</h1></div>
           <div className="flex items-center gap-4 text-sm">
+            {financeOnly
+              ? <a href={appPath("/admin")} className="text-indigo-700 font-semibold hover:underline">Pannello sito</a>
+              : <a href={appPath("/gestionale")} className="text-indigo-700 font-semibold hover:underline">Gestionale PromoApp</a>}
             <a href={appPath("/")} className="text-slate-500 hover:underline">Sito pubblico</a>
             <button disabled={!!busy} onClick={logout} className="bg-white border border-slate-200 rounded-xl px-4 py-2 disabled:opacity-50">Esci</button>
           </div>
         </header>
-        <nav aria-label="Sezioni admin" className="flex flex-wrap gap-2 mb-6">
-          {([["overview", "Statistiche"], ["contacts", "Contatti ricevuti"], ["reviews", "Recensioni"], ["visits", "Visite"], ["controls", "Controlli gratuiti"], ["finance", "Controllo Economico"]] as const).map(([value, label]) =>
+        {!financeOnly && <nav aria-label="Sezioni del pannello sito" className="flex flex-wrap gap-2 mb-6">
+          {([["overview", "Statistiche"], ["contacts", "Contatti ricevuti"], ["reviews", "Recensioni"], ["visits", "Visite"], ["controls", "Controlli gratuiti"]] as const).map(([value, label]) =>
             <button key={value} aria-current={tab === value ? "page" : undefined} onClick={() => {
               setTab(value);
-              setLocation(value === "controls" ? "/admin/controlli" : value === "finance" ? "/admin?tab=finance" : "/admin");
+              setLocation(value === "controls" ? "/admin/controlli" : "/admin");
             }}
               data-testid={`button-admin-tab-${value}`}
               className={`rounded-xl px-4 py-3 text-sm font-semibold ${tab === value ? "bg-indigo-600 text-white" : "bg-white border border-slate-200 text-slate-600"}`}>{label}</button>)}
-        </nav>
+        </nav>}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5 text-sm">
           <p className="text-slate-500">{updated ? `Ultimo aggiornamento alle ${updated}` : "Caricamento dei dati…"} · Aggiornamento automatico ogni minuto</p>
           <button onClick={() => void load()} disabled={loading || !!busy} className="text-indigo-700 font-semibold disabled:opacity-40">{loading ? "Aggiornamento…" : "Aggiorna"}</button>

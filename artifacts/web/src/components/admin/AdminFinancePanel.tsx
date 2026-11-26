@@ -304,9 +304,9 @@ export default function AdminFinancePanel({
     <section aria-label="Contabilità e bilancio lavori" className="space-y-6" data-testid="panel-admin-finance">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold">Gestionale PromoApp · Controllo economico</h2>
+          <h2 className="text-xl font-bold">Il lavoro e i conti di PromoApp</h2>
           <p className="mt-1 max-w-2xl text-sm text-slate-500">
-            Bilancio interno dell’agenzia, separato dai dati del sito pubblico. Clienti, lavori, fornitori, incassi e spese. Non è un documento fiscale.
+            Clienti, lavori, pagamenti, canoni, fornitori e spese del gestionale interno. Separato dai dati del sito pubblico.
           </p>
         </div>
         <label className="flex items-center gap-2 text-sm font-semibold text-slate-600">
@@ -322,12 +322,12 @@ export default function AdminFinancePanel({
       </div>
 
       <nav aria-label="Sezioni del gestionale" className="flex flex-wrap gap-2">
-        {([["balance","Bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi e canoni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
+        {([["balance","Panoramica e bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi, rate e canoni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
       </nav>
       <div className="flex flex-wrap gap-2">
         <Button size="sm" variant="outline" disabled={busy} onClick={()=>{setSection("clients");setClientEditor("new");}}>Aggiungi cliente</Button>
         <Button size="sm" variant="outline" disabled={busy||!data?.clients.length} onClick={()=>{setSection("clients");setProjectEditor("new");}}>Aggiungi lavoro</Button>
-        <Button size="sm" disabled={busy} onClick={()=>setEntryEditor("new")} data-testid="button-new-finance-entry">Registra incasso / spesa</Button>
+        <Button size="sm" disabled={busy} onClick={()=>setEntryEditor("new")} data-testid="button-new-finance-entry">Registra incasso, rata o spesa</Button>
       </div>
       {entryEditor && <section className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
         <h3 className="mb-3 font-bold">{entryEditor==="new"?"Registra incasso, rata, scadenza o spesa":"Modifica movimento"}</h3>

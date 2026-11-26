@@ -231,6 +231,14 @@ from = "/controllo-sito/"
 to = "/controllo-sito/index.html"
 
 [[services.production.rewrites]]
+from = "/gestionale"
+to = "/gestionale/index.html"
+
+[[services.production.rewrites]]
+from = "/gestionale/"
+to = "/gestionale/index.html"
+
+[[services.production.rewrites]]
 from = "/admin"
 to = "/admin/index.html"
 
