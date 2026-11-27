@@ -16,6 +16,16 @@ export interface AdminFinanceClient {
   email: string | null;
   /** @nullable */
   phone: string | null;
+  /** @nullable */
+  taxId: string | null;
+  /** @nullable */
+  address: string | null;
+  /** @nullable */
+  sector: string | null;
+  /** @nullable */
+  acquisitionSource: string | null;
+  /** @nullable */
+  status: string | null;
   notes: string;
   createdAt: Date;
   details?: FinanceClientDetails;

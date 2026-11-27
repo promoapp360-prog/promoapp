@@ -15,6 +15,16 @@ export interface FinanceSupplierUpdate {
   name?: string;
   category?: FinanceSupplierUpdateCategory;
   /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 240
+   * @nullable
+   */
+  address?: string | null;
+  /**
    * @maxLength 254
    * @nullable
    */

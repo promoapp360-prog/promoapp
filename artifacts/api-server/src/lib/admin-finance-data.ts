@@ -15,13 +15,15 @@ import { ObjectStorageService } from "./objectStorage";
 export async function ensureFinanceSchema() {
   await pool.query("SELECT customer_id,details FROM admin_finance_projects LIMIT 0");
 }
-const clientColumns = `id, name, company_name AS "companyName", email, phone,
- notes, details, created_at AS "createdAt"`;
-const supplierColumns = `id,name,category,email,website,notes,active,created_at AS "createdAt"`;
+const clientColumns = `id, name, company_name AS "companyName", email, phone,tax_id AS "taxId",
+ address,sector,acquisition_source AS "acquisitionSource",status,notes,details,created_at AS "createdAt"`;
+const supplierColumns = `id,name,category,tax_id AS "taxId",address,email,website,notes,active,created_at AS "createdAt"`;
 const projectColumns = `p.id,p.client_id AS "clientId",
  COALESCE(NULLIF(c.company_name,''),c.name,p.client_name) AS "clientName",
  p.name,p.total_amount_cents AS "totalAmountCents",p.payment_type AS "paymentType",
  p.deposit_amount_cents AS "depositAmountCents",p.installment_count AS "installmentCount",
+ p.work_type AS "workType",p.status,p.start_date::text AS "startDate",p.delivery_date::text AS "deliveryDate",
+ p.service_description AS "serviceDescription",p.technical_references AS "technicalReferences",
  p.notes,p.active,p.created_at AS "createdAt",
  p.details AS details`;
 const entryColumns = `e.id,e.project_id AS "projectId",p.name AS "projectName",
@@ -170,12 +172,24 @@ async function saveProject(id: string, input: FinanceProjectInput | FinanceProje
     if (paymentType === "advance" && (!deposit || deposit > total || installments !== null)) invalid("Acconto non valido.");
     if (paymentType === "single" && (deposit !== null || installments !== null)) invalid("Modalità di pagamento non valida.");
     if (paymentType === "installments" && deposit !== null) invalid("Indicare le singole rate nei movimenti.");
+    const workType=input.workType===undefined?before?.work_type??null:input.workType;
+    const status=input.status===undefined?before?.status??null:input.status;
+    const startDate=input.startDate===undefined?(before?.start_date?calendarDate(before.start_date):null):input.startDate;
+    const deliveryDate=input.deliveryDate===undefined?(before?.delivery_date?calendarDate(before.delivery_date):null):input.deliveryDate;
+    if(startDate&&!validCalendarDate(startDate))invalid("Data di inizio lavoro non valida.");
+    if(deliveryDate&&!validCalendarDate(deliveryDate))invalid("Data di consegna non valida.");
+    if(startDate&&deliveryDate&&deliveryDate<startDate)invalid("La consegna prevista non può precedere l’inizio.");
+    const serviceDescription=input.serviceDescription===undefined?before?.service_description??null:clean(input.serviceDescription);
+    const technicalReferences=input.technicalReferences===undefined?before?.technical_references??{}:input.technicalReferences;
     await q.query(`INSERT INTO admin_finance_projects
-      (id,client_id,client_name,name,total_amount_cents,payment_type,deposit_amount_cents,installment_count,notes,active,details)
-      VALUES($1,$2,'',$3,$4,$5,$6,$7,$8,$9,$10)
+      (id,client_id,client_name,name,total_amount_cents,payment_type,deposit_amount_cents,installment_count,
+       work_type,status,start_date,delivery_date,service_description,technical_references,notes,active,details)
+      VALUES($1,$2,'',$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
       ON CONFLICT(id) DO UPDATE SET client_id=$2,name=$3,total_amount_cents=$4,
-      payment_type=$5,deposit_amount_cents=$6,installment_count=$7,notes=$8,active=$9,details=$10`,
+      payment_type=$5,deposit_amount_cents=$6,installment_count=$7,work_type=$8,status=$9,start_date=$10,
+      delivery_date=$11,service_description=$12,technical_references=$13,notes=$14,active=$15,details=$16`,
     [id,clientId,input.name?.trim() ?? before?.name,total,paymentType,deposit,installments,
+      workType,status,startDate,deliveryDate,serviceDescription,JSON.stringify(technicalReferences),
       input.notes ?? before?.notes ?? "",("active" in input ? input.active : undefined) ?? before?.active ?? true,JSON.stringify(details)]);
     await financeAudit(q,"project",id,before,{ ...input, details },"Aggiornamento lavoro e accordo");
     return id;
@@ -258,8 +272,12 @@ export const adminFinanceData = {
       await q.query("SELECT pg_advisory_xact_lock(7861401)");
       if ((await q.query(`SELECT id FROM admin_finance_clients WHERE identity_key=$1`,[identityKey])).rowCount) return true;
       await verifyClientDetails(q,input.details,id);
-      await q.query(`INSERT INTO admin_finance_clients(id,identity_key,name,company_name,email,phone,notes,details) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
-        [id,identityKey,input.name.trim(),clean(input.companyName),clean(input.email),clean(input.phone),input.notes??"",JSON.stringify(input.details??{})]);
+      await q.query(`INSERT INTO admin_finance_clients
+        (id,identity_key,name,company_name,email,phone,tax_id,address,sector,acquisition_source,status,notes,details)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+        [id,identityKey,input.name.trim(),clean(input.companyName),clean(input.email),clean(input.phone),
+          clean(input.taxId),clean(input.address),clean(input.sector),clean(input.acquisitionSource),clean(input.status),
+          input.notes??"",JSON.stringify(input.details??{})]);
       await financeAudit(q,"client",id,null,input,"Cliente creato nell’anagrafica interna PromoApp"); return false;
     });
     return duplicate ? null : getClient(id);
@@ -273,10 +291,22 @@ export const adminFinanceData = {
       const identityKey = `${nextName.toLocaleLowerCase("it-IT")}\u001f${(nextCompany ?? "").toLocaleLowerCase("it-IT")}`;
       if((await q.query(`SELECT id FROM admin_finance_clients WHERE id<>$1 AND identity_key=$2`,[id,identityKey])).rowCount)invalid("Esiste già un cliente con lo stesso nome e la stessa azienda.");
       const details = { ...current.details,...input.details }; await verifyClientDetails(q,details,id);
-      await q.query(`UPDATE admin_finance_clients SET identity_key=$2,name=$3,company_name=$4,email=$5,phone=$6,notes=$7,details=$8 WHERE id=$1`,
-        [id,identityKey,nextName,nextCompany,input.email===undefined?current.email:clean(input.email),
-          input.phone===undefined?current.phone:clean(input.phone),input.notes??current.notes,JSON.stringify(details)]);
-      await financeAudit(q,"client",id,current,input,"Aggiornamento anagrafica cliente interna"); return true;
+      const after={
+        name:nextName,companyName:nextCompany,
+        email:input.email===undefined?current.email:clean(input.email),
+        phone:input.phone===undefined?current.phone:clean(input.phone),
+        taxId:input.taxId===undefined?current.tax_id:clean(input.taxId),
+        address:input.address===undefined?current.address:clean(input.address),
+        sector:input.sector===undefined?current.sector:clean(input.sector),
+        acquisitionSource:input.acquisitionSource===undefined?current.acquisition_source:clean(input.acquisitionSource),
+        status:input.status===undefined?current.status:clean(input.status),
+        notes:input.notes??current.notes,details,
+      };
+      await q.query(`UPDATE admin_finance_clients SET identity_key=$2,name=$3,company_name=$4,email=$5,phone=$6,
+        tax_id=$7,address=$8,sector=$9,acquisition_source=$10,status=$11,notes=$12,details=$13 WHERE id=$1`,
+        [id,identityKey,nextName,nextCompany,after.email,after.phone,after.taxId,after.address,after.sector,
+          after.acquisitionSource,after.status,after.notes,JSON.stringify(details)]);
+      await financeAudit(q,"client",id,current,{...input,...after},"Aggiornamento anagrafica cliente interna"); return true;
     }); return saved?getClient(id):undefined;
   },
   async listSuppliers(): Promise<AdminFinanceSupplier[]> {
@@ -287,8 +317,9 @@ export const adminFinanceData = {
     return financeTransaction(async q => {
       await q.query("SELECT pg_advisory_xact_lock(7861402)");
       if ((await q.query("SELECT id FROM admin_finance_suppliers WHERE lower(trim(name))=lower(trim($1))",[input.name])).rowCount) return null;
-      await q.query(`INSERT INTO admin_finance_suppliers(id,name,category,email,website,notes)
-        VALUES($1,$2,$3,$4,$5,$6)`,[id,input.name.trim(),input.category,clean(input.email),clean(input.website),input.notes?.trim()??""]);
+      await q.query(`INSERT INTO admin_finance_suppliers(id,name,category,tax_id,address,email,website,notes)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,[id,input.name.trim(),input.category,clean(input.taxId),clean(input.address),
+          clean(input.email),clean(input.website),input.notes?.trim()??""]);
       await financeAudit(q,"supplier",id,null,input,"Fornitore registrato nel gestionale PromoApp");
       return (await q.query<AdminFinanceSupplier>(`SELECT ${supplierColumns} FROM admin_finance_suppliers WHERE id=$1`,[id])).rows[0];
     });
@@ -302,10 +333,12 @@ export const adminFinanceData = {
       if((await q.query("SELECT id FROM admin_finance_suppliers WHERE id<>$1 AND lower(trim(name))=lower(trim($2))",[id,name])).rowCount)return null;
       const after={
         name,category:input.category??before.category,email:input.email===undefined?before.email:clean(input.email),
+        taxId:input.taxId===undefined?before.tax_id:clean(input.taxId),
+        address:input.address===undefined?before.address:clean(input.address),
         website:input.website===undefined?before.website:clean(input.website),notes:input.notes?.trim()??before.notes,active:input.active??before.active,
       };
-      await q.query(`UPDATE admin_finance_suppliers SET name=$2,category=$3,email=$4,website=$5,notes=$6,active=$7 WHERE id=$1`,
-        [id,after.name,after.category,after.email,after.website,after.notes,after.active]);
+      await q.query(`UPDATE admin_finance_suppliers SET name=$2,category=$3,tax_id=$4,address=$5,email=$6,website=$7,notes=$8,active=$9 WHERE id=$1`,
+        [id,after.name,after.category,after.taxId,after.address,after.email,after.website,after.notes,after.active]);
       await financeAudit(q,"supplier",id,before,after,"Aggiornamento fornitore");
       return (await q.query<AdminFinanceSupplier>(`SELECT ${supplierColumns} FROM admin_finance_suppliers WHERE id=$1`,[id])).rows[0];
     });
@@ -343,16 +376,20 @@ export const adminFinanceData = {
 export async function financeWorkspace(): Promise<FinanceWorkspace> {
   const [recurring, history, suppliers] = await Promise.all([
     pool.query(`SELECT id,project_id AS "projectId",client_id AS "clientId",direction,category,description,amount_cents AS "amountCents",
-      start_date::text AS "startDate",next_date::text AS "nextDate",interval_months AS "intervalMonths",state FROM admin_finance_recurring ORDER BY description`),
+      start_date::text AS "startDate",next_date::text AS "nextDate",end_date::text AS "endDate",
+      interval_months AS "intervalMonths",state FROM admin_finance_recurring ORDER BY description`),
     pool.query(`SELECT id,entity_type AS "entityType",entity_id AS "entityId",actor,reason,before,after,created_at AS "createdAt" FROM admin_finance_audit ORDER BY created_at DESC LIMIT 200`),
     pool.query<AdminFinanceSupplier>(`SELECT ${supplierColumns} FROM admin_finance_suppliers ORDER BY active DESC,lower(name)`),
   ]);
   return { recurring:recurring.rows,history:history.rows,suppliers:suppliers.rows,warnings:["Dati del sito pubblico esclusi dal gestionale PromoApp."] };
 }
 export async function saveRecurring(input: FinanceRecurringInput) {
-  if((input.startDate&&!validCalendarDate(input.startDate))||(input.nextDate&&!validCalendarDate(input.nextDate))) invalid("Date della ricorrenza non valide.");
+  if((input.startDate&&!validCalendarDate(input.startDate))||(input.nextDate&&!validCalendarDate(input.nextDate))||
+    (input.endDate&&!validCalendarDate(input.endDate))) invalid("Date della ricorrenza non valide.");
   if(!categoryMatchesDirection(input.direction,input.category)) invalid("Categoria ricorrenza non valida.");
   if(input.state==="active" && (!input.startDate || !input.nextDate || input.nextDate<input.startDate)) invalid("Decorrenza e prossima scadenza obbligatorie per un servizio attivo.");
+  if(input.startDate&&input.endDate&&input.endDate<input.startDate)invalid("La fine del canone non può precedere la decorrenza.");
+  if(input.nextDate&&input.endDate&&input.nextDate>input.endDate)invalid("La prossima scadenza supera la data di fine del canone.");
   return financeTransaction(async q=>{
     const id=input.id??randomUUID();
     const before=(await q.query("SELECT * FROM admin_finance_recurring WHERE id=$1 FOR UPDATE",[id])).rows[0];
@@ -364,11 +401,11 @@ export async function saveRecurring(input: FinanceRecurringInput) {
     }
     if(input.clientId && !(await q.query("SELECT id FROM admin_finance_clients WHERE id=$1",[input.clientId])).rowCount) invalid("Cliente non valido.");
     if(input.direction==="income" && !input.projectId && !input.clientId) invalid("Collega il servizio al cliente.");
-    await q.query(`INSERT INTO admin_finance_recurring(id,project_id,client_id,direction,category,description,amount_cents,start_date,next_date,interval_months,anchor_day,state)
-      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT(id) DO UPDATE SET project_id=$2,client_id=$3,direction=$4,category=$5,
-      description=$6,amount_cents=$7,start_date=$8,next_date=$9,interval_months=$10,anchor_day=$11,state=$12`,
-    [id,input.projectId??null,input.clientId??null,input.direction,input.category,input.description,input.amountCents,input.startDate??null,input.nextDate??null,input.intervalMonths,
-      before?.anchor_day??(input.startDate?Number(input.startDate.slice(-2)):null),input.state]);
+    await q.query(`INSERT INTO admin_finance_recurring(id,project_id,client_id,direction,category,description,amount_cents,start_date,next_date,end_date,interval_months,anchor_day,state)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ON CONFLICT(id) DO UPDATE SET project_id=$2,client_id=$3,direction=$4,category=$5,
+      description=$6,amount_cents=$7,start_date=$8,next_date=$9,end_date=$10,interval_months=$11,anchor_day=$12,state=$13`,
+    [id,input.projectId??null,input.clientId??null,input.direction,input.category,input.description,input.amountCents,input.startDate??null,input.nextDate??null,
+      input.endDate??null,input.intervalMonths,before?.anchor_day??(input.startDate?Number(input.startDate.slice(-2)):null),input.state]);
     await financeAudit(q,"recurring",id,before,input,"Aggiornamento canone / costo ricorrente"); return {id};
   });
 }

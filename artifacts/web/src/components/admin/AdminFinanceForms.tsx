@@ -32,6 +32,10 @@ const clientSchema = z.object({
   companyName: z.string().max(160),
   email: z.string().max(254).email("Inserisci un’email valida.").or(z.literal("")),
   phone: z.string().max(60),
+  taxId: z.string().max(40),
+  address: z.string().max(500),
+  sector: z.string().max(120),
+  acquisitionSource: z.string().max(160),
   notes: z.string().max(4000),
 });
 type ClientFormValues = z.infer<typeof clientSchema>;
@@ -43,6 +47,11 @@ const projectSchema = z.object({
   paymentType: z.enum(["single", "advance", "installments"]),
   depositAmountCents: z.number().int().nullable(),
   installmentCount: z.number().int().nullable(),
+  workType: z.enum(["","website","web_app","management","ecommerce","ads","seo","other"]),
+  status: z.enum(["","waiting_deposit","in_progress","in_review","delivered","closed","cancelled"]),
+  startDate: z.string(),
+  deliveryDate: z.string(),
+  serviceDescription: z.string().max(2000),
   notes: z.string().max(4000),
 }).superRefine((values, context) => {
   if (values.paymentType === "single" && (values.depositAmountCents !== null || values.installmentCount !== null)) {
@@ -60,6 +69,9 @@ const projectSchema = z.object({
   )) {
     context.addIssue({ code: "custom", path: ["installmentCount"], message: "Indica un numero di rate da 2 a 60 oppure lascia il campo vuoto." });
   }
+  if(values.startDate&&!/^\d{4}-\d{2}-\d{2}$/.test(values.startDate))context.addIssue({code:"custom",path:["startDate"],message:"Data di inizio non valida."});
+  if(values.deliveryDate&&!/^\d{4}-\d{2}-\d{2}$/.test(values.deliveryDate))context.addIssue({code:"custom",path:["deliveryDate"],message:"Data di consegna non valida."});
+  if(values.startDate&&values.deliveryDate&&values.deliveryDate<values.startDate)context.addIssue({code:"custom",path:["deliveryDate"],message:"La consegna non può precedere l’inizio."});
 });
 type ProjectFormValues = z.infer<typeof projectSchema>;
 
@@ -130,7 +142,7 @@ export function FinanceClientForm({
   useEffect(()=>{setDetails(initial?.details??{});},[initial?.id,JSON.stringify(initial?.details)]);
   const form = useForm<ClientFormValues>({
     resolver: zodResolver(clientSchema),
-    defaultValues: { name: "", companyName: "", email: "", phone: "", notes: "" },
+    defaultValues: { name: "", companyName: "", email: "", phone: "", taxId:"",address:"",sector:"",acquisitionSource:"",notes: "" },
   });
   const { reset } = form;
 
@@ -140,9 +152,13 @@ export function FinanceClientForm({
       companyName: initial.companyName ?? "",
       email: initial.email ?? "",
       phone: initial.phone ?? "",
+      taxId:initial.taxId??"",
+      address:initial.address??"",
+      sector:initial.sector??"",
+      acquisitionSource:initial.acquisitionSource??"",
       notes: initial.notes,
-    } : { name: "", companyName: "", email: "", phone: "", notes: "" });
-  }, [reset, initial?.id, initial?.name, initial?.companyName, initial?.email, initial?.phone, initial?.notes]);
+    } : { name: "", companyName: "", email: "", phone: "", taxId:"",address:"",sector:"",acquisitionSource:"",notes: "" });
+  }, [reset, initial?.id, initial?.name, initial?.companyName, initial?.email, initial?.phone, initial?.taxId,initial?.address,initial?.sector,initial?.acquisitionSource,initial?.notes]);
 
   return (
     <Form {...form}>
@@ -153,6 +169,10 @@ export function FinanceClientForm({
             companyName: values.companyName.trim() || null,
             email: values.email.trim() || null,
             phone: values.phone.trim() || null,
+            taxId:values.taxId.trim()||null,
+            address:values.address.trim()||null,
+            sector:values.sector.trim()||null,
+            acquisitionSource:values.acquisitionSource.trim()||null,
             notes: values.notes,
             details: {...details,aliases:details.aliases?.map(v=>v.trim()).filter(Boolean)},
           };
@@ -191,6 +211,22 @@ export function FinanceClientForm({
             <FormControl><Input {...field} type="tel" autoComplete="tel" data-testid="input-finance-client-phone" /></FormControl>
             <FormMessage />
           </FormItem>
+        )} />
+        <FormField control={form.control} name="taxId" render={({ field }) => (
+          <FormItem><FormLabel>Codice fiscale / P. IVA (facoltativo)</FormLabel>
+            <FormControl><Input {...field} autoComplete="off" /></FormControl><FormMessage /></FormItem>
+        )} />
+        <FormField control={form.control} name="address" render={({ field }) => (
+          <FormItem><FormLabel>Indirizzo (facoltativo)</FormLabel>
+            <FormControl><Input {...field} autoComplete="street-address" /></FormControl><FormMessage /></FormItem>
+        )} />
+        <FormField control={form.control} name="sector" render={({ field }) => (
+          <FormItem><FormLabel>Settore (facoltativo)</FormLabel>
+            <FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+        )} />
+        <FormField control={form.control} name="acquisitionSource" render={({ field }) => (
+          <FormItem><FormLabel>Come è arrivato (facoltativo)</FormLabel>
+            <FormControl><Input {...field} placeholder="Es. passaparola" /></FormControl><FormMessage /></FormItem>
         )} />
         <FormField control={form.control} name="notes" render={({ field }) => (
           <FormItem className="sm:col-span-2">
@@ -242,6 +278,11 @@ export function FinanceProjectForm({
       paymentType: "single",
       depositAmountCents: null,
       installmentCount: null,
+      workType:"",
+      status:"",
+      startDate:"",
+      deliveryDate:"",
+      serviceDescription:"",
       notes: "",
     },
   });
@@ -256,6 +297,11 @@ export function FinanceProjectForm({
           paymentType: initial.paymentType,
           depositAmountCents: initial.depositAmountCents,
           installmentCount: initial.installmentCount,
+          workType:initial.workType??"",
+          status:initial.status??"",
+          startDate:initial.startDate??"",
+          deliveryDate:initial.deliveryDate??"",
+          serviceDescription:initial.serviceDescription??"",
           notes: initial.notes,
         }
       : {
@@ -265,9 +311,14 @@ export function FinanceProjectForm({
           paymentType: "single",
           depositAmountCents: null,
           installmentCount: null,
+          workType:"",
+          status:"",
+          startDate:"",
+          deliveryDate:"",
+          serviceDescription:"",
           notes: "",
         });
-  }, [reset, initial?.id, initial?.clientId, initial?.name, initial?.totalAmountCents, initial?.paymentType, initial?.depositAmountCents, initial?.installmentCount, initial?.notes]);
+  }, [reset, initial?.id, initial?.clientId, initial?.name, initial?.totalAmountCents, initial?.paymentType, initial?.depositAmountCents, initial?.installmentCount, initial?.workType,initial?.status,initial?.startDate,initial?.deliveryDate,initial?.serviceDescription,initial?.notes]);
 
   return (
     <Form {...form}>
@@ -280,6 +331,12 @@ export function FinanceProjectForm({
             paymentType: values.paymentType,
             depositAmountCents: values.depositAmountCents,
             installmentCount: values.installmentCount,
+            workType:values.workType||null,
+            status:values.status||null,
+            startDate:values.startDate||null,
+            deliveryDate:values.deliveryDate||null,
+            serviceDescription:values.serviceDescription.trim()||null,
+            technicalReferences:initial?.technicalReferences??{},
             notes: values.notes,
             details,
           }, initial?.id);
@@ -377,6 +434,35 @@ export function FinanceProjectForm({
             <FormControl><Input {...field} placeholder="Es. Sito web" data-testid="input-finance-work" /></FormControl>
             <FormMessage />
           </FormItem>
+        )} />
+        <FormField control={form.control} name="workType" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Tipo di lavoro (facoltativo)</FormLabel>
+            <FormControl><select {...field} className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm">
+              <option value="">Non specificato</option><option value="website">Sito web</option><option value="web_app">Applicazione web</option>
+              <option value="management">Gestionale</option><option value="ecommerce">E-commerce</option><option value="ads">Pubblicità</option>
+              <option value="seo">SEO</option><option value="other">Altro</option>
+            </select></FormControl><FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="status" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Stato operativo (facoltativo)</FormLabel>
+            <FormControl><select {...field} className="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm">
+              <option value="">Non specificato</option><option value="waiting_deposit">In attesa dell’acconto</option><option value="in_progress">In lavorazione</option>
+              <option value="in_review">In revisione</option><option value="delivered">Consegnato</option><option value="closed">Chiuso</option><option value="cancelled">Annullato</option>
+            </select></FormControl><FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="startDate" render={({ field }) => (
+          <FormItem><FormLabel>Inizio lavoro (facoltativo)</FormLabel><FormControl><Input {...field} type="date" /></FormControl><FormMessage /></FormItem>
+        )} />
+        <FormField control={form.control} name="deliveryDate" render={({ field }) => (
+          <FormItem><FormLabel>Consegna prevista (facoltativa)</FormLabel><FormControl><Input {...field} type="date" /></FormControl><FormMessage /></FormItem>
+        )} />
+        <FormField control={form.control} name="serviceDescription" render={({ field }) => (
+          <FormItem className="sm:col-span-2"><FormLabel>Lavoro svolto / servizio concordato (facoltativo)</FormLabel>
+            <FormControl><textarea {...field} rows={3} className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm" /></FormControl><FormMessage /></FormItem>
         )} />
         <FormField control={form.control} name="totalAmountCents" render={({ field }) => (
           <FormItem>

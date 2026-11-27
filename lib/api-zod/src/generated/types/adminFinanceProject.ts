@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AdminFinanceProjectPaymentType } from "./adminFinanceProjectPaymentType";
+import type { AdminFinanceProjectStatus } from "./adminFinanceProjectStatus";
+import type { AdminFinanceProjectTechnicalReferences } from "./adminFinanceProjectTechnicalReferences";
+import type { AdminFinanceProjectWorkType } from "./adminFinanceProjectWorkType";
 import type { FinanceProjectDetails } from "./financeProjectDetails";
 
 export interface AdminFinanceProject {
@@ -32,6 +35,26 @@ export interface AdminFinanceProject {
    * @nullable
    */
   installmentCount: number | null;
+  /** @nullable */
+  workType: AdminFinanceProjectWorkType;
+  /** @nullable */
+  status: AdminFinanceProjectStatus;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  deliveryDate: string | null;
+  /**
+   * @maxLength 2000
+   * @nullable
+   */
+  serviceDescription: string | null;
+  technicalReferences: AdminFinanceProjectTechnicalReferences;
   notes: string;
   active: boolean;
   createdAt: Date;

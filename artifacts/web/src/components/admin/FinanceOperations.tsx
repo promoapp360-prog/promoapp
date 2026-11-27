@@ -13,7 +13,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
   const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit"}).format(new Date());
   const loadLedger=async()=>{try{setLedger(await adminApi<FinanceLedgerData>(`/finance/ledger?month=${month}`));}catch{setLedger(undefined);}};
   useEffect(()=>{void loadLedger();},[data,workspace,month]);
-  const fresh=():FinanceRecurringInput=>({direction:"income",category:"monthly_fee",description:"",amountCents:0,intervalMonths:1,state:"potential",startDate:null,nextDate:null});
+  const fresh=():FinanceRecurringInput=>({direction:"income",category:"monthly_fee",description:"",amountCents:0,intervalMonths:1,state:"potential",startDate:null,nextDate:null,endDate:null});
   const act=async (work:()=>Promise<unknown>)=>{
     setError("");setBusy(true);setNotice("");
     try {await work();await onRefresh();await loadLedger();setNotice("Operazione completata e dati ricaricati.");return true;}
@@ -38,6 +38,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
         <FinanceField label="Frequenza"><select className={fieldClass} value={editor.intervalMonths} onChange={e=>set({intervalMonths:Number(e.target.value)})}><option value={1}>Mensile</option><option value={3}>Trimestrale</option><option value={6}>Semestrale</option><option value={12}>Annuale</option></select></FinanceField>
         <FinanceField label="Decorrenza"><input type="date" className={fieldClass} value={editor.startDate??""} onChange={e=>set({startDate:e.target.value||null})}/></FinanceField>
         <FinanceField label="Prossima scadenza"><input type="date" className={fieldClass} value={editor.nextDate??""} onChange={e=>set({nextDate:e.target.value||null})}/></FinanceField>
+        <FinanceField label="Fine canone (facoltativa)"><input type="date" className={fieldClass} value={editor.endDate??""} onChange={e=>set({endDate:e.target.value||null})}/></FinanceField>
         <FinanceField label="Stato"><select className={fieldClass} value={editor.state} onChange={e=>set({state:e.target.value as FinanceRecurringInput["state"]})}><option value="potential">Potenziale, non accettato</option><option value="active">Attivo, accordo confermato</option><option value="suspended">Sospeso</option></select></FinanceField>
         {editor.direction==="expense"&&<FinanceField label="Categoria"><select className={fieldClass} value={editor.category} onChange={e=>set({category:e.target.value})}>{Object.entries(categoryLabels).filter(([k])=>!["deposit","balance","installment","monthly_fee"].includes(k)).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></FinanceField>}
         <div className="flex gap-2 sm:col-span-2"><Button disabled={busy}>Salva ricorrenza</Button><Button type="button" variant="outline" onClick={()=>setEditor(null)}>Annulla</Button></div>
@@ -45,7 +46,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
       <div className="grid gap-3 lg:grid-cols-2">{workspace?.recurring.map(r=><article key={r.id} className="rounded-xl border p-4">
         <h4 className="font-semibold">{r.description}</h4><p className="text-xs text-slate-500">{data?.clients.find(c=>c.id===r.clientId)?.name||data?.projects.find(p=>p.id===r.projectId)?.clientName||"Costo generale"}</p>
         <p className="my-2 text-sm">{money(r.amountCents)} ogni {r.intervalMonths} mesi · {r.state==="active"?"Attivo":r.state==="potential"?"Potenziale":"Sospeso"}</p>
-        <p className="text-xs text-slate-500">Da {r.startDate||"definire"} · prossima {r.nextDate||"da definire"}</p>
+        <p className="text-xs text-slate-500">Da {r.startDate||"definire"} · prossima {r.nextDate||"da definire"}{r.endDate?` · fine ${r.endDate}`:""}</p>
         <div className="my-3 flex flex-wrap gap-3"><button className="text-xs font-semibold text-indigo-700" disabled={busy} onClick={()=>setEditor(r)}>Modifica / sospendi</button>
           {r.state==="active"&&<button disabled={busy} className="text-xs font-semibold text-indigo-700" onClick={()=>void act(()=>adminApi(`/finance/recurring/${r.id}/generate`,{method:"POST",body:JSON.stringify({dueDate:r.nextDate})}))}>Genera prossima scadenza</button>}
         </div>

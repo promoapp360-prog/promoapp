@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { FinanceClientForm, FinanceProjectForm } from "./AdminFinanceForms";
 import FinanceLedgerPanel from "./FinanceLedgerPanel";
 import FinanceOperations from "./FinanceOperations";
+import FinanceQuotes from "./FinanceQuotes";
+import FinanceSchedule from "./FinanceSchedule";
+import FinanceFiscalDocuments from "./FinanceFiscalDocuments";
 import FinanceSuppliers from "./FinanceSuppliers";
 import { adminApi } from "@/lib/admin-api";
 import { confirmed } from "./finance-ui";
@@ -98,7 +101,7 @@ export default function AdminFinancePanel({
   useEffect(()=>{void loadLedger();},[loadLedger]);
   const [projectEditor, setProjectEditor] = useState<AdminFinanceProject | "new" | null>(null);
   const [clientEditor, setClientEditor] = useState<AdminFinanceClient | "new" | null>(null);
-  const [section, setSection] = useState<"balance" | "clients" | "suppliers" | "receipts">("balance");
+  const [section, setSection] = useState<"balance" | "clients" | "suppliers" | "receipts" | "quotes" | "schedule" | "documents" | "settings">("balance");
   const [filter, setFilter] = useState<"all" | "open" | "income" | "expense">("all");
   const visibleEntries = useMemo(() => (data?.entries ?? []).filter((entry) => {
     const inSelectedMonth = !entry.paidAt || monthInRome(entry.paidAt) === month;
@@ -134,6 +137,14 @@ export default function AdminFinancePanel({
             <h5 className="break-words font-semibold">{project.name}</h5>
             {project.clientId === null && <p className="text-xs text-slate-500">Cliente non associato · {project.clientName}</p>}
             {!project.active && <p className="mt-1 text-xs text-slate-500">Archiviato</p>}
+            {(project.workType||project.status)&&<p className="mt-1 text-xs text-slate-500">
+              {project.workType?({website:"Sito web",web_app:"Applicazione web",management:"Gestionale",ecommerce:"E-commerce",ads:"Pubblicità",seo:"SEO",other:"Altro"}[project.workType]??project.workType):""}
+              {project.workType&&project.status?" · ":""}
+              {project.status?({waiting_deposit:"In attesa dell’acconto",in_progress:"In lavorazione",in_review:"In revisione",delivered:"Consegnato",closed:"Chiuso",cancelled:"Annullato"}[project.status]??project.status):""}
+            </p>}
+            {(project.startDate||project.deliveryDate)&&<p className="mt-1 text-xs text-slate-500">
+              {project.startDate?`Inizio ${displayDate(project.startDate)}`:""}{project.startDate&&project.deliveryDate?" · ":""}{project.deliveryDate?`Consegna ${displayDate(project.deliveryDate)}`:""}
+            </p>}
           </div>
           <p className="shrink-0 text-sm font-bold">{project.details?.amountKnown?money(project.totalAmountCents+(project.details.extraCents??0)):"Importo da definire"}</p>
         </div>
@@ -212,7 +223,7 @@ export default function AdminFinancePanel({
       </div>
 
       <nav aria-label="Sezioni del gestionale" className="flex flex-wrap gap-2">
-        {([["balance","Panoramica e bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi, rate e canoni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
+        {([["balance","Panoramica e bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi, rate e canoni"],["quotes","Preventivi"],["schedule","Scadenzario"],["documents","Documenti fiscali"],["settings","Impostazioni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
       </nav>
       <div className="flex flex-wrap gap-2">
         <Button size="sm" variant="outline" disabled={busy} onClick={()=>{setSection("clients");setClientEditor("new");}}>Aggiungi cliente</Button>
@@ -223,6 +234,10 @@ export default function AdminFinancePanel({
         month={month} clients={data?.clients??[]} projects={data?.projects??[]} suppliers={workspace?.suppliers??[]} onRefresh={onRefresh}
       />}
       {section==="suppliers"&&<FinanceSuppliers suppliers={workspace?.suppliers??[]} entries={data?.entries??[]} onRefresh={loadWorkspace}/>}
+      {section==="quotes"&&<FinanceQuotes clients={data?.clients??[]} onRefresh={onRefresh}/>}
+      {section==="schedule"&&<FinanceSchedule month={month} onMonth={onMonth} clients={data?.clients??[]} projects={data?.projects??[]} onRefresh={onRefresh}/>}
+      {section==="documents"&&<FinanceFiscalDocuments mode="documents" clients={data?.clients??[]} projects={data?.projects??[]} onRefresh={onRefresh}/>}
+      {section==="settings"&&<FinanceFiscalDocuments mode="settings" clients={data?.clients??[]} projects={data?.projects??[]} onRefresh={onRefresh}/>}
       {workspaceError&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{workspaceError}</p>}
 
       <section hidden={section!=="clients"} className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Anagrafica clienti">
@@ -267,6 +282,9 @@ export default function AdminFinancePanel({
                 </div>
                 {client.email && <p className="mt-2 break-all text-xs text-slate-600">{client.email}</p>}
                 {client.phone && <p className="mt-1 text-xs text-slate-600">{client.phone}</p>}
+            {client.taxId&&<p className="mt-1 text-xs text-slate-600">CF/P. IVA: {client.taxId}</p>}
+            {client.address&&<p className="mt-1 text-xs text-slate-600">{client.address}</p>}
+            {client.sector&&<p className="mt-1 text-xs text-slate-500">Settore: {client.sector}</p>}
                 {client.notes && <p className="mt-2 whitespace-pre-wrap break-words text-xs text-slate-500">{client.notes}</p>}
                 <p className="mt-3 flex justify-between gap-3 border-t border-slate-100 pt-3 text-xs">
                   <span className="text-slate-500">Da incassare · lavori e canoni</span>
@@ -359,6 +377,9 @@ export default function AdminFinancePanel({
                         <div className="text-xs text-slate-500">
                           {client.email && <p>{client.email}</p>}
                           {client.phone && <p>{client.phone}</p>}
+                           {client.taxId&&<p>CF/P. IVA: {client.taxId}</p>}
+                           {client.address&&<p>{client.address}</p>}
+                           {client.sector&&<p>Settore: {client.sector}</p>}
                           {client.notes && <p className="mt-1 whitespace-pre-wrap">{client.notes}</p>}
                         </div>
                         <button type="button" disabled={busy} onClick={() => setClientEditor(client)} className="text-xs font-semibold text-indigo-700 disabled:opacity-50" data-testid={`button-edit-finance-client-${client.id}`}>

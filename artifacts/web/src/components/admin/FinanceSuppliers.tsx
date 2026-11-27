@@ -17,6 +17,8 @@ const categories = {
 const schema = z.object({
   name: z.string().trim().min(1, "Inserisci il nome.").max(160),
   category: z.enum(["advertising", "hosting", "software", "domains", "professional", "administration", "equipment", "other"]),
+  taxId: z.string().max(40),
+  address: z.string().max(240),
   email: z.string().email("Email non valida.").or(z.literal("")),
   website: z.string().max(2048),
   notes: z.string().max(4000),
@@ -42,11 +44,11 @@ export default function FinanceSuppliers({ suppliers, entries, onRefresh }: {
   },[entries,month]);
   const form = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", category: "other", email: "", website: "", notes: "" },
+    defaultValues: { name: "", category: "other", taxId: "", address: "", email: "", website: "", notes: "" },
   });
   const open = (supplier: AdminFinanceSupplier | "new") => {
-    form.reset(supplier === "new" ? { name: "", category: "other", email: "", website: "", notes: "" }
-      : { ...supplier, email: supplier.email ?? "", website: supplier.website ?? "" });
+    form.reset(supplier === "new" ? { name: "", category: "other", taxId: "", address: "", email: "", website: "", notes: "" }
+      : { ...supplier, taxId:supplier.taxId??"", address:supplier.address??"", email: supplier.email ?? "", website: supplier.website ?? "" });
     setEditor(supplier); setError("");
   };
   const act = async (work: () => Promise<unknown>) => {
@@ -66,12 +68,13 @@ export default function FinanceSuppliers({ suppliers, entries, onRefresh }: {
     {error && <p role="alert" className="text-sm text-rose-800">{error}</p>}
     {notice && <p role="status" className="text-sm text-emerald-800">{notice}</p>}
     {editor && <Form {...form}><form className="grid gap-4 rounded-xl bg-indigo-50/50 p-4 sm:grid-cols-2" data-testid="form-finance-supplier" onSubmit={form.handleSubmit(async values => {
-      const input = { ...values, email: values.email.trim() || null, website: values.website.trim() || null };
+      const input = { ...values, taxId:values.taxId.trim()||null,address:values.address.trim()||null,
+        email: values.email.trim() || null, website: values.website.trim() || null };
       const id = editor === "new" ? null : editor.id;
       if (await act(() => adminApi(`/finance/suppliers${id ? `/${id}` : ""}`, { method: id ? "PATCH" : "POST", body: JSON.stringify(input) }))) setEditor(null);
     })}>
-      {(["name", "email", "website", "notes"] as const).map(name => <FormField key={name} control={form.control} name={name} render={({ field }) => <FormItem>
-        <FormLabel>{{ name: "Nome fornitore", email: "Email facoltativa", website: "Sito web facoltativo", notes: "Note" }[name]}</FormLabel>
+      {(["name","taxId","address","email","website","notes"] as const).map(name => <FormField key={name} control={form.control} name={name} render={({ field }) => <FormItem>
+        <FormLabel>{{ name: "Nome fornitore",taxId:"Codice fiscale / P. IVA",address:"Indirizzo",email: "Email facoltativa", website: "Sito web facoltativo", notes: "Note" }[name]}</FormLabel>
         <FormControl><Input {...field} data-testid={`input-supplier-${name}`} /></FormControl><FormMessage />
       </FormItem>} />)}
       <FormField control={form.control} name="category" render={({ field }) => <FormItem><FormLabel>Categoria</FormLabel><FormControl><select {...field} className={fieldClass} data-testid="select-supplier-category">{Object.entries(categories).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></FormControl><FormMessage /></FormItem>} />
@@ -85,7 +88,8 @@ export default function FinanceSuppliers({ suppliers, entries, onRefresh }: {
       const outstandingCents=related.reduce((sum,item)=>sum+item.remainingCents,0);
       return <article key={s.id} className="space-y-2 rounded-xl border p-4" data-testid={`card-finance-supplier-${s.id}`}>
         <h4 className="font-bold">{s.name} {!s.active && <span className="text-xs font-normal text-slate-500">Archiviato</span>}</h4>
-        <p className="text-xs text-slate-500">{categories[s.category]}{s.email ? ` · ${s.email}` : ""}</p>
+        <p className="text-xs text-slate-500">{categories[s.category]}{s.taxId?` · CF/P. IVA ${s.taxId}`:""}{s.email ? ` · ${s.email}` : ""}</p>
+        {s.address&&<p className="text-xs text-slate-500">{s.address}</p>}
         {s.notes && <p className="whitespace-pre-wrap text-xs text-slate-500">{s.notes}</p>}
         <p className="text-sm">Pagato: <strong>{ledger?money(paidCents):"—"}</strong> · Da pagare: <strong>{ledger?money(outstandingCents):"—"}</strong></p>
         <div className="flex gap-3"><button type="button" disabled={busy} className="text-xs font-semibold text-indigo-700" onClick={() => open(s)} data-testid={`button-edit-supplier-${s.id}`}>Modifica</button>

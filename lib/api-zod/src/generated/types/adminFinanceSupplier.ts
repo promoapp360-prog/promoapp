@@ -12,6 +12,10 @@ export interface AdminFinanceSupplier {
   name: string;
   category: AdminFinanceSupplierCategory;
   /** @nullable */
+  taxId: string | null;
+  /** @nullable */
+  address: string | null;
+  /** @nullable */
   email: string | null;
   /** @nullable */
   website: string | null;

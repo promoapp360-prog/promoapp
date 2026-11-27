@@ -2,7 +2,7 @@ import { build } from "esbuild";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, dirname } from "node:path";
+import { join, dirname, delimiter } from "node:path";
 import { fileURLToPath } from "node:url";
 
 if (process.env.NODE_ENV === "production") throw new Error("Finance fixtures are development-only.");
@@ -14,7 +14,7 @@ try {
     await build({
       entryPoints: [join(root, `tests/${suite}.test.ts`)],
       bundle: true, platform: "node", format: "cjs", outfile: output,
-      external: ["pg-native"],
+      external: ["pg-native", "pdfkit"],
       plugins: [{
         name: "test-logger",
         setup(builder) {
@@ -25,7 +25,8 @@ try {
         },
       }],
     });
-    const result = spawnSync(process.execPath, ["--test", output], { stdio: "inherit", env: { ...process.env, NODE_ENV: "test" } });
+    const nodePath=[join(root,"node_modules"),process.env.NODE_PATH].filter(Boolean).join(delimiter);
+    const result = spawnSync(process.execPath, ["--test", output], { stdio: "inherit", env: { ...process.env, NODE_ENV: "test", NODE_PATH:nodePath } });
     if (result.status !== 0) { process.exitCode = result.status ?? 1; break; }
   }
 } finally { rmSync(directory, { recursive: true, force: true }); }

@@ -41,7 +41,9 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   const server=app.listen(0,"127.0.0.1");
   await new Promise<void>(resolve=>server.once("listening",resolve));
   const url=`http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  let cookie="",csrf="",documentPath="";
+  let cookie="",csrf="",documentPath="",quoteId="",quoteProjectId="",quoteRecurringId="",manualReminderId="",fiscalDocumentId="";
+  let fiscalSettingsSnapshot:{settings:any[];regimes:any[];sequences:any[];regimeIds:string[]}|null=null;
+  const fiscalTestTaxId=`TEST${randomUUID().replaceAll("-","").slice(0,16)}`;
   const request=async(path:string,method="GET",body?:unknown,authorized=true)=>{
     return fetch(`${url}${path}`,{method,signal:AbortSignal.timeout(15000),headers:{"Content-Type":"application/json",...(authorized?{cookie,"x-admin-csrf":csrf}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
   };
@@ -54,7 +56,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   const legacyId=randomUUID(),accontoId=randomUUID();
   try{
     await t.test("tutte le risorse economiche richiedono accesso e protezione CSRF",async()=>{
-      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/development-transfer","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`]){
+      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/development-transfer","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`,"/admin/finance/quotes","/admin/finance/schedule?month="+month,"/admin/finance/settings","/admin/finance/fiscal-documents"]){
         assert.equal((await request(path,"GET",undefined,false)).status,401);
       }
       const login=await request("/admin/login","POST",{password},false);
@@ -178,11 +180,13 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       assert.equal((await pool.query("SELECT count(*)::int AS count FROM acconti WHERE id=$1",[accontoId])).rows[0].count,1);
     });
     await t.test("fornitori persistenti, spese collegate e archiviazione senza cancellazioni",async()=>{
-      const supplier=await json("/admin/finance/suppliers","POST",{name:prefix,category:"software",notes:"Fornitore sintetico"});
+      const supplier=await json("/admin/finance/suppliers","POST",{name:prefix,category:"software",taxId:"TEST0000000000001",address:"Via Fornitore 1",notes:"Fornitore sintetico"});
       assert.equal((await request("/admin/finance/suppliers","POST",{name:prefix.toUpperCase(),category:"software"})).status,409);
       const expense=await json("/admin/finance/entries","POST",{direction:"expense",category:"replit",description:prefix,amountCents:2500,dueDate:today,paid:true,details:{supplierId:supplier.id,paidDate:today,amountConfirmed:true,reconciliation:"reconciled"}});
       const workspace=await json("/admin/finance/workspace");
       assert.equal(workspace.suppliers.find((s:any)=>s.id===supplier.id).category,"software");
+       assert.equal(workspace.suppliers.find((s:any)=>s.id===supplier.id).taxId,"TEST0000000000001");
+       assert.equal(workspace.suppliers.find((s:any)=>s.id===supplier.id).address,"Via Fornitore 1");
       const reloaded=(await json(`/admin/finance?month=${month}`)).entries.find((e:any)=>e.id===expense.id);
       assert.equal(reloaded.details.supplierId,supplier.id);
       assert.equal(reloaded.details.supplier,prefix);
@@ -310,11 +314,135 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       assert.equal(ledger.summary.receivedCents-baseline.summary.receivedCents,58000);
       assert.equal(ledger.summary.cashBalanceCents-baseline.summary.cashBalanceCents,58000);
       assert.equal(ledger.historicalCandidates.some((item:any)=>item.id===historicalProject.id),false);
+
+        assert.equal((await request("/admin/finance/quotes","POST",{
+          clientId:ledgerClient.id,issuedOn:today,items:[{description:"Quantità non valida",quantity:1.0001,unitPriceCents:100000}],
+        })).status,400);
+        const quote=await json("/admin/finance/quotes","POST",{
+          clientId:ledgerClient.id,issuedOn:today,validUntil:null,notes:`${prefix}_preventivo`,
+          items:[{description:`${prefix}_sito web`,quantity:1,unitPriceCents:100000}],
+        });
+        quoteId=quote.id;
+        assert.match(quote.number,/^PREV-\d{4}-\d{3,}$/);
+        assert.equal(quote.totalAmountCents,100000);
+        await json(`/admin/finance/quotes/${quote.id}/status`,"POST",{status:"sent"});
+        const nextDue=nextMonthlyDate(today,Number(today.slice(-2)));
+        const accepted=await json(`/admin/finance/quotes/${quote.id}/convert`,"POST",{
+          projectName:`${prefix}_lavoro_da_preventivo`,workType:"website",paymentType:"advance",
+          depositAmountCents:50000,installmentCount:null,startDate:today,deliveryDate:nextDue,
+          status:"in_progress",notes:"",installments:[
+            {description:"Acconto concordato",amountCents:50000,dueDate:today},
+            {description:"Saldo concordato",amountCents:50000,dueDate:nextDue},
+          ],
+          recurring:{description:`${prefix}_canone futuro`,amountCents:2000,intervalMonths:1,startDate:nextDue,nextDate:nextDue,endDate:null},
+        });
+        quoteProjectId=accepted.projectId;quoteRecurringId=accepted.recurringId;
+        assert.equal(accepted.quoteId,quote.id);assert.equal(accepted.createdInstallments,2);
+        assert.ok(accepted.recurringId);
+        assert.equal((await request(`/admin/finance/quotes/${quote.id}/convert`,"POST",{
+          projectName:"Doppia conversione",workType:"other",paymentType:"single",depositAmountCents:null,
+          installmentCount:null,startDate:null,deliveryDate:null,status:"in_progress",notes:"",installments:[],
+        })).status,409);
+        const listed=await json("/admin/finance/quotes");
+        assert.equal(listed.quotes.find((item:any)=>item.id===quote.id).status,"accepted");
+        assert.equal(listed.quotes.find((item:any)=>item.id===quote.id).projectId,accepted.projectId);
+        const beforeReceipt=await json(`/admin/finance/ledger?month=${month}`);
+        assert.equal(beforeReceipt.summary.soldCents-ledger.summary.soldCents,100000);
+        assert.equal(beforeReceipt.summary.receivableCents-ledger.summary.receivableCents,100000);
+        const quoteDeposit=beforeReceipt.obligations.find((item:any)=>item.projectId===accepted.projectId&&item.category==="deposit");
+        assert.ok(quoteDeposit);
+        await json("/admin/finance/ledger/movements","POST",{
+          movementDate:today,direction:"income",amountCents:50000,accountId:account.id,paymentMethod:"Bonifico",
+          note:`${prefix}_preventivo incasso`,allocations:[{obligationId:quoteDeposit.id,amountCents:50000}],
+        });
+        const afterReceipt=await json(`/admin/finance/ledger?month=${month}`);
+        assert.equal(afterReceipt.summary.receivedCents-beforeReceipt.summary.receivedCents,50000);
+        assert.equal(afterReceipt.summary.receivableCents-beforeReceipt.summary.receivableCents,-50000);
+        assert.equal(afterReceipt.obligations.find((item:any)=>item.id===quoteDeposit.id).remainingCents,0);
+
+        const reminder=await json("/admin/finance/manual-reminders","POST",{
+          title:`${prefix}_promemoria`,dueDate:today,clientId:ledgerClient.id,projectId:accepted.projectId,notes:"Verificare consegna",
+        });
+        manualReminderId=reminder.id;
+        const currentSchedule=await json(`/admin/finance/schedule?month=${month}`);
+        assert.ok(currentSchedule.items.some((item:any)=>item.id===quoteDeposit.id&&item.status==="paid"));
+        assert.ok(currentSchedule.items.some((item:any)=>item.id===reminder.id&&item.sourceType==="manual"));
+        await json(`/admin/finance/manual-reminders/${reminder.id}`,"PATCH",{completed:true});
+        const completedSchedule=await json(`/admin/finance/schedule?month=${month}`);
+        assert.equal(completedSchedule.items.find((item:any)=>item.id===reminder.id).status,"completed");
+        const futureSchedule=await json(`/admin/finance/schedule?month=${nextDue.slice(0,7)}`);
+        assert.ok(futureSchedule.items.some((item:any)=>item.id.startsWith(`recurring:${accepted.recurringId}:`)&&item.status==="planned"));
+        assert.ok(futureSchedule.items.some((item:any)=>item.sourceType==="delivery"&&item.title.includes(`${prefix}_lavoro_da_preventivo`)));
+        assert.ok(futureSchedule.items.some((item:any)=>item.sourceType==="installment"&&item.title.includes("Saldo concordato")));
+        const futureTotals=await json(`/admin/finance/ledger?month=${nextDue.slice(0,7)}`);
+        assert.equal(futureTotals.summary.soldCents-ledger.summary.soldCents,100000);
+
+        fiscalSettingsSnapshot={
+          settings:(await pool.query("SELECT * FROM admin_finance_settings WHERE key=ANY($1::text[])",[["issuer","document_prefixes"]])).rows,
+          regimes:(await pool.query("SELECT * FROM admin_finance_tax_regimes")).rows,
+          sequences:(await pool.query("SELECT * FROM admin_finance_document_sequences WHERE document_type='receipt' AND fiscal_year=$1",[Number(today.slice(0,4))])).rows,
+          regimeIds:[],
+        };
+        const clientWithTaxData=await json(`/admin/finance/clients/${ledgerClient.id}`,"PATCH",{
+          taxId:fiscalTestTaxId,address:"Via Test fiscale 1, Roma",
+        });
+        assert.equal(clientWithTaxData.taxId,fiscalTestTaxId);
+        const currentSettings=await json("/admin/finance/settings");
+        fiscalSettingsSnapshot.regimeIds=currentSettings.regimes.map((item:any)=>item.id);
+        const configured=await json("/admin/finance/settings","PUT",{
+          ...currentSettings,
+          issuer:{...currentSettings.issuer,taxId:fiscalTestTaxId,address:"Via Test PromoApp 1",postalCode:"00100",city:"Roma",province:"RM"},
+        });
+        assert.equal(configured.regimes.find((item:any)=>item.documentType==="receipt").withholdingRateBps,2000);
+        const vatRegime=configured.regimes.find((item:any)=>item.documentType==="invoice");
+        assert.equal(vatRegime.effectiveFrom,"2027-01-01");
+        assert.equal(vatRegime.vatRateBps,2200);
+        const openBalance=futureTotals.obligations.find((item:any)=>item.projectId===accepted.projectId&&item.description==="Saldo concordato");
+        assert.ok(openBalance);
+        await json("/admin/finance/ledger/movements","POST",{
+          movementDate:today,direction:"income",amountCents:10000,accountId:account.id,paymentMethod:"Bonifico",
+          note:`${prefix}_ledger incasso parziale saldo`,allocations:[{obligationId:openBalance.id,amountCents:10000}],
+        });
+        const fiscalDocument=await json("/admin/finance/fiscal-documents","POST",{
+          clientId:ledgerClient.id,projectId:accepted.projectId,obligationId:openBalance.id,issuedOn:today,
+          dueDate:today,description:"Saldo del lavoro",grossAmountCents:openBalance.amountCents,notes:"Documento di prova",
+        });
+        fiscalDocumentId=fiscalDocument.id;
+        assert.equal(fiscalDocument.documentType,"receipt");
+        assert.equal(fiscalDocument.grossAmountCents,50000);
+        assert.equal(fiscalDocument.withholdingAmountCents,10000);
+        assert.equal(fiscalDocument.netAmountCents,40000);
+        const pdfResponse=await request(`/admin/finance/fiscal-documents/${fiscalDocument.id}/pdf`);
+        assert.equal(pdfResponse.status,200);
+        assert.equal(Buffer.from(await pdfResponse.arrayBuffer()).subarray(0,4).toString(),"%PDF");
+        const originalPdfPath=(await pool.query("SELECT storage_path FROM admin_finance_documents WHERE id=$1",[fiscalDocument.id])).rows[0].storage_path;
+        const adjustedLedger=await json(`/admin/finance/ledger?month=${month}`);
+        assert.equal(adjustedLedger.obligations.find((item:any)=>item.id===openBalance.id).amountCents,40000);
+        assert.equal(adjustedLedger.obligations.find((item:any)=>item.id===openBalance.id).remainingCents,30000);
+        assert.equal(adjustedLedger.obligations.find((item:any)=>item.id===openBalance.id).dueDate.slice(0,10),today);
+        const voided=await json(`/admin/finance/fiscal-documents/${fiscalDocument.id}/void`,"POST",{reason:"Documento sintetico di test"});
+        assert.equal(voided.status,"void");
+        const voidPdfPath=(await pool.query("SELECT storage_path FROM admin_finance_documents WHERE id=$1",[fiscalDocument.id])).rows[0].storage_path;
+        assert.notEqual(voidPdfPath,originalPdfPath);
+        const voidPdfResponse=await request(`/admin/finance/fiscal-documents/${fiscalDocument.id}/pdf`);
+        assert.equal(Buffer.from(await voidPdfResponse.arrayBuffer()).subarray(0,4).toString(),"%PDF");
+        const restoredLedger=await json(`/admin/finance/ledger?month=${month}`);
+        assert.equal(restoredLedger.obligations.find((item:any)=>item.id===openBalance.id).amountCents,50000);
+        assert.equal(restoredLedger.obligations.find((item:any)=>item.id===openBalance.id).remainingCents,40000);
+        const restoredFutureLedger=await json(`/admin/finance/ledger?month=${nextDue.slice(0,7)}`);
+        assert.equal(restoredFutureLedger.obligations.find((item:any)=>item.id===openBalance.id).dueDate.slice(0,10),nextDue);
     });
   } finally {
     if(documentPath){
       try { await (await new ObjectStorageService().getObjectEntityFile(documentPath)).delete(); }
       catch { /* Cleanup must not prevent removal of the database's synthetic fixtures. */ }
+    }
+    if(fiscalDocumentId){
+      const stored=(await pool.query("SELECT storage_path FROM admin_finance_documents WHERE id=$1",[fiscalDocumentId])).rows[0];
+      if(stored?.storage_path){
+        try{await (await new ObjectStorageService().getObjectEntityFile(stored.storage_path)).delete();}
+        catch{/* The PDF may already have been removed by an interrupted test run. */}
+      }
     }
     const q=await pool.connect();
     try{
@@ -328,16 +456,49 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const c=(await q.query("SELECT id FROM admin_finance_clients WHERE name=ANY($1::text[])",[[prefix,`${prefix}_ledger`]])).rows.map(r=>r.id);
       const s=(await q.query("SELECT id FROM admin_finance_suppliers WHERE name=$1",[prefix])).rows.map(r=>r.id);
       const a=(await q.query("SELECT id FROM admin_finance_accounts WHERE name=$1",[`${prefix}_ledger_conto`])).rows.map(r=>r.id);
-      const o=(await q.query(`SELECT id FROM admin_finance_obligations WHERE project_id=ANY($1::text[]) OR recurring_id=ANY($2::text[]) OR description LIKE $3`,[[...p,...ledgerP],[...r,...ledgerR],`${prefix}_ledger%`])).rows.map(r=>r.id);
+      const reminderIds=manualReminderId?[manualReminderId]:[];
+      const quoteIds=quoteId?[quoteId]:[];
+      const quoteRecurringIds=quoteRecurringId?[quoteRecurringId]:[];
+      const quoteProjectIds=quoteProjectId?[quoteProjectId]:[];
+      const o=(await q.query(`SELECT id FROM admin_finance_obligations WHERE project_id=ANY($1::text[]) OR recurring_id=ANY($2::text[]) OR description LIKE $3`,[[...p,...ledgerP,...quoteProjectIds],[...r,...ledgerR,...quoteRecurringIds],`${prefix}_ledger%`])).rows.map(r=>r.id);
       const m=(await q.query(`SELECT id FROM admin_finance_movements WHERE account_id=ANY($1::text[]) OR note LIKE $2`,[a,`%${prefix}_ledger%`])).rows.map(r=>r.id);
-      await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...ledgerP,...e,...r,...ledgerR,...c,...s,...a,...o,...m]]);
+       await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...ledgerP,...quoteProjectIds,...quoteIds,...quoteRecurringIds,...reminderIds,...e,...r,...ledgerR,...c,...s,...a,...o,...m,...(fiscalDocumentId?[fiscalDocumentId]:[])]]);
+       if(fiscalSettingsSnapshot){
+         await q.query("DELETE FROM admin_finance_documents WHERE id=$1",[fiscalDocumentId]);
+         await q.query("DELETE FROM admin_finance_settings WHERE key=ANY($1::text[])",[["issuer","document_prefixes"]]);
+         for(const row of fiscalSettingsSnapshot.settings)await q.query(`INSERT INTO admin_finance_settings(key,value,updated_at)
+           VALUES($1,$2,$3) ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value,updated_at=EXCLUDED.updated_at`,
+         [row.key,row.value,row.updated_at]);
+         const previousRegimeIds=fiscalSettingsSnapshot.regimes.map((item:any)=>item.id);
+         await q.query("DELETE FROM admin_finance_tax_regimes WHERE id=ANY($1::text[]) AND NOT(id=ANY($2::text[]))",
+           [fiscalSettingsSnapshot.regimeIds,previousRegimeIds]);
+         for(const row of fiscalSettingsSnapshot.regimes)await q.query(`INSERT INTO admin_finance_tax_regimes
+           (id,name,regime_type,document_type,effective_from,effective_until,vat_rate_bps,withholding_rate_bps,active,notes)
+           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT(id) DO UPDATE SET
+             name=EXCLUDED.name,regime_type=EXCLUDED.regime_type,document_type=EXCLUDED.document_type,
+             effective_from=EXCLUDED.effective_from,effective_until=EXCLUDED.effective_until,
+             vat_rate_bps=EXCLUDED.vat_rate_bps,withholding_rate_bps=EXCLUDED.withholding_rate_bps,
+             active=EXCLUDED.active,notes=EXCLUDED.notes`,
+         [row.id,row.name,row.regime_type,row.document_type,row.effective_from,row.effective_until,row.vat_rate_bps,
+           row.withholding_rate_bps,row.active,row.notes]);
+         await q.query("DELETE FROM admin_finance_document_sequences WHERE document_type='receipt' AND fiscal_year=$1",[Number(today.slice(0,4))]);
+         for(const row of fiscalSettingsSnapshot.sequences)await q.query(`INSERT INTO admin_finance_document_sequences
+           (id,document_type,fiscal_year,next_number,prefix,updated_at) VALUES($1,$2,$3,$4,$5,$6)`,
+         [row.id,row.document_type,row.fiscal_year,row.next_number,row.prefix,row.updated_at]);
+         await q.query("DELETE FROM admin_finance_audit WHERE entity_type='finance_settings' AND after->'issuer'->>'taxId'=$1",[fiscalTestTaxId]);
+       }
+      await q.query("DELETE FROM admin_finance_reminders WHERE id=ANY($1::text[])",[reminderIds]);
       await q.query("DELETE FROM admin_finance_movement_allocations WHERE movement_id=ANY($1::text[]) OR obligation_id=ANY($2::text[])",[m,o]);
       await q.query("DELETE FROM admin_finance_movements WHERE id=ANY($1::text[])",[m]);
       await q.query("DELETE FROM admin_finance_obligations WHERE id=ANY($1::text[])",[o]);
+      if(quoteIds.length){
+        await q.query("DELETE FROM admin_finance_quote_items WHERE quote_id=ANY($1::text[])",[quoteIds]);
+        await q.query("DELETE FROM admin_finance_quotes WHERE id=ANY($1::text[])",[quoteIds]);
+      }
       await q.query("DELETE FROM admin_finance_accounts WHERE id=ANY($1::text[])",[a]);
       await q.query("DELETE FROM admin_finance_entries WHERE id=ANY($1::text[])",[e]);
-      await q.query("DELETE FROM admin_finance_recurring WHERE id=ANY($1::text[])",[[...r,...ledgerR]]);
-      await q.query("DELETE FROM admin_finance_projects WHERE id=ANY($1::text[])",[[...p,...ledgerP]]);
+      await q.query("DELETE FROM admin_finance_recurring WHERE id=ANY($1::text[])",[[...r,...ledgerR,...quoteRecurringIds]]);
+      await q.query("DELETE FROM admin_finance_projects WHERE id=ANY($1::text[])",[[...p,...ledgerP,...quoteProjectIds]]);
       await q.query("DELETE FROM voci_progetto WHERE progetto_id=$1",[legacyId]);
       await q.query("DELETE FROM progetti_lavori WHERE id=$1",[legacyId]);
       await q.query("DELETE FROM acconti WHERE progetto=$1",[prefix]);

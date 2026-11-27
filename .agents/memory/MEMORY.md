@@ -9,3 +9,5 @@
 - [Push schema di sviluppo](push-schema-sviluppo.md) — limitare le aggiunte Drizzle alle tabelle previste quando il database contiene tabelle non modellate.
 - [Archiviazione privata](private-storage-compatibility.md) — dopo aggiornamenti del client, verificare lettura riservata e collegamento oltre al caricamento firmato.
 - [Scritture batch nel database](managed-db-batch-inserts.md) — per importazioni tramite executeSql, preferire INSERT VALUES parametrizzati se le forme JSON/CTE restituiscono errori generici.
+- [Annidamento dei test Node](node-test-nesting.md) — nella suite economica evita `t.test()` dentro un altro callback `t.test()`, che può lasciare il caso interno in attesa.
+- [PDFKit nei bundle](pdfkit-runtime-assets.md) — esternalizzare PDFKit nei bundle API e test per mantenere corretti percorsi dei dati di runtime.

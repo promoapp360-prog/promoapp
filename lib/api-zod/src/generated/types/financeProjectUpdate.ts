@@ -7,6 +7,9 @@
  */
 import type { FinanceProjectDetails } from "./financeProjectDetails";
 import type { FinanceProjectUpdatePaymentType } from "./financeProjectUpdatePaymentType";
+import type { FinanceProjectUpdateStatus } from "./financeProjectUpdateStatus";
+import type { FinanceProjectUpdateTechnicalReferences } from "./financeProjectUpdateTechnicalReferences";
+import type { FinanceProjectUpdateWorkType } from "./financeProjectUpdateWorkType";
 
 export interface FinanceProjectUpdate {
   clientId?: string;
@@ -33,6 +36,26 @@ export interface FinanceProjectUpdate {
    * @nullable
    */
   installmentCount?: number | null;
+  /** @nullable */
+  workType?: FinanceProjectUpdateWorkType;
+  /** @nullable */
+  status?: FinanceProjectUpdateStatus;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate?: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  deliveryDate?: string | null;
+  /**
+   * @maxLength 2000
+   * @nullable
+   */
+  serviceDescription?: string | null;
+  technicalReferences?: FinanceProjectUpdateTechnicalReferences;
   /** @maxLength 4000 */
   notes?: string;
   active?: boolean;

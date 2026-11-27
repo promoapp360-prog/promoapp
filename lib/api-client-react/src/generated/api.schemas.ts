@@ -179,6 +179,230 @@ export interface FinanceDocumentUpload {
   objectPath: string;
 }
 
+export interface FinanceIssuerSettings {
+  /** @maxLength 40 */
+  taxId: string;
+  /** @maxLength 240 */
+  address: string;
+  /** @maxLength 16 */
+  postalCode: string;
+  /** @maxLength 120 */
+  city: string;
+  /** @maxLength 8 */
+  province: string;
+  /** @maxLength 254 */
+  email: string;
+  /** @maxLength 254 */
+  pec: string;
+  /** @maxLength 16 */
+  sdiCode: string;
+}
+
+export type FinanceTaxRegimeRegimeType =
+  (typeof FinanceTaxRegimeRegimeType)[keyof typeof FinanceTaxRegimeRegimeType];
+
+export const FinanceTaxRegimeRegimeType = {
+  withholding: "withholding",
+  vat: "vat",
+} as const;
+
+export type FinanceTaxRegimeDocumentType =
+  (typeof FinanceTaxRegimeDocumentType)[keyof typeof FinanceTaxRegimeDocumentType];
+
+export const FinanceTaxRegimeDocumentType = {
+  receipt: "receipt",
+  invoice: "invoice",
+} as const;
+
+export interface FinanceTaxRegime {
+  /**
+   * @minLength 1
+   * @maxLength 80
+   */
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  name: string;
+  regimeType: FinanceTaxRegimeRegimeType;
+  documentType: FinanceTaxRegimeDocumentType;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  effectiveFrom: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  effectiveUntil: string | null;
+  /**
+   * @minimum 0
+   * @maximum 10000
+   * @nullable
+   */
+  vatRateBps: number | null;
+  /**
+   * @minimum 0
+   * @maximum 10000
+   * @nullable
+   */
+  withholdingRateBps: number | null;
+  /** @maxLength 1000 */
+  notes: string;
+}
+
+export interface FinanceDocumentPrefixes {
+  /**
+   * @minLength 1
+   * @maxLength 24
+   * @pattern ^[A-Z0-9-]+$
+   */
+  receipt: string;
+  /**
+   * @minLength 1
+   * @maxLength 24
+   * @pattern ^[A-Z0-9-]+$
+   */
+  invoice: string;
+}
+
+export interface FinanceSettings {
+  issuer: FinanceIssuerSettings;
+  prefixes: FinanceDocumentPrefixes;
+  /**
+   * @minItems 1
+   * @maxItems 20
+   */
+  regimes: FinanceTaxRegime[];
+}
+
+export interface FinanceSettingsInput {
+  issuer: FinanceIssuerSettings;
+  prefixes: FinanceDocumentPrefixes;
+  /**
+   * @minItems 1
+   * @maxItems 20
+   */
+  regimes: FinanceTaxRegime[];
+}
+
+export type FinanceFiscalDocumentDocumentType =
+  (typeof FinanceFiscalDocumentDocumentType)[keyof typeof FinanceFiscalDocumentDocumentType];
+
+export const FinanceFiscalDocumentDocumentType = {
+  receipt: "receipt",
+  invoice: "invoice",
+} as const;
+
+export type FinanceFiscalDocumentStatus =
+  (typeof FinanceFiscalDocumentStatus)[keyof typeof FinanceFiscalDocumentStatus];
+
+export const FinanceFiscalDocumentStatus = {
+  issued: "issued",
+  paid: "paid",
+  void: "void",
+} as const;
+
+export interface FinanceFiscalDocument {
+  id: string;
+  clientId: string;
+  clientName: string;
+  /** @nullable */
+  projectId: string | null;
+  /** @nullable */
+  projectName: string | null;
+  /** @nullable */
+  obligationId: string | null;
+  documentType: FinanceFiscalDocumentDocumentType;
+  /**
+   * @minimum 2000
+   * @maximum 9999
+   */
+  fiscalYear: number;
+  number: string;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  issuedOn: string;
+  status: FinanceFiscalDocumentStatus;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  grossAmountCents: number;
+  /**
+   * @minimum 0
+   * @maximum 10000
+   * @nullable
+   */
+  vatRateBps: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  vatAmountCents: number;
+  /**
+   * @minimum 0
+   * @maximum 10000
+   * @nullable
+   */
+  withholdingRateBps: number | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  withholdingAmountCents: number;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  netAmountCents: number;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  dueDate: string | null;
+  description: string;
+  createdAt: string;
+  regimeName: string;
+}
+
+export interface FinanceFiscalDocumentsResponse {
+  documents: FinanceFiscalDocument[];
+}
+
+export interface FinanceFiscalDocumentInput {
+  clientId: string;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  obligationId?: string | null;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  issuedOn: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  dueDate?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 500
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  grossAmountCents: number;
+  /** @maxLength 2000 */
+  notes?: string;
+}
+
+export interface FinanceFiscalDocumentVoidInput {
+  /**
+   * @minLength 3
+   * @maxLength 500
+   */
+  reason: string;
+}
+
 export interface FinanceRecurringGenerationInput {
   /** @pattern ^\d{4}-\d{2}-\d{2}$ */
   dueDate: string;
@@ -230,6 +454,11 @@ export interface FinanceRecurringInput {
    * @pattern ^\d{4}-\d{2}-\d{2}$
    */
   nextDate?: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  endDate?: string | null;
   /**
    * @minimum 1
    * @maximum 12
@@ -554,6 +783,10 @@ export interface AdminFinanceSupplier {
   name: string;
   category: AdminFinanceSupplierCategory;
   /** @nullable */
+  taxId: string | null;
+  /** @nullable */
+  address: string | null;
+  /** @nullable */
   email: string | null;
   /** @nullable */
   website: string | null;
@@ -571,6 +804,360 @@ export interface FinanceWorkspace {
 
 export interface FinanceReminder {
   text: string;
+}
+
+export interface FinanceQuoteItem {
+  id: string;
+  /** @minimum 0 */
+  position: number;
+  description: string;
+  /**
+   * @minimum 0.001
+   * @maximum 100000
+   */
+  quantity: number;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  unitPriceCents: number;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  totalCents: number;
+}
+
+export type FinanceQuoteStatus =
+  (typeof FinanceQuoteStatus)[keyof typeof FinanceQuoteStatus];
+
+export const FinanceQuoteStatus = {
+  draft: "draft",
+  sent: "sent",
+  accepted: "accepted",
+  rejected: "rejected",
+  expired: "expired",
+} as const;
+
+export interface FinanceQuote {
+  id: string;
+  clientId: string;
+  clientName: string;
+  /** @nullable */
+  companyName: string | null;
+  /** @nullable */
+  clientEmail: string | null;
+  /** @nullable */
+  clientPhone: string | null;
+  /** @nullable */
+  clientTaxId: string | null;
+  /** @nullable */
+  clientAddress: string | null;
+  number: string;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  issuedOn: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  validUntil: string | null;
+  status: FinanceQuoteStatus;
+  /** @minimum 0 */
+  totalAmountCents: number;
+  notes: string;
+  items: FinanceQuoteItem[];
+  /** @nullable */
+  projectId: string | null;
+  createdAt: string;
+}
+
+export interface FinanceQuotesResponse {
+  quotes: FinanceQuote[];
+}
+
+export interface FinanceQuoteLineInput {
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description: string;
+  /**
+   * @minimum 0.001
+   * @maximum 100000
+   */
+  quantity: number;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   */
+  unitPriceCents: number;
+}
+
+export interface FinanceQuoteInput {
+  clientId: string;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  issuedOn: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  validUntil?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+  /**
+   * @minItems 1
+   * @maxItems 60
+   */
+  items: FinanceQuoteLineInput[];
+}
+
+export interface FinanceQuoteUpdate {
+  clientId?: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  validUntil?: string | null;
+  /** @maxLength 4000 */
+  notes?: string;
+  /**
+   * @minItems 1
+   * @maxItems 60
+   */
+  items?: FinanceQuoteLineInput[];
+}
+
+export type FinanceQuoteStatusInputStatus =
+  (typeof FinanceQuoteStatusInputStatus)[keyof typeof FinanceQuoteStatusInputStatus];
+
+export const FinanceQuoteStatusInputStatus = {
+  draft: "draft",
+  sent: "sent",
+  rejected: "rejected",
+} as const;
+
+export interface FinanceQuoteStatusInput {
+  status: FinanceQuoteStatusInputStatus;
+}
+
+export interface FinancePlannedInstallment {
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  dueDate: string | null;
+}
+
+export type FinanceQuoteRecurringInputIntervalMonths =
+  (typeof FinanceQuoteRecurringInputIntervalMonths)[keyof typeof FinanceQuoteRecurringInputIntervalMonths];
+
+export const FinanceQuoteRecurringInputIntervalMonths = {
+  NUMBER_1: 1,
+  NUMBER_3: 3,
+  NUMBER_6: 6,
+  NUMBER_12: 12,
+} as const;
+
+export interface FinanceQuoteRecurringInput {
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  intervalMonths: FinanceQuoteRecurringInputIntervalMonths;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  startDate: string;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  nextDate: string;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  endDate: string | null;
+}
+
+export type FinanceQuoteConversionInputWorkType =
+  (typeof FinanceQuoteConversionInputWorkType)[keyof typeof FinanceQuoteConversionInputWorkType];
+
+export const FinanceQuoteConversionInputWorkType = {
+  website: "website",
+  web_app: "web_app",
+  management: "management",
+  ecommerce: "ecommerce",
+  ads: "ads",
+  seo: "seo",
+  other: "other",
+} as const;
+
+export type FinanceQuoteConversionInputPaymentType =
+  (typeof FinanceQuoteConversionInputPaymentType)[keyof typeof FinanceQuoteConversionInputPaymentType];
+
+export const FinanceQuoteConversionInputPaymentType = {
+  single: "single",
+  advance: "advance",
+  installments: "installments",
+} as const;
+
+export type FinanceQuoteConversionInputStatus =
+  (typeof FinanceQuoteConversionInputStatus)[keyof typeof FinanceQuoteConversionInputStatus];
+
+export const FinanceQuoteConversionInputStatus = {
+  waiting_deposit: "waiting_deposit",
+  in_progress: "in_progress",
+  in_review: "in_review",
+  delivered: "delivered",
+  closed: "closed",
+  cancelled: "cancelled",
+} as const;
+
+export interface FinanceQuoteConversionInput {
+  /**
+   * @minLength 1
+   * @maxLength 160
+   */
+  projectName: string;
+  workType: FinanceQuoteConversionInputWorkType;
+  paymentType: FinanceQuoteConversionInputPaymentType;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   * @nullable
+   */
+  depositAmountCents: number | null;
+  /**
+   * @minimum 2
+   * @maximum 60
+   * @nullable
+   */
+  installmentCount: number | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  deliveryDate: string | null;
+  status: FinanceQuoteConversionInputStatus;
+  /** @maxLength 4000 */
+  notes: string;
+  /** @maxItems 60 */
+  installments: FinancePlannedInstallment[];
+  recurring?: FinanceQuoteRecurringInput;
+}
+
+export interface FinanceQuoteConversionResponse {
+  projectId: string;
+  quoteId: string;
+  /**
+   * @minimum 1
+   * @maximum 60
+   */
+  createdInstallments: number;
+  /** @nullable */
+  recurringId: string | null;
+}
+
+export type FinanceScheduleItemSourceType =
+  (typeof FinanceScheduleItemSourceType)[keyof typeof FinanceScheduleItemSourceType];
+
+export const FinanceScheduleItemSourceType = {
+  installment: "installment",
+  expense: "expense",
+  recurring: "recurring",
+  delivery: "delivery",
+  manual: "manual",
+} as const;
+
+export type FinanceScheduleItemStatus =
+  (typeof FinanceScheduleItemStatus)[keyof typeof FinanceScheduleItemStatus];
+
+export const FinanceScheduleItemStatus = {
+  open: "open",
+  partial: "partial",
+  paid: "paid",
+  planned: "planned",
+  overdue: "overdue",
+  completed: "completed",
+} as const;
+
+export interface FinanceScheduleItem {
+  id: string;
+  sourceType: FinanceScheduleItemSourceType;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  dueDate: string;
+  title: string;
+  /** @nullable */
+  clientName: string | null;
+  /**
+   * @minimum 0
+   * @maximum 2147483647
+   * @nullable
+   */
+  amountCents: number | null;
+  status: FinanceScheduleItemStatus;
+  notes: string;
+}
+
+export interface FinanceScheduleResponse {
+  /** @pattern ^\d{4}-(0[1-9]|1[0-2])$ */
+  month: string;
+  items: FinanceScheduleItem[];
+}
+
+export interface FinanceManualReminderInput {
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  title: string;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  dueDate: string;
+  /** @nullable */
+  clientId?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** @maxLength 2000 */
+  notes?: string;
+}
+
+export interface FinanceManualReminderUpdate {
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  dueDate?: string;
+  completed?: boolean;
+}
+
+export interface FinanceManualReminder {
+  id: string;
+  title: string;
+  /** @pattern ^\d{4}-\d{2}-\d{2}$ */
+  dueDate: string;
+  /** @nullable */
+  clientId: string | null;
+  /** @nullable */
+  clientName: string | null;
+  /** @nullable */
+  projectId: string | null;
+  notes: string;
+  completed: boolean;
+  createdAt: string;
 }
 
 export type FinanceImportRowAction =
@@ -636,6 +1223,16 @@ export interface FinanceSupplierInput {
   name: string;
   category: FinanceSupplierInputCategory;
   /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 240
+   * @nullable
+   */
+  address?: string | null;
+  /**
    * @maxLength 254
    * @nullable
    */
@@ -670,6 +1267,16 @@ export interface FinanceSupplierUpdate {
    */
   name?: string;
   category?: FinanceSupplierUpdateCategory;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 240
+   * @nullable
+   */
+  address?: string | null;
   /**
    * @maxLength 254
    * @nullable
@@ -824,6 +1431,41 @@ export const AdminFinanceProjectPaymentType = {
   installments: "installments",
 } as const;
 
+/**
+ * @nullable
+ */
+export type AdminFinanceProjectWorkType =
+  | (typeof AdminFinanceProjectWorkType)[keyof typeof AdminFinanceProjectWorkType]
+  | null;
+
+export const AdminFinanceProjectWorkType = {
+  website: "website",
+  web_app: "web_app",
+  management: "management",
+  ecommerce: "ecommerce",
+  ads: "ads",
+  seo: "seo",
+  other: "other",
+} as const;
+
+/**
+ * @nullable
+ */
+export type AdminFinanceProjectStatus =
+  | (typeof AdminFinanceProjectStatus)[keyof typeof AdminFinanceProjectStatus]
+  | null;
+
+export const AdminFinanceProjectStatus = {
+  waiting_deposit: "waiting_deposit",
+  in_progress: "in_progress",
+  in_review: "in_review",
+  delivered: "delivered",
+  closed: "closed",
+  cancelled: "cancelled",
+} as const;
+
+export type AdminFinanceProjectTechnicalReferences = { [key: string]: unknown };
+
 export interface AdminFinanceProject {
   id: string;
   /** @nullable */
@@ -848,6 +1490,26 @@ export interface AdminFinanceProject {
    * @nullable
    */
   installmentCount: number | null;
+  /** @nullable */
+  workType: AdminFinanceProjectWorkType;
+  /** @nullable */
+  status: AdminFinanceProjectStatus;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  deliveryDate: string | null;
+  /**
+   * @maxLength 2000
+   * @nullable
+   */
+  serviceDescription: string | null;
+  technicalReferences: AdminFinanceProjectTechnicalReferences;
   notes: string;
   active: boolean;
   createdAt: string;
@@ -933,6 +1595,16 @@ export interface AdminFinanceClient {
   email: string | null;
   /** @nullable */
   phone: string | null;
+  /** @nullable */
+  taxId: string | null;
+  /** @nullable */
+  address: string | null;
+  /** @nullable */
+  sector: string | null;
+  /** @nullable */
+  acquisitionSource: string | null;
+  /** @nullable */
+  status: string | null;
   notes: string;
   createdAt: string;
   details?: FinanceClientDetails;
@@ -1261,6 +1933,31 @@ export interface FinanceClientInput {
    * @nullable
    */
   phone?: string | null;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 500
+   * @nullable
+   */
+  address?: string | null;
+  /**
+   * @maxLength 120
+   * @nullable
+   */
+  sector?: string | null;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  acquisitionSource?: string | null;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  status?: string | null;
   /** @maxLength 4000 */
   notes?: string;
   details?: FinanceClientDetails;
@@ -1287,6 +1984,31 @@ export interface FinanceClientUpdate {
    * @nullable
    */
   phone?: string | null;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 500
+   * @nullable
+   */
+  address?: string | null;
+  /**
+   * @maxLength 120
+   * @nullable
+   */
+  sector?: string | null;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  acquisitionSource?: string | null;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  status?: string | null;
   /** @maxLength 4000 */
   notes?: string;
   details?: FinanceClientDetails;
@@ -1300,6 +2022,41 @@ export const FinanceProjectInputPaymentType = {
   advance: "advance",
   installments: "installments",
 } as const;
+
+/**
+ * @nullable
+ */
+export type FinanceProjectInputWorkType =
+  | (typeof FinanceProjectInputWorkType)[keyof typeof FinanceProjectInputWorkType]
+  | null;
+
+export const FinanceProjectInputWorkType = {
+  website: "website",
+  web_app: "web_app",
+  management: "management",
+  ecommerce: "ecommerce",
+  ads: "ads",
+  seo: "seo",
+  other: "other",
+} as const;
+
+/**
+ * @nullable
+ */
+export type FinanceProjectInputStatus =
+  | (typeof FinanceProjectInputStatus)[keyof typeof FinanceProjectInputStatus]
+  | null;
+
+export const FinanceProjectInputStatus = {
+  waiting_deposit: "waiting_deposit",
+  in_progress: "in_progress",
+  in_review: "in_review",
+  delivered: "delivered",
+  closed: "closed",
+  cancelled: "cancelled",
+} as const;
+
+export type FinanceProjectInputTechnicalReferences = { [key: string]: unknown };
 
 export interface FinanceProjectInput {
   clientId: string;
@@ -1326,6 +2083,26 @@ export interface FinanceProjectInput {
    * @nullable
    */
   installmentCount?: number | null;
+  /** @nullable */
+  workType?: FinanceProjectInputWorkType;
+  /** @nullable */
+  status?: FinanceProjectInputStatus;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate?: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  deliveryDate?: string | null;
+  /**
+   * @maxLength 2000
+   * @nullable
+   */
+  serviceDescription?: string | null;
+  technicalReferences?: FinanceProjectInputTechnicalReferences;
   /** @maxLength 4000 */
   notes?: string;
   details?: FinanceProjectDetails;
@@ -1339,6 +2116,43 @@ export const FinanceProjectUpdatePaymentType = {
   advance: "advance",
   installments: "installments",
 } as const;
+
+/**
+ * @nullable
+ */
+export type FinanceProjectUpdateWorkType =
+  | (typeof FinanceProjectUpdateWorkType)[keyof typeof FinanceProjectUpdateWorkType]
+  | null;
+
+export const FinanceProjectUpdateWorkType = {
+  website: "website",
+  web_app: "web_app",
+  management: "management",
+  ecommerce: "ecommerce",
+  ads: "ads",
+  seo: "seo",
+  other: "other",
+} as const;
+
+/**
+ * @nullable
+ */
+export type FinanceProjectUpdateStatus =
+  | (typeof FinanceProjectUpdateStatus)[keyof typeof FinanceProjectUpdateStatus]
+  | null;
+
+export const FinanceProjectUpdateStatus = {
+  waiting_deposit: "waiting_deposit",
+  in_progress: "in_progress",
+  in_review: "in_review",
+  delivered: "delivered",
+  closed: "closed",
+  cancelled: "cancelled",
+} as const;
+
+export type FinanceProjectUpdateTechnicalReferences = {
+  [key: string]: unknown;
+};
 
 export interface FinanceProjectUpdate {
   clientId?: string;
@@ -1365,6 +2179,26 @@ export interface FinanceProjectUpdate {
    * @nullable
    */
   installmentCount?: number | null;
+  /** @nullable */
+  workType?: FinanceProjectUpdateWorkType;
+  /** @nullable */
+  status?: FinanceProjectUpdateStatus;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  startDate?: string | null;
+  /**
+   * @nullable
+   * @pattern ^\d{4}-\d{2}-\d{2}$
+   */
+  deliveryDate?: string | null;
+  /**
+   * @maxLength 2000
+   * @nullable
+   */
+  serviceDescription?: string | null;
+  technicalReferences?: FinanceProjectUpdateTechnicalReferences;
   /** @maxLength 4000 */
   notes?: string;
   active?: boolean;
@@ -1714,6 +2548,13 @@ export const GetAdminOverviewDays = {
 
 export type ListAdminSiteControlRequestsParams = {
   status?: SiteControlRequestStatus;
+};
+
+export type GetFinanceScheduleParams = {
+  /**
+   * @pattern ^\d{4}-(0[1-9]|1[0-2])$
+   */
+  month: string;
 };
 
 export type ExportFinanceParams = {

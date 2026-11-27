@@ -15,6 +15,16 @@ export interface FinanceSupplierInput {
   name: string;
   category: FinanceSupplierInputCategory;
   /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 240
+   * @nullable
+   */
+  address?: string | null;
+  /**
    * @maxLength 254
    * @nullable
    */

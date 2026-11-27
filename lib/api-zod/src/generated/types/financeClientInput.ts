@@ -28,6 +28,31 @@ export interface FinanceClientInput {
    * @nullable
    */
   phone?: string | null;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  taxId?: string | null;
+  /**
+   * @maxLength 500
+   * @nullable
+   */
+  address?: string | null;
+  /**
+   * @maxLength 120
+   * @nullable
+   */
+  sector?: string | null;
+  /**
+   * @maxLength 160
+   * @nullable
+   */
+  acquisitionSource?: string | null;
+  /**
+   * @maxLength 40
+   * @nullable
+   */
+  status?: string | null;
   /** @maxLength 4000 */
   notes?: string;
   details?: FinanceClientDetails;

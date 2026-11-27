@@ -188,6 +188,128 @@ paths:
             schema: { $ref: "#/components/schemas/FinanceRecurringGenerationInput" }
       responses:
         "200": { description: Prossima scadenza creata una sola volta }
+  /admin/finance/quotes:
+    get:
+      operationId: listFinanceQuotes
+      responses:
+        "200":
+          description: Preventivi interni del gestionale PromoApp
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceQuotesResponse" }
+    post:
+      operationId: createFinanceQuote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceQuoteInput" }
+      responses:
+        "201":
+          description: Preventivo creato con numero progressivo annuale
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceQuote" }
+        "400": { description: Dati del preventivo non validi }
+  /admin/finance/quotes/{id}:
+    patch:
+      operationId: updateFinanceQuote
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceQuoteUpdate" }
+      responses:
+        "200":
+          description: Preventivo aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceQuote" }
+        "400": { description: Preventivo non modificabile o dati non validi }
+        "404": { description: Preventivo non trovato }
+  /admin/finance/quotes/{id}/status:
+    post:
+      operationId: updateFinanceQuoteStatus
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceQuoteStatusInput" }
+      responses:
+        "200":
+          description: Stato commerciale del preventivo aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceQuote" }
+        "400": { description: Transizione di stato non valida }
+        "404": { description: Preventivo non trovato }
+  /admin/finance/quotes/{id}/convert:
+    post:
+      operationId: convertFinanceQuoteToProject
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceQuoteConversionInput" }
+      responses:
+        "201":
+          description: Preventivo accettato e lavoro creato con rate collegate
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceQuoteConversionResponse" }
+        "400": { description: Piano pagamenti o lavoro non valido }
+        "404": { description: Preventivo o cliente non trovato }
+        "409": { description: Preventivo già convertito }
+  /admin/finance/schedule:
+    get:
+      operationId: getFinanceSchedule
+      parameters:
+        - { name: month, in: query, required: true, schema: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" } }
+      responses:
+        "200":
+          description: Scadenze, canoni, consegne e promemoria del mese
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceScheduleResponse" }
+        "400": { description: Mese non valido }
+  /admin/finance/manual-reminders:
+    post:
+      operationId: createFinanceManualReminder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceManualReminderInput" }
+      responses:
+        "201":
+          description: Promemoria manuale creato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceManualReminder" }
+        "400": { description: Dati del promemoria non validi }
+  /admin/finance/manual-reminders/{id}:
+    patch:
+      operationId: updateFinanceManualReminder
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceManualReminderUpdate" }
+      responses:
+        "200":
+          description: Promemoria aggiornato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceManualReminder" }
+        "404": { description: Promemoria non trovato }
   /admin/finance/reminders/{id}:
     get:
       operationId: getFinanceReminder
@@ -272,6 +394,77 @@ paths:
         - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
       responses:
         "200": { description: Documento riservato }
+  /admin/finance/settings:
+    get:
+      operationId: getFinanceSettings
+      responses:
+        "200":
+          description: Intestazione e regimi fiscali configurati
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceSettings" }
+    put:
+      operationId: updateFinanceSettings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceSettingsInput" }
+      responses:
+        "200":
+          description: Impostazioni salvate
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceSettings" }
+  /admin/finance/fiscal-documents:
+    get:
+      operationId: listFinanceFiscalDocuments
+      responses:
+        "200":
+          description: Documenti fiscali del gestionale
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceFiscalDocumentsResponse" }
+    post:
+      operationId: issueFinanceFiscalDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceFiscalDocumentInput" }
+      responses:
+        "201":
+          description: Documento numerato e PDF archiviato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceFiscalDocument" }
+  /admin/finance/fiscal-documents/{id}/pdf:
+    get:
+      operationId: downloadFinanceFiscalDocumentPdf
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: PDF fiscale riservato
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+  /admin/finance/fiscal-documents/{id}/void:
+    post:
+      operationId: voidFinanceFiscalDocument
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceFiscalDocumentVoidInput" }
+      responses:
+        "200":
+          description: Documento annullato senza riutilizzare il numero
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceFiscalDocument" }
   /admin/finance:
     get:
       operationId: getAdminFinance
@@ -744,6 +937,98 @@ components:
       properties:
         uploadURL: { type: string }
         objectPath: { type: string }
+    FinanceIssuerSettings:
+      type: object
+      required: [taxId, address, postalCode, city, province, email, pec, sdiCode]
+      properties:
+        taxId: { type: string, maxLength: 40 }
+        address: { type: string, maxLength: 240 }
+        postalCode: { type: string, maxLength: 16 }
+        city: { type: string, maxLength: 120 }
+        province: { type: string, maxLength: 8 }
+        email: { type: string, maxLength: 254 }
+        pec: { type: string, maxLength: 254 }
+        sdiCode: { type: string, maxLength: 16 }
+    FinanceTaxRegime:
+      type: object
+      required: [id, name, regimeType, documentType, effectiveFrom, effectiveUntil, vatRateBps, withholdingRateBps, notes]
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        regimeType: { type: string, enum: [withholding, vat] }
+        documentType: { type: string, enum: [receipt, invoice] }
+        effectiveFrom: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        effectiveUntil: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        vatRateBps: { type: ["integer", "null"], minimum: 0, maximum: 10000, multipleOf: 1 }
+        withholdingRateBps: { type: ["integer", "null"], minimum: 0, maximum: 10000, multipleOf: 1 }
+        notes: { type: string, maxLength: 1000 }
+    FinanceDocumentPrefixes:
+      type: object
+      required: [receipt, invoice]
+      properties:
+        receipt: { type: string, minLength: 1, maxLength: 24, pattern: "^[A-Z0-9-]+$" }
+        invoice: { type: string, minLength: 1, maxLength: 24, pattern: "^[A-Z0-9-]+$" }
+    FinanceSettings:
+      type: object
+      required: [issuer, prefixes, regimes]
+      properties:
+        issuer: { $ref: "#/components/schemas/FinanceIssuerSettings" }
+        prefixes: { $ref: "#/components/schemas/FinanceDocumentPrefixes" }
+        regimes: { type: array, minItems: 1, maxItems: 20, items: { $ref: "#/components/schemas/FinanceTaxRegime" } }
+    FinanceSettingsInput:
+      type: object
+      required: [issuer, prefixes, regimes]
+      properties:
+        issuer: { $ref: "#/components/schemas/FinanceIssuerSettings" }
+        prefixes: { $ref: "#/components/schemas/FinanceDocumentPrefixes" }
+        regimes: { type: array, minItems: 1, maxItems: 20, items: { $ref: "#/components/schemas/FinanceTaxRegime" } }
+    FinanceFiscalDocument:
+      type: object
+      required: [id, clientId, clientName, projectId, projectName, obligationId, documentType, fiscalYear, number, issuedOn, status, grossAmountCents, vatRateBps, vatAmountCents, withholdingRateBps, withholdingAmountCents, netAmountCents, dueDate, description, createdAt, regimeName]
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: string, format: uuid }
+        clientName: { type: string }
+        projectId: { type: ["string", "null"], format: uuid }
+        projectName: { type: ["string", "null"] }
+        obligationId: { type: ["string", "null"], format: uuid }
+        documentType: { type: string, enum: [receipt, invoice] }
+        fiscalYear: { type: integer, minimum: 2000, maximum: 9999, multipleOf: 1 }
+        number: { type: string }
+        issuedOn: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        status: { type: string, enum: [issued, paid, void] }
+        grossAmountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        vatRateBps: { type: ["integer", "null"], minimum: 0, maximum: 10000, multipleOf: 1 }
+        vatAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        withholdingRateBps: { type: ["integer", "null"], minimum: 0, maximum: 10000, multipleOf: 1 }
+        withholdingAmountCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        netAmountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        description: { type: string }
+        createdAt: { type: string, format: date-time }
+        regimeName: { type: string }
+    FinanceFiscalDocumentsResponse:
+      type: object
+      required: [documents]
+      properties:
+        documents: { type: array, items: { $ref: "#/components/schemas/FinanceFiscalDocument" } }
+    FinanceFiscalDocumentInput:
+      type: object
+      required: [clientId, issuedOn, description, grossAmountCents]
+      properties:
+        clientId: { type: string, format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        obligationId: { type: ["string", "null"], format: uuid }
+        issuedOn: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        dueDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        description: { type: string, minLength: 1, maxLength: 500 }
+        grossAmountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        notes: { type: string, maxLength: 2000 }
+    FinanceFiscalDocumentVoidInput:
+      type: object
+      required: [reason]
+      properties:
+        reason: { type: string, minLength: 3, maxLength: 500 }
     FinanceRecurringGenerationInput:
       type: object
       required: [dueDate]
@@ -762,6 +1047,7 @@ components:
         amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
         startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
         nextDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        endDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
         intervalMonths: { type: integer, minimum: 1, maximum: 12, multipleOf: 1 }
         state: { type: string, enum: [active, potential, suspended] }
     FinanceDevelopmentTransferClient:
@@ -902,6 +1188,155 @@ components:
       required: [text]
       properties:
         text: { type: string }
+    FinanceQuoteItem:
+      type: object
+      required: [id, position, description, quantity, unitPriceCents, totalCents]
+      properties:
+        id: { type: string, format: uuid }
+        position: { type: integer, minimum: 0, multipleOf: 1 }
+        description: { type: string }
+        quantity: { type: number, minimum: 0.001, maximum: 100000 }
+        unitPriceCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        totalCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+    FinanceQuote:
+      type: object
+      required: [id, clientId, clientName, companyName, clientEmail, clientPhone, clientTaxId, clientAddress, number, issuedOn, validUntil, status, totalAmountCents, notes, items, projectId, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: string, format: uuid }
+        clientName: { type: string }
+        companyName: { type: ["string", "null"] }
+        clientEmail: { type: ["string", "null"] }
+        clientPhone: { type: ["string", "null"] }
+        clientTaxId: { type: ["string", "null"] }
+        clientAddress: { type: ["string", "null"] }
+        number: { type: string }
+        issuedOn: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        validUntil: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        status: { type: string, enum: [draft, sent, accepted, rejected, expired] }
+        totalAmountCents: { type: integer, minimum: 0, multipleOf: 1 }
+        notes: { type: string }
+        items: { type: array, items: { $ref: "#/components/schemas/FinanceQuoteItem" } }
+        projectId: { type: ["string", "null"], format: uuid }
+        createdAt: { type: string, format: date-time }
+    FinanceQuotesResponse:
+      type: object
+      required: [quotes]
+      properties:
+        quotes: { type: array, items: { $ref: "#/components/schemas/FinanceQuote" } }
+    FinanceQuoteLineInput:
+      type: object
+      required: [description, quantity, unitPriceCents]
+      properties:
+        description: { type: string, minLength: 1, maxLength: 240 }
+        quantity: { type: number, minimum: 0.001, maximum: 100000 }
+        unitPriceCents: { type: integer, minimum: 0, maximum: 2147483647, multipleOf: 1 }
+    FinanceQuoteInput:
+      type: object
+      required: [clientId, issuedOn, items]
+      properties:
+        clientId: { type: string, format: uuid }
+        issuedOn: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        validUntil: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        notes: { type: string, maxLength: 4000 }
+        items: { type: array, minItems: 1, maxItems: 60, items: { $ref: "#/components/schemas/FinanceQuoteLineInput" } }
+    FinanceQuoteUpdate:
+      type: object
+      properties:
+        clientId: { type: string, format: uuid }
+        validUntil: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        notes: { type: string, maxLength: 4000 }
+        items: { type: array, minItems: 1, maxItems: 60, items: { $ref: "#/components/schemas/FinanceQuoteLineInput" } }
+    FinanceQuoteStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [draft, sent, rejected] }
+    FinancePlannedInstallment:
+      type: object
+      required: [description, amountCents, dueDate]
+      properties:
+        description: { type: string, minLength: 1, maxLength: 160 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+    FinanceQuoteRecurringInput:
+      type: object
+      required: [description, amountCents, intervalMonths, startDate, nextDate, endDate]
+      properties:
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        intervalMonths: { type: integer, enum: [1, 3, 6, 12] }
+        startDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        nextDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        endDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+    FinanceQuoteConversionInput:
+      type: object
+      required: [projectName, workType, paymentType, depositAmountCents, installmentCount, startDate, deliveryDate, status, notes, installments]
+      properties:
+        projectName: { type: string, minLength: 1, maxLength: 160 }
+        workType: { type: string, enum: [website, web_app, management, ecommerce, ads, seo, other] }
+        paymentType: { type: string, enum: [single, advance, installments] }
+        depositAmountCents: { type: ["integer", "null"], minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        deliveryDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        status: { type: string, enum: [waiting_deposit, in_progress, in_review, delivered, closed, cancelled] }
+        notes: { type: string, maxLength: 4000 }
+        installments: { type: array, maxItems: 60, items: { $ref: "#/components/schemas/FinancePlannedInstallment" } }
+        recurring: { $ref: "#/components/schemas/FinanceQuoteRecurringInput" }
+    FinanceQuoteConversionResponse:
+      type: object
+      required: [projectId, quoteId, createdInstallments, recurringId]
+      properties:
+        projectId: { type: string, format: uuid }
+        quoteId: { type: string, format: uuid }
+        createdInstallments: { type: integer, minimum: 1, maximum: 60, multipleOf: 1 }
+        recurringId: { type: ["string", "null"], format: uuid }
+    FinanceScheduleItem:
+      type: object
+      required: [id, sourceType, dueDate, title, clientName, amountCents, status, notes]
+      properties:
+        id: { type: string }
+        sourceType: { type: string, enum: [installment, expense, recurring, delivery, manual] }
+        dueDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        title: { type: string }
+        clientName: { type: ["string", "null"] }
+        amountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
+        status: { type: string, enum: [open, partial, paid, planned, overdue, completed] }
+        notes: { type: string }
+    FinanceScheduleResponse:
+      type: object
+      required: [month, items]
+      properties:
+        month: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+        items: { type: array, items: { $ref: "#/components/schemas/FinanceScheduleItem" } }
+    FinanceManualReminderInput:
+      type: object
+      required: [title, dueDate]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 240 }
+        dueDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        clientId: { type: ["string", "null"], format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        notes: { type: string, maxLength: 2000 }
+    FinanceManualReminderUpdate:
+      type: object
+      properties:
+        dueDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        completed: { type: boolean }
+    FinanceManualReminder:
+      type: object
+      required: [id, title, dueDate, clientId, clientName, projectId, notes, completed, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        dueDate: { type: string, pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        clientId: { type: ["string", "null"], format: uuid }
+        clientName: { type: ["string", "null"] }
+        projectId: { type: ["string", "null"], format: uuid }
+        notes: { type: string }
+        completed: { type: boolean }
+        createdAt: { type: string, format: date-time }
     FinanceImportRow:
       type: object
       required: [key, name, action, aliases, anomalies]
@@ -932,6 +1367,8 @@ components:
       properties:
         name: { type: string, minLength: 1, maxLength: 160 }
         category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        taxId: { type: ["string", "null"], maxLength: 40 }
+        address: { type: ["string", "null"], maxLength: 240 }
         email: { type: ["string", "null"], format: email, maxLength: 254 }
         website: { type: ["string", "null"], maxLength: 2048 }
         notes: { type: string, maxLength: 4000 }
@@ -940,17 +1377,21 @@ components:
       properties:
         name: { type: string, minLength: 1, maxLength: 160 }
         category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        taxId: { type: ["string", "null"], maxLength: 40 }
+        address: { type: ["string", "null"], maxLength: 240 }
         email: { type: ["string", "null"], format: email, maxLength: 254 }
         website: { type: ["string", "null"], maxLength: 2048 }
         notes: { type: string, maxLength: 4000 }
         active: { type: boolean }
     AdminFinanceSupplier:
       type: object
-      required: [id, name, category, email, website, notes, active, createdAt]
+      required: [id, name, category, taxId, address, email, website, notes, active, createdAt]
       properties:
         id: { type: string, format: uuid }
         name: { type: string }
         category: { type: string, enum: [advertising, hosting, software, domains, professional, administration, equipment, other] }
+        taxId: { type: ["string", "null"] }
+        address: { type: ["string", "null"] }
         email: { type: ["string", "null"], format: email }
         website: { type: ["string", "null"] }
         notes: { type: string }
@@ -993,7 +1434,7 @@ components:
         cancelled: { type: boolean }
     AdminFinanceProject:
       type: object
-      required: [id, clientId, clientName, name, totalAmountCents, paymentType, depositAmountCents, installmentCount, notes, active, createdAt, receivedCents, outstandingCents]
+      required: [id, clientId, clientName, name, totalAmountCents, paymentType, depositAmountCents, installmentCount, workType, status, startDate, deliveryDate, serviceDescription, technicalReferences, notes, active, createdAt, receivedCents, outstandingCents]
       properties:
         id: { type: string, format: uuid }
         clientId: { type: ["string", "null"], format: uuid }
@@ -1003,6 +1444,12 @@ components:
         paymentType: { type: string, enum: [single, advance, installments] }
         depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        workType: { type: ["string", "null"], enum: [website, web_app, management, ecommerce, ads, seo, other, null] }
+        status: { type: ["string", "null"], enum: [waiting_deposit, in_progress, in_review, delivered, closed, cancelled, null] }
+        startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        deliveryDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        serviceDescription: { type: ["string", "null"], maxLength: 2000 }
+        technicalReferences: { type: object, additionalProperties: true }
         notes: { type: string }
         active: { type: boolean }
         createdAt: { type: string, format: date-time }
@@ -1200,13 +1647,18 @@ components:
         overdueCents: { type: integer, minimum: 0, multipleOf: 1 }
     AdminFinanceClient:
       type: object
-      required: [id, name, companyName, email, phone, notes, createdAt]
+      required: [id, name, companyName, email, phone, taxId, address, sector, acquisitionSource, status, notes, createdAt]
       properties:
         id: { type: string, format: uuid }
         name: { type: string }
         companyName: { type: ["string", "null"] }
         email: { type: ["string", "null"], format: email }
         phone: { type: ["string", "null"] }
+        taxId: { type: ["string", "null"] }
+        address: { type: ["string", "null"] }
+        sector: { type: ["string", "null"] }
+        acquisitionSource: { type: ["string", "null"] }
+        status: { type: ["string", "null"] }
         notes: { type: string }
         createdAt: { type: string, format: date-time }
         details: { $ref: "#/components/schemas/FinanceClientDetails" }
@@ -1218,6 +1670,11 @@ components:
         companyName: { type: ["string", "null"], maxLength: 160 }
         email: { type: ["string", "null"], format: email, maxLength: 254 }
         phone: { type: ["string", "null"], maxLength: 60 }
+        taxId: { type: ["string", "null"], maxLength: 40 }
+        address: { type: ["string", "null"], maxLength: 500 }
+        sector: { type: ["string", "null"], maxLength: 120 }
+        acquisitionSource: { type: ["string", "null"], maxLength: 160 }
+        status: { type: ["string", "null"], maxLength: 40 }
         notes: { type: string, maxLength: 4000 }
         details: { $ref: "#/components/schemas/FinanceClientDetails" }
     FinanceClientUpdate:
@@ -1227,6 +1684,11 @@ components:
         companyName: { type: ["string", "null"], maxLength: 160 }
         email: { type: ["string", "null"], format: email, maxLength: 254 }
         phone: { type: ["string", "null"], maxLength: 60 }
+        taxId: { type: ["string", "null"], maxLength: 40 }
+        address: { type: ["string", "null"], maxLength: 500 }
+        sector: { type: ["string", "null"], maxLength: 120 }
+        acquisitionSource: { type: ["string", "null"], maxLength: 160 }
+        status: { type: ["string", "null"], maxLength: 40 }
         notes: { type: string, maxLength: 4000 }
         details: { $ref: "#/components/schemas/FinanceClientDetails" }
     FinanceProjectInput:
@@ -1239,6 +1701,12 @@ components:
         paymentType: { type: string, enum: [single, advance, installments] }
         depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        workType: { type: ["string", "null"], enum: [website, web_app, management, ecommerce, ads, seo, other, null] }
+        status: { type: ["string", "null"], enum: [waiting_deposit, in_progress, in_review, delivered, closed, cancelled, null] }
+        startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        deliveryDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        serviceDescription: { type: ["string", "null"], maxLength: 2000 }
+        technicalReferences: { type: object, additionalProperties: true }
         notes: { type: string, maxLength: 4000 }
         details: { $ref: "#/components/schemas/FinanceProjectDetails" }
     FinanceProjectUpdate:
@@ -1250,6 +1718,12 @@ components:
         paymentType: { type: string, enum: [single, advance, installments] }
         depositAmountCents: { type: ["integer", "null"], minimum: 0, maximum: 2147483647, multipleOf: 1 }
         installmentCount: { type: ["integer", "null"], minimum: 2, maximum: 60, multipleOf: 1 }
+        workType: { type: ["string", "null"], enum: [website, web_app, management, ecommerce, ads, seo, other, null] }
+        status: { type: ["string", "null"], enum: [waiting_deposit, in_progress, in_review, delivered, closed, cancelled, null] }
+        startDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        deliveryDate: { type: ["string", "null"], pattern: "^\\d{4}-\\d{2}-\\d{2}$" }
+        serviceDescription: { type: ["string", "null"], maxLength: 2000 }
+        technicalReferences: { type: object, additionalProperties: true }
         notes: { type: string, maxLength: 4000 }
         active: { type: boolean }
         details: { $ref: "#/components/schemas/FinanceProjectDetails" }

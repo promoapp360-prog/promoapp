@@ -22,6 +22,8 @@ import {
 import type { FinanceEntryInput, FinanceSupplierInput } from "@workspace/api-zod";
 import { adminFinanceData } from "../lib/admin-finance-data";
 import { createAdminFinanceLedgerRouter } from "./admin-finance-ledger";
+import { createAdminFinanceFiscalRouter } from "./admin-finance-fiscal";
+import { createAdminFinanceQuotesRouter } from "./admin-finance-quotes";
 import { createFinanceToolsRouter } from "./admin-finance-tools";
 
 type FinanceData = typeof adminFinanceData;
@@ -55,6 +57,8 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
   const router = Router();
   router.use(createFinanceToolsRouter());
   router.use(createAdminFinanceLedgerRouter());
+  router.use(createAdminFinanceFiscalRouter());
+  router.use(createAdminFinanceQuotesRouter());
 
   router.get("/admin/finance", async (req, res): Promise<void> => {
     const parsed = GetAdminFinanceQueryParams.safeParse(req.query);
@@ -99,6 +103,11 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
       ...(body.data.companyName === undefined ? {} : { companyName: body.data.companyName?.trim() || null }),
       ...(body.data.email === undefined ? {} : { email: body.data.email?.trim() || null }),
       ...(body.data.phone === undefined ? {} : { phone: body.data.phone?.trim() || null }),
+      ...(body.data.taxId === undefined ? {} : { taxId: body.data.taxId?.trim() || null }),
+      ...(body.data.address === undefined ? {} : { address: body.data.address?.trim() || null }),
+      ...(body.data.sector === undefined ? {} : { sector: body.data.sector?.trim() || null }),
+      ...(body.data.acquisitionSource === undefined ? {} : { acquisitionSource: body.data.acquisitionSource?.trim() || null }),
+      ...(body.data.status === undefined ? {} : { status: body.data.status }),
       ...(body.data.notes === undefined ? {} : { notes: body.data.notes.trim() }),
       ...(body.data.details === undefined ? {} : { details: body.data.details }),
     };
