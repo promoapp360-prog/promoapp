@@ -372,20 +372,3 @@ export async function saveRecurring(input: FinanceRecurringInput) {
     await financeAudit(q,"recurring",id,before,input,"Aggiornamento canone / costo ricorrente"); return {id};
   });
 }
-export async function generateRecurring(id: string, expectedDate: string) {
-  if(!validCalendarDate(expectedDate)) invalid("Scadenza non valida.");
-  return financeTransaction(async q=>{
-    const r=(await q.query("SELECT *,next_date::text AS next,start_date::text AS start FROM admin_finance_recurring WHERE id=$1 FOR UPDATE",[id])).rows[0];
-    if(!r || r.state!=="active" || !r.next || !r.start || r.next<r.start) invalid("Solo servizi attivi con decorrenza e scadenza definite.");
-    const existing=(await q.query("SELECT id FROM admin_finance_entries WHERE recurring_id=$1 AND due_date=$2",[id,expectedDate])).rows[0];
-    if(existing)return {id:existing.id};
-    if(r.next!==expectedDate) invalid("La prossima scadenza è cambiata. Ricarica i dati prima di generarla.");
-    const entryId=randomUUID();
-    await q.query(`INSERT INTO admin_finance_entries(id,project_id,direction,category,description,amount_cents,due_date,recurring_id,details)
-      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT(recurring_id,due_date) DO NOTHING`,
-    [entryId,r.project_id,r.direction,r.category,r.description,r.amount_cents,r.next,id,JSON.stringify({amountConfirmed:true,clientId:r.client_id,currency:"EUR",reconciliation:"unverified"})]);
-    const next=nextMonthlyDate(r.next,r.anchor_day??Number(r.start.slice(-2)),r.interval_months);
-    await q.query("UPDATE admin_finance_recurring SET next_date=$2 WHERE id=$1",[id,next]);
-    await financeAudit(q,"recurring",id,r,{generatedDate:r.next,nextDate:next},"Creata scadenza non pagata; nessun incasso presunto"); return {id:entryId};
-  });
-}

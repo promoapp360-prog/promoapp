@@ -111,18 +111,17 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const first=await json(`/admin/finance/recurring/${r.id}/generate`,"POST",{dueDate:today});
       const repeated=await json(`/admin/finance/recurring/${r.id}/generate`,"POST",{dueDate:today});
       assert.equal(first.id,repeated.id);
+      let ledger=await json(`/admin/finance/ledger?month=${month}`);
+      assert.equal(ledger.obligations.filter((item:any)=>item.sourceType==="recurring"&&item.sourceId===r.id).length,1);
+      assert.equal(ledger.obligations.find((item:any)=>item.id===first.id).remainingCents,1000);
       let data=await json(`/admin/finance?month=${month}`);
-      assert.equal(data.entries.filter((e:any)=>e.details?.recurringId===r.id).length,1);
-      assert.equal(data.entries.find((e:any)=>e.id===first.id).paidAt,null);
       assert.equal(data.projects.find((p:any)=>p.id===project.id).outstandingCents,95000);
-      await json(`/admin/finance/entries/${first.id}`,"PATCH",{paid:true,details:{paidDate:today,amountConfirmed:true,reconciliation:"reconciled"}});
-      data=await json(`/admin/finance?month=${month}`);
-      assert.equal(data.projects.find((p:any)=>p.id===project.id).receivedCents,20000);
       await json("/admin/finance/recurring","POST",{id:r.id,clientId:customer.id,projectId:project.id,direction:"income",category:"monthly_fee",description:prefix,amountCents:2000,intervalMonths:1,state:"suspended",startDate:today,nextDate:nextMonthlyDate(today,Number(today.slice(-2)))});
       assert.equal((await request(`/admin/finance/recurring/${r.id}/generate`,"POST",{dueDate:today})).status,400);
       const workspace=await json("/admin/finance/workspace");
       assert.equal(workspace.recurring.find((item:any)=>item.id===r.id).state,"suspended");
-      assert.equal(data.entries.find((e:any)=>e.id===first.id).amountCents,1000);
+      ledger=await json(`/admin/finance/ledger?month=${month}`);
+      assert.equal(ledger.obligations.find((item:any)=>item.id===first.id).amountCents,1000);
     });
     await t.test("rettifica, annullamento e ripristino conservano lo storico",async()=>{
       await json(`/admin/finance/entries/${paid.id}`,"PATCH",{amountCents:25000,details:{notes:"Rettifica sintetica"}});
@@ -230,6 +229,88 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const reloaded=(await json(`/admin/finance?month=${month}`)).entries.find((e:any)=>e.id===paid.id);
       assert.equal(reloaded.details.documentPath,documentPath);
     });
+    await t.test("bilancio nuovo: venduto, incassi allocati, residuo e canoni maturati",async()=>{
+      const baseline=await json(`/admin/finance/ledger?month=${month}`);
+      const ledgerClientName=`${prefix}_ledger`;
+      const ledgerClient=await json("/admin/finance/clients","POST",{name:ledgerClientName});
+      const ledgerProject=await json("/admin/finance/projects","POST",{
+        clientId:ledgerClient.id,name:ledgerClientName,totalAmountCents:100000,paymentType:"advance",depositAmountCents:50000,
+      });
+      await json(`/admin/finance/projects/${ledgerProject.id}`,"PATCH",{details:{
+        amountKnown:true,commercialState:"confirmed",agreementConfirmed:true,confirmedDate:today,creditReview:false,extraCents:0,
+      }});
+      const deposit=await json("/admin/finance/ledger/obligations","POST",{
+        direction:"income",category:"deposit",description:"Acconto concordato",amountCents:50000,dueDate:today,
+        clientId:ledgerClient.id,projectId:ledgerProject.id,
+      });
+      const balance=await json("/admin/finance/ledger/obligations","POST",{
+        direction:"income",category:"balance",description:"Saldo finale",amountCents:50000,
+        dueDate:new Date(Date.parse(`${today}T00:00:00Z`)+14*86400000).toISOString().slice(0,10),
+        clientId:ledgerClient.id,projectId:ledgerProject.id,
+      });
+      assert.equal((await request("/admin/finance/ledger/accounts","POST",{
+        name:`${prefix}_ledger_conto_senza_data`,accountType:"bank",openingBalanceCents:1000,
+      })).status,400);
+      const account=await json("/admin/finance/ledger/accounts","POST",{
+        name:`${prefix}_ledger_conto`,accountType:"bank",openingBalanceCents:0,openingBalanceDate:today,
+      });
+      await json("/admin/finance/ledger/movements","POST",{
+        movementDate:today,direction:"income",amountCents:50000,accountId:account.id,
+        paymentMethod:"Bonifico",note:`${prefix}_ledger acconto`,
+        allocations:[{obligationId:deposit.id,amountCents:50000}],
+      });
+      let ledger=await json(`/admin/finance/ledger?month=${month}`);
+      assert.equal(ledger.summary.soldCents-baseline.summary.soldCents,100000);
+      assert.equal(ledger.summary.receivedCents-baseline.summary.receivedCents,50000);
+      assert.equal(ledger.summary.cashBalanceCents-baseline.summary.cashBalanceCents,50000);
+      assert.equal(ledger.summary.receivableCents-baseline.summary.receivableCents,50000);
+      assert.equal(ledger.obligations.find((item:any)=>item.id===deposit.id).remainingCents,0);
+      assert.equal(ledger.obligations.find((item:any)=>item.id===balance.id).remainingCents,50000);
+      assert.equal(ledger.clientBalances.find((item:any)=>item.clientId===ledgerClient.id).receivedCents,50000);
+      assert.equal(ledger.clientBalances.find((item:any)=>item.clientId===ledgerClient.id).receivableCents,50000);
+
+      const threeMonthsAgo=new Date(Date.parse(`${today}T00:00:00Z`)-90*86400000).toISOString().slice(0,10);
+      const [year,monthNumber,day]=threeMonthsAgo.split("-").map(Number);
+      const startDate=new Date(Date.UTC(year,monthNumber-1,day+1)).toISOString().slice(0,10);
+      const recurring=await json("/admin/finance/recurring","POST",{
+        clientId:ledgerClient.id,projectId:ledgerProject.id,direction:"income",category:"monthly_fee",
+        description:"Canone mensile test",amountCents:1000,intervalMonths:1,state:"active",startDate,nextDate:startDate,
+      });
+      ledger=await json(`/admin/finance/ledger?month=${month}`);
+      const matured=ledger.obligations.filter((item:any)=>item.sourceType==="recurring"&&item.sourceId===recurring.id);
+      assert.equal(matured.length,3);
+      assert.equal(ledger.obligations.some((item:any)=>item.sourceType==="recurring"&&item.sourceId===recurring.id&&String(item.dueDate).slice(0,10)>today),false);
+      assert.equal(ledger.summary.soldCents-baseline.summary.soldCents,103000);
+      assert.equal(ledger.summary.receivedCents-baseline.summary.receivedCents,50000);
+      assert.equal(ledger.summary.receivableCents-baseline.summary.receivableCents,53000);
+      assert.equal(ledger.summary.overdueCents-baseline.summary.overdueCents,3000);
+      assert.ok(matured.every((item:any)=>item.remainingCents===1000&&item.overdue));
+
+      const historicalProject=await json("/admin/finance/projects","POST",{
+        clientId:ledgerClient.id,name:`${ledgerClientName}_historical`,totalAmountCents:25000,paymentType:"single",
+      });
+      await json(`/admin/finance/projects/${historicalProject.id}`,"PATCH",{details:{
+        amountKnown:true,commercialState:"confirmed",agreementConfirmed:true,confirmedDate:today,
+        creditReview:false,extraCents:0,reportedReceivedCents:8000,
+      }});
+      ledger=await json(`/admin/finance/ledger?month=${month}`);
+      assert.equal(ledger.summary.receivedCents-baseline.summary.receivedCents,50000);
+      const candidate=ledger.historicalCandidates.find((item:any)=>item.sourceType==="project_reported"&&item.id===historicalProject.id);
+      assert.ok(candidate);
+      const reconciled=await json("/admin/finance/ledger/reconcile","POST",{
+        sourceType:"project_reported",sourceId:historicalProject.id,movementDate:today,
+        amountCents:8000,accountId:account.id,note:`${prefix}_ledger storico confermato`,
+      });
+      assert.equal(reconciled.historical,true);
+      assert.equal((await request("/admin/finance/ledger/reconcile","POST",{
+        sourceType:"project_reported",sourceId:historicalProject.id,movementDate:today,
+        amountCents:8000,accountId:account.id,
+      })).status,409);
+      ledger=await json(`/admin/finance/ledger?month=${month}`);
+      assert.equal(ledger.summary.receivedCents-baseline.summary.receivedCents,58000);
+      assert.equal(ledger.summary.cashBalanceCents-baseline.summary.cashBalanceCents,58000);
+      assert.equal(ledger.historicalCandidates.some((item:any)=>item.id===historicalProject.id),false);
+    });
   } finally {
     if(documentPath){
       try { await (await new ObjectStorageService().getObjectEntityFile(documentPath)).delete(); }
@@ -239,14 +320,24 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
     try{
       await q.query("BEGIN");
       const p=(await q.query("SELECT id FROM admin_finance_projects WHERE name=$1",[prefix])).rows.map(r=>r.id);
+      const ledgerP=(await q.query("SELECT id FROM admin_finance_projects WHERE name LIKE $1",[`${prefix}_ledger%`])).rows.map(r=>r.id);
       const e=(await q.query("SELECT id FROM admin_finance_entries WHERE description=$1",[prefix])).rows.map(r=>r.id);
       const r=(await q.query("SELECT id FROM admin_finance_recurring WHERE description=$1",[prefix])).rows.map(r=>r.id);
-      const c=(await q.query("SELECT id FROM admin_finance_clients WHERE name=$1",[prefix])).rows.map(r=>r.id);
+      const ledgerC=(await q.query("SELECT id FROM admin_finance_clients WHERE name=$1",[`${prefix}_ledger`])).rows.map(r=>r.id);
+      const ledgerR=(await q.query("SELECT id FROM admin_finance_recurring WHERE description='Canone mensile test' AND client_id=ANY($1::text[])",[ledgerC])).rows.map(r=>r.id);
+      const c=(await q.query("SELECT id FROM admin_finance_clients WHERE name=ANY($1::text[])",[[prefix,`${prefix}_ledger`]])).rows.map(r=>r.id);
       const s=(await q.query("SELECT id FROM admin_finance_suppliers WHERE name=$1",[prefix])).rows.map(r=>r.id);
-      await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...e,...r,...c,...s]]);
+      const a=(await q.query("SELECT id FROM admin_finance_accounts WHERE name=$1",[`${prefix}_ledger_conto`])).rows.map(r=>r.id);
+      const o=(await q.query(`SELECT id FROM admin_finance_obligations WHERE project_id=ANY($1::text[]) OR recurring_id=ANY($2::text[]) OR description LIKE $3`,[[...p,...ledgerP],[...r,...ledgerR],`${prefix}_ledger%`])).rows.map(r=>r.id);
+      const m=(await q.query(`SELECT id FROM admin_finance_movements WHERE account_id=ANY($1::text[]) OR note LIKE $2`,[a,`%${prefix}_ledger%`])).rows.map(r=>r.id);
+      await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...ledgerP,...e,...r,...ledgerR,...c,...s,...a,...o,...m]]);
+      await q.query("DELETE FROM admin_finance_movement_allocations WHERE movement_id=ANY($1::text[]) OR obligation_id=ANY($2::text[])",[m,o]);
+      await q.query("DELETE FROM admin_finance_movements WHERE id=ANY($1::text[])",[m]);
+      await q.query("DELETE FROM admin_finance_obligations WHERE id=ANY($1::text[])",[o]);
+      await q.query("DELETE FROM admin_finance_accounts WHERE id=ANY($1::text[])",[a]);
       await q.query("DELETE FROM admin_finance_entries WHERE id=ANY($1::text[])",[e]);
-      await q.query("DELETE FROM admin_finance_recurring WHERE id=ANY($1::text[])",[r]);
-      await q.query("DELETE FROM admin_finance_projects WHERE id=ANY($1::text[])",[p]);
+      await q.query("DELETE FROM admin_finance_recurring WHERE id=ANY($1::text[])",[[...r,...ledgerR]]);
+      await q.query("DELETE FROM admin_finance_projects WHERE id=ANY($1::text[])",[[...p,...ledgerP]]);
       await q.query("DELETE FROM voci_progetto WHERE progetto_id=$1",[legacyId]);
       await q.query("DELETE FROM progetti_lavori WHERE id=$1",[legacyId]);
       await q.query("DELETE FROM acconti WHERE progetto=$1",[prefix]);

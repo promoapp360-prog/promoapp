@@ -1,0 +1,3 @@
+ALTER TABLE "admin_finance_obligations" ALTER COLUMN "due_date" DROP NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX "admin_finance_movements_external_reference_idx" ON "admin_finance_movements" USING btree ("external_reference") WHERE NULLIF("admin_finance_movements"."external_reference", '') IS NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX "admin_finance_obligations_source_due_idx" ON "admin_finance_obligations" USING btree ("source_type","source_id","due_date");

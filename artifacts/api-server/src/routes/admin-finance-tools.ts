@@ -10,8 +10,9 @@ import {
 } from "@workspace/api-zod";
 import { pool } from "@workspace/db";
 import {
-  adminFinanceData, financeWorkspace, saveRecurring, generateRecurring, importDevelopmentFinance, validCalendarDate,
+  adminFinanceData, financeWorkspace, saveRecurring, importDevelopmentFinance, validCalendarDate,
 } from "../lib/admin-finance-data";
+import { generateRecurringObligation } from "../lib/finance-ledger-data";
 import { eligibleIncome, todayRome } from "../lib/finance-calculations";
 import { buildFinanceImportPreview } from "../lib/finance-import-preview";
 import { ObjectStorageService } from "../lib/objectStorage";
@@ -70,7 +71,8 @@ export function createFinanceToolsRouter() {
     const params=GenerateFinanceRecurringParams.safeParse(req.params);
     const body=GenerateFinanceRecurringBody.safeParse(req.body);
     if(!params.success||!body.success){res.status(400).json({message:"Ricorrenza o data non valida."});return;}
-    res.json(await generateRecurring(params.data.id,body.data.dueDate));
+    const obligation=await generateRecurringObligation(params.data.id,body.data.dueDate);
+    res.json({id:obligation?.id});
   });
   router.get("/admin/finance/import-preview",async (_req,res):Promise<void>=>{
     const [data,workspace]=await Promise.all([adminFinanceData.list(todayRome().slice(0,7)),financeWorkspace()]);

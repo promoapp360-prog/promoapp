@@ -945,6 +945,301 @@ export interface AdminFinanceData {
   entries: AdminFinanceEntry[];
 }
 
+export interface FinanceLedgerSummary {
+  /** @pattern ^\d{4}-(0[1-9]|1[0-2])$ */
+  month: string;
+  /** @minimum 0 */
+  soldCents: number;
+  /** @minimum 0 */
+  receivedCents: number;
+  /** @minimum 0 */
+  spentCents: number;
+  openingBalancesCents: number;
+  cashBalanceCents: number;
+  /** @minimum 0 */
+  receivableCents: number;
+  /** @minimum 0 */
+  overdueCents: number;
+  managedMarginCents: number;
+  /** @minimum 0 */
+  monthSoldCents: number;
+  /** @minimum 0 */
+  monthReceivedCents: number;
+  /** @minimum 0 */
+  monthSpentCents: number;
+  monthCashFlowCents: number;
+}
+
+export type FinanceAccountAccountType =
+  (typeof FinanceAccountAccountType)[keyof typeof FinanceAccountAccountType];
+
+export const FinanceAccountAccountType = {
+  bank: "bank",
+  paypal: "paypal",
+  cash: "cash",
+  other: "other",
+} as const;
+
+export interface FinanceAccount {
+  id: string;
+  name: string;
+  accountType: FinanceAccountAccountType;
+  openingBalanceCents: number;
+  /** @nullable */
+  openingBalanceDate: string | null;
+  active: boolean;
+}
+
+export type FinanceLedgerObligationDirection =
+  (typeof FinanceLedgerObligationDirection)[keyof typeof FinanceLedgerObligationDirection];
+
+export const FinanceLedgerObligationDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface FinanceLedgerObligation {
+  id: string;
+  direction: FinanceLedgerObligationDirection;
+  category: string;
+  description: string;
+  /** @minimum 1 */
+  amountCents: number;
+  /** @nullable */
+  dueDate: string | null;
+  /** @nullable */
+  clientId: string | null;
+  /** @nullable */
+  clientName: string | null;
+  /** @nullable */
+  projectId: string | null;
+  /** @nullable */
+  projectName: string | null;
+  /** @nullable */
+  supplierId: string | null;
+  sourceType: string;
+  /** @nullable */
+  sourceId: string | null;
+  /** @minimum 0 */
+  allocatedCents: number;
+  /** @minimum 0 */
+  remainingCents: number;
+  overdue: boolean;
+}
+
+export type FinanceLedgerMovementDirection =
+  (typeof FinanceLedgerMovementDirection)[keyof typeof FinanceLedgerMovementDirection];
+
+export const FinanceLedgerMovementDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface FinanceLedgerMovementAllocation {
+  obligationId: string;
+  description: string;
+  /** @nullable */
+  dueDate: string | null;
+  /** @minimum 1 */
+  amountCents: number;
+}
+
+export interface FinanceLedgerMovement {
+  id: string;
+  movementDate: string;
+  direction: FinanceLedgerMovementDirection;
+  /** @minimum 1 */
+  amountCents: number;
+  /** @nullable */
+  accountId: string | null;
+  /** @nullable */
+  accountName: string | null;
+  /** @nullable */
+  paymentMethod: string | null;
+  historical: boolean;
+  note: string;
+  allocations: FinanceLedgerMovementAllocation[];
+}
+
+export type FinanceHistoricalCandidateSourceType =
+  (typeof FinanceHistoricalCandidateSourceType)[keyof typeof FinanceHistoricalCandidateSourceType];
+
+export const FinanceHistoricalCandidateSourceType = {
+  project_reported: "project_reported",
+  legacy_entry: "legacy_entry",
+} as const;
+
+export type FinanceHistoricalCandidateDirection =
+  (typeof FinanceHistoricalCandidateDirection)[keyof typeof FinanceHistoricalCandidateDirection];
+
+export const FinanceHistoricalCandidateDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface FinanceHistoricalCandidate {
+  sourceType: FinanceHistoricalCandidateSourceType;
+  id: string;
+  direction: FinanceHistoricalCandidateDirection;
+  category: string;
+  description: string;
+  /** @minimum 1 */
+  suggestedAmountCents: number;
+  /** @nullable */
+  suggestedDate: string | null;
+  /** @nullable */
+  clientId: string | null;
+  /** @nullable */
+  clientName: string | null;
+  /** @nullable */
+  projectId: string | null;
+  /** @nullable */
+  projectName: string | null;
+}
+
+export interface FinanceClientBalance {
+  clientId: string;
+  clientName: string;
+  /** @minimum 0 */
+  soldCents: number;
+  /** @minimum 0 */
+  receivedCents: number;
+  /** @minimum 0 */
+  receivableCents: number;
+  /** @minimum 0 */
+  overdueCents: number;
+}
+
+export interface FinanceLedgerData {
+  summary: FinanceLedgerSummary;
+  accounts: FinanceAccount[];
+  obligations: FinanceLedgerObligation[];
+  movements: FinanceLedgerMovement[];
+  historicalCandidates: FinanceHistoricalCandidate[];
+  clientBalances: FinanceClientBalance[];
+}
+
+export type FinanceAccountInputAccountType =
+  (typeof FinanceAccountInputAccountType)[keyof typeof FinanceAccountInputAccountType];
+
+export const FinanceAccountInputAccountType = {
+  bank: "bank",
+  paypal: "paypal",
+  cash: "cash",
+  other: "other",
+} as const;
+
+export interface FinanceAccountInput {
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  name: string;
+  accountType: FinanceAccountInputAccountType;
+  /**
+   * @minimum -2147483647
+   * @maximum 2147483647
+   */
+  openingBalanceCents: number;
+  /** @nullable */
+  openingBalanceDate?: string | null;
+  /** @maxLength 2000 */
+  notes?: string;
+}
+
+export type FinanceObligationInputDirection =
+  (typeof FinanceObligationInputDirection)[keyof typeof FinanceObligationInputDirection];
+
+export const FinanceObligationInputDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface FinanceObligationInput {
+  direction: FinanceObligationInputDirection;
+  /**
+   * @minLength 1
+   * @maxLength 60
+   */
+  category: string;
+  /**
+   * @minLength 1
+   * @maxLength 240
+   */
+  description: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  /** @nullable */
+  dueDate?: string | null;
+  /** @nullable */
+  clientId?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  supplierId?: string | null;
+}
+
+export interface FinanceMovementAllocationInput {
+  obligationId: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+}
+
+export type FinanceMovementInputDirection =
+  (typeof FinanceMovementInputDirection)[keyof typeof FinanceMovementInputDirection];
+
+export const FinanceMovementInputDirection = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface FinanceMovementInput {
+  movementDate: string;
+  direction: FinanceMovementInputDirection;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  accountId: string;
+  /** @maxLength 100 */
+  paymentMethod?: string;
+  /** @maxLength 2000 */
+  note?: string;
+  /** @maxItems 100 */
+  allocations: FinanceMovementAllocationInput[];
+}
+
+export type FinanceReconciliationInputSourceType =
+  (typeof FinanceReconciliationInputSourceType)[keyof typeof FinanceReconciliationInputSourceType];
+
+export const FinanceReconciliationInputSourceType = {
+  project_reported: "project_reported",
+  legacy_entry: "legacy_entry",
+} as const;
+
+export interface FinanceReconciliationInput {
+  sourceType: FinanceReconciliationInputSourceType;
+  sourceId: string;
+  movementDate: string;
+  /**
+   * @minimum 1
+   * @maximum 2147483647
+   */
+  amountCents: number;
+  accountId: string;
+  /** @maxLength 100 */
+  paymentMethod?: string;
+  /** @maxLength 2000 */
+  note?: string;
+}
+
 export interface FinanceClientInput {
   /**
    * @minLength 1
@@ -1434,6 +1729,13 @@ export const ExportFinanceFormat = {
 } as const;
 
 export type GetAdminFinanceParams = {
+  /**
+   * @pattern ^\d{4}-(0[1-9]|1[0-2])$
+   */
+  month: string;
+};
+
+export type GetFinanceLedgerParams = {
   /**
    * @pattern ^\d{4}-(0[1-9]|1[0-2])$
    */

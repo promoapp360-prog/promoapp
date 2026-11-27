@@ -1,6 +1,7 @@
 import {
   pgTable, text, integer, boolean, timestamp, date, jsonb, numeric, uniqueIndex, index,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { adminFinanceClientsTable, adminFinanceProjectsTable, adminFinanceRecurringTable, adminFinanceSuppliersTable } from "./admin-finance";
 
 export const adminFinanceQuotesTable = pgTable("admin_finance_quotes", {
@@ -34,7 +35,7 @@ export const adminFinanceObligationsTable = pgTable("admin_finance_obligations",
   category: text("category").notNull(),
   description: text("description").notNull(),
   amountCents: integer("amount_cents").notNull(),
-  dueDate: date("due_date", { mode: "string" }).notNull(),
+  dueDate: date("due_date", { mode: "string" }),
   clientId: text("client_id").references(() => adminFinanceClientsTable.id),
   projectId: text("project_id").references(() => adminFinanceProjectsTable.id),
   recurringId: text("recurring_id").references(() => adminFinanceRecurringTable.id),
@@ -44,6 +45,7 @@ export const adminFinanceObligationsTable = pgTable("admin_finance_obligations",
   notes: text("notes").notNull().default(""),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, table => [
+  uniqueIndex("admin_finance_obligations_source_due_idx").on(table.sourceType, table.sourceId, table.dueDate),
   index("admin_finance_obligations_due_idx").on(table.dueDate),
   index("admin_finance_obligations_client_idx").on(table.clientId, table.dueDate),
   index("admin_finance_obligations_source_idx").on(table.sourceType, table.sourceId),
@@ -74,6 +76,7 @@ export const adminFinanceMovementsTable = pgTable("admin_finance_movements", {
 }, table => [
   index("admin_finance_movements_date_idx").on(table.movementAt),
   index("admin_finance_movements_direction_date_idx").on(table.direction, table.movementAt),
+  uniqueIndex("admin_finance_movements_external_reference_idx").on(table.externalReference).where(sql`NULLIF(${table.externalReference}, '') IS NOT NULL`),
 ]);
 
 export const adminFinanceMovementAllocationsTable = pgTable("admin_finance_movement_allocations", {

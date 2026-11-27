@@ -21,6 +21,7 @@ import {
 } from "@workspace/api-zod";
 import type { FinanceEntryInput, FinanceSupplierInput } from "@workspace/api-zod";
 import { adminFinanceData } from "../lib/admin-finance-data";
+import { createAdminFinanceLedgerRouter } from "./admin-finance-ledger";
 import { createFinanceToolsRouter } from "./admin-finance-tools";
 
 type FinanceData = typeof adminFinanceData;
@@ -53,6 +54,7 @@ function paymentTermsMatch(
 export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
   const router = Router();
   router.use(createFinanceToolsRouter());
+  router.use(createAdminFinanceLedgerRouter());
 
   router.get("/admin/finance", async (req, res): Promise<void> => {
     const parsed = GetAdminFinanceQueryParams.safeParse(req.query);

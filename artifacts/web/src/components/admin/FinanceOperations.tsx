@@ -1,18 +1,22 @@
-import { useState } from "react";
-import type { AdminFinanceData, FinanceWorkspace, FinanceRecurringInput } from "@workspace/api-client-react";
+import { useEffect, useState } from "react";
+import type { AdminFinanceData, FinanceWorkspace, FinanceRecurringInput, FinanceLedgerData } from "@workspace/api-client-react";
 import { adminApi } from "@/lib/admin-api";
 import { appPath } from "@/lib/marketing";
 import { Button } from "@/components/ui/button";
 import { FinanceField } from "./FinanceDetailsFields";
-import { categoryLabels, fieldClass, money, cash, iso } from "./finance-ui";
+import { categoryLabels, fieldClass, money } from "./finance-ui";
 
 export default function FinanceOperations({data,workspace,onRefresh}:{data?:AdminFinanceData;workspace?:FinanceWorkspace;onRefresh:()=>Promise<void>}) {
   const [editor,setEditor]=useState<FinanceRecurringInput|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState("");
   const [notice,setNotice]=useState("");
+  const [ledger,setLedger]=useState<FinanceLedgerData>();
+  const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit"}).format(new Date());
+  const loadLedger=async()=>{try{setLedger(await adminApi<FinanceLedgerData>(`/finance/ledger?month=${month}`));}catch{setLedger(undefined);}};
+  useEffect(()=>{void loadLedger();},[data,workspace,month]);
   const fresh=():FinanceRecurringInput=>({direction:"income",category:"monthly_fee",description:"",amountCents:0,intervalMonths:1,state:"potential",startDate:null,nextDate:null});
   const act=async (work:()=>Promise<unknown>)=>{
     setError("");setBusy(true);setNotice("");
-    try {await work();await onRefresh();setNotice("Operazione completata e dati ricaricati.");return true;}
+    try {await work();await onRefresh();await loadLedger();setNotice("Operazione completata e dati ricaricati.");return true;}
     catch(err){setError(err instanceof Error?err.message:"Operazione non riuscita.");return false;}
     finally{setBusy(false);}
   };
@@ -45,7 +49,7 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
         <div className="my-3 flex flex-wrap gap-3"><button className="text-xs font-semibold text-indigo-700" disabled={busy} onClick={()=>setEditor(r)}>Modifica / sospendi</button>
           {r.state==="active"&&<button disabled={busy} className="text-xs font-semibold text-indigo-700" onClick={()=>void act(()=>adminApi(`/finance/recurring/${r.id}/generate`,{method:"POST",body:JSON.stringify({dueDate:r.nextDate})}))}>Genera prossima scadenza</button>}
         </div>
-        <details><summary className="cursor-pointer text-xs font-semibold">Storico delle mensilità</summary><ul className="mt-2 space-y-1 text-xs">{data?.entries.filter(e=>e.details?.recurringId===r.id).map(e=><li key={e.id}>{iso(e.dueDate)} · {money(e.amountCents)} · {e.details?.cancelled?"Annullato":cash(e)?"Pagato e riconciliato":e.paidAt?"Pagamento da verificare":"Non pagato"}</li>)}</ul></details>
+       <details><summary className="cursor-pointer text-xs font-semibold">Storico delle mensilità</summary><ul className="mt-2 space-y-1 text-xs">{ledger?.obligations.filter(item=>item.sourceType==="recurring"&&item.sourceId===r.id).map(item=><li key={item.id}>{item.dueDate?.slice(0,10)??"Data assente"} · {money(item.amountCents)} · {item.remainingCents===0?"Incassato / pagato":item.direction==="income"?"Da incassare":"Da pagare"} · residuo {money(item.remainingCents)}</li>)}</ul>{!ledger?.obligations.some(item=>item.sourceType==="recurring"&&item.sourceId===r.id)&&<p className="mt-2 text-xs text-slate-500">Nessuna scadenza maturata registrata.</p>}</details>
       </article>)}</div>
       {!workspace?.recurring.length&&<p className="py-3 text-sm text-slate-500">Nessun canone registrato. Aggiungi un servizio mensile per cliente o una spesa ricorrente.</p>}
     </section>

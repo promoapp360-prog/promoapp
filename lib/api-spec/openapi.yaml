@@ -288,6 +288,87 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/AdminFinanceData" }
         "400": { description: Mese non valido }
+  /admin/finance/ledger:
+    get:
+      operationId: getFinanceLedger
+      summary: Riepilogo del bilancio e prima nota
+      parameters:
+        - name: month
+          in: query
+          required: true
+          schema: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+      responses:
+        "200":
+          description: Totali complessivi, periodo, scadenze e movimenti
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceLedgerData" }
+        "400": { description: Mese non valido }
+  /admin/finance/ledger/accounts:
+    post:
+      operationId: createFinanceAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceAccountInput" }
+      responses:
+        "201":
+          description: Conto creato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceAccount" }
+        "400": { description: Dati del conto non validi }
+        "409": { description: Nome conto già presente }
+  /admin/finance/ledger/obligations:
+    post:
+      operationId: createFinanceObligation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceObligationInput" }
+      responses:
+        "201":
+          description: Scadenza creata
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceLedgerObligation" }
+        "400": { description: Dati della scadenza non validi }
+        "404": { description: "Cliente, lavoro o fornitore non trovato" }
+  /admin/finance/ledger/movements:
+    post:
+      operationId: createFinanceMovement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceMovementInput" }
+      responses:
+        "201":
+          description: Incasso o pagamento registrato
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceLedgerMovement" }
+        "400": { description: "Importo, conto o ripartizione non validi" }
+        "404": { description: Conto o scadenza non trovati }
+  /admin/finance/ledger/reconcile:
+    post:
+      operationId: reconcileFinanceHistory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FinanceReconciliationInput" }
+      responses:
+        "201":
+          description: Dato storico confermato e registrato come movimento
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FinanceLedgerMovement" }
+        "400": { description: Data o importo da riconciliare non validi }
+        "404": { description: Dato storico o conto non trovato }
+        "409": { description: Dato storico già riconciliato }
   /admin/finance/clients:
     post:
       operationId: createAdminFinanceClient
@@ -964,6 +1045,159 @@ components:
         clients: { type: array, items: { $ref: "#/components/schemas/AdminFinanceClient" } }
         projects: { type: array, items: { $ref: "#/components/schemas/AdminFinanceProject" } }
         entries: { type: array, items: { $ref: "#/components/schemas/AdminFinanceEntry" } }
+    FinanceLedgerData:
+      type: object
+      required: [summary, accounts, obligations, movements, historicalCandidates, clientBalances]
+      properties:
+        summary: { $ref: "#/components/schemas/FinanceLedgerSummary" }
+        accounts: { type: array, items: { $ref: "#/components/schemas/FinanceAccount" } }
+        obligations: { type: array, items: { $ref: "#/components/schemas/FinanceLedgerObligation" } }
+        movements: { type: array, items: { $ref: "#/components/schemas/FinanceLedgerMovement" } }
+        historicalCandidates: { type: array, items: { $ref: "#/components/schemas/FinanceHistoricalCandidate" } }
+        clientBalances: { type: array, items: { $ref: "#/components/schemas/FinanceClientBalance" } }
+    FinanceLedgerSummary:
+      type: object
+      required: [month, soldCents, receivedCents, spentCents, openingBalancesCents, cashBalanceCents, receivableCents, overdueCents, managedMarginCents, monthSoldCents, monthReceivedCents, monthSpentCents, monthCashFlowCents]
+      properties:
+        month: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+        soldCents: { type: integer, minimum: 0, multipleOf: 1 }
+        receivedCents: { type: integer, minimum: 0, multipleOf: 1 }
+        spentCents: { type: integer, minimum: 0, multipleOf: 1 }
+        openingBalancesCents: { type: integer, multipleOf: 1 }
+        cashBalanceCents: { type: integer, multipleOf: 1 }
+        receivableCents: { type: integer, minimum: 0, multipleOf: 1 }
+        overdueCents: { type: integer, minimum: 0, multipleOf: 1 }
+        managedMarginCents: { type: integer, multipleOf: 1 }
+        monthSoldCents: { type: integer, minimum: 0, multipleOf: 1 }
+        monthReceivedCents: { type: integer, minimum: 0, multipleOf: 1 }
+        monthSpentCents: { type: integer, minimum: 0, multipleOf: 1 }
+        monthCashFlowCents: { type: integer, multipleOf: 1 }
+    FinanceAccount:
+      type: object
+      required: [id, name, accountType, openingBalanceCents, openingBalanceDate, active]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        accountType: { type: string, enum: [bank, paypal, cash, other] }
+        openingBalanceCents: { type: integer, multipleOf: 1 }
+        openingBalanceDate: { type: ["string", "null"], format: date }
+        active: { type: boolean }
+    FinanceAccountInput:
+      type: object
+      required: [name, accountType, openingBalanceCents]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        accountType: { type: string, enum: [bank, paypal, cash, other] }
+        openingBalanceCents: { type: integer, minimum: -2147483647, maximum: 2147483647, multipleOf: 1 }
+        openingBalanceDate: { type: ["string", "null"], format: date }
+        notes: { type: string, maxLength: 2000 }
+    FinanceLedgerObligation:
+      type: object
+      required: [id, direction, category, description, amountCents, dueDate, clientId, clientName, projectId, projectName, supplierId, sourceType, sourceId, allocatedCents, remainingCents, overdue]
+      properties:
+        id: { type: string, format: uuid }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string }
+        description: { type: string }
+        amountCents: { type: integer, minimum: 1, multipleOf: 1 }
+        dueDate: { type: ["string", "null"], format: date }
+        clientId: { type: ["string", "null"], format: uuid }
+        clientName: { type: ["string", "null"] }
+        projectId: { type: ["string", "null"], format: uuid }
+        projectName: { type: ["string", "null"] }
+        supplierId: { type: ["string", "null"], format: uuid }
+        sourceType: { type: string }
+        sourceId: { type: ["string", "null"] }
+        allocatedCents: { type: integer, minimum: 0, multipleOf: 1 }
+        remainingCents: { type: integer, minimum: 0, multipleOf: 1 }
+        overdue: { type: boolean }
+    FinanceObligationInput:
+      type: object
+      required: [direction, category, description, amountCents]
+      properties:
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string, minLength: 1, maxLength: 60 }
+        description: { type: string, minLength: 1, maxLength: 240 }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        dueDate: { type: ["string", "null"], format: date }
+        clientId: { type: ["string", "null"], format: uuid }
+        projectId: { type: ["string", "null"], format: uuid }
+        supplierId: { type: ["string", "null"], format: uuid }
+    FinanceMovementAllocationInput:
+      type: object
+      required: [obligationId, amountCents]
+      properties:
+        obligationId: { type: string, format: uuid }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+    FinanceLedgerMovementAllocation:
+      type: object
+      required: [obligationId, description, dueDate, amountCents]
+      properties:
+        obligationId: { type: string, format: uuid }
+        description: { type: string }
+        dueDate: { type: ["string", "null"], format: date }
+        amountCents: { type: integer, minimum: 1, multipleOf: 1 }
+    FinanceLedgerMovement:
+      type: object
+      required: [id, movementDate, direction, amountCents, accountId, accountName, paymentMethod, historical, note, allocations]
+      properties:
+        id: { type: string, format: uuid }
+        movementDate: { type: string, format: date }
+        direction: { type: string, enum: [income, expense] }
+        amountCents: { type: integer, minimum: 1, multipleOf: 1 }
+        accountId: { type: ["string", "null"], format: uuid }
+        accountName: { type: ["string", "null"] }
+        paymentMethod: { type: ["string", "null"] }
+        historical: { type: boolean }
+        note: { type: string }
+        allocations: { type: array, items: { $ref: "#/components/schemas/FinanceLedgerMovementAllocation" } }
+    FinanceMovementInput:
+      type: object
+      required: [movementDate, direction, amountCents, accountId, allocations]
+      properties:
+        movementDate: { type: string, format: date }
+        direction: { type: string, enum: [income, expense] }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        accountId: { type: string, format: uuid }
+        paymentMethod: { type: string, maxLength: 100 }
+        note: { type: string, maxLength: 2000 }
+        allocations: { type: array, maxItems: 100, items: { $ref: "#/components/schemas/FinanceMovementAllocationInput" } }
+    FinanceHistoricalCandidate:
+      type: object
+      required: [sourceType, id, direction, category, description, suggestedAmountCents, suggestedDate, clientId, clientName, projectId, projectName]
+      properties:
+        sourceType: { type: string, enum: [project_reported, legacy_entry] }
+        id: { type: string, format: uuid }
+        direction: { type: string, enum: [income, expense] }
+        category: { type: string }
+        description: { type: string }
+        suggestedAmountCents: { type: integer, minimum: 1, multipleOf: 1 }
+        suggestedDate: { type: ["string", "null"], format: date }
+        clientId: { type: ["string", "null"], format: uuid }
+        clientName: { type: ["string", "null"] }
+        projectId: { type: ["string", "null"], format: uuid }
+        projectName: { type: ["string", "null"] }
+    FinanceReconciliationInput:
+      type: object
+      required: [sourceType, sourceId, movementDate, amountCents, accountId]
+      properties:
+        sourceType: { type: string, enum: [project_reported, legacy_entry] }
+        sourceId: { type: string, format: uuid }
+        movementDate: { type: string, format: date }
+        amountCents: { type: integer, minimum: 1, maximum: 2147483647, multipleOf: 1 }
+        accountId: { type: string, format: uuid }
+        paymentMethod: { type: string, maxLength: 100 }
+        note: { type: string, maxLength: 2000 }
+    FinanceClientBalance:
+      type: object
+      required: [clientId, clientName, soldCents, receivedCents, receivableCents, overdueCents]
+      properties:
+        clientId: { type: string, format: uuid }
+        clientName: { type: string }
+        soldCents: { type: integer, minimum: 0, multipleOf: 1 }
+        receivedCents: { type: integer, minimum: 0, multipleOf: 1 }
+        receivableCents: { type: integer, minimum: 0, multipleOf: 1 }
+        overdueCents: { type: integer, minimum: 0, multipleOf: 1 }
     AdminFinanceClient:
       type: object
       required: [id, name, companyName, email, phone, notes, createdAt]

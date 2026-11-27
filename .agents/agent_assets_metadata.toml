@@ -231,3 +231,17 @@ mtime_ms = 1795779848682
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/8edfe802-2733-4b5b-b1d8-3ac4480ebd00/fafec7b0-04c5-4987-b55e-221e0a9b21e7"
 storage_version_token = "1795779849107382"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "Lp8RVaVsJTWut5POZJZ0Z"
+uri = "file://generated-artifacts/finance-development-pre-fase-2.json"
+type = "unspecified"
+title = "Esportazione contabile PromoApp - prima della Fase 2"
+description = "Esportazione in sola lettura dell'archivio di sviluppo, prima delle modifiche alla struttura delle scadenze. Contiene dati interni contabili."
+logical_id = "45d1d221-ca26-4ba6-83cb-5cdd06758b19"
+content_hash = "sha256:11a8130a93f0bba9cae0bd5a906908b018e1223061482e172f1abeab4cab357f"
+size = 78675
+mtime_ms = 1795780521578
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/45d1d221-ca26-4ba6-83cb-5cdd06758b19/9ab4aec7-d46c-48a2-917f-9752144e4762"
+storage_version_token = "1795780522112605"
+content_type = "application/octet-stream"

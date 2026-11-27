@@ -32,6 +32,8 @@ import type {
   ContactResponse,
   ContactStateInput,
   ExportFinanceParams,
+  FinanceAccount,
+  FinanceAccountInput,
   FinanceClientInput,
   FinanceClientUpdate,
   FinanceDevelopmentTransferInput,
@@ -41,8 +43,14 @@ import type {
   FinanceEntryInput,
   FinanceEntryUpdate,
   FinanceImportPreview,
+  FinanceLedgerData,
+  FinanceLedgerMovement,
+  FinanceLedgerObligation,
+  FinanceMovementInput,
+  FinanceObligationInput,
   FinanceProjectInput,
   FinanceProjectUpdate,
+  FinanceReconciliationInput,
   FinanceRecurringGenerationInput,
   FinanceRecurringInput,
   FinanceReminder,
@@ -52,6 +60,7 @@ import type {
   FinanceWorkspace,
   GetAdminFinanceParams,
   GetAdminOverviewParams,
+  GetFinanceLedgerParams,
   HealthStatus,
   ListAdminSiteControlRequestsParams,
   ReviewPublicationInput,
@@ -1924,6 +1933,425 @@ export function useGetAdminFinance<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Riepilogo del bilancio e prima nota
+ */
+export const getGetFinanceLedgerUrl = (params: GetFinanceLedgerParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/finance/ledger?${stringifiedParams}`
+    : `/api/admin/finance/ledger`;
+};
+
+export const getFinanceLedger = async (
+  params: GetFinanceLedgerParams,
+  options?: RequestInit,
+): Promise<FinanceLedgerData> => {
+  return customFetch<FinanceLedgerData>(getGetFinanceLedgerUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetFinanceLedgerQueryKey = (
+  params?: GetFinanceLedgerParams,
+) => {
+  return [`/api/admin/finance/ledger`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetFinanceLedgerQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFinanceLedger>>,
+  TError = ErrorType<void>,
+>(
+  params: GetFinanceLedgerParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getFinanceLedger>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetFinanceLedgerQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getFinanceLedger>>
+  > = ({ signal }) => getFinanceLedger(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFinanceLedger>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetFinanceLedgerQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFinanceLedger>>
+>;
+export type GetFinanceLedgerQueryError = ErrorType<void>;
+
+/**
+ * @summary Riepilogo del bilancio e prima nota
+ */
+
+export function useGetFinanceLedger<
+  TData = Awaited<ReturnType<typeof getFinanceLedger>>,
+  TError = ErrorType<void>,
+>(
+  params: GetFinanceLedgerParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getFinanceLedger>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetFinanceLedgerQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getCreateFinanceAccountUrl = () => {
+  return `/api/admin/finance/ledger/accounts`;
+};
+
+export const createFinanceAccount = async (
+  financeAccountInput: FinanceAccountInput,
+  options?: RequestInit,
+): Promise<FinanceAccount> => {
+  return customFetch<FinanceAccount>(getCreateFinanceAccountUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeAccountInput),
+  });
+};
+
+export const getCreateFinanceAccountMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFinanceAccount>>,
+    TError,
+    { data: BodyType<FinanceAccountInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createFinanceAccount>>,
+  TError,
+  { data: BodyType<FinanceAccountInput> },
+  TContext
+> => {
+  const mutationKey = ["createFinanceAccount"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createFinanceAccount>>,
+    { data: BodyType<FinanceAccountInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createFinanceAccount(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateFinanceAccountMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createFinanceAccount>>
+>;
+export type CreateFinanceAccountMutationBody = BodyType<FinanceAccountInput>;
+export type CreateFinanceAccountMutationError = ErrorType<void>;
+
+export const useCreateFinanceAccount = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFinanceAccount>>,
+    TError,
+    { data: BodyType<FinanceAccountInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createFinanceAccount>>,
+  TError,
+  { data: BodyType<FinanceAccountInput> },
+  TContext
+> => {
+  return useMutation(getCreateFinanceAccountMutationOptions(options));
+};
+
+export const getCreateFinanceObligationUrl = () => {
+  return `/api/admin/finance/ledger/obligations`;
+};
+
+export const createFinanceObligation = async (
+  financeObligationInput: FinanceObligationInput,
+  options?: RequestInit,
+): Promise<FinanceLedgerObligation> => {
+  return customFetch<FinanceLedgerObligation>(getCreateFinanceObligationUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeObligationInput),
+  });
+};
+
+export const getCreateFinanceObligationMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFinanceObligation>>,
+    TError,
+    { data: BodyType<FinanceObligationInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createFinanceObligation>>,
+  TError,
+  { data: BodyType<FinanceObligationInput> },
+  TContext
+> => {
+  const mutationKey = ["createFinanceObligation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createFinanceObligation>>,
+    { data: BodyType<FinanceObligationInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createFinanceObligation(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateFinanceObligationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createFinanceObligation>>
+>;
+export type CreateFinanceObligationMutationBody =
+  BodyType<FinanceObligationInput>;
+export type CreateFinanceObligationMutationError = ErrorType<void>;
+
+export const useCreateFinanceObligation = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFinanceObligation>>,
+    TError,
+    { data: BodyType<FinanceObligationInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createFinanceObligation>>,
+  TError,
+  { data: BodyType<FinanceObligationInput> },
+  TContext
+> => {
+  return useMutation(getCreateFinanceObligationMutationOptions(options));
+};
+
+export const getCreateFinanceMovementUrl = () => {
+  return `/api/admin/finance/ledger/movements`;
+};
+
+export const createFinanceMovement = async (
+  financeMovementInput: FinanceMovementInput,
+  options?: RequestInit,
+): Promise<FinanceLedgerMovement> => {
+  return customFetch<FinanceLedgerMovement>(getCreateFinanceMovementUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeMovementInput),
+  });
+};
+
+export const getCreateFinanceMovementMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFinanceMovement>>,
+    TError,
+    { data: BodyType<FinanceMovementInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createFinanceMovement>>,
+  TError,
+  { data: BodyType<FinanceMovementInput> },
+  TContext
+> => {
+  const mutationKey = ["createFinanceMovement"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createFinanceMovement>>,
+    { data: BodyType<FinanceMovementInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createFinanceMovement(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateFinanceMovementMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createFinanceMovement>>
+>;
+export type CreateFinanceMovementMutationBody = BodyType<FinanceMovementInput>;
+export type CreateFinanceMovementMutationError = ErrorType<void>;
+
+export const useCreateFinanceMovement = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFinanceMovement>>,
+    TError,
+    { data: BodyType<FinanceMovementInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createFinanceMovement>>,
+  TError,
+  { data: BodyType<FinanceMovementInput> },
+  TContext
+> => {
+  return useMutation(getCreateFinanceMovementMutationOptions(options));
+};
+
+export const getReconcileFinanceHistoryUrl = () => {
+  return `/api/admin/finance/ledger/reconcile`;
+};
+
+export const reconcileFinanceHistory = async (
+  financeReconciliationInput: FinanceReconciliationInput,
+  options?: RequestInit,
+): Promise<FinanceLedgerMovement> => {
+  return customFetch<FinanceLedgerMovement>(getReconcileFinanceHistoryUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(financeReconciliationInput),
+  });
+};
+
+export const getReconcileFinanceHistoryMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof reconcileFinanceHistory>>,
+    TError,
+    { data: BodyType<FinanceReconciliationInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof reconcileFinanceHistory>>,
+  TError,
+  { data: BodyType<FinanceReconciliationInput> },
+  TContext
+> => {
+  const mutationKey = ["reconcileFinanceHistory"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof reconcileFinanceHistory>>,
+    { data: BodyType<FinanceReconciliationInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return reconcileFinanceHistory(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ReconcileFinanceHistoryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof reconcileFinanceHistory>>
+>;
+export type ReconcileFinanceHistoryMutationBody =
+  BodyType<FinanceReconciliationInput>;
+export type ReconcileFinanceHistoryMutationError = ErrorType<void>;
+
+export const useReconcileFinanceHistory = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof reconcileFinanceHistory>>,
+    TError,
+    { data: BodyType<FinanceReconciliationInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof reconcileFinanceHistory>>,
+  TError,
+  { data: BodyType<FinanceReconciliationInput> },
+  TContext
+> => {
+  return useMutation(getReconcileFinanceHistoryMutationOptions(options));
+};
 
 /**
  * @summary Aggiunge un cliente all’anagrafica contabile

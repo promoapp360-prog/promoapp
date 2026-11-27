@@ -1094,6 +1094,371 @@ export const GetAdminFinanceResponse = zod.object({
 });
 
 /**
+ * @summary Riepilogo del bilancio e prima nota
+ */
+export const getFinanceLedgerQueryMonthRegExp = new RegExp(
+  "^\\d{4}-(0[1-9]|1[0-2])$",
+);
+
+export const GetFinanceLedgerQueryParams = zod.object({
+  month: zod.coerce.string().regex(getFinanceLedgerQueryMonthRegExp),
+});
+
+export const getFinanceLedgerResponseSummaryMonthRegExp = new RegExp(
+  "^\\d{4}-(0[1-9]|1[0-2])$",
+);
+export const getFinanceLedgerResponseSummarySoldCentsMin = 0;
+export const getFinanceLedgerResponseSummarySoldCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryReceivedCentsMin = 0;
+export const getFinanceLedgerResponseSummaryReceivedCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummarySpentCentsMin = 0;
+export const getFinanceLedgerResponseSummarySpentCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryOpeningBalancesCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryCashBalanceCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryReceivableCentsMin = 0;
+export const getFinanceLedgerResponseSummaryReceivableCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryOverdueCentsMin = 0;
+export const getFinanceLedgerResponseSummaryOverdueCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryManagedMarginCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryMonthSoldCentsMin = 0;
+export const getFinanceLedgerResponseSummaryMonthSoldCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryMonthReceivedCentsMin = 0;
+export const getFinanceLedgerResponseSummaryMonthReceivedCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryMonthSpentCentsMin = 0;
+export const getFinanceLedgerResponseSummaryMonthSpentCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseSummaryMonthCashFlowCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseAccountsItemOpeningBalanceCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseObligationsItemAmountCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseObligationsItemAllocatedCentsMin = 0;
+export const getFinanceLedgerResponseObligationsItemAllocatedCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseObligationsItemRemainingCentsMin = 0;
+export const getFinanceLedgerResponseObligationsItemRemainingCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseMovementsItemAmountCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseMovementsItemAllocationsItemAmountCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseHistoricalCandidatesItemSuggestedAmountCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseClientBalancesItemSoldCentsMin = 0;
+export const getFinanceLedgerResponseClientBalancesItemSoldCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseClientBalancesItemReceivedCentsMin = 0;
+export const getFinanceLedgerResponseClientBalancesItemReceivedCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseClientBalancesItemReceivableCentsMin = 0;
+export const getFinanceLedgerResponseClientBalancesItemReceivableCentsMultipleOf = 1;
+
+export const getFinanceLedgerResponseClientBalancesItemOverdueCentsMin = 0;
+export const getFinanceLedgerResponseClientBalancesItemOverdueCentsMultipleOf = 1;
+
+export const GetFinanceLedgerResponse = zod.object({
+  summary: zod.object({
+    month: zod.string().regex(getFinanceLedgerResponseSummaryMonthRegExp),
+    soldCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummarySoldCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummarySoldCentsMultipleOf),
+    receivedCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummaryReceivedCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummaryReceivedCentsMultipleOf),
+    spentCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummarySpentCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummarySpentCentsMultipleOf),
+    openingBalancesCents: zod
+      .number()
+      .multipleOf(
+        getFinanceLedgerResponseSummaryOpeningBalancesCentsMultipleOf,
+      ),
+    cashBalanceCents: zod
+      .number()
+      .multipleOf(getFinanceLedgerResponseSummaryCashBalanceCentsMultipleOf),
+    receivableCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummaryReceivableCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummaryReceivableCentsMultipleOf),
+    overdueCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummaryOverdueCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummaryOverdueCentsMultipleOf),
+    managedMarginCents: zod
+      .number()
+      .multipleOf(getFinanceLedgerResponseSummaryManagedMarginCentsMultipleOf),
+    monthSoldCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummaryMonthSoldCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummaryMonthSoldCentsMultipleOf),
+    monthReceivedCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummaryMonthReceivedCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummaryMonthReceivedCentsMultipleOf),
+    monthSpentCents: zod
+      .number()
+      .min(getFinanceLedgerResponseSummaryMonthSpentCentsMin)
+      .multipleOf(getFinanceLedgerResponseSummaryMonthSpentCentsMultipleOf),
+    monthCashFlowCents: zod
+      .number()
+      .multipleOf(getFinanceLedgerResponseSummaryMonthCashFlowCentsMultipleOf),
+  }),
+  accounts: zod.array(
+    zod.object({
+      id: zod.string().uuid(),
+      name: zod.string(),
+      accountType: zod.enum(["bank", "paypal", "cash", "other"]),
+      openingBalanceCents: zod
+        .number()
+        .multipleOf(
+          getFinanceLedgerResponseAccountsItemOpeningBalanceCentsMultipleOf,
+        ),
+      openingBalanceDate: zod.coerce.date().nullable(),
+      active: zod.boolean(),
+    }),
+  ),
+  obligations: zod.array(
+    zod.object({
+      id: zod.string().uuid(),
+      direction: zod.enum(["income", "expense"]),
+      category: zod.string(),
+      description: zod.string(),
+      amountCents: zod
+        .number()
+        .min(1)
+        .multipleOf(
+          getFinanceLedgerResponseObligationsItemAmountCentsMultipleOf,
+        ),
+      dueDate: zod.coerce.date().nullable(),
+      clientId: zod.string().uuid().nullable(),
+      clientName: zod.string().nullable(),
+      projectId: zod.string().uuid().nullable(),
+      projectName: zod.string().nullable(),
+      supplierId: zod.string().uuid().nullable(),
+      sourceType: zod.string(),
+      sourceId: zod.string().nullable(),
+      allocatedCents: zod
+        .number()
+        .min(getFinanceLedgerResponseObligationsItemAllocatedCentsMin)
+        .multipleOf(
+          getFinanceLedgerResponseObligationsItemAllocatedCentsMultipleOf,
+        ),
+      remainingCents: zod
+        .number()
+        .min(getFinanceLedgerResponseObligationsItemRemainingCentsMin)
+        .multipleOf(
+          getFinanceLedgerResponseObligationsItemRemainingCentsMultipleOf,
+        ),
+      overdue: zod.boolean(),
+    }),
+  ),
+  movements: zod.array(
+    zod.object({
+      id: zod.string().uuid(),
+      movementDate: zod.coerce.date(),
+      direction: zod.enum(["income", "expense"]),
+      amountCents: zod
+        .number()
+        .min(1)
+        .multipleOf(getFinanceLedgerResponseMovementsItemAmountCentsMultipleOf),
+      accountId: zod.string().uuid().nullable(),
+      accountName: zod.string().nullable(),
+      paymentMethod: zod.string().nullable(),
+      historical: zod.boolean(),
+      note: zod.string(),
+      allocations: zod.array(
+        zod.object({
+          obligationId: zod.string().uuid(),
+          description: zod.string(),
+          dueDate: zod.coerce.date().nullable(),
+          amountCents: zod
+            .number()
+            .min(1)
+            .multipleOf(
+              getFinanceLedgerResponseMovementsItemAllocationsItemAmountCentsMultipleOf,
+            ),
+        }),
+      ),
+    }),
+  ),
+  historicalCandidates: zod.array(
+    zod.object({
+      sourceType: zod.enum(["project_reported", "legacy_entry"]),
+      id: zod.string().uuid(),
+      direction: zod.enum(["income", "expense"]),
+      category: zod.string(),
+      description: zod.string(),
+      suggestedAmountCents: zod
+        .number()
+        .min(1)
+        .multipleOf(
+          getFinanceLedgerResponseHistoricalCandidatesItemSuggestedAmountCentsMultipleOf,
+        ),
+      suggestedDate: zod.coerce.date().nullable(),
+      clientId: zod.string().uuid().nullable(),
+      clientName: zod.string().nullable(),
+      projectId: zod.string().uuid().nullable(),
+      projectName: zod.string().nullable(),
+    }),
+  ),
+  clientBalances: zod.array(
+    zod.object({
+      clientId: zod.string().uuid(),
+      clientName: zod.string(),
+      soldCents: zod
+        .number()
+        .min(getFinanceLedgerResponseClientBalancesItemSoldCentsMin)
+        .multipleOf(
+          getFinanceLedgerResponseClientBalancesItemSoldCentsMultipleOf,
+        ),
+      receivedCents: zod
+        .number()
+        .min(getFinanceLedgerResponseClientBalancesItemReceivedCentsMin)
+        .multipleOf(
+          getFinanceLedgerResponseClientBalancesItemReceivedCentsMultipleOf,
+        ),
+      receivableCents: zod
+        .number()
+        .min(getFinanceLedgerResponseClientBalancesItemReceivableCentsMin)
+        .multipleOf(
+          getFinanceLedgerResponseClientBalancesItemReceivableCentsMultipleOf,
+        ),
+      overdueCents: zod
+        .number()
+        .min(getFinanceLedgerResponseClientBalancesItemOverdueCentsMin)
+        .multipleOf(
+          getFinanceLedgerResponseClientBalancesItemOverdueCentsMultipleOf,
+        ),
+    }),
+  ),
+});
+
+export const createFinanceAccountBodyNameMax = 120;
+
+export const createFinanceAccountBodyOpeningBalanceCentsMin = -2147483647;
+export const createFinanceAccountBodyOpeningBalanceCentsMax = 2147483647;
+export const createFinanceAccountBodyOpeningBalanceCentsMultipleOf = 1;
+
+export const createFinanceAccountBodyNotesMax = 2000;
+
+export const CreateFinanceAccountBody = zod.object({
+  name: zod.string().min(1).max(createFinanceAccountBodyNameMax),
+  accountType: zod.enum(["bank", "paypal", "cash", "other"]),
+  openingBalanceCents: zod
+    .number()
+    .min(createFinanceAccountBodyOpeningBalanceCentsMin)
+    .max(createFinanceAccountBodyOpeningBalanceCentsMax)
+    .multipleOf(createFinanceAccountBodyOpeningBalanceCentsMultipleOf),
+  openingBalanceDate: zod.coerce.date().nullish(),
+  notes: zod.string().max(createFinanceAccountBodyNotesMax).optional(),
+});
+
+export const createFinanceObligationBodyCategoryMax = 60;
+
+export const createFinanceObligationBodyDescriptionMax = 240;
+
+export const createFinanceObligationBodyAmountCentsMax = 2147483647;
+export const createFinanceObligationBodyAmountCentsMultipleOf = 1;
+
+export const CreateFinanceObligationBody = zod.object({
+  direction: zod.enum(["income", "expense"]),
+  category: zod.string().min(1).max(createFinanceObligationBodyCategoryMax),
+  description: zod
+    .string()
+    .min(1)
+    .max(createFinanceObligationBodyDescriptionMax),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(createFinanceObligationBodyAmountCentsMax)
+    .multipleOf(createFinanceObligationBodyAmountCentsMultipleOf),
+  dueDate: zod.coerce.date().nullish(),
+  clientId: zod.string().uuid().nullish(),
+  projectId: zod.string().uuid().nullish(),
+  supplierId: zod.string().uuid().nullish(),
+});
+
+export const createFinanceMovementBodyAmountCentsMax = 2147483647;
+export const createFinanceMovementBodyAmountCentsMultipleOf = 1;
+
+export const createFinanceMovementBodyPaymentMethodMax = 100;
+
+export const createFinanceMovementBodyNoteMax = 2000;
+
+export const createFinanceMovementBodyAllocationsItemAmountCentsMax = 2147483647;
+export const createFinanceMovementBodyAllocationsItemAmountCentsMultipleOf = 1;
+
+export const createFinanceMovementBodyAllocationsMax = 100;
+
+export const CreateFinanceMovementBody = zod.object({
+  movementDate: zod.coerce.date(),
+  direction: zod.enum(["income", "expense"]),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(createFinanceMovementBodyAmountCentsMax)
+    .multipleOf(createFinanceMovementBodyAmountCentsMultipleOf),
+  accountId: zod.string().uuid(),
+  paymentMethod: zod
+    .string()
+    .max(createFinanceMovementBodyPaymentMethodMax)
+    .optional(),
+  note: zod.string().max(createFinanceMovementBodyNoteMax).optional(),
+  allocations: zod
+    .array(
+      zod.object({
+        obligationId: zod.string().uuid(),
+        amountCents: zod
+          .number()
+          .min(1)
+          .max(createFinanceMovementBodyAllocationsItemAmountCentsMax)
+          .multipleOf(
+            createFinanceMovementBodyAllocationsItemAmountCentsMultipleOf,
+          ),
+      }),
+    )
+    .max(createFinanceMovementBodyAllocationsMax),
+});
+
+export const reconcileFinanceHistoryBodyAmountCentsMax = 2147483647;
+export const reconcileFinanceHistoryBodyAmountCentsMultipleOf = 1;
+
+export const reconcileFinanceHistoryBodyPaymentMethodMax = 100;
+
+export const reconcileFinanceHistoryBodyNoteMax = 2000;
+
+export const ReconcileFinanceHistoryBody = zod.object({
+  sourceType: zod.enum(["project_reported", "legacy_entry"]),
+  sourceId: zod.string().uuid(),
+  movementDate: zod.coerce.date(),
+  amountCents: zod
+    .number()
+    .min(1)
+    .max(reconcileFinanceHistoryBodyAmountCentsMax)
+    .multipleOf(reconcileFinanceHistoryBodyAmountCentsMultipleOf),
+  accountId: zod.string().uuid(),
+  paymentMethod: zod
+    .string()
+    .max(reconcileFinanceHistoryBodyPaymentMethodMax)
+    .optional(),
+  note: zod.string().max(reconcileFinanceHistoryBodyNoteMax).optional(),
+});
+
+/**
  * @summary Aggiunge un cliente all’anagrafica contabile
  */
 export const createAdminFinanceClientBodyNameMax = 160;

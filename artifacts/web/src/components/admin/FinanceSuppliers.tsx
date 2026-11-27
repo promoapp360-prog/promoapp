@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { AdminFinanceSupplier, AdminFinanceEntry, FinanceSupplierInput } from "@workspace/api-client-react";
+import type { AdminFinanceSupplier, AdminFinanceEntry, FinanceSupplierInput, FinanceLedgerData } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { adminApi } from "@/lib/admin-api";
-import { cash, fieldClass, money } from "./finance-ui";
+import { fieldClass, money } from "./finance-ui";
 
 const categories = {
   advertising: "Pubblicità", hosting: "Hosting", software: "Software",
@@ -35,6 +35,11 @@ export default function FinanceSuppliers({ suppliers, entries, onRefresh }: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [ledger,setLedger]=useState<FinanceLedgerData>();
+  const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit"}).format(new Date());
+  useEffect(()=>{
+    void adminApi<FinanceLedgerData>(`/finance/ledger?month=${month}`).then(setLedger).catch(()=>setLedger(undefined));
+  },[entries,month]);
   const form = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", category: "other", email: "", website: "", notes: "" },
@@ -74,12 +79,15 @@ export default function FinanceSuppliers({ suppliers, entries, onRefresh }: {
     </form></Form>}
     {!suppliers.length && <p className="text-sm text-slate-500">Nessun fornitore. Aggiungi Meta, Google, Replit o un altro fornitore.</p>}
     <div className="grid gap-3 sm:grid-cols-2">{suppliers.map(s => {
-      const related = entries.filter(e => e.direction === "expense" && e.details?.supplierId === s.id && !e.details?.cancelled);
+      const related=ledger?.obligations.filter(item=>item.direction==="expense"&&item.supplierId===s.id)??[];
+      const relatedIds=new Set(related.map(item=>item.id));
+      const paidCents=(ledger?.movements??[]).reduce((sum,movement)=>sum+movement.allocations.filter(allocation=>relatedIds.has(allocation.obligationId)).reduce((allocationSum,allocation)=>allocationSum+allocation.amountCents,0),0);
+      const outstandingCents=related.reduce((sum,item)=>sum+item.remainingCents,0);
       return <article key={s.id} className="space-y-2 rounded-xl border p-4" data-testid={`card-finance-supplier-${s.id}`}>
         <h4 className="font-bold">{s.name} {!s.active && <span className="text-xs font-normal text-slate-500">Archiviato</span>}</h4>
         <p className="text-xs text-slate-500">{categories[s.category]}{s.email ? ` · ${s.email}` : ""}</p>
         {s.notes && <p className="whitespace-pre-wrap text-xs text-slate-500">{s.notes}</p>}
-        <p className="text-sm">Pagato: <strong>{money(related.filter(cash).reduce((sum, e) => sum + e.amountCents, 0))}</strong> · Da pagare: <strong>{money(related.filter(e => !e.paidAt && e.details?.amountConfirmed).reduce((sum, e) => sum + e.amountCents, 0))}</strong></p>
+        <p className="text-sm">Pagato: <strong>{ledger?money(paidCents):"—"}</strong> · Da pagare: <strong>{ledger?money(outstandingCents):"—"}</strong></p>
         <div className="flex gap-3"><button type="button" disabled={busy} className="text-xs font-semibold text-indigo-700" onClick={() => open(s)} data-testid={`button-edit-supplier-${s.id}`}>Modifica</button>
           <button type="button" disabled={busy} className="text-xs text-slate-600" data-testid={`button-archive-supplier-${s.id}`} onClick={() => void act(() => adminApi(`/finance/suppliers/${s.id}`, { method: "PATCH", body: JSON.stringify({ active: !s.active }) }))}>{s.active ? "Archivia" : "Riattiva"}</button></div>
       </article>;
