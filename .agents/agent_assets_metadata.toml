@@ -203,3 +203,31 @@ mtime_ms = 1795724323841
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/fbc580fc-c64b-40cb-b95c-03ab052e0fbc/812a3675-a344-44f4-9887-a872edb9ae05"
 storage_version_token = "1795724546103251"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "QLgeC4617kpzEgyuTia6V"
+uri = "file://generated-artifacts/finance-development-pre-migration.json"
+type = "unspecified"
+title = "Esportazione contabile PromoApp - sviluppo"
+description = "Esportazione in sola lettura dei dati contabili esistenti prima della migrazione. Contiene dati interni di clienti, lavori e movimenti."
+logical_id = "19c73369-45ee-4519-b694-d286db459b42"
+content_hash = "sha256:80c3db51995911177d039e74d810e0ec1f072e18d490bb1c13613b0b4e1dbaf1"
+size = 70513
+mtime_ms = 1795779834610
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/19c73369-45ee-4519-b694-d286db459b42/25ee9f25-40a7-48da-844f-e8670a6f274f"
+storage_version_token = "1795779835262647"
+content_type = "application/octet-stream"
+
+[[outputs]]
+id = "cj_BLNYcwsyXptpF2RsBI"
+uri = "file://generated-artifacts/finance-production-pre-migration.json"
+type = "unspecified"
+title = "Esportazione contabile PromoApp - produzione"
+description = "Esportazione in sola lettura dei dati contabili esistenti prima della migrazione. Contiene dati interni di clienti, lavori e movimenti."
+logical_id = "8edfe802-2733-4b5b-b1d8-3ac4480ebd00"
+content_hash = "sha256:162d5efea96138583ffed660565ec61b4b1e7c44fe722a678fbc7116cffa56eb"
+size = 80950
+mtime_ms = 1795779848682
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:1e928345-517c-4655-a8b3-671a62144970/8edfe802-2733-4b5b-b1d8-3ac4480ebd00/fafec7b0-04c5-4987-b55e-221e0a9b21e7"
+storage_version_token = "1795779849107382"
+content_type = "application/octet-stream"

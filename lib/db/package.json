@@ -10,7 +10,9 @@
   "scripts": {
     "push": "drizzle-kit push --config ./drizzle.config.ts",
     "push:finance": "drizzle-kit push --config ./finance.drizzle.config.ts",
-    "push-force": "drizzle-kit push --force --config ./drizzle.config.ts"
+    "push-force": "drizzle-kit push --force --config ./drizzle.config.ts",
+    "generate:finance-ledger": "drizzle-kit generate --config ./finance-ledger.drizzle.config.ts",
+    "migrate:finance-ledger": "drizzle-kit migrate --config ./finance-ledger.drizzle.config.ts"
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
