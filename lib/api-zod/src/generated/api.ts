@@ -1299,6 +1299,213 @@ export const ExportFinanceQueryParams = zod.object({
   format: zod.enum(["csv", "xlsx"]).default(exportFinanceQueryFormatDefault),
 });
 
+export const getFinanceReportsQueryPeriodRegExp = new RegExp(
+  "^\\d{4}(-\\d{2})?$",
+);
+
+export const GetFinanceReportsQueryParams = zod.object({
+  periodType: zod.enum(["month", "year"]),
+  period: zod.coerce.string().regex(getFinanceReportsQueryPeriodRegExp),
+});
+
+export const getFinanceReportsResponseTotalsReceivedCentsMin = 0;
+export const getFinanceReportsResponseTotalsReceivedCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseTotalsSpentCentsMin = 0;
+export const getFinanceReportsResponseTotalsSpentCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseTotalsPeriodBalanceCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseTotalsCashBalanceCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseTotalsSoldCentsMin = 0;
+export const getFinanceReportsResponseTotalsSoldCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseTotalsWithholdingCreditCentsMin = 0;
+export const getFinanceReportsResponseTotalsWithholdingCreditCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseTotalsVatCentsMin = 0;
+export const getFinanceReportsResponseTotalsVatCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseClientsItemSoldCentsMin = 0;
+export const getFinanceReportsResponseClientsItemSoldCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseClientsItemReceivedCentsMin = 0;
+export const getFinanceReportsResponseClientsItemReceivedCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseClientsItemReceivableCentsMin = 0;
+export const getFinanceReportsResponseClientsItemReceivableCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseClientsItemDirectCostsCentsMin = 0;
+export const getFinanceReportsResponseClientsItemDirectCostsCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseClientsItemMarginCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseExpensesByCategoryItemAmountCentsMin = 0;
+export const getFinanceReportsResponseExpensesByCategoryItemAmountCentsMultipleOf = 1;
+
+export const getFinanceReportsResponseExpensesBySupplierItemAmountCentsMin = 0;
+export const getFinanceReportsResponseExpensesBySupplierItemAmountCentsMultipleOf = 1;
+
+export const GetFinanceReportsResponse = zod.object({
+  periodType: zod.enum(["month", "year"]),
+  period: zod.string(),
+  startDate: zod.coerce.date(),
+  endDate: zod.coerce.date(),
+  totals: zod.object({
+    receivedCents: zod
+      .number()
+      .min(getFinanceReportsResponseTotalsReceivedCentsMin)
+      .multipleOf(getFinanceReportsResponseTotalsReceivedCentsMultipleOf),
+    spentCents: zod
+      .number()
+      .min(getFinanceReportsResponseTotalsSpentCentsMin)
+      .multipleOf(getFinanceReportsResponseTotalsSpentCentsMultipleOf),
+    periodBalanceCents: zod
+      .number()
+      .multipleOf(getFinanceReportsResponseTotalsPeriodBalanceCentsMultipleOf),
+    cashBalanceCents: zod
+      .number()
+      .multipleOf(getFinanceReportsResponseTotalsCashBalanceCentsMultipleOf),
+    soldCents: zod
+      .number()
+      .min(getFinanceReportsResponseTotalsSoldCentsMin)
+      .multipleOf(getFinanceReportsResponseTotalsSoldCentsMultipleOf),
+    withholdingCreditCents: zod
+      .number()
+      .min(getFinanceReportsResponseTotalsWithholdingCreditCentsMin)
+      .multipleOf(
+        getFinanceReportsResponseTotalsWithholdingCreditCentsMultipleOf,
+      ),
+    vatCents: zod
+      .number()
+      .min(getFinanceReportsResponseTotalsVatCentsMin)
+      .multipleOf(getFinanceReportsResponseTotalsVatCentsMultipleOf),
+  }),
+  clients: zod.array(
+    zod.object({
+      clientId: zod.string().uuid(),
+      clientName: zod.string(),
+      soldCents: zod
+        .number()
+        .min(getFinanceReportsResponseClientsItemSoldCentsMin)
+        .multipleOf(getFinanceReportsResponseClientsItemSoldCentsMultipleOf),
+      receivedCents: zod
+        .number()
+        .min(getFinanceReportsResponseClientsItemReceivedCentsMin)
+        .multipleOf(
+          getFinanceReportsResponseClientsItemReceivedCentsMultipleOf,
+        ),
+      receivableCents: zod
+        .number()
+        .min(getFinanceReportsResponseClientsItemReceivableCentsMin)
+        .multipleOf(
+          getFinanceReportsResponseClientsItemReceivableCentsMultipleOf,
+        ),
+      directCostsCents: zod
+        .number()
+        .min(getFinanceReportsResponseClientsItemDirectCostsCentsMin)
+        .multipleOf(
+          getFinanceReportsResponseClientsItemDirectCostsCentsMultipleOf,
+        ),
+      marginCents: zod
+        .number()
+        .multipleOf(getFinanceReportsResponseClientsItemMarginCentsMultipleOf),
+    }),
+  ),
+  expensesByCategory: zod.array(
+    zod.object({
+      key: zod.string(),
+      label: zod.string(),
+      amountCents: zod
+        .number()
+        .min(getFinanceReportsResponseExpensesByCategoryItemAmountCentsMin)
+        .multipleOf(
+          getFinanceReportsResponseExpensesByCategoryItemAmountCentsMultipleOf,
+        ),
+    }),
+  ),
+  expensesBySupplier: zod.array(
+    zod.object({
+      key: zod.string(),
+      label: zod.string(),
+      amountCents: zod
+        .number()
+        .min(getFinanceReportsResponseExpensesBySupplierItemAmountCentsMin)
+        .multipleOf(
+          getFinanceReportsResponseExpensesBySupplierItemAmountCentsMultipleOf,
+        ),
+    }),
+  ),
+});
+
+export const getFinanceIntegrityResponseTotalIssuesMin = 0;
+export const getFinanceIntegrityResponseTotalIssuesMultipleOf = 1;
+
+export const getFinanceIntegrityResponseHighCountMin = 0;
+export const getFinanceIntegrityResponseHighCountMultipleOf = 1;
+
+export const getFinanceIntegrityResponseMediumCountMin = 0;
+export const getFinanceIntegrityResponseMediumCountMultipleOf = 1;
+
+export const getFinanceIntegrityResponseLowCountMin = 0;
+export const getFinanceIntegrityResponseLowCountMultipleOf = 1;
+
+export const getFinanceIntegrityResponseItemsItemAmountCentsMin = 0;
+export const getFinanceIntegrityResponseItemsItemAmountCentsMultipleOf = 1;
+
+export const GetFinanceIntegrityResponse = zod.object({
+  totalIssues: zod
+    .number()
+    .min(getFinanceIntegrityResponseTotalIssuesMin)
+    .multipleOf(getFinanceIntegrityResponseTotalIssuesMultipleOf),
+  highCount: zod
+    .number()
+    .min(getFinanceIntegrityResponseHighCountMin)
+    .multipleOf(getFinanceIntegrityResponseHighCountMultipleOf),
+  mediumCount: zod
+    .number()
+    .min(getFinanceIntegrityResponseMediumCountMin)
+    .multipleOf(getFinanceIntegrityResponseMediumCountMultipleOf),
+  lowCount: zod
+    .number()
+    .min(getFinanceIntegrityResponseLowCountMin)
+    .multipleOf(getFinanceIntegrityResponseLowCountMultipleOf),
+  items: zod.array(
+    zod.object({
+      id: zod.string(),
+      category: zod.enum([
+        "income_without_allocation",
+        "legacy_paid_without_movement",
+        "delivered_open_balance",
+        "overdue_recurring",
+        "historical_unreconciled",
+        "missing_client_fiscal_data",
+        "confirmed_project_missing_date",
+      ]),
+      severity: zod.enum(["high", "medium", "low"]),
+      title: zod.string(),
+      detail: zod.string(),
+      entityType: zod.enum([
+        "movement",
+        "legacy_entry",
+        "project",
+        "obligation",
+        "fiscal_document",
+      ]),
+      entityId: zod.string().uuid(),
+      clientName: zod.string().nullable(),
+      projectName: zod.string().nullable(),
+      date: zod.coerce.date().nullable(),
+      amountCents: zod
+        .number()
+        .min(getFinanceIntegrityResponseItemsItemAmountCentsMin)
+        .multipleOf(getFinanceIntegrityResponseItemsItemAmountCentsMultipleOf)
+        .nullable(),
+    }),
+  ),
+});
+
 export const requestFinanceDocumentBodyNameMax = 200;
 
 export const requestFinanceDocumentBodySizeMax = 10485760;

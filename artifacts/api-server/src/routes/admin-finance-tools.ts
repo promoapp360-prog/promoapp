@@ -96,13 +96,59 @@ export function createFinanceToolsRouter() {
   router.get("/admin/finance/export",async (req,res):Promise<void>=>{
     const format=req.query.format??"csv";
     if(format!=="csv" && format!=="xlsx"){res.status(400).json({message:"Formato non valido."});return;}
-    const [data,workspace,audit]=await Promise.all([adminFinanceData.list(todayRome().slice(0,7)),financeWorkspace(),
-      pool.query(`SELECT entity_type,entity_id,actor,reason,before,after,created_at FROM admin_finance_audit ORDER BY created_at`)]);
+    const [data,workspace,audit,movements,documents]=await Promise.all([
+      adminFinanceData.list(todayRome().slice(0,7)),financeWorkspace(),
+      pool.query(`SELECT entity_type,entity_id,actor,reason,before,after,created_at FROM admin_finance_audit ORDER BY created_at`),
+      pool.query(`SELECT m.id,(m.movement_at AT TIME ZONE 'Europe/Rome')::date::text AS "movementDate",
+          m.direction,m.amount_cents AS "amountCents",m.account_id AS "accountId",a.name AS "accountName",
+          m.payment_method AS "paymentMethod",m.historical,m.note,m.external_reference AS "externalReference",
+          COALESCE(json_agg(json_build_object('obligationId',o.id,'description',o.description,
+            'dueDate',o.due_date::text,'amountCents',ma.amount_cents)
+            ORDER BY o.due_date NULLS LAST,o.description) FILTER (WHERE ma.id IS NOT NULL),'[]'::json) AS allocations
+        FROM admin_finance_movements m
+        LEFT JOIN admin_finance_accounts a ON a.id=m.account_id
+        LEFT JOIN admin_finance_movement_allocations ma ON ma.movement_id=m.id
+        LEFT JOIN admin_finance_obligations o ON o.id=ma.obligation_id
+        GROUP BY m.id,a.name ORDER BY m.movement_at`),
+      pool.query(`SELECT d.id,d.number,d.document_type AS kind,d.status,d.issued_on::text AS "issuedOn",
+          COALESCE(NULLIF(c.company_name,''),c.name) AS "clientName",d.client_id AS "clientId",
+          p.name AS "projectName",d.project_id AS "projectId",
+          d.details->>'regimeName' AS "taxRegime",d.details->>'description' AS description,
+          d.details->>'dueDate' AS "dueDate",d.details->>'obligationId' AS "obligationId",
+          d.net_amount_cents AS "netAmountCents",
+          d.withholding_amount_cents AS "withholdingAmountCents",d.vat_rate_bps AS "vatRate",
+          d.vat_amount_cents AS "vatAmountCents",d.gross_amount_cents AS "grossAmountCents",
+          d.withholding_rate_bps AS "withholdingRate",d.created_at AS "createdAt"
+        FROM admin_finance_documents d
+        JOIN admin_finance_clients c ON c.id=d.client_id
+        LEFT JOIN admin_finance_projects p ON p.id=d.project_id
+        ORDER BY d.issued_on,d.number`),
+    ]);
+    const movementRows=movements.rows.map(row=>({
+      id:row.id,movementDate:row.movementDate,direction:row.direction==="income"?"Entrata":"Uscita",
+      amountEuro:Number(row.amountCents)/100,amountCents:Number(row.amountCents),
+      account:row.accountName??"",paymentMethod:row.paymentMethod??"",historical:Boolean(row.historical),
+      note:row.note??"",externalReference:row.externalReference??"",
+      allocations:JSON.stringify(row.allocations??[]),
+    }));
+    const documentRows=documents.rows.map(row=>({
+      id:row.id,number:row.number,kind:row.kind,status:row.status,issuedOn:row.issuedOn,
+      clientId:row.clientId,clientName:row.clientName,projectId:row.projectId??"",projectName:row.projectName??"",
+      taxRegime:row.taxRegime??"",description:row.description??"",dueDate:row.dueDate??"",
+      netAmountEuro:Number(row.netAmountCents)/100,netAmountCents:Number(row.netAmountCents),
+      withholdingRate:row.withholdingRate,withholdingAmountEuro:Number(row.withholdingAmountCents)/100,
+      withholdingAmountCents:Number(row.withholdingAmountCents),vatRate:row.vatRate,
+      vatAmountEuro:Number(row.vatAmountCents)/100,vatAmountCents:Number(row.vatAmountCents),
+      grossAmountEuro:Number(row.grossAmountCents)/100,grossAmountCents:Number(row.grossAmountCents),
+      obligationId:row.obligationId??"",createdAt:row.createdAt,
+    }));
     const sheets: Record<string,Record<string,unknown>[]> = {
       Clienti: data.clients.map(c=>({...c,details:JSON.stringify(c.details)})),
       Fornitori: workspace.suppliers.map(s=>({...s})),
       Lavori: data.projects.map(p=>({...p,details:JSON.stringify(p.details)})),
-      Movimenti: data.entries.map(e=>({...e,dueDate:e.dueDate.toISOString().slice(0,10),details:JSON.stringify(e.details)})),
+      "Movimenti effettivi":movementRows,
+      "Documenti fiscali":documentRows,
+      "Archivio precedente": data.entries.map(e=>({...e,dueDate:e.dueDate.toISOString().slice(0,10),details:JSON.stringify(e.details)})),
       Ricorrenze: workspace.recurring.map(r=>({...r})),
       Rettifiche: audit.rows.map(r=>({...r,before:JSON.stringify(r.before),after:JSON.stringify(r.after)})),
     };

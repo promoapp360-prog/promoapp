@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { pool } from "@workspace/db";
 import type {
   FinanceAccountInput, FinanceLedgerData, FinanceLedgerMovement, FinanceLedgerObligation,
-  FinanceMovementInput, FinanceObligationInput, FinanceReconciliationInput,
+  FinanceMovementInput, FinanceObligationInput, FinanceReconciliationInput, FinanceHistoricalCandidate,
 } from "@workspace/api-zod";
 import { GetFinanceLedgerResponse as FinanceLedgerDataSchema } from "@workspace/api-zod";
 import type { PoolClient } from "pg";
@@ -179,6 +179,10 @@ async function historicalCandidates() {
     });
   }
   return candidates;
+}
+
+export async function financeHistoricalCandidates():Promise<FinanceHistoricalCandidate[]>{
+  return await historicalCandidates() as FinanceHistoricalCandidate[];
 }
 
 export async function financeLedgerData(month: string): Promise<FinanceLedgerData> {

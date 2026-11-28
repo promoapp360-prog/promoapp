@@ -47,6 +47,7 @@ import type {
   FinanceFiscalDocumentVoidInput,
   FinanceFiscalDocumentsResponse,
   FinanceImportPreview,
+  FinanceIntegrityResponse,
   FinanceLedgerData,
   FinanceLedgerMovement,
   FinanceLedgerObligation,
@@ -68,6 +69,7 @@ import type {
   FinanceRecurringGenerationInput,
   FinanceRecurringInput,
   FinanceReminder,
+  FinanceReportsResponse,
   FinanceScheduleResponse,
   FinanceSettings,
   FinanceSettingsInput,
@@ -78,6 +80,7 @@ import type {
   GetAdminFinanceParams,
   GetAdminOverviewParams,
   GetFinanceLedgerParams,
+  GetFinanceReportsParams,
   GetFinanceScheduleParams,
   HealthStatus,
   ListAdminSiteControlRequestsParams,
@@ -2346,6 +2349,164 @@ export function useExportFinance<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getExportFinanceQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getGetFinanceReportsUrl = (params: GetFinanceReportsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/finance/reports?${stringifiedParams}`
+    : `/api/admin/finance/reports`;
+};
+
+export const getFinanceReports = async (
+  params: GetFinanceReportsParams,
+  options?: RequestInit,
+): Promise<FinanceReportsResponse> => {
+  return customFetch<FinanceReportsResponse>(getGetFinanceReportsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetFinanceReportsQueryKey = (
+  params?: GetFinanceReportsParams,
+) => {
+  return [`/api/admin/finance/reports`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetFinanceReportsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFinanceReports>>,
+  TError = ErrorType<void>,
+>(
+  params: GetFinanceReportsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getFinanceReports>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetFinanceReportsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getFinanceReports>>
+  > = ({ signal }) => getFinanceReports(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFinanceReports>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetFinanceReportsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFinanceReports>>
+>;
+export type GetFinanceReportsQueryError = ErrorType<void>;
+
+export function useGetFinanceReports<
+  TData = Awaited<ReturnType<typeof getFinanceReports>>,
+  TError = ErrorType<void>,
+>(
+  params: GetFinanceReportsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getFinanceReports>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetFinanceReportsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getGetFinanceIntegrityUrl = () => {
+  return `/api/admin/finance/verification`;
+};
+
+export const getFinanceIntegrity = async (
+  options?: RequestInit,
+): Promise<FinanceIntegrityResponse> => {
+  return customFetch<FinanceIntegrityResponse>(getGetFinanceIntegrityUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetFinanceIntegrityQueryKey = () => {
+  return [`/api/admin/finance/verification`] as const;
+};
+
+export const getGetFinanceIntegrityQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFinanceIntegrity>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getFinanceIntegrity>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetFinanceIntegrityQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getFinanceIntegrity>>
+  > = ({ signal }) => getFinanceIntegrity({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFinanceIntegrity>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetFinanceIntegrityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFinanceIntegrity>>
+>;
+export type GetFinanceIntegrityQueryError = ErrorType<unknown>;
+
+export function useGetFinanceIntegrity<
+  TData = Awaited<ReturnType<typeof getFinanceIntegrity>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getFinanceIntegrity>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetFinanceIntegrityQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

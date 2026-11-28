@@ -368,6 +368,127 @@ export interface FinanceFiscalDocumentsResponse {
   documents: FinanceFiscalDocument[];
 }
 
+export interface FinanceReportTotals {
+  /** @minimum 0 */
+  receivedCents: number;
+  /** @minimum 0 */
+  spentCents: number;
+  periodBalanceCents: number;
+  cashBalanceCents: number;
+  /** @minimum 0 */
+  soldCents: number;
+  /** @minimum 0 */
+  withholdingCreditCents: number;
+  /** @minimum 0 */
+  vatCents: number;
+}
+
+export interface FinanceClientReport {
+  clientId: string;
+  clientName: string;
+  /** @minimum 0 */
+  soldCents: number;
+  /** @minimum 0 */
+  receivedCents: number;
+  /** @minimum 0 */
+  receivableCents: number;
+  /** @minimum 0 */
+  directCostsCents: number;
+  marginCents: number;
+}
+
+export interface FinanceExpenseBreakdown {
+  key: string;
+  label: string;
+  /** @minimum 0 */
+  amountCents: number;
+}
+
+export type FinanceReportsResponsePeriodType =
+  (typeof FinanceReportsResponsePeriodType)[keyof typeof FinanceReportsResponsePeriodType];
+
+export const FinanceReportsResponsePeriodType = {
+  month: "month",
+  year: "year",
+} as const;
+
+export interface FinanceReportsResponse {
+  periodType: FinanceReportsResponsePeriodType;
+  period: string;
+  startDate: string;
+  endDate: string;
+  totals: FinanceReportTotals;
+  clients: FinanceClientReport[];
+  expensesByCategory: FinanceExpenseBreakdown[];
+  expensesBySupplier: FinanceExpenseBreakdown[];
+}
+
+export type FinanceIntegrityIssueCategory =
+  (typeof FinanceIntegrityIssueCategory)[keyof typeof FinanceIntegrityIssueCategory];
+
+export const FinanceIntegrityIssueCategory = {
+  income_without_allocation: "income_without_allocation",
+  legacy_paid_without_movement: "legacy_paid_without_movement",
+  delivered_open_balance: "delivered_open_balance",
+  overdue_recurring: "overdue_recurring",
+  historical_unreconciled: "historical_unreconciled",
+  missing_client_fiscal_data: "missing_client_fiscal_data",
+  confirmed_project_missing_date: "confirmed_project_missing_date",
+} as const;
+
+export type FinanceIntegrityIssueSeverity =
+  (typeof FinanceIntegrityIssueSeverity)[keyof typeof FinanceIntegrityIssueSeverity];
+
+export const FinanceIntegrityIssueSeverity = {
+  high: "high",
+  medium: "medium",
+  low: "low",
+} as const;
+
+export type FinanceIntegrityIssueEntityType =
+  (typeof FinanceIntegrityIssueEntityType)[keyof typeof FinanceIntegrityIssueEntityType];
+
+export const FinanceIntegrityIssueEntityType = {
+  movement: "movement",
+  legacy_entry: "legacy_entry",
+  project: "project",
+  obligation: "obligation",
+  fiscal_document: "fiscal_document",
+} as const;
+
+export interface FinanceIntegrityIssue {
+  id: string;
+  category: FinanceIntegrityIssueCategory;
+  severity: FinanceIntegrityIssueSeverity;
+  title: string;
+  detail: string;
+  entityType: FinanceIntegrityIssueEntityType;
+  entityId: string;
+  /** @nullable */
+  clientName: string | null;
+  /** @nullable */
+  projectName: string | null;
+  /** @nullable */
+  date: string | null;
+  /**
+   * @minimum 0
+   * @nullable
+   */
+  amountCents: number | null;
+}
+
+export interface FinanceIntegrityResponse {
+  /** @minimum 0 */
+  totalIssues: number;
+  /** @minimum 0 */
+  highCount: number;
+  /** @minimum 0 */
+  mediumCount: number;
+  /** @minimum 0 */
+  lowCount: number;
+  items: FinanceIntegrityIssue[];
+}
+
 export interface FinanceFiscalDocumentInput {
   clientId: string;
   /** @nullable */
@@ -2567,6 +2688,22 @@ export type ExportFinanceFormat =
 export const ExportFinanceFormat = {
   csv: "csv",
   xlsx: "xlsx",
+} as const;
+
+export type GetFinanceReportsParams = {
+  periodType: GetFinanceReportsPeriodType;
+  /**
+   * @pattern ^\d{4}(-\d{2})?$
+   */
+  period: string;
+};
+
+export type GetFinanceReportsPeriodType =
+  (typeof GetFinanceReportsPeriodType)[keyof typeof GetFinanceReportsPeriodType];
+
+export const GetFinanceReportsPeriodType = {
+  month: "month",
+  year: "year",
 } as const;
 
 export type GetAdminFinanceParams = {

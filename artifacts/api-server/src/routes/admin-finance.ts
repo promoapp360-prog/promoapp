@@ -24,6 +24,7 @@ import { adminFinanceData } from "../lib/admin-finance-data";
 import { createAdminFinanceLedgerRouter } from "./admin-finance-ledger";
 import { createAdminFinanceFiscalRouter } from "./admin-finance-fiscal";
 import { createAdminFinanceQuotesRouter } from "./admin-finance-quotes";
+import { createAdminFinanceReportsRouter } from "./admin-finance-reports";
 import { createFinanceToolsRouter } from "./admin-finance-tools";
 
 type FinanceData = typeof adminFinanceData;
@@ -59,6 +60,7 @@ export function createAdminFinanceRouter(data: FinanceData = adminFinanceData) {
   router.use(createAdminFinanceLedgerRouter());
   router.use(createAdminFinanceFiscalRouter());
   router.use(createAdminFinanceQuotesRouter());
+  router.use(createAdminFinanceReportsRouter());
 
   router.get("/admin/finance", async (req, res): Promise<void> => {
     const parsed = GetAdminFinanceQueryParams.safeParse(req.query);

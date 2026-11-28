@@ -41,7 +41,9 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   const server=app.listen(0,"127.0.0.1");
   await new Promise<void>(resolve=>server.once("listening",resolve));
   const url=`http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  let cookie="",csrf="",documentPath="",quoteId="",quoteProjectId="",quoteRecurringId="",manualReminderId="",fiscalDocumentId="";
+   let cookie="",csrf="",documentPath="",quoteId="",quoteProjectId="",quoteRecurringId="",manualReminderId="",fiscalDocumentId="";
+   let ledgerClientId="",ledgerProjectId="",ledgerAccountId="",ledgerRecurringId="",reportExpenseObligationId="",unallocatedMovementId="",integrityDocumentId="";
+   const fiscalDocumentIds:string[]=[];
   let fiscalSettingsSnapshot:{settings:any[];regimes:any[];sequences:any[];regimeIds:string[]}|null=null;
   const fiscalTestTaxId=`TEST${randomUUID().replaceAll("-","").slice(0,16)}`;
   const request=async(path:string,method="GET",body?:unknown,authorized=true)=>{
@@ -56,7 +58,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   const legacyId=randomUUID(),accontoId=randomUUID();
   try{
     await t.test("tutte le risorse economiche richiedono accesso e protezione CSRF",async()=>{
-      for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/development-transfer","/admin/finance/export?format=xlsx",`/admin/finance/documents/${randomUUID()}`,"/admin/finance/quotes","/admin/finance/schedule?month="+month,"/admin/finance/settings","/admin/finance/fiscal-documents"]){
+       for(const path of ["/admin/finance?month="+month,"/admin/finance/workspace","/admin/finance/suppliers","/admin/finance/import-preview","/admin/finance/development-transfer","/admin/finance/export?format=xlsx","/admin/finance/reports?periodType=month&period="+month,"/admin/finance/verification",`/admin/finance/documents/${randomUUID()}`,"/admin/finance/quotes","/admin/finance/schedule?month="+month,"/admin/finance/settings","/admin/finance/fiscal-documents"]){
         assert.equal((await request(path,"GET",undefined,false)).status,401);
       }
       const login=await request("/admin/login","POST",{password},false);
@@ -236,10 +238,10 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
     await t.test("bilancio nuovo: venduto, incassi allocati, residuo e canoni maturati",async()=>{
       const baseline=await json(`/admin/finance/ledger?month=${month}`);
       const ledgerClientName=`${prefix}_ledger`;
-      const ledgerClient=await json("/admin/finance/clients","POST",{name:ledgerClientName});
-      const ledgerProject=await json("/admin/finance/projects","POST",{
+       const ledgerClient=await json("/admin/finance/clients","POST",{name:ledgerClientName});ledgerClientId=ledgerClient.id;
+       const ledgerProject=await json("/admin/finance/projects","POST",{
         clientId:ledgerClient.id,name:ledgerClientName,totalAmountCents:100000,paymentType:"advance",depositAmountCents:50000,
-      });
+       });ledgerProjectId=ledgerProject.id;
       await json(`/admin/finance/projects/${ledgerProject.id}`,"PATCH",{details:{
         amountKnown:true,commercialState:"confirmed",agreementConfirmed:true,confirmedDate:today,creditReview:false,extraCents:0,
       }});
@@ -255,9 +257,9 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       assert.equal((await request("/admin/finance/ledger/accounts","POST",{
         name:`${prefix}_ledger_conto_senza_data`,accountType:"bank",openingBalanceCents:1000,
       })).status,400);
-      const account=await json("/admin/finance/ledger/accounts","POST",{
+       const account=await json("/admin/finance/ledger/accounts","POST",{
         name:`${prefix}_ledger_conto`,accountType:"bank",openingBalanceCents:0,openingBalanceDate:today,
-      });
+       });ledgerAccountId=account.id;
       await json("/admin/finance/ledger/movements","POST",{
         movementDate:today,direction:"income",amountCents:50000,accountId:account.id,
         paymentMethod:"Bonifico",note:`${prefix}_ledger acconto`,
@@ -279,7 +281,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const recurring=await json("/admin/finance/recurring","POST",{
         clientId:ledgerClient.id,projectId:ledgerProject.id,direction:"income",category:"monthly_fee",
         description:"Canone mensile test",amountCents:1000,intervalMonths:1,state:"active",startDate,nextDate:startDate,
-      });
+       });ledgerRecurringId=recurring.id;
       ledger=await json(`/admin/finance/ledger?month=${month}`);
       const matured=ledger.obligations.filter((item:any)=>item.sourceType==="recurring"&&item.sourceId===recurring.id);
       assert.equal(matured.length,3);
@@ -408,6 +410,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
           dueDate:today,description:"Saldo del lavoro",grossAmountCents:openBalance.amountCents,notes:"Documento di prova",
         });
         fiscalDocumentId=fiscalDocument.id;
+         fiscalDocumentIds.push(fiscalDocument.id);
         assert.equal(fiscalDocument.documentType,"receipt");
         assert.equal(fiscalDocument.grossAmountCents,50000);
         assert.equal(fiscalDocument.withholdingAmountCents,10000);
@@ -432,15 +435,78 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
         const restoredFutureLedger=await json(`/admin/finance/ledger?month=${nextDue.slice(0,7)}`);
         assert.equal(restoredFutureLedger.obligations.find((item:any)=>item.id===openBalance.id).dueDate.slice(0,10),nextDue);
     });
+
+    await t.test("report per periodo, margini, controlli e archivio export",async()=>{
+      assert.ok(ledgerClientId&&ledgerProjectId&&ledgerAccountId);
+      const reportPath=`/admin/finance/reports?periodType=month&period=${month}`;
+      const baseline=await json(reportPath);
+      const baselineClient=baseline.clients.find((item:any)=>item.clientId===ledgerClientId);
+      assert.ok(baselineClient);
+      assert.equal((await json(`/admin/finance/reports?periodType=year&period=${today.slice(0,4)}`)).periodType,"year");
+      assert.equal((await request(`/admin/finance/reports?periodType=month&period=${today.slice(0,4)}`)).status,400);
+
+      const supplier=await json("/admin/finance/suppliers","POST",{name:`${prefix}_report_supplier`,category:"software"});
+      const expenseObligation=await json("/admin/finance/ledger/obligations","POST",{
+        direction:"expense",category:"replit",description:`${prefix}_report_spesa`,amountCents:1234,dueDate:today,
+        clientId:ledgerClientId,projectId:ledgerProjectId,supplierId:supplier.id,
+      });
+      reportExpenseObligationId=expenseObligation.id;
+      await json("/admin/finance/ledger/movements","POST",{
+        movementDate:today,direction:"expense",amountCents:1234,accountId:ledgerAccountId,
+        note:`${prefix}_ledger spesa per report`,allocations:[{obligationId:expenseObligation.id,amountCents:1234}],
+      });
+      const unallocatedMovement=await json("/admin/finance/ledger/movements","POST",{
+        movementDate:today,direction:"income",amountCents:321,accountId:ledgerAccountId,
+        note:`${prefix}_ledger incasso da attribuire`,allocations:[],
+      });
+      unallocatedMovementId=unallocatedMovement.id;
+      await json(`/admin/finance/projects/${ledgerProjectId}`,"PATCH",{status:"delivered",details:{operationalState:"delivered"}});
+
+      const fiscalDocument=await json("/admin/finance/fiscal-documents","POST",{
+        clientId:ledgerClientId,projectId:ledgerProjectId,issuedOn:today,dueDate:today,
+        description:"Documento sintetico per controllo anagrafica",grossAmountCents:2000,notes:"",
+      });
+      integrityDocumentId=fiscalDocument.id;fiscalDocumentIds.push(fiscalDocument.id);
+      await json(`/admin/finance/clients/${ledgerClientId}`,"PATCH",{taxId:null,address:null});
+
+      const report=await json(reportPath);
+      assert.equal(report.totals.receivedCents-baseline.totals.receivedCents,321);
+      assert.equal(report.totals.spentCents-baseline.totals.spentCents,1234);
+      assert.equal(report.totals.periodBalanceCents-baseline.totals.periodBalanceCents,-913);
+      assert.equal(report.totals.withholdingCreditCents-baseline.totals.withholdingCreditCents,400);
+      assert.equal(report.expensesBySupplier.find((item:any)=>item.key===supplier.id).amountCents,1234);
+      const reportClient=report.clients.find((item:any)=>item.clientId===ledgerClientId);
+      assert.equal(reportClient.directCostsCents-baselineClient.directCostsCents,1234);
+      assert.equal(reportClient.marginCents-baselineClient.marginCents,-1234);
+
+      const checks=await json("/admin/finance/verification");
+      const issue=(category:string,id:string)=>checks.items.find((item:any)=>item.category===category&&item.entityId===id);
+      assert.ok(issue("income_without_allocation",unallocatedMovementId));
+      assert.ok(issue("delivered_open_balance",ledgerProjectId),JSON.stringify({
+        project:(await pool.query("SELECT status,details FROM admin_finance_projects WHERE id=$1",[ledgerProjectId])).rows[0],
+        issues:checks.items.filter((item:any)=>item.entityId===ledgerProjectId),
+      }));
+      assert.ok(issue("legacy_paid_without_movement",paid.id));
+      assert.ok(issue("overdue_recurring",ledgerRecurringId));
+      assert.ok(issue("missing_client_fiscal_data",integrityDocumentId));
+
+      const csv=await request("/admin/finance/export?format=csv");
+      assert.equal(csv.status,200);const text=await csv.text();
+      assert.ok(text.includes("Movimenti effettivi"));assert.ok(text.includes("Documenti fiscali"));
+      assert.ok(text.includes(`${prefix}_ledger incasso da attribuire`));
+      assert.ok(text.includes("netAmountEuro"));assert.ok(text.includes("Clienti"));
+      const xlsx=await request("/admin/finance/export?format=xlsx");
+      assert.equal(xlsx.status,200);assert.equal(Buffer.from(await xlsx.arrayBuffer()).subarray(0,2).toString(),"PK");
+    });
   } finally {
     if(documentPath){
       try { await (await new ObjectStorageService().getObjectEntityFile(documentPath)).delete(); }
       catch { /* Cleanup must not prevent removal of the database's synthetic fixtures. */ }
     }
-    if(fiscalDocumentId){
-      const stored=(await pool.query("SELECT storage_path FROM admin_finance_documents WHERE id=$1",[fiscalDocumentId])).rows[0];
-      if(stored?.storage_path){
-        try{await (await new ObjectStorageService().getObjectEntityFile(stored.storage_path)).delete();}
+    if(fiscalDocumentIds.length){
+      const stored=(await pool.query("SELECT storage_path FROM admin_finance_documents WHERE id=ANY($1::text[])",[fiscalDocumentIds])).rows;
+      for(const document of stored)if(document.storage_path){
+        try{await (await new ObjectStorageService().getObjectEntityFile(document.storage_path)).delete();}
         catch{/* The PDF may already have been removed by an interrupted test run. */}
       }
     }
@@ -454,7 +520,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const ledgerC=(await q.query("SELECT id FROM admin_finance_clients WHERE name=$1",[`${prefix}_ledger`])).rows.map(r=>r.id);
       const ledgerR=(await q.query("SELECT id FROM admin_finance_recurring WHERE description='Canone mensile test' AND client_id=ANY($1::text[])",[ledgerC])).rows.map(r=>r.id);
       const c=(await q.query("SELECT id FROM admin_finance_clients WHERE name=ANY($1::text[])",[[prefix,`${prefix}_ledger`]])).rows.map(r=>r.id);
-      const s=(await q.query("SELECT id FROM admin_finance_suppliers WHERE name=$1",[prefix])).rows.map(r=>r.id);
+       const s=(await q.query("SELECT id FROM admin_finance_suppliers WHERE name LIKE $1",[`${prefix}%`])).rows.map(r=>r.id);
       const a=(await q.query("SELECT id FROM admin_finance_accounts WHERE name=$1",[`${prefix}_ledger_conto`])).rows.map(r=>r.id);
       const reminderIds=manualReminderId?[manualReminderId]:[];
       const quoteIds=quoteId?[quoteId]:[];
@@ -462,9 +528,9 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const quoteProjectIds=quoteProjectId?[quoteProjectId]:[];
       const o=(await q.query(`SELECT id FROM admin_finance_obligations WHERE project_id=ANY($1::text[]) OR recurring_id=ANY($2::text[]) OR description LIKE $3`,[[...p,...ledgerP,...quoteProjectIds],[...r,...ledgerR,...quoteRecurringIds],`${prefix}_ledger%`])).rows.map(r=>r.id);
       const m=(await q.query(`SELECT id FROM admin_finance_movements WHERE account_id=ANY($1::text[]) OR note LIKE $2`,[a,`%${prefix}_ledger%`])).rows.map(r=>r.id);
-       await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...ledgerP,...quoteProjectIds,...quoteIds,...quoteRecurringIds,...reminderIds,...e,...r,...ledgerR,...c,...s,...a,...o,...m,...(fiscalDocumentId?[fiscalDocumentId]:[])]]);
+        await q.query("DELETE FROM admin_finance_audit WHERE entity_id=ANY($1::text[])",[[...p,...ledgerP,...quoteProjectIds,...quoteIds,...quoteRecurringIds,...reminderIds,...e,...r,...ledgerR,...c,...s,...a,...o,...m,...fiscalDocumentIds]]);
        if(fiscalSettingsSnapshot){
-         await q.query("DELETE FROM admin_finance_documents WHERE id=$1",[fiscalDocumentId]);
+          await q.query("DELETE FROM admin_finance_documents WHERE id=ANY($1::text[])",[fiscalDocumentIds]);
          await q.query("DELETE FROM admin_finance_settings WHERE key=ANY($1::text[])",[["issuer","document_prefixes"]]);
          for(const row of fiscalSettingsSnapshot.settings)await q.query(`INSERT INTO admin_finance_settings(key,value,updated_at)
            VALUES($1,$2,$3) ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value,updated_at=EXCLUDED.updated_at`,

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { AdminFinanceData, FinanceWorkspace, FinanceRecurringInput, FinanceLedgerData } from "@workspace/api-client-react";
 import { adminApi } from "@/lib/admin-api";
-import { appPath } from "@/lib/marketing";
 import { Button } from "@/components/ui/button";
 import { FinanceField } from "./FinanceDetailsFields";
 import { categoryLabels, fieldClass, money } from "./finance-ui";
@@ -58,10 +57,5 @@ export default function FinanceOperations({data,workspace,onRefresh}:{data?:Admi
       {workspace?.history.map(h=><details className="rounded-xl border p-3 text-xs" key={h.id}><summary className="cursor-pointer">{new Date(h.createdAt).toLocaleString("it-IT")} · {h.reason} · {h.actor}</summary><p className="mt-2 break-all">Riferimento: {h.entityId}</p><div className="grid gap-2 sm:grid-cols-2"><pre className="overflow-auto whitespace-pre-wrap break-words bg-slate-50 p-2">Prima: {JSON.stringify(h.before,null,2)}</pre><pre className="overflow-auto whitespace-pre-wrap break-words bg-slate-50 p-2">Dopo: {JSON.stringify(h.after,null,2)}</pre></div></details>)}
       {!workspace?.history.length&&<p className="text-sm text-slate-500">Nessuna rettifica registrata.</p>}
     </div></details>
-    <div className="flex flex-wrap gap-3">{(["csv","xlsx"] as const).map(format=><Button key={format} variant="outline" disabled={busy} onClick={()=>void act(async()=>{
-      const response=await fetch(appPath(`/api/admin/finance/export?format=${format}`),{credentials:"same-origin",cache:"no-store"});
-      if(!response.ok)throw new Error("Esportazione non riuscita. Verifica la sessione e riprova.");
-      const url=URL.createObjectURL(await response.blob());const link=document.createElement("a");link.href=url;link.download=`promoapp-controllo-economico.${format}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    })}>Esporta tutto {format==="csv"?"CSV":"Excel"}</Button>)}</div>
   </section>;
 }

@@ -21,6 +21,8 @@ import FinanceQuotes from "./FinanceQuotes";
 import FinanceSchedule from "./FinanceSchedule";
 import FinanceFiscalDocuments from "./FinanceFiscalDocuments";
 import FinanceSuppliers from "./FinanceSuppliers";
+import FinanceReports from "./FinanceReports";
+import FinanceIntegrity from "./FinanceIntegrity";
 import { adminApi } from "@/lib/admin-api";
 import { confirmed } from "./finance-ui";
 
@@ -101,7 +103,7 @@ export default function AdminFinancePanel({
   useEffect(()=>{void loadLedger();},[loadLedger]);
   const [projectEditor, setProjectEditor] = useState<AdminFinanceProject | "new" | null>(null);
   const [clientEditor, setClientEditor] = useState<AdminFinanceClient | "new" | null>(null);
-  const [section, setSection] = useState<"balance" | "clients" | "suppliers" | "receipts" | "quotes" | "schedule" | "documents" | "settings">("balance");
+  const [section, setSection] = useState<"balance" | "clients" | "suppliers" | "receipts" | "quotes" | "schedule" | "documents" | "settings" | "reports" | "verification">("balance");
   const [filter, setFilter] = useState<"all" | "open" | "income" | "expense">("all");
   const visibleEntries = useMemo(() => (data?.entries ?? []).filter((entry) => {
     const inSelectedMonth = !entry.paidAt || monthInRome(entry.paidAt) === month;
@@ -223,7 +225,7 @@ export default function AdminFinancePanel({
       </div>
 
       <nav aria-label="Sezioni del gestionale" className="flex flex-wrap gap-2">
-        {([["balance","Panoramica e bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi, rate e canoni"],["quotes","Preventivi"],["schedule","Scadenzario"],["documents","Documenti fiscali"],["settings","Impostazioni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
+        {([["balance","Panoramica e bilancio"],["clients","Clienti e lavori"],["suppliers","Fornitori e spese"],["receipts","Incassi, rate e canoni"],["quotes","Preventivi"],["schedule","Scadenzario"],["documents","Documenti fiscali"],["reports","Report"],["verification","Verifica dati"],["settings","Impostazioni"]] as const).map(([value,label])=><button key={value} type="button" aria-pressed={section===value} data-testid={`button-finance-section-${value}`} onClick={()=>{setSection(value);setFilter("all");}} className={`rounded-xl px-4 py-2 text-sm font-semibold ${section===value?"bg-indigo-600 text-white":"border bg-white text-slate-600"}`}>{label}</button>)}
       </nav>
       <div className="flex flex-wrap gap-2">
         <Button size="sm" variant="outline" disabled={busy} onClick={()=>{setSection("clients");setClientEditor("new");}}>Aggiungi cliente</Button>
@@ -238,6 +240,8 @@ export default function AdminFinancePanel({
       {section==="schedule"&&<FinanceSchedule month={month} onMonth={onMonth} clients={data?.clients??[]} projects={data?.projects??[]} onRefresh={onRefresh}/>}
       {section==="documents"&&<FinanceFiscalDocuments mode="documents" clients={data?.clients??[]} projects={data?.projects??[]} onRefresh={onRefresh}/>}
       {section==="settings"&&<FinanceFiscalDocuments mode="settings" clients={data?.clients??[]} projects={data?.projects??[]} onRefresh={onRefresh}/>}
+      {section==="reports"&&<FinanceReports/>}
+      {section==="verification"&&<FinanceIntegrity onNavigate={(destination)=>setSection(destination)}/>}
       {workspaceError&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{workspaceError}</p>}
 
       <section hidden={section!=="clients"} className="rounded-2xl border border-slate-200 bg-white p-5" aria-label="Anagrafica clienti">
