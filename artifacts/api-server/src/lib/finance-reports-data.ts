@@ -21,6 +21,9 @@ const categoryNames: Record<string, string> = {
   accountant: "Commercialista", consulting: "Consulenze", equipment: "Attrezzature e tecnologia",
   research: "Ricerca e sviluppo", other: "Altro",
 };
+const euro = (cents: number) => new Intl.NumberFormat("it-IT", {
+  style: "currency", currency: "EUR",
+}).format(cents / 100);
 const integer = (value: unknown) => {
   const result = Number(value ?? 0);
   if (!Number.isSafeInteger(result)) throw new Error("Un importo del report supera la precisione intera supportata.");
@@ -123,14 +126,16 @@ export async function getFinanceReports(
     const confirmed = confirmedProject({ details } as unknown as Parameters<typeof confirmedProject>[0]);
     const status = String(project.status ?? details.status ?? "");
     const confirmedDate = typeof details.confirmedDate === "string" ? details.confirmedDate : "";
-    if (!confirmed || status === "cancelled" || !validCalendarDate(confirmedDate) ||
+    if (!confirmed || status === "draft" || status === "cancelled" ||
+      details.commercialState === "draft" || details.commercialState === "cancelled" ||
+      !validCalendarDate(confirmedDate) ||
       confirmedDate < range.startDate || confirmedDate > range.endDate) return sum;
     return sum + Math.max(0, integer(project.totalAmountCents) + integer(details.extraCents));
   }, 0);
   const recurringSold = integer((await pool.query(`SELECT COALESCE(sum(amount_cents),0)::bigint AS amount
     FROM admin_finance_obligations
     WHERE direction='income' AND source_type='recurring' AND due_date BETWEEN $1::date AND $2::date
-      AND due_date<=current_date`, [range.startDate, range.endDate])).rows[0]?.amount);
+      AND due_date<=$3::date`, [range.startDate, range.endDate, range.today])).rows[0]?.amount);
   const receivedCents = integer(movementsResult.rows[0]?.received);
   const spentCents = integer(movementsResult.rows[0]?.spent);
   const soldCents = projectSoldCents + recurringSold;
@@ -139,7 +144,7 @@ export async function getFinanceReports(
   const supplierAmounts = new Map<string, number>();
   for (const row of allocatedExpensesResult.rows) {
     const category = String(row.category ?? "other");
-    const categoryName = categoryNames[category] ?? "Altro";
+    const categoryName = categoryNames[category] ?? category;
     const amount = integer(row.amount);
     categoryAmounts.set(categoryName, (categoryAmounts.get(categoryName) ?? 0) + amount);
     const supplierId = String(row.supplierId ?? "");
@@ -213,7 +218,7 @@ export async function getFinanceIntegrity(): Promise<FinanceIntegrityResponse> {
         COALESCE(NULLIF(c.company_name,''),c.name,p.client_name) AS "clientName",
         p.total_amount_cents AS "totalAmountCents",p.status,p.details,
         COALESCE(sum(ob.amount),0)::bigint AS planned,
-        COALESCE(sum(GREATEST(0,ob.amount-ob.allocated)),0)::bigint AS obligationRemaining
+        COALESCE(sum(GREATEST(0,ob.amount-ob.allocated)),0)::bigint AS "obligationRemaining"
       FROM admin_finance_projects p
       LEFT JOIN admin_finance_clients c ON c.id=p.client_id
       LEFT JOIN LATERAL (
@@ -253,21 +258,16 @@ export async function getFinanceIntegrity(): Promise<FinanceIntegrityResponse> {
       FROM admin_finance_projects p LEFT JOIN admin_finance_clients c ON c.id=p.client_id
       WHERE p.details->>'agreementConfirmed'='true' AND p.details->>'amountKnown'='true'
         AND p.details->>'commercialState'='confirmed'
-        AND COALESCE(p.details->>'status','')<>'cancelled'
-        AND COALESCE(p.details->>'confirmedDate','')=''`),
+        AND COALESCE(p.status,'') NOT IN ('draft','cancelled')`),
   ]);
 
-  console.log("finance-integrity-delivered", delivered.rows.map((row: Record<string, unknown>) => ({
-    id: row.id, projectName: row.projectName, status: row.status, planned: row.planned,
-    obligationRemaining: row.obligationRemaining, details: row.details,
-  })));
   const items: FinanceIntegrityIssue[] = [];
   const add = (issue: FinanceIntegrityIssue) => items.push(issue);
   for (const row of unallocated.rows) {
     const outstanding = Math.max(0, integer(row.amountCents) - integer(row.allocated));
     add({
       id: `income_without_allocation:${row.id}`, category: "income_without_allocation", severity: "medium",
-      title: "Incasso non attribuito", detail: `${row.note || "Movimento senza nota"} · ${outstanding} centesimi non collegati a rate o canoni.`,
+      title: "Incasso non attribuito", detail: `${row.note || "Movimento senza nota"} · ${euro(outstanding)} non collegati a rate o canoni.`,
       entityType: "movement", entityId: row.id, clientName: null, projectName: null, date: asDate(row.date), amountCents: outstanding,
     });
   }
@@ -290,7 +290,7 @@ export async function getFinanceIntegrity(): Promise<FinanceIntegrityResponse> {
     if (receivable <= 0) continue;
     add({
       id: `delivered_open_balance:${row.id}`, category: "delivered_open_balance", severity: "high",
-      title: "Lavoro consegnato con residuo", detail: `Residuo non coperto da movimenti: ${receivable} centesimi.`,
+      title: "Lavoro consegnato con residuo", detail: `Residuo non coperto da movimenti: ${euro(receivable)}.`,
       entityType: "project", entityId: row.id, clientName: row.clientName ?? null, projectName: row.projectName, date: null, amountCents: receivable,
     });
   }
@@ -299,7 +299,7 @@ export async function getFinanceIntegrity(): Promise<FinanceIntegrityResponse> {
     add({
       id: `overdue_recurring:${row.id}`, category: "overdue_recurring", severity: "high",
       title: row.direction === "income" ? "Canone scaduto da incassare" : "Canone scaduto da pagare",
-      detail: `${row.description}${row.supplierName ? ` · ${row.supplierName}` : ""} · scadenza ${row.date} · residuo ${amount} centesimi.`,
+      detail: `${row.description}${row.supplierName ? ` · ${row.supplierName}` : ""} · scadenza ${row.date} · residuo ${euro(amount)}.`,
       entityType: "obligation", entityId: row.id, clientName: row.clientName ?? null, projectName: row.projectName ?? null,
       date: asDate(row.date), amountCents: amount,
     });
@@ -325,6 +325,8 @@ export async function getFinanceIntegrity(): Promise<FinanceIntegrityResponse> {
     });
   }
   for (const row of undatedProjects.rows) {
+    const details = detailsRecord(row.details);
+    if (validCalendarDate(String(details.confirmedDate ?? ""))) continue;
     add({
       id: `confirmed_project_missing_date:${row.id}`, category: "confirmed_project_missing_date", severity: "low",
       title: "Lavoro confermato senza data di conferma",

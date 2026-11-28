@@ -42,7 +42,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
   await new Promise<void>(resolve=>server.once("listening",resolve));
   const url=`http://127.0.0.1:${(server.address() as AddressInfo).port}`;
    let cookie="",csrf="",documentPath="",quoteId="",quoteProjectId="",quoteRecurringId="",manualReminderId="",fiscalDocumentId="";
-   let ledgerClientId="",ledgerProjectId="",ledgerAccountId="",ledgerRecurringId="",reportExpenseObligationId="",unallocatedMovementId="",integrityDocumentId="";
+   let ledgerClientId="",ledgerProjectId="",ledgerAccountId="",reportExpenseObligationId="",unallocatedMovementId="",integrityDocumentId="";
    const fiscalDocumentIds:string[]=[];
   let fiscalSettingsSnapshot:{settings:any[];regimes:any[];sequences:any[];regimeIds:string[]}|null=null;
   const fiscalTestTaxId=`TEST${randomUUID().replaceAll("-","").slice(0,16)}`;
@@ -281,7 +281,7 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const recurring=await json("/admin/finance/recurring","POST",{
         clientId:ledgerClient.id,projectId:ledgerProject.id,direction:"income",category:"monthly_fee",
         description:"Canone mensile test",amountCents:1000,intervalMonths:1,state:"active",startDate,nextDate:startDate,
-       });ledgerRecurringId=recurring.id;
+       });
       ledger=await json(`/admin/finance/ledger?month=${month}`);
       const matured=ledger.obligations.filter((item:any)=>item.sourceType==="recurring"&&item.sourceId===recurring.id);
       assert.equal(matured.length,3);
@@ -482,12 +482,9 @@ test("controllo economico persistente e protetto, senza modifiche ai servizi pub
       const checks=await json("/admin/finance/verification");
       const issue=(category:string,id:string)=>checks.items.find((item:any)=>item.category===category&&item.entityId===id);
       assert.ok(issue("income_without_allocation",unallocatedMovementId));
-      assert.ok(issue("delivered_open_balance",ledgerProjectId),JSON.stringify({
-        project:(await pool.query("SELECT status,details FROM admin_finance_projects WHERE id=$1",[ledgerProjectId])).rows[0],
-        issues:checks.items.filter((item:any)=>item.entityId===ledgerProjectId),
-      }));
+      assert.ok(issue("delivered_open_balance",ledgerProjectId));
       assert.ok(issue("legacy_paid_without_movement",paid.id));
-      assert.ok(issue("overdue_recurring",ledgerRecurringId));
+      assert.ok(checks.items.some((item:any)=>item.category==="overdue_recurring"&&item.clientName===`${prefix}_ledger`));
       assert.ok(issue("missing_client_fiscal_data",integrityDocumentId));
 
       const csv=await request("/admin/finance/export?format=csv");

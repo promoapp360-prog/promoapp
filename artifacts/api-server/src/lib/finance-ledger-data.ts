@@ -92,7 +92,7 @@ async function materializeMaturedRecurringObligations() {
 }
 
 async function projectRows() {
-  return (await pool.query(`SELECT p.id,p.client_id AS "clientId",
+  return (await pool.query(`SELECT p.id,p.client_id AS "clientId",p.status,
       COALESCE(NULLIF(c.company_name,''),c.name,p.client_name) AS "clientName",
       p.name,p.total_amount_cents AS "totalAmountCents",p.details,
       p.created_at AS "createdAt"
@@ -251,7 +251,9 @@ export async function financeLedgerData(month: string): Promise<FinanceLedgerDat
   }
   let soldCents=0,monthSoldCents=0;
   for (const project of projects) {
-    if (!confirmedProject(project as Parameters<typeof confirmedProject>[0])) continue;
+    if (!confirmedProject(project as Parameters<typeof confirmedProject>[0]) ||
+      project.status === "draft" || project.status === "cancelled" ||
+      project.details?.commercialState === "draft" || project.details?.commercialState === "cancelled") continue;
     const amount = Math.max(0,Number(project.totalAmountCents)+Number(project.details?.extraCents??0));
     const related = projectObligations.get(project.id) ?? [];
     const planned = total(related);

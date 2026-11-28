@@ -136,9 +136,9 @@ export function createFinanceToolsRouter() {
       clientId:row.clientId,clientName:row.clientName,projectId:row.projectId??"",projectName:row.projectName??"",
       taxRegime:row.taxRegime??"",description:row.description??"",dueDate:row.dueDate??"",
       netAmountEuro:Number(row.netAmountCents)/100,netAmountCents:Number(row.netAmountCents),
-      withholdingRate:row.withholdingRate,withholdingAmountEuro:Number(row.withholdingAmountCents)/100,
+      withholdingRateBps:row.withholdingRate,withholdingAmountEuro:Number(row.withholdingAmountCents)/100,
       withholdingAmountCents:Number(row.withholdingAmountCents),vatRate:row.vatRate,
-      vatAmountEuro:Number(row.vatAmountCents)/100,vatAmountCents:Number(row.vatAmountCents),
+      vatAmountEuro:Number(row.vatAmountCents)/100,vatAmountCents:Number(row.vatAmountCents),vatRateBps:row.vatRate,
       grossAmountEuro:Number(row.grossAmountCents)/100,grossAmountCents:Number(row.grossAmountCents),
       obligationId:row.obligationId??"",createdAt:row.createdAt,
     }));

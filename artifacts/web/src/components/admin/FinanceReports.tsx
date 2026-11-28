@@ -147,9 +147,12 @@ export default function FinanceReports() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead><tr className="border-b text-xs text-slate-500">
-                <th className="py-2 pr-3">Cliente</th><th className="py-2 pr-3 text-right">Venduto</th>
-                <th className="py-2 pr-3 text-right">Incassato</th><th className="py-2 pr-3 text-right">Da incassare</th>
-                <th className="py-2 pr-3 text-right">Costi diretti</th><th className="py-2 text-right">Margine</th>
+                <th className="py-2 pr-3">Cliente</th>
+                <th className="py-2 pr-3 text-right" title="Prezzi dei lavori confermati e canoni maturati, su tutta la storia del cliente.">Venduto ⓘ</th>
+                <th className="py-2 pr-3 text-right" title="Movimenti di entrata effettivi allocati a obblighi del cliente, su tutta la storia.">Incassato ⓘ</th>
+                <th className="py-2 pr-3 text-right" title="Obblighi di entrata del cliente meno le quote coperte da movimenti effettivi.">Da incassare ⓘ</th>
+                <th className="py-2 pr-3 text-right" title="Movimenti di uscita allocati a spese collegate al cliente.">Costi diretti ⓘ</th>
+                <th className="py-2 text-right" title="Venduto storico meno costi diretti storici; margine gestionale, non fiscale.">Margine ⓘ</th>
               </tr></thead>
               <tbody>{report.clients.map((client) => <tr key={client.clientId} className="border-b last:border-0" data-testid={`row-finance-report-client-${client.clientId}`}>
                 <th className="py-3 pr-3 font-medium">{client.clientName}</th>
@@ -171,7 +174,7 @@ export default function FinanceReports() {
           <h4 className="font-bold">{title}</h4>
           <p className="mt-1 text-xs text-slate-500">Uscite effettive del periodo; le quote non attribuite sono separate.</p>
           {!rows.length ? <p className="mt-4 text-sm text-slate-500">Nessuna spesa registrata nel periodo.</p> :
-            <ul className="mt-3 divide-y">{rows.map((row) => <li key={row.key} className="flex justify-between gap-3 py-2 text-sm" data-testid={`row-finance-report-breakdown-${row.key}`}>
+            <ul className="mt-3 divide-y">{rows.map((row) => <li key={row.key} title={`Totale di movimenti di uscita effettivi del periodo attribuiti a ${row.label}.`} className="flex justify-between gap-3 py-2 text-sm" data-testid={`row-finance-report-breakdown-${row.key}`}>
               <span>{row.label}</span><strong>{money(row.amountCents)}</strong>
             </li>)}</ul>}
         </section>)}
